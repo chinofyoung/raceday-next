@@ -2,6 +2,7 @@
 export const CLOUDINARY_CONFIG = {
     cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
     uploadPreset: process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+    apiKey: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
 };
 
 export const cloudinaryLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {

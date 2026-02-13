@@ -21,11 +21,11 @@ export async function logAdminAction(
 ) {
     try {
         await addDoc(collection(db, "auditLogs"), {
-            adminId,
-            adminName,
-            action,
-            targetId,
-            targetName,
+            adminId: adminId || "unknown",
+            adminName: adminName || "Unknown Admin",
+            action: action || "unknown_action",
+            targetId: targetId || "unknown",
+            targetName: targetName || "Unknown Target",
             details: details || "",
             timestamp: serverTimestamp()
         });

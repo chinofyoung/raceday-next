@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { getEvents } from "@/lib/services/eventService";
+import { toDate } from "@/lib/utils";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://raceday.com";
@@ -20,14 +20,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
     try {
-        // Dynamic event routes
-        const eventsSnap = await getDocs(
-            query(collection(db, "events"), where("status", "==", "published"))
-        );
+        // Dynamic event routes - Capped at 1000 most recent published events
+        const { items: events } = await getEvents({
+            status: "published",
+            limitCount: 1000
+        });
 
-        const eventRoutes = eventsSnap.docs.map((doc) => ({
-            url: `${baseUrl}/events/${doc.id}`,
-            lastModified: new Date(), // Ideally use doc.data().updatedAt
+        const eventRoutes = events.map((event) => ({
+            url: `${baseUrl}/events/${event.id}`,
+            lastModified: toDate((event as any).updatedAt || (event as any).createdAt || new Date()),
             changeFrequency: "weekly" as const,
             priority: 0.7,
         }));

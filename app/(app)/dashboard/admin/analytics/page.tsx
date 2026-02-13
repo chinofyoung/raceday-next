@@ -11,9 +11,14 @@ import {
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
 import { collection, query, getDocs, orderBy, where } from "firebase/firestore";
-import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
+import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, isWithinInterval, startOfDay } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import dynamic from "next/dynamic";
+import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
+import { getRegistrations } from "@/lib/services/registrationService";
+import { getEvents } from "@/lib/services/eventService";
+import { toDate } from "@/lib/utils";
+import { RaceEvent } from "@/types/event";
 
 const ResponsiveContainer = dynamic(() => import("recharts").then(mod => mod.ResponsiveContainer), { ssr: false });
 const BarChart = dynamic(() => import("recharts").then(mod => mod.BarChart), { ssr: false });
@@ -41,36 +46,77 @@ export default function AnalyticsPage() {
     const fetchAnalytics = async () => {
         setLoading(true);
         try {
-            // 1. Revenue by Month (Last 6 months)
-            const months = Array.from({ length: 6 }).map((_, i) => {
-                const date = subMonths(new Date(), 5 - i);
-                return {
-                    name: format(date, "MMM"),
-                    revenue: Math.floor(Math.random() * 500000) + 100000,
-                    registrations: Math.floor(Math.random() * 200) + 50
-                };
-            });
-            setRevenueData(months);
-
-            // 2. User Distribution
-            const usersSnap = await getDocs(collection(db, "users"));
-            const roles = { runner: 0, organizer: 0, admin: 0 };
-            usersSnap.docs.forEach(d => {
-                const role = d.data().role as keyof typeof roles;
-                if (roles[role] !== undefined) roles[role]++;
-            });
-            setUserDistribution([
-                { name: "Runners", value: roles.runner, color: "var(--primary)" },
-                { name: "Organizers", value: roles.organizer, color: "var(--cta)" },
-                { name: "Admins", value: roles.admin, color: "var(--text-muted)" }
+            // Optimized parallel fetching
+            const [stats, regsResult, eventsResult] = await Promise.all([
+                getPlatformStats(),
+                getRegistrations({ status: "paid", limitCount: 1000 }), // Cap for charts
+                getEvents({ status: "all", limitCount: 100 })
             ]);
 
+            // 1. Process User Distribution
+            setUserDistribution([
+                { name: "Runners", value: stats.usersByRole.runner, color: "#f97316" },
+                { name: "Organizers", value: stats.usersByRole.organizer, color: "#22c55e" },
+                { name: "Admins", value: stats.usersByRole.admin, color: "#8b5cf6" }
+            ]);
+
+            // 2. Process Revenue & Registrations by Month (Last 6 months)
+            const sixMonthsAgo = startOfMonth(subMonths(new Date(), 5));
+            const monthsInterval = eachMonthOfInterval({
+                start: sixMonthsAgo,
+                end: new Date()
+            });
+
+            const registrations = regsResult.items.map(r => ({
+                ...r,
+                paidAt: toDate((r as any).paidAt || r.createdAt)
+            }));
+
+            const monthlyData = monthsInterval.map(month => {
+                const monthStart = startOfMonth(month);
+                const monthEnd = endOfMonth(month);
+
+                const monthRegs = registrations.filter(reg =>
+                    isWithinInterval(reg.paidAt as Date, { start: monthStart, end: monthEnd })
+                );
+
+                return {
+                    name: format(month, "MMM"),
+                    revenue: monthRegs.reduce((sum, r) => sum + (r.totalPrice || 0), 0),
+                    registrations: monthRegs.length
+                };
+            });
+            setRevenueData(monthlyData);
+
             // 3. Category Popularity
-            setEventCategories([
-                { name: "5K", value: 45 },
-                { name: "10K", value: 30 },
-                { name: "21K", value: 15 },
-                { name: "42K", value: 10 }
+            const categoryCounts: Record<string, number> = {};
+            registrations.forEach(reg => {
+                const catId = reg.categoryId;
+                categoryCounts[catId] = (categoryCounts[catId] || 0) + 1;
+            });
+
+            // Map category IDs to names using events data
+            const categoryNames: Record<string, string> = {};
+            eventsResult.items.forEach((event: RaceEvent) => {
+                event.categories?.forEach((cat: any) => {
+                    categoryNames[cat.id] = cat.name;
+                });
+            });
+
+            const totalRegs = registrations.length || 1;
+            const popularCategories = Object.entries(categoryCounts)
+                .map(([id, count]) => ({
+                    name: categoryNames[id] || "Other",
+                    value: Math.round((count / totalRegs) * 100)
+                }))
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 4);
+
+            setEventCategories(popularCategories.length > 0 ? popularCategories : [
+                { name: "5K", value: 0 },
+                { name: "10K", value: 0 },
+                { name: "21K", value: 0 },
+                { name: "42K", value: 0 }
             ]);
 
         } catch (error) {
@@ -120,11 +166,40 @@ export default function AnalyticsPage() {
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={revenueData}>
+                                <defs>
+                                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8} />
+                                        <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0.2} />
+                                    </linearGradient>
+                                </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tick={{ fontStyle: 'italic', fontWeight: 'bold' }} />
-                                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tick={{ fontStyle: 'italic', fontWeight: 'bold' }} />
-                                <Tooltip contentStyle={{ backgroundColor: '#16161a', border: '1px solid rgba(255,255,255,0.05)' }} />
-                                <Bar dataKey="revenue" fill="var(--primary)" radius={[4, 4, 0, 0]} />
+                                <XAxis
+                                    dataKey="name"
+                                    stroke="rgba(255,255,255,0.3)"
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                                />
+                                <YAxis
+                                    stroke="rgba(255,255,255,0.3)"
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                                />
+                                <Tooltip
+                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                    contentStyle={{
+                                        backgroundColor: '#1f2937',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)'
+                                    }}
+                                />
+                                <Bar dataKey="revenue" fill="url(#revenueGradient)" radius={[6, 6, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -180,11 +255,45 @@ export default function AnalyticsPage() {
                     <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={revenueData}>
+                                <defs>
+                                    <linearGradient id="lineOverlay" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--color-cta)" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="var(--color-cta)" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tick={{ fontStyle: 'italic', fontWeight: 'bold' }} />
-                                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} tickLine={false} axisLine={false} tick={{ fontStyle: 'italic', fontWeight: 'bold' }} />
-                                <Tooltip contentStyle={{ backgroundColor: '#16161a', border: '1px solid rgba(255,255,255,0.05)' }} />
-                                <Line type="monotone" dataKey="registrations" stroke="var(--cta)" strokeWidth={3} dot={{ fill: 'var(--cta)' }} />
+                                <XAxis
+                                    dataKey="name"
+                                    stroke="rgba(255,255,255,0.3)"
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                                />
+                                <YAxis
+                                    stroke="rgba(255,255,255,0.3)"
+                                    fontSize={10}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                                />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: '#1f2937',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold'
+                                    }}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="registrations"
+                                    stroke="var(--color-cta)"
+                                    strokeWidth={4}
+                                    dot={{ fill: 'var(--color-cta)', strokeWidth: 2, r: 4 }}
+                                    activeDot={{ r: 6, strokeWidth: 0 }}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -207,7 +316,7 @@ export default function AnalyticsPage() {
                                 </div>
                                 <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                                     <div
-                                        className="h-full bg-primary transition-all duration-1000"
+                                        className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-1000"
                                         style={{ width: `${cat.value}%` }}
                                     />
                                 </div>

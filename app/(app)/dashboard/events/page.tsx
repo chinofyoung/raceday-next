@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/Card";
+import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/Button";
 import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -127,69 +127,7 @@ export default function EventsManagementPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredEvents.map((event) => (
-                        <Card key={event.id} className="group relative bg-surface border-white/5 overflow-hidden transition-all hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
-                            <div className="aspect-[16/9] relative overflow-hidden">
-                                <img
-                                    src={event.featuredImage || "/placeholder.jpg"}
-                                    alt={event.name}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-transparent" />
-                                <div className="absolute top-4 left-4">
-                                    <span className={cn(
-                                        "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg",
-                                        event.status === "published" ? "bg-green-500 text-white" :
-                                            event.status === "draft" ? "bg-cta text-white" : "bg-white/20 text-white"
-                                    )}>
-                                        {event.status}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="p-6 space-y-4">
-                                <div className="space-y-1">
-                                    <h3 className="text-xl font-bold uppercase italic tracking-tight text-white line-clamp-1">{event.name}</h3>
-                                    <div className="flex items-center gap-2 text-xs text-text-muted font-medium italic">
-                                        <Calendar size={14} className="text-primary" />
-                                        {event.date ? format(typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date), "MMMM d, yyyy") : "TBD"}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-bold uppercase text-text-muted tracking-widest">Registrations</p>
-                                        <div className="flex items-center gap-2">
-                                            <Users size={14} className="text-cta" />
-                                            <span className="text-sm font-black italic">0</span>
-                                        </div>
-                                    </div>
-                                    <div className="space-y-1">
-                                        <p className="text-[10px] font-bold uppercase text-text-muted tracking-widest">Categories</p>
-                                        <div className="flex items-center gap-2">
-                                            <Filter size={14} className="text-blue-500" />
-                                            <span className="text-sm font-black italic">{event.categories?.length || 0}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-2 pt-2">
-                                    <Button variant="outline" size="sm" className="flex-1 gap-2" asChild>
-                                        <Link href={`/dashboard/events/${event.id}/edit`}><Edit2 size={14} /> Edit</Link>
-                                    </Button>
-                                    <Button variant="outline" size="sm" className="gap-2" asChild title="Manage Participants">
-                                        <Link href={`/dashboard/events/${event.id}`}><Eye size={14} /></Link>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-red-500 hover:bg-red-500/10 hover:border-red-500/20"
-                                        onClick={() => handleDelete(event.id)}
-                                    >
-                                        <Trash2 size={14} />
-                                    </Button>
-                                </div>
-                            </div>
-                        </Card>
+                        <EventCard key={event.id} event={event} onDelete={handleDelete} />
                     ))}
                 </div>
             )}

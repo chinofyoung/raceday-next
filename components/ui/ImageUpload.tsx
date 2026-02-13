@@ -54,11 +54,32 @@ export function ImageUpload({
 
         try {
             setLoading(true);
+
+            // 1. Get Signature from our server
+            const paramsToSign = {
+                upload_preset: CLOUDINARY_CONFIG.uploadPreset,
+            };
+
+            const signResponse = await fetch("/api/cloudinary/sign", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paramsToSign }),
+            });
+
+            if (!signResponse.ok) {
+                throw new Error("Failed to get upload signature from server");
+            }
+
+            const { signature, timestamp } = await signResponse.json();
+
+            // 2. Upload to Cloudinary with signature
             const formData = new FormData();
             formData.append("file", file);
+            formData.append("api_key", CLOUDINARY_CONFIG.apiKey || "");
+            formData.append("timestamp", timestamp.toString());
+            formData.append("signature", signature);
             formData.append("upload_preset", CLOUDINARY_CONFIG.uploadPreset || "");
 
-            // Using unsigned upload to Cloudinary directly from client
             const cloudName = CLOUDINARY_CONFIG.cloudName;
             if (!cloudName) throw new Error("Cloudinary cloud name not configured");
 
@@ -72,7 +93,7 @@ export function ImageUpload({
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error?.message || "Upload failed");
+                throw new Error(errorData.error?.message || "Cloudinary upload failed");
             }
 
             const data = await response.json();

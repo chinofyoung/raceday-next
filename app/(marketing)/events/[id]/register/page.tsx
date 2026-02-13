@@ -73,37 +73,45 @@ export default function RegisterPage() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
-                    <div className="lg:col-span-3">
-                        <RegistrationForm event={event} initialCategoryId={initialCategoryId} />
-                    </div>
+                <div className="space-y-12">
+                    <RegistrationForm event={event} initialCategoryId={initialCategoryId} />
 
-                    {/* Sidebar Info */}
-                    <div className="space-y-6">
-                        <Card className="p-6 bg-surface/50 border-white/5 space-y-6">
-                            <h3 className="text-sm font-black uppercase italic tracking-widest text-white border-b border-white/5 pb-3">Why register now?</h3>
-                            <ul className="space-y-4">
-                                <li className="flex gap-3 text-xs text-text-muted italic font-medium leading-relaxed">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                                    Secure your preferred category before slots run out.
-                                </li>
-                                <li className="flex gap-3 text-xs text-text-muted italic font-medium leading-relaxed">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                                    Get exclusive race kits and finisher tokens.
-                                </li>
-                                <li className="flex gap-3 text-xs text-text-muted italic font-medium leading-relaxed">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-cta mt-1.5 shrink-0" />
-                                    Join the official leaderboard on race day.
-                                </li>
-                            </ul>
-                            <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 flex gap-3">
+                    {/* Why Register Box Below */}
+                    <Card className="p-8 bg-surface/30 border-white/5 space-y-8 backdrop-blur-sm">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-6">
+                            <h3 className="text-xl font-black uppercase italic tracking-widest text-white">Why register now?</h3>
+                            <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex gap-3 max-w-sm">
                                 <Info className="text-primary shrink-0" size={16} />
                                 <p className="text-[10px] text-text-muted italic font-bold leading-relaxed uppercase">
                                     Your personal information is secured and will only be used for event-related communications.
                                 </p>
                             </div>
-                        </Card>
-                    </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="flex gap-4 items-start group">
+                                <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-cta shrink-0 font-black italic transition-colors group-hover:bg-cta group-hover:text-white">01</div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-primary italic tracking-widest">Limited Slots</p>
+                                    <p className="text-xs text-text-muted italic font-medium leading-relaxed">Secure your preferred category before slots run out.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 items-start group">
+                                <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-cta shrink-0 font-black italic transition-colors group-hover:bg-cta group-hover:text-white">02</div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-primary italic tracking-widest">Exclusives</p>
+                                    <p className="text-xs text-text-muted italic font-medium leading-relaxed">Get exclusive race kits and finisher tokens.</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4 items-start group">
+                                <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-cta shrink-0 font-black italic transition-colors group-hover:bg-cta group-hover:text-white">03</div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase text-primary italic tracking-widest">Leaderboards</p>
+                                    <p className="text-xs text-text-muted italic font-medium leading-relaxed">Join the official leaderboard on race day.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
                 </div>
             </div>
         </PageWrapper>

@@ -156,7 +156,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
 
     return (
         <FormProvider {...methods}>
-            <div className="space-y-8 max-w-5xl mx-auto">
+            <div className="space-y-8 mx-auto">
                 {/* Progress Header */}
                 <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4 no-scrollbar">
                     {STEPS.map((step, i) => {

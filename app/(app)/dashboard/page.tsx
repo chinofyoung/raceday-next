@@ -9,12 +9,12 @@ import { Badge } from "@/components/ui/Badge";
 import {
     Calendar, User, Settings, ArrowRight, Trophy,
     Plus, BarChart3, Users, DollarSign, QrCode,
-    Loader2, MapPin, CheckCircle2
+    Loader2, MapPin, CheckCircle2, Globe
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { collection, query, where, getDocs, doc, getDoc, limit, orderBy } from "firebase/firestore";
 import { format } from "date-fns";
+import { getEvents } from "@/lib/services/eventService";
+import { getRegistrations, getRegistrationsWithEvents } from "@/lib/services/registrationService";
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
@@ -35,18 +35,16 @@ export default function DashboardPage() {
         setLoading(true);
         try {
             if (isOrganizer) {
-                // Fetch Organizer Stats
-                const eventsQ = query(collection(db, "events"), where("organizerId", "==", user?.uid));
-                const eventsSnap = await getDocs(eventsQ);
-                const eventsList = eventsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Fetch Organizer Stats (Stage 3.1: Parallelize)
+                const [eventsResult, regsResult] = await Promise.all([
+                    getEvents({ organizerId: user?.uid, limitCount: 100, status: "all" }),
+                    getRegistrations({ status: "paid", limitCount: 1000 })
+                ]);
 
-                // Fetch Registrations for these events
-                const regsQ = query(collection(db, "registrations"), where("status", "==", "paid"));
-                const regsSnap = await getDocs(regsQ);
-                const allPaidRegs = regsSnap.docs.map(doc => doc.data());
-
-                const myEventsIds = eventsList.map(e => e.id);
-                const myRegs = allPaidRegs.filter(r => myEventsIds.includes(r.eventId));
+                const eventsList = eventsResult.items;
+                const myEventsIds = eventsList.map((e: any) => e.id);
+                // Filter registrations for this organizer's events (Stage 1.1)
+                const myRegs = regsResult.items.filter((r: any) => myEventsIds.includes(r.eventId));
                 const totalRevenue = myRegs.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
 
                 setStats({
@@ -56,30 +54,18 @@ export default function DashboardPage() {
                 });
                 setItems(eventsList.slice(0, 3));
             } else {
-                // Fetch Runner Stats
-                const regsQ = query(
-                    collection(db, "registrations"),
-                    where("userId", "==", user?.uid),
-                    orderBy("createdAt", "desc"),
-                    limit(5)
-                );
-                const regsSnap = await getDocs(regsQ);
-                const myRegs = await Promise.all(regsSnap.docs.map(async (regDoc) => {
-                    const regData = regDoc.data();
-                    const eventDoc = await getDoc(doc(db, "events", regData.eventId));
-                    return {
-                        id: regDoc.id,
-                        ...regData,
-                        event: eventDoc.exists() ? eventDoc.data() : null
-                    } as any;
-                }));
+                // Fetch Runner Stats (Stage 1.4: Fix N+1 Query)
+                const result = await getRegistrationsWithEvents({
+                    userId: user?.uid,
+                    limitCount: 5
+                });
 
                 setStats({
-                    total: myRegs.filter(r => r.status === "paid").length,
-                    secondary: 0, // Could be finished races
+                    total: result.items.filter((r: any) => r.status === "paid").length,
+                    secondary: 0,
                     revenue: 0
                 });
-                setItems(myRegs);
+                setItems(result.items);
             }
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
@@ -112,8 +98,11 @@ export default function DashboardPage() {
                             <Link href="/dashboard/events/create"><Plus size={16} className="mr-2" /> New Event</Link>
                         </Button>
                     )}
-                    <Button variant="outline" size="sm" asChild className="font-black italic uppercase">
+                    <Button variant="outline" size="sm" asChild className="font-black italic uppercase border-white/10">
                         <Link href="/dashboard/settings"><Settings size={16} className="mr-2" /> Settings</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild className="hidden sm:flex font-black italic uppercase border-primary/20 text-primary hover:bg-primary/5">
+                        <Link href="/"><Globe size={16} className="mr-2" /> Back to Website</Link>
                     </Button>
                 </div>
             </div>
@@ -331,6 +320,15 @@ export default function DashboardPage() {
                                     )}
                                 </>
                             )}
+                            <Link href="/" className="block p-4 bg-white/5 rounded-xl border border-white/5 hover:border-cta/50 transition-all group">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Globe size={18} className="text-cta" />
+                                        <span className="font-bold uppercase italic text-sm text-text">Back to Website</span>
+                                    </div>
+                                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-cta" />
+                                </div>
+                            </Link>
                         </div>
                     </div>
 

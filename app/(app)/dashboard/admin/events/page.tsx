@@ -8,42 +8,34 @@ import { Badge } from "@/components/ui/Badge";
 import {
     Calendar, Search, Filter, ArrowLeft, Loader2,
     MapPin, Users, Trophy, MoreVertical, Star,
-    XCircle, Trash2, ExternalLink, Eye
+    XCircle, Trash2, ExternalLink, Eye, Download
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
-import { collection, query, getDocs, orderBy, doc, updateDoc, deleteDoc, where } from "firebase/firestore";
-import { RaceEvent } from "@/types/event";
+import { doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { RaceEvent, EventStatus } from "@/types/event";
 import { cn, formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { logAdminAction } from "@/lib/admin/audit";
 import { exportToCSV } from "@/lib/admin/export";
-import { Download } from "lucide-react";
+import { getEvents } from "@/lib/services/eventService";
+import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 
 export default function AdminEventManagementPage() {
     const { user: currentUser } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState<RaceEvent[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [statusFilter, setStatusFilter] = useState("all");
+    const [statusFilter, setStatusFilter] = useState<any>("all");
     const [processing, setProcessing] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+    const { data: events, loading, hasMore, loadMore, refresh } = usePaginatedQuery<RaceEvent>({
+        fetchFn: (opts) => getEvents({ ...opts, status: statusFilter }),
+        pageSize: 25
+    });
 
-    const fetchEvents = async () => {
-        setLoading(true);
-        try {
-            const q = query(collection(db, "events"), orderBy("createdAt", "desc"));
-            const snap = await getDocs(q);
-            setEvents(snap.docs.map(d => ({ id: d.id, ...d.data() })) as RaceEvent[]);
-        } catch (error) {
-            console.error("Error fetching events:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Refresh when filter changes
+    useEffect(() => {
+        refresh();
+    }, [statusFilter]);
 
     const handleFeature = async (event: RaceEvent) => {
         setProcessing(event.id);
@@ -60,8 +52,7 @@ export default function AdminEventManagementPage() {
                     event.name
                 );
             }
-
-            setEvents(prev => prev.map(e => e.id === event.id ? { ...e, featured: !e.featured } : e));
+            refresh();
         } catch (error) {
             console.error("Error featuring event:", error);
         } finally {
@@ -75,7 +66,7 @@ export default function AdminEventManagementPage() {
 
         setProcessing(id);
         try {
-            await updateDoc(doc(db, "events", id), { status: "cancelled", cancellationReason: reason });
+            await updateDoc(doc(db, "events", id), { status: "cancelled" as EventStatus, cancellationReason: reason });
 
             // Log action
             const targetEvent = events.find(e => e.id === id);
@@ -89,8 +80,7 @@ export default function AdminEventManagementPage() {
                     reason
                 );
             }
-
-            setEvents(prev => prev.map(e => e.id === id ? { ...e, status: "cancelled" } : e));
+            refresh();
         } catch (error) {
             console.error("Error cancelling event:", error);
         } finally {
@@ -117,7 +107,7 @@ export default function AdminEventManagementPage() {
                 );
             }
 
-            setEvents(prev => prev.filter(e => e.id !== id));
+            refresh();
         } catch (error) {
             console.error("Error deleting event:", error);
         } finally {
@@ -297,6 +287,21 @@ export default function AdminEventManagementPage() {
                     ))
                 )}
             </div>
+
+            {/* Load More */}
+            {hasMore && (
+                <div className="flex justify-center pt-8">
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        onClick={() => loadMore()}
+                        disabled={loading}
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={16} /> : "Load More Events"}
+                    </Button>
+                </div>
+            )}
         </PageWrapper>
     );
 }

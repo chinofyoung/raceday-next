@@ -12,41 +12,31 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
-import { collection, query, getDocs, orderBy, doc, updateDoc, Timestamp, getDoc } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import { format } from "date-fns";
 import { OrganizerApplication } from "@/types/user";
 import { cn, formatDate } from "@/lib/utils";
 import { logAdminAction } from "@/lib/admin/audit";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { exportToCSV } from "@/lib/admin/export";
+import { getOrganizerApplications } from "@/lib/services/applicationService";
+import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 import { Download } from "lucide-react";
 
 export default function ApplicationsPage() {
     const { user: currentUser } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [applications, setApplications] = useState<OrganizerApplication[]>([]);
-    const [filter, setFilter] = useState("pending");
+    const [filter, setFilter] = useState<any>("pending");
     const [processing, setProcessing] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchApplications();
-    }, []);
+    const { data: applications, loading, hasMore, loadMore, refresh } = usePaginatedQuery<OrganizerApplication>({
+        fetchFn: (opts) => getOrganizerApplications({ ...opts, status: filter }),
+        pageSize: 20
+    });
 
-    const fetchApplications = async () => {
-        setLoading(true);
-        try {
-            const q = query(
-                collection(db, "organizerApplications"),
-                orderBy("createdAt", "desc")
-            );
-            const snap = await getDocs(q);
-            setApplications(snap.docs.map(d => ({ id: d.id, ...d.data() })) as OrganizerApplication[]);
-        } catch (error) {
-            console.error("Error fetching applications:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Refresh when filter changes
+    useEffect(() => {
+        refresh();
+    }, [filter]);
 
     const handleApprove = async (app: OrganizerApplication) => {
         if (!confirm(`Are you sure you want to approve ${app.organizerName}?`)) return;
@@ -78,10 +68,7 @@ export default function ApplicationsPage() {
                 );
             }
 
-            // Refresh list
-            setApplications(prev => prev.map(a =>
-                a.id === app.id ? { ...a, status: "approved" as const } : a
-            ));
+            refresh();
         } catch (error) {
             console.error("Error approving application:", error);
             alert("Failed to approve application. Check console.");
@@ -114,9 +101,7 @@ export default function ApplicationsPage() {
                 );
             }
 
-            setApplications(prev => prev.map(a =>
-                a.id === app.id ? { ...a, status: "rejected" as const, rejectionReason: reason } : a
-            ));
+            refresh();
         } catch (error) {
             console.error("Error rejecting application:", error);
             alert("Failed to reject application.");
@@ -283,6 +268,21 @@ export default function ApplicationsPage() {
                             </div>
                         </Card>
                     ))}
+                </div>
+            )}
+
+            {/* Load More */}
+            {hasMore && (
+                <div className="flex justify-center pt-8">
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        onClick={() => loadMore()}
+                        disabled={loading}
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={16} /> : "Load More Applications"}
+                    </Button>
                 </div>
             )}
         </PageWrapper>

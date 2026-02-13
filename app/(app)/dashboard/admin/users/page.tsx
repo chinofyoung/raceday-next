@@ -8,43 +8,34 @@ import { Badge } from "@/components/ui/Badge";
 import {
     Users, Search, Filter, ArrowLeft, Loader2,
     Mail, Calendar, Trophy, ChevronRight, User as UserIcon,
-    MoreVertical, Shield, UserCog, Ban
+    MoreVertical, Shield, UserCog, Ban, Download
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
-import { collection, query, getDocs, orderBy, doc, updateDoc, where } from "firebase/firestore";
-import { RaceEvent } from "@/types/event";
+import { doc, updateDoc } from "firebase/firestore";
 import { User } from "@/types/user";
 import { cn, formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { logAdminAction } from "@/lib/admin/audit";
 import { exportToCSV } from "@/lib/admin/export";
-import { Download } from "lucide-react";
+import { getUsers } from "@/lib/services/userService";
+import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 
 export default function UserManagementPage() {
     const { user: currentUser } = useAuth();
-    const [loading, setLoading] = useState(true);
-    const [users, setUsers] = useState<User[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [roleFilter, setRoleFilter] = useState("all");
+    const [roleFilter, setRoleFilter] = useState<any>("all");
     const [processing, setProcessing] = useState<string | null>(null);
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    const { data: users, loading, hasMore, loadMore, refresh } = usePaginatedQuery<User>({
+        fetchFn: (opts) => getUsers({ ...opts, role: roleFilter }),
+        pageSize: 25
+    });
 
-    const fetchUsers = async () => {
-        setLoading(true);
-        try {
-            const q = query(collection(db, "users"), orderBy("createdAt", "desc"));
-            const snap = await getDocs(q);
-            setUsers(snap.docs.map(d => ({ ...d.data() })) as User[]);
-        } catch (error) {
-            console.error("Error fetching users:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Refresh when filter changes
+    useEffect(() => {
+        refresh();
+    }, [roleFilter]);
 
     const handleRoleChange = async (uid: string, newRole: User["role"]) => {
         if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
@@ -65,8 +56,7 @@ export default function UserManagementPage() {
                     `Changed role to ${newRole}`
                 );
             }
-
-            setUsers(prev => prev.map(u => u.uid === uid ? { ...u, role: newRole } : u));
+            refresh();
         } catch (error) {
             console.error("Error changing role:", error);
             alert("Failed to update role.");
@@ -76,10 +66,9 @@ export default function UserManagementPage() {
     };
 
     const filteredUsers = users.filter(u => {
-        const matchesSearch = u.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            u.email.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = roleFilter === "all" || u.role === roleFilter;
-        return matchesSearch && matchesRole;
+        const matchesSearch = u.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            u.email?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesSearch;
     });
 
     const handleExport = () => {
@@ -251,6 +240,21 @@ export default function UserManagementPage() {
                     ))
                 )}
             </div>
+
+            {/* Load More */}
+            {hasMore && (
+                <div className="flex justify-center pt-8">
+                    <Button
+                        variant="outline"
+                        size="lg"
+                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        onClick={() => loadMore()}
+                        disabled={loading}
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={16} /> : "Load More Users"}
+                    </Button>
+                </div>
+            )}
         </PageWrapper>
     );
 }

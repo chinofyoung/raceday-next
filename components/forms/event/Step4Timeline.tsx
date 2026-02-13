@@ -3,18 +3,55 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { EventFormValues } from "@/lib/validations/event";
-import { Plus, Trash2, Calendar, Clock, AlignLeft } from "lucide-react";
+import { Plus, Trash2, Calendar, Clock, AlignLeft, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export function Step4Timeline() {
-    const { control, register, formState: { errors } } = useFormContext<EventFormValues>();
-    const { fields, append, remove } = useFieldArray({
+    const { control, register, formState: { errors }, watch } = useFormContext<EventFormValues>();
+    const { fields, append, remove, replace } = useFieldArray({
         control,
         name: "timeline"
     });
+    const [isGenerating, setIsGenerating] = useState(false);
+
+    const eventName = watch("name");
+    const eventDescription = watch("description");
+
+    const handleAIAssist = async () => {
+        if (!eventName) {
+            toast.error("Set an event name first (Step 1)", {
+                description: "Claude needs event info to suggest a timeline."
+            });
+            return;
+        }
+
+        setIsGenerating(true);
+        const tid = toast.loading("Claude is scheduling your race day...");
+
+        try {
+            const { getAITimeline } = await import("@/lib/services/aiService");
+            const result = await getAITimeline(`${eventName}. ${eventDescription}`);
+            const newTimeline = result.timeline.map((item, idx) => ({
+                id: uuidv4(),
+                activity: item.activity,
+                description: item.description,
+                time: item.time,
+                order: idx
+            }));
+            replace(newTimeline);
+            toast.success("Timeline suggested by AI!", { id: tid });
+        } catch (error) {
+            console.error("AI Timeline Error:", error);
+            toast.error("Failed to suggest timeline", { id: tid });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
 
     const addTimelineItem = () => {
         append({
@@ -33,9 +70,28 @@ export function Step4Timeline() {
                     <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Event Timeline</h2>
                     <p className="text-text-muted font-medium">Schedule the day of the race and lead-up activities.</p>
                 </div>
-                <Button onClick={addTimelineItem} variant="primary" size="sm" className="gap-2 self-start md:self-center">
-                    <Plus size={18} /> Add Activity
-                </Button>
+                <div className="flex gap-3 self-start md:self-center">
+                    <button
+                        type="button"
+                        onClick={handleAIAssist}
+                        disabled={isGenerating}
+                        className={cn(
+                            "flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                            "bg-gradient-to-r from-primary/10 to-cta/10 border border-white/5 hover:border-primary/50 text-white",
+                            "hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed group"
+                        )}
+                    >
+                        {isGenerating ? (
+                            <Loader2 size={16} className="animate-spin text-primary" />
+                        ) : (
+                            <Sparkles size={16} className="text-primary" />
+                        )}
+                        <span className="bg-gradient-to-r from-primary to-cta bg-clip-text text-transparent italic">AI Assistant</span>
+                    </button>
+                    <Button onClick={addTimelineItem} variant="outline" size="sm" className="gap-2 shrink-0 h-10 border-white/10 hover:bg-white/5">
+                        <Plus size={18} /> Add Activity
+                    </Button>
+                </div>
             </div>
 
             <div className="space-y-4">
@@ -51,7 +107,7 @@ export function Step4Timeline() {
                     </div>
                 )}
 
-                <div className="space-y-4 max-w-3xl mx-auto">
+                <div className="space-y-4 w-full mx-auto">
                     {fields.map((field, index) => (
                         <Card key={field.id} className="p-6 bg-surface/50 border-white/5 relative group">
                             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">

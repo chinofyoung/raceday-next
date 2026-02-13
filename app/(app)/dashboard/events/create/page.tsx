@@ -39,7 +39,7 @@ export default function CreateEventPage() {
 
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10">
-            <div className="flex flex-col gap-4 max-w-5xl mx-auto">
+            <div className="flex flex-col gap-4 mx-auto">
                 <Link href="/dashboard" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
                     <ArrowLeft size={14} /> Back to Dashboard
                 </Link>

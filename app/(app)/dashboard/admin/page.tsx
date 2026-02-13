@@ -15,16 +15,13 @@ import { collection, query, where, getDocs, limit, orderBy } from "firebase/fire
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
+import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
+import { getEvents } from "@/lib/services/eventService";
+import { getOrganizerApplications } from "@/lib/services/applicationService";
 
 export default function AdminDashboardPage() {
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState({
-        totalUsers: 0,
-        totalEvents: 0,
-        totalRevenue: 0,
-        totalRegistrations: 0,
-        pendingApps: 0
-    });
+    const [stats, setStats] = useState<PlatformStats | null>(null);
     const [chartData, setChartData] = useState<any[]>([]);
     const [recentEvents, setRecentEvents] = useState<any[]>([]);
     const [recentApps, setRecentApps] = useState<any[]>([]);
@@ -36,23 +33,18 @@ export default function AdminDashboardPage() {
     const fetchAdminData = async () => {
         setLoading(true);
         try {
-            // 1. Fetch Stats
-            const usersSnap = await getDocs(collection(db, "users"));
-            const eventsSnap = await getDocs(collection(db, "events"));
-            const regsSnap = await getDocs(query(collection(db, "registrations"), where("status", "==", "paid")));
-            const appsSnap = await getDocs(query(collection(db, "organizerApplications"), where("status", "==", "pending")));
+            // Use Stage 3.1: Parallelize Independent Queries
+            const [statsResult, eventsResult, appsResult] = await Promise.all([
+                getPlatformStats(),
+                getEvents({ limitCount: 3, status: "all" }),
+                getOrganizerApplications({ limitCount: 3, status: "pending" })
+            ]);
 
-            const revenue = regsSnap.docs.reduce((sum, doc) => sum + (doc.data().totalPrice || 0), 0);
+            setStats(statsResult);
+            setRecentEvents(eventsResult.items);
+            setRecentApps(appsResult.items);
 
-            setStats({
-                totalUsers: usersSnap.size,
-                totalEvents: eventsSnap.size,
-                totalRevenue: revenue,
-                totalRegistrations: regsSnap.size,
-                pendingApps: appsSnap.size
-            });
-
-            // 2. Mock Chart Data (Real data would aggregate regs by date)
+            // Mock Chart Data for now (Real data would aggregate regs by date - Stage 1.2 plan)
             const last7Days = Array.from({ length: 7 }).map((_, i) => {
                 const date = subDays(new Date(), 6 - i);
                 return {
@@ -62,10 +54,6 @@ export default function AdminDashboardPage() {
                 };
             });
             setChartData(last7Days);
-
-            // 3. Recent Items
-            setRecentEvents(eventsSnap.docs.slice(0, 3).map(d => ({ id: d.id, ...d.data() })));
-            setRecentApps(appsSnap.docs.slice(0, 3).map(d => ({ id: d.id, ...d.data() })));
 
         } catch (error) {
             console.error("Error fetching admin data:", error);
@@ -109,7 +97,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Users</p>
-                            <p className="text-2xl font-black italic">{stats.totalUsers.toLocaleString()}</p>
+                            <p className="text-2xl font-black italic">{stats?.totalUsers.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -121,7 +109,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Events</p>
-                            <p className="text-2xl font-black italic">{stats.totalEvents.toLocaleString()}</p>
+                            <p className="text-2xl font-black italic">{stats?.totalEvents.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -133,7 +121,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Revenue</p>
-                            <p className="text-2xl font-black italic">₱{stats.totalRevenue.toLocaleString()}</p>
+                            <p className="text-2xl font-black italic">₱{stats?.totalRevenue.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -145,7 +133,7 @@ export default function AdminDashboardPage() {
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Pending Apps</p>
-                            <p className="text-2xl font-black italic">{stats.pendingApps.toLocaleString()}</p>
+                            <p className="text-2xl font-black italic">{stats?.pendingApplications.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -170,8 +158,8 @@ export default function AdminDashboardPage() {
                                 <AreaChart data={chartData}>
                                     <defs>
                                         <linearGradient id="colorRegs" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                                            <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
@@ -191,10 +179,27 @@ export default function AdminDashboardPage() {
                                         tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
                                     />
                                     <Tooltip
-                                        contentStyle={{ backgroundColor: 'rgb(22, 22, 26)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
-                                        itemStyle={{ color: 'var(--primary)', fontWeight: 'bold', fontStyle: 'italic', textTransform: 'uppercase', fontSize: '10px' }}
+                                        contentStyle={{
+                                            backgroundColor: '#1f2937',
+                                            border: '1px solid rgba(255,255,255,0.1)',
+                                            borderRadius: '12px'
+                                        }}
+                                        itemStyle={{
+                                            color: 'var(--color-primary)',
+                                            fontWeight: 'bold',
+                                            fontStyle: 'italic',
+                                            textTransform: 'uppercase',
+                                            fontSize: '10px'
+                                        }}
                                     />
-                                    <Area type="monotone" dataKey="registrations" stroke="var(--primary)" fillOpacity={1} fill="url(#colorRegs)" strokeWidth={3} />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="registrations"
+                                        stroke="var(--color-primary)"
+                                        fillOpacity={1}
+                                        fill="url(#colorRegs)"
+                                        strokeWidth={4}
+                                    />
                                 </AreaChart>
                             </ResponsiveContainer>
                         </div>

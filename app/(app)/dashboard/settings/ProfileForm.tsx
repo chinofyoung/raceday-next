@@ -95,7 +95,7 @@ export function ProfileForm() {
     }, [watchedFields, saveProfile, errors.displayName, isDirty]);
 
     return (
-        <div className="space-y-8 max-w-4xl mx-auto">
+        <div className="space-y-8 mx-auto">
             {/* Autosave Status Indicator */}
             <div className="fixed bottom-8 right-8 z-[100]">
                 <div className={cn(

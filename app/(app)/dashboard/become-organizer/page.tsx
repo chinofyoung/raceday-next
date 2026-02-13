@@ -95,7 +95,7 @@ export default function BecomeOrganizerPage() {
 
     return (
         <PageWrapper className="pt-8 pb-12 space-y-12">
-            <div className="flex flex-col gap-4 max-w-4xl mx-auto">
+            <div className="flex flex-col gap-4 mx-auto">
                 <Link href="/dashboard" className="text-primary text-sm font-bold flex items-center gap-1 hover:underline uppercase tracking-widest italic">
                     <ArrowLeft size={14} /> Back to Dashboard
                 </Link>
@@ -107,7 +107,7 @@ export default function BecomeOrganizerPage() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-4xl mx-auto items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto items-start">
                 <div className="space-y-10">
                     <div className="space-y-8">
                         <h2 className="text-2xl font-bold uppercase italic tracking-tight text-white">Organizer Benefits</h2>
