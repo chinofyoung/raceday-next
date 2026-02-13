@@ -38,8 +38,8 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-4",
-                isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-2" : "bg-transparent"
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-8",
+                isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-6" : "bg-transparent"
             )}
         >
             <div className="max-w-7xl mx-auto flex items-center justify-between">

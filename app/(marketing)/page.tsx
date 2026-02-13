@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, MapPin, TrendingUp, Users } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, TrendingUp, Users, Zap, Trophy, Timer } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -32,33 +32,87 @@ export default async function HomePage() {
     return (
         <PageWrapper className="space-y-24 pb-20">
             {/* Hero Section */}
-            <section className="relative pt-12 text-center space-y-8 max-w-4xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 border border-primary/20 rounded-full text-primary font-bold text-sm uppercase tracking-wider animate-bounce">
-                    <TrendingUp size={16} />
-                    <span>New events added daily</span>
+            <section className="relative pt-16 pb-8 lg:pt-28 lg:pb-16 overflow-visible">
+                {/* Atmospheric glow — breaks out of wrapper to fill viewport edges */}
+                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen pointer-events-none overflow-hidden" aria-hidden="true">
+                    <div className="absolute -top-40 right-0 w-[500px] h-[500px] bg-primary/15 rounded-full blur-[150px]" />
+                    <div className="absolute -bottom-40 left-0 w-[400px] h-[400px] bg-cta/10 rounded-full blur-[130px]" />
                 </div>
 
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black italic uppercase leading-none tracking-tight">
-                    Chase the <span className="text-primary italic">High</span>, <br />
-                    Define the <span className="text-cta">Line</span>.
-                </h1>
+                <div className="relative z-10 space-y-14">
+                    {/* Top Badge */}
+                    <div className="flex justify-center lg:justify-start">
+                        <div className="inline-flex items-center gap-2.5 px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm">
+                            <span className="flex h-2 w-2 rounded-full bg-cta" />
+                            <span className="text-[11px] font-black uppercase tracking-[0.15em] text-text-muted italic">
+                                The Running Community Platform
+                            </span>
+                        </div>
+                    </div>
 
-                <p className="text-lg md:text-xl text-text-muted max-w-2xl mx-auto leading-relaxed font-medium italic">
-                    The ultimate platform for running enthusiasts. Discover upcoming marathons,
-                    manage your race kits, and join a community that never stops moving.
-                </p>
+                    {/* Main Headline — Left-aligned on desktop for asymmetry */}
+                    <div className="space-y-6 text-center lg:text-left max-w-5xl">
+                        <h1 className="text-5xl md:text-7xl lg:text-[6.5rem] font-black italic uppercase leading-[0.88] tracking-tighter text-white">
+                            Chase the{" "}
+                            <span className="text-primary">High</span>,{" "}
+                            <br className="hidden md:block" />
+                            Define the{" "}
+                            <span className="relative inline-block">
+                                <span className="text-cta">Line</span>
+                                <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-cta/30 rounded-full" />
+                            </span>.
+                        </h1>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                    <Button size="lg" className="w-full sm:w-auto text-lg uppercase italic tracking-wider font-black shadow-xl shadow-primary/20" asChild>
-                        <Link href="/events">Browse Events <ArrowRight className="ml-2" size={20} /></Link>
-                    </Button>
-                    <Button variant="outline" size="lg" className="w-full sm:w-auto text-lg uppercase italic tracking-wider font-black" asChild>
-                        <Link href="/for-organizers">Host an Event</Link>
-                    </Button>
+                        <p className="text-lg md:text-xl text-text-muted max-w-2xl leading-relaxed font-medium italic lg:pr-8">
+                            From fun runs to ultra marathons — discover events, register in seconds,
+                            and join thousands of runners pushing their limits every weekend.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 pt-2">
+                            <Button size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black px-8 shadow-xl shadow-cta/20" asChild>
+                                <Link href="/events" className="flex items-center gap-2">
+                                    Browse Events
+                                    <ArrowRight size={18} />
+                                </Link>
+                            </Button>
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black" asChild>
+                                <Link href="/for-organizers">Host an Event</Link>
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Stats Strip — Social proof for credibility */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x divide-white/10 bg-surface/30 backdrop-blur-sm rounded-2xl border border-white/5 p-6 md:p-0">
+                        <div className="flex flex-col items-center md:py-8 gap-2">
+                            <div className="flex items-center gap-2 text-primary">
+                                <Calendar size={18} />
+                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">50+</span>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Events Listed</span>
+                        </div>
+                        <div className="flex flex-col items-center md:py-8 gap-2">
+                            <div className="flex items-center gap-2 text-cta">
+                                <Users size={18} />
+                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">10K+</span>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Runners Joined</span>
+                        </div>
+                        <div className="flex flex-col items-center md:py-8 gap-2">
+                            <div className="flex items-center gap-2 text-blue-400">
+                                <Trophy size={18} />
+                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">200+</span>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Race Categories</span>
+                        </div>
+                        <div className="flex flex-col items-center md:py-8 gap-2">
+                            <div className="flex items-center gap-2 text-amber-400">
+                                <Timer size={18} />
+                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">30s</span>
+                            </div>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Avg. Registration</span>
+                        </div>
+                    </div>
                 </div>
-
-                <div className="hidden lg:block absolute -top-10 -left-20 w-32 h-32 bg-cta/10 rounded-full blur-3xl animate-pulse" />
-                <div className="hidden lg:block absolute top-40 -right-20 w-48 h-48 bg-primary/10 rounded-full blur-3xl animate-pulse delay-700" />
             </section>
 
             {/* Featured Events */}
