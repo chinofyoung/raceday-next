@@ -154,19 +154,34 @@ export default async function HomePage() {
             </section>
 
             {/* Organizer CTA */}
-            <section className="relative rounded-[2rem] overflow-hidden bg-primary p-12 md:p-24 text-center space-y-8">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-                <h2 className="text-4xl md:text-6xl font-black italic uppercase leading-none tracking-tight text-white relative z-10">
-                    Empowering Organizers, <br />
-                    Igniting <span className="text-background underline decoration-cta decoration-4">Communities</span>.
-                </h2>
-                <p className="text-white/80 max-w-2xl mx-auto text-lg relative z-10">
-                    Scale your event with the most robust registration and participant management platform built specifically for race directors.
-                </p>
-                <div className="relative z-10">
-                    <Button variant="secondary" size="lg" className="bg-white text-primary hover:bg-white/90 shadow-2xl" asChild>
-                        <Link href="/for-organizers">Learn More for Organizers</Link>
-                    </Button>
+            <section className="relative rounded-[3rem] overflow-hidden border border-white/5 bg-surface/30 p-12 md:p-24 text-center space-y-10 group">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/20 rounded-full blur-[120px] opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+                <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-cta/10 rounded-full blur-[120px] opacity-30 group-hover:opacity-100 transition-opacity duration-1000" />
+
+                <div className="relative z-10 space-y-6">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-primary/30 rounded-full text-primary bg-primary/5 uppercase font-black italic tracking-widest text-[10px]">
+                        Organizers Hub
+                    </div>
+
+                    <h2 className="text-4xl md:text-7xl font-black italic uppercase leading-[0.9] tracking-tighter text-white max-w-4xl mx-auto">
+                        Empowering <span className="text-primary italic">Organizers</span>, <br />
+                        Igniting <span className="text-cta">Communities</span>.
+                    </h2>
+
+                    <p className="text-text-muted max-w-2xl mx-auto text-lg md:text-xl font-medium italic leading-relaxed px-4">
+                        Scale your race with the most robust registration and participant management platform
+                        built specifically for professional race directors and local running clubs.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-6">
+                        <Button size="lg" className="w-full sm:w-auto text-lg uppercase italic tracking-wider font-black px-10 shadow-2xl shadow-primary/20 hover:scale-105 transition-transform" asChild>
+                            <Link href="/for-organizers">Launch Your Event <ArrowRight className="ml-2" size={20} /></Link>
+                        </Button>
+                        <Link href="/about" className="text-text-muted hover:text-white font-black uppercase italic tracking-widest text-[10px] transition-colors border-b border-white/10 pb-1 hover:border-primary/50">
+                            Explore platform features
+                        </Link>
+                    </div>
                 </div>
             </section>
         </PageWrapper>
