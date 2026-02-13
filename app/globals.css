@@ -1,26 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-heading: "Barlow Condensed", sans-serif;
+  --font-body: "Barlow", sans-serif;
+
+  --color-primary: #f97316;
+  --color-secondary: #fb923c;
+  --color-cta: #22c55e;
+  --color-background: #1f2937;
+  --color-surface: #374151;
+  --color-text: #f8fafc;
+  --color-text-muted: #94a3b8;
+
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground-rgb: 248, 250, 252;
+  --background-rgb: 31, 41, 55;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: var(--font-body);
+  @apply antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  @apply font-bold uppercase tracking-wide;
+}
+
+.btn-primary {
+  @apply bg-cta text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer active:scale-95 hover:opacity-90 hover:-translate-y-0.5 shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-transparent text-primary border-2 border-primary px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer active:scale-95 hover:bg-primary/10 hover:-translate-y-0.5;
+}
+
+.card {
+  @apply bg-surface rounded-xl p-6 shadow-md transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-1;
+}
+
+.input {
+  @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200;
 }
