@@ -36,7 +36,7 @@ export default function ForOrganizersPage() {
                 </p>
                 <div className="pt-6">
                     <Button size="lg" className="text-lg uppercase italic tracking-wider h-16 px-10" asChild>
-                        <Link href="/auth/login">Apply to Host Now</Link>
+                        <Link href="/dashboard/become-organizer">Apply to Host Now</Link>
                     </Button>
                 </div>
             </section>
@@ -104,7 +104,7 @@ export default function ForOrganizersPage() {
                     Join hundreds of successful organizers who trust RaceDay for their event management.
                 </p>
                 <Button size="lg" variant="primary" asChild>
-                    <Link href="/auth/login" className="px-12">Get Started</Link>
+                    <Link href="/dashboard/become-organizer" className="px-12">Get Started</Link>
                 </Button>
             </section>
         </PageWrapper>
