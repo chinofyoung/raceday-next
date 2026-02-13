@@ -16,6 +16,11 @@ export async function POST(req: Request) {
         if (body.status === "PAID" || body.status === "SETTLED") {
             const registrationId = body.external_id;
 
+            if (!registrationId || typeof registrationId !== "string") {
+                console.error("Invalid registration ID:", registrationId);
+                return NextResponse.json({ error: "Invalid registration ID" }, { status: 400 });
+            }
+
             // 1. Fetch the registration doc
             const regRef = doc(db, "registrations", registrationId);
             const regSnap = await getDoc(regRef);

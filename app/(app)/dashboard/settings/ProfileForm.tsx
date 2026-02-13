@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Check, Loader2, User as UserIcon, MapPin, ShieldAlert, Shirt, CloudUpload } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CldUploadWidget } from "next-cloudinary";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 
 const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
@@ -117,61 +117,23 @@ export function ProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5 md:col-span-2">
                     <div className="flex flex-col md:flex-row items-center gap-8">
                         <div className="relative group">
-                            <div className="w-32 h-32 bg-surface rounded-full border-4 border-primary/20 overflow-hidden shadow-2xl">
-                                {user?.photoURL ? (
-                                    <picture>
-                                        <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
-                                    </picture>
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10">
-                                        <UserIcon size={48} />
-                                    </div>
-                                )}
-                            </div>
-                            <CldUploadWidget
-                                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                                onSuccess={(result: any) => {
-                                    if (result.event === "success") {
-                                        const photoURL = result.info.secure_url;
-                                        if (user) {
-                                            updateDoc(doc(db, "users", user.uid), { photoURL });
-                                        }
+                            <ImageUpload
+                                value={user?.photoURL || ""}
+                                onChange={(url) => {
+                                    if (user) {
+                                        updateDoc(doc(db, "users", user.uid), { photoURL: url });
                                     }
                                 }}
-                            >
-                                {({ open }) => (
-                                    <button
-                                        type="button"
-                                        onClick={() => open?.()}
-                                        className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                    >
-                                        <CloudUpload className="text-white" size={32} />
-                                    </button>
-                                )}
-                            </CldUploadWidget>
+                                aspectRatio="square"
+                                className="w-32 h-32 rounded-full"
+                                label="" // No label inside
+                            />
                         </div>
                         <div className="text-center md:text-left space-y-2">
                             <h3 className="text-xl font-bold uppercase italic tracking-tight text-white leading-none">Profile Image</h3>
                             <p className="text-sm text-text-muted leading-relaxed max-w-sm font-medium">
                                 Upload a clear headshot. This helps organizers identify you at race kit collection and finishers&apos; lines.
                             </p>
-                            <CldUploadWidget
-                                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-                                onSuccess={(result: any) => {
-                                    if (result.event === "success") {
-                                        const photoURL = result.info.secure_url;
-                                        if (user) {
-                                            updateDoc(doc(db, "users", user.uid), { photoURL });
-                                        }
-                                    }
-                                }}
-                            >
-                                {({ open }) => (
-                                    <Button type="button" variant="outline" size="sm" onClick={() => open?.()} className="mt-2 text-xs h-9">
-                                        Browse Photos
-                                    </Button>
-                                )}
-                            </CldUploadWidget>
                         </div>
                     </div>
                 </Card>

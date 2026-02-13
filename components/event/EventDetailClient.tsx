@@ -30,7 +30,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<"info" | "categories" | "timeline" | "route">("info");
 
-    const eventDate = typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date);
+    const eventDate = new Date(event.date as unknown as string);
 
     return (
         <div className="relative">

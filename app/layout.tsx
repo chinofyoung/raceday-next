@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body className="antialiased selection:bg-primary/30 selection:text-white">
         <AuthProvider>
           {children}
+          <Toaster richColors closeButton position="top-right" />
         </AuthProvider>
       </body>
     </html>

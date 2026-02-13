@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
     Camera, Scan, ShieldCheck, XCircle,
-    CheckCircle2, AlertTriangle, User, Shirt, Hash
+    CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft
 } from "lucide-react";
+import Link from "next/link";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { cn } from "@/lib/utils";
 
@@ -100,6 +101,9 @@ export default function EventScannerPage() {
 
     return (
         <PageWrapper className="pt-8 pb-24 max-w-4xl mx-auto space-y-12">
+            <Link href={`/dashboard/events/${eventId}`} className="inline-flex items-center gap-2 text-text-muted hover:text-white mb-2 text-xs font-black uppercase tracking-widest italic transition-colors">
+                <ArrowLeft size={14} /> Back to Event
+            </Link>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">
                     <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-widest italic animate-pulse">

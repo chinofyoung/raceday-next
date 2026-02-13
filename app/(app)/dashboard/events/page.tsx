@@ -8,7 +8,7 @@ import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, Loader2 } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -69,9 +69,14 @@ export default function EventsManagementPage() {
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-1">
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Event <span className="text-primary">Management</span></h1>
-                    <p className="text-text-muted font-medium italic">Track registrations, manage categories, and update event details.</p>
+                <div className="space-y-4">
+                    <Link href="/dashboard" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
+                        <ArrowLeft size={14} /> Back to Dashboard
+                    </Link>
+                    <div className="space-y-1">
+                        <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Event <span className="text-primary">Management</span></h1>
+                        <p className="text-text-muted font-medium italic">Track registrations, manage categories, and update event details.</p>
+                    </div>
                 </div>
                 <Button variant="primary" asChild className="gap-2">
                     <Link href="/dashboard/events/create"><Plus size={20} /> Create New Event</Link>

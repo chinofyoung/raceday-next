@@ -6,10 +6,11 @@ import { EventDetailClient } from "@/components/event/EventDetailClient";
 import { notFound } from "next/navigation";
 
 interface EventPageProps {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({ params }: EventPageProps): Promise<Metadata> {
+export async function generateMetadata(props: EventPageProps): Promise<Metadata> {
+    const params = await props.params;
     const docRef = doc(db, "events", params.id);
     const snap = await getDoc(docRef);
 
@@ -32,7 +33,8 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     };
 }
 
-export default async function EventDetailPage({ params }: EventPageProps) {
+export default async function EventDetailPage(props: EventPageProps) {
+    const params = await props.params;
     const docRef = doc(db, "events", params.id);
     const snap = await getDoc(docRef);
 
@@ -40,7 +42,14 @@ export default async function EventDetailPage({ params }: EventPageProps) {
         notFound();
     }
 
-    const event = { id: snap.id, ...snap.data() } as RaceEvent;
+    const data = snap.data();
+    const event = {
+        ...data,
+        id: snap.id,
+        date: (data?.date as any)?.toDate?.()?.toISOString() || data?.date,
+        createdAt: (data?.createdAt as any)?.toDate?.()?.toISOString() || null,
+        updatedAt: (data?.updatedAt as any)?.toDate?.()?.toISOString() || null,
+    } as unknown as RaceEvent;
 
     // Structured Data (JSON-LD)
     const jsonLd = {

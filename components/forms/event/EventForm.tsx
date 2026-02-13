@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { eventSchema, EventFormValues } from "@/lib/validations/event";
 import { PageWrapper } from "@/components/layout/PageWrapper";
@@ -37,6 +38,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
     const { user } = useAuth();
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
+    const [maxStepReached, setMaxStepReached] = useState(0);
     const [loading, setLoading] = useState(false);
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
 
@@ -70,7 +72,9 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
 
         const isValid = await trigger(fieldsToValidate as any);
         if (isValid) {
-            setCurrentStep(prev => Math.min(prev + 1, STEPS.length - 1));
+            const next = Math.min(currentStep + 1, STEPS.length - 1);
+            setCurrentStep(next);
+            setMaxStepReached(prev => Math.max(prev, next));
             // Autosave draft if it's the first time or every step
             saveDraft();
         }
@@ -78,11 +82,25 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
 
     const prevStep = () => setCurrentStep(prev => Math.max(prev - 1, 0));
 
+    const handleStepClick = (i: number) => {
+        if (i <= maxStepReached) {
+            setCurrentStep(i);
+        }
+    };
+
     const saveDraft = async () => {
-        if (!user) return;
+        if (!user) {
+            toast.error("You must be logged in to save.", {
+                description: "Session may have expired. Please refresh."
+            });
+            return;
+        }
+
+        const loadingToast = toast.loading("Saving draft...");
+
         const values = methods.getValues();
         try {
-            if (draftId) {
+            if (draftId && typeof draftId === "string" && draftId.length > 0) {
                 await updateDoc(doc(db, "events", draftId), {
                     ...values,
                     updatedAt: serverTimestamp(),
@@ -98,8 +116,13 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                 });
                 setDraftId(res.id);
             }
+            toast.success("Draft saved successfully!", { id: loadingToast });
         } catch (e) {
             console.error("Error saving draft:", e);
+            toast.error("Failed to save draft.", {
+                id: loadingToast,
+                description: "Please check your connection and try again."
+            });
         }
     };
 
@@ -115,7 +138,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                 updatedAt: serverTimestamp(),
             };
 
-            if (draftId) {
+            if (draftId && typeof draftId === "string" && draftId.length > 0) {
                 await updateDoc(doc(db, "events", draftId), payload);
             } else {
                 await addDoc(collection(db, "events"), {
@@ -136,24 +159,42 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             <div className="space-y-8 max-w-5xl mx-auto">
                 {/* Progress Header */}
                 <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4 no-scrollbar">
-                    {STEPS.map((step, i) => (
-                        <div key={i} className="flex items-center gap-2 shrink-0">
-                            <div className={cn(
-                                "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all",
-                                currentStep === i ? "bg-primary text-white scale-110 shadow-lg shadow-primary/20" :
-                                    currentStep > i ? "bg-cta/20 text-cta" : "bg-white/5 text-text-muted"
-                            )}>
-                                {currentStep > i ? "✓" : i + 1}
+                    {STEPS.map((step, i) => {
+                        const isClickable = i <= maxStepReached;
+                        const isActive = currentStep === i;
+                        const isCompleted = currentStep > i;
+
+                        return (
+                            <div key={i} className="flex items-center shrink-0">
+                                <button
+                                    type="button"
+                                    onClick={() => handleStepClick(i)}
+                                    disabled={!isClickable}
+                                    className={cn(
+                                        "flex items-center gap-2 transition-all p-2 rounded-xl",
+                                        isClickable ? "cursor-pointer hover:bg-white/5" : "cursor-not-allowed opacity-50",
+                                        isActive && "bg-white/5"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all",
+                                        isActive ? "bg-primary text-white scale-110 shadow-lg shadow-primary/20" :
+                                            isCompleted ? "bg-cta/20 text-cta" : "bg-white/5 text-text-muted"
+                                    )}>
+                                        {isCompleted ? "✓" : i + 1}
+                                    </div>
+                                    <span className={cn(
+                                        "hidden md:block text-[10px] uppercase font-black italic tracking-widest transition-colors",
+                                        isActive ? "text-white" : "text-text-muted opacity-50",
+                                        isClickable && !isActive && "group-hover:text-white"
+                                    )}>
+                                        {step}
+                                    </span>
+                                </button>
+                                {i < STEPS.length - 1 && <div className="w-4 h-px bg-white/10 mx-2" />}
                             </div>
-                            <span className={cn(
-                                "hidden md:block text-xs uppercase font-black italic tracking-widest",
-                                currentStep === i ? "text-white" : "text-text-muted opacity-50"
-                            )}>
-                                {step}
-                            </span>
-                            {i < STEPS.length - 1 && <div className="w-4 h-px bg-white/10 mx-2" />}
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
 
                 <div className="bg-surface/30 backdrop-blur-sm border border-white/5 rounded-3xl p-8 shadow-2xl">
