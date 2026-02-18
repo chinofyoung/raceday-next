@@ -13,9 +13,10 @@ import { Step1Category } from "./Step1Category";
 import { Step2Details } from "./Step2Details";
 import { Step3Vanity } from "./Step3Vanity";
 import { Step4Review } from "./Step4Review";
+import { Step0Who } from "./Step0Who";
 import { cn } from "@/lib/utils";
 
-const STEPS = ["Category", "Details", "Vanity", "Review"];
+const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
 
 interface RegistrationFormProps {
     event: RaceEvent;
@@ -38,6 +39,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         resolver: zodResolver(registrationSchema) as any,
         defaultValues: {
             eventId: event.id,
+            registrationType: "self",
             categoryId: initialCategoryId || "",
             participantInfo: {
                 name: user?.displayName || "",
@@ -61,11 +63,17 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         mode: "onChange"
     });
 
-    // Update form when user data loads
+    const registrationType = methods.watch("registrationType");
+
+    // Update form when user data loads or registration type changes
     useEffect(() => {
-        if (user) {
+        if (!user) return;
+
+        const currentValues = methods.getValues();
+
+        if (registrationType === "self") {
             methods.reset({
-                ...methods.getValues(),
+                ...currentValues,
                 participantInfo: {
                     name: user.displayName || "",
                     email: user.email || "",
@@ -80,13 +88,32 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                     medicalConditions: user.medicalConditions || "",
                 }
             });
+        } else {
+            // Proxy - clear fields
+            methods.reset({
+                ...currentValues,
+                participantInfo: {
+                    name: "",
+                    email: "",
+                    phone: "",
+                    tShirtSize: "",
+                    singletSize: "",
+                    emergencyContact: {
+                        name: "",
+                        phone: "",
+                        relationship: "",
+                    },
+                    medicalConditions: "",
+                }
+            });
         }
-    }, [user]);
+    }, [user, registrationType, methods]);
 
     const nextStep = async () => {
         let fieldsToValidate: any[] = [];
-        if (currentStep === 0) fieldsToValidate = ["categoryId"];
-        if (currentStep === 1) fieldsToValidate = [
+        if (currentStep === 0) fieldsToValidate = ["registrationType"];
+        if (currentStep === 1) fieldsToValidate = ["categoryId"];
+        if (currentStep === 2) fieldsToValidate = [
             "participantInfo.name",
             "participantInfo.email",
             "participantInfo.phone",
@@ -96,7 +123,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
             "participantInfo.emergencyContact.phone",
             "participantInfo.emergencyContact.relationship"
         ];
-        if (currentStep === 2) fieldsToValidate = ["vanityNumber"];
+        if (currentStep === 3) fieldsToValidate = ["vanityNumber"];
 
         const isValid = await methods.trigger(fieldsToValidate);
         if (isValid) {
@@ -122,6 +149,9 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                     registrationData: {
                         ...data,
                         userId: user?.uid,
+                        registeredByUserId: user?.uid,
+                        registeredByName: user?.displayName || "Unknown",
+                        isProxy: data.registrationType === "proxy",
                     },
                     eventName: event.name,
                     categoryName: selectedCategory.name
@@ -179,10 +209,11 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
                 {/* Form Steps */}
                 <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-12">
-                    {currentStep === 0 && <Step1Category event={event} />}
-                    {currentStep === 1 && <Step2Details event={event} />}
-                    {currentStep === 2 && <Step3Vanity event={event} />}
-                    {currentStep === 3 && <Step4Review event={event} />}
+                    {currentStep === 0 && <Step0Who />}
+                    {currentStep === 1 && <Step1Category event={event} />}
+                    {currentStep === 2 && <Step2Details event={event} />}
+                    {currentStep === 3 && <Step3Vanity event={event} />}
+                    {currentStep === 4 && <Step4Review event={event} />}
 
                     {/* Navigation */}
                     <div className="flex items-center justify-between pt-8 border-t border-white/5">

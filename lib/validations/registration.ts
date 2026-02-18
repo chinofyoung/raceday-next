@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 export const registrationSchema = z.object({
+    registrationType: z.enum(["self", "proxy"]),
     eventId: z.string(),
     categoryId: z.string().min(1, "Please select a category"),
     participantInfo: z.object({

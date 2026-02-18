@@ -11,7 +11,8 @@ import {
     Trash2,
     Tag,
     Trophy,
-    ArrowRight
+    ArrowRight,
+    CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
@@ -23,9 +24,10 @@ interface EventCardProps {
     event: RaceEvent;
     onDelete?: (id: string) => void;
     mode?: "management" | "discovery";
+    registrationStatus?: { isRegistered: boolean; isProxy: boolean; status: string };
 }
 
-export function EventCard({ event, onDelete, mode = "management" }: EventCardProps) {
+export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const [paidCount, setPaidCount] = React.useState<number>(0);
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
 
@@ -64,7 +66,7 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
     const isNearlyFull = capacity > 0 && paidCount / capacity > 0.8;
 
     return (
-        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0">
+        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative">
             {/* Image Section */}
             <div className="aspect-[16/9] relative overflow-hidden">
                 <img
@@ -74,7 +76,7 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-black/10 to-transparent" />
 
-                {/* Status Badge */}
+                {/* Status Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {mode === "management" && (
                         <span className={cn(
@@ -91,6 +93,18 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                         </span>
                     )}
                 </div>
+
+                {registrationStatus?.isRegistered && (
+                    <div className="absolute top-4 right-4 z-20">
+                        <div className={cn(
+                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white",
+                            registrationStatus.status === "paid" ? "bg-blue-500/80" : "bg-orange-500/80"
+                        )}>
+                            <CheckCircle2 size={12} fill="currentColor" className="text-white/20" />
+                            {registrationStatus.isProxy ? "Registered for Someone" : "Registered"}
+                        </div>
+                    </div>
+                )}
 
                 {/* Categories Count Badge */}
                 <div className="absolute bottom-4 left-4 flex gap-2">
@@ -178,9 +192,16 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                         </>
                     ) : (
                         <>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">
-                                Verified Event
-                            </span>
+                            {event.vanityRaceNumber?.enabled ? (
+                                <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-400/10 border border-amber-400/20 rounded-lg">
+                                    <Trophy size={12} className="text-amber-400" />
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-400 italic">
+                                        Premium Kits
+                                    </span>
+                                </div>
+                            ) : (
+                                <div /> // Spacer or nothing
+                            )}
                             <Button variant="primary" size="sm" className="text-[10px] uppercase font-black italic h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>
                                 <Link href={`/events/${event.id}`} className="flex items-center gap-1.5">
                                     View Details <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
@@ -190,13 +211,6 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                     )}
                 </div>
             </CardContent>
-
-            {/* Vanity Badge */}
-            {event.vanityRaceNumber?.enabled && (
-                <div className="absolute top-4 right-[-30px] rotate-45 bg-amber-400 text-black text-[8px] font-black px-10 py-1 shadow-lg pointer-events-none uppercase tracking-widest italic">
-                    Premium Kits
-                </div>
-            )}
         </Card>
     );
 }

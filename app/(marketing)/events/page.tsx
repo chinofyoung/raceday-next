@@ -14,6 +14,8 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { EventCardSkeleton } from "@/components/shared/Skeleton";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { getUserRegistrations } from "@/lib/services/registrationService";
 
 const DISTANCE_FILTERS = ["All", "5K", "10K", "21K", "42K"];
 
@@ -22,10 +24,20 @@ export default function EventsDirectoryPage() {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [activeFilter, setActiveFilter] = useState("All");
+    const [userRegistrations, setUserRegistrations] = useState<any[]>([]);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchEvents();
     }, []);
+
+    useEffect(() => {
+        if (user?.uid) {
+            getUserRegistrations(user.uid).then(setUserRegistrations);
+        } else {
+            setUserRegistrations([]);
+        }
+    }, [user]);
 
     const fetchEvents = async () => {
         setLoading(true);
@@ -47,6 +59,16 @@ export default function EventsDirectoryPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const getRegistrationStatus = (eventId: string) => {
+        const reg = userRegistrations.find(r => r.eventId === eventId);
+        if (!reg) return undefined;
+        return {
+            isRegistered: true,
+            isProxy: reg.isProxy || false,
+            status: reg.status
+        };
     };
 
     const filteredEvents = events.filter(event => {
@@ -118,7 +140,12 @@ export default function EventsDirectoryPage() {
             ) : filteredEvents.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredEvents.map((event) => (
-                        <EventCard key={event.id} event={event} mode="discovery" />
+                        <EventCard
+                            key={event.id}
+                            event={event}
+                            mode="discovery"
+                            registrationStatus={getRegistrationStatus(event.id)}
+                        />
                     ))}
                 </div>
             ) : (

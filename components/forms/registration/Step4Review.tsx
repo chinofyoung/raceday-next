@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, User, Phone, Mail, Shirt, HeartPulse, FileText, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface Step4ReviewProps {
     event: RaceEvent;
@@ -16,6 +17,10 @@ interface Step4ReviewProps {
 export function Step4Review({ event }: Step4ReviewProps) {
     const { watch, register, formState: { errors } } = useFormContext<RegistrationFormValues>();
     const data = watch();
+    const { user } = useAuth(); // Need user to show "Registered by [Name]" if self, but wait. 
+    // If proxy, we are the one registering. 
+    // Plan says: "If proxy, show a highlighted info badge: "Proxy Registration — Registered by [Your Name]""
+    // Since we are the current user, [Your Name] is us.
 
     const selectedCategory = event.categories.find(c => (c.id || "0") === data.categoryId) || event.categories[0];
 
@@ -24,6 +29,15 @@ export function Step4Review({ event }: Step4ReviewProps) {
             <div className="space-y-1">
                 <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Review & <span className="text-primary">Confirm</span></h2>
                 <p className="text-text-muted font-medium italic">Please ensure all details are correct before completing your registration.</p>
+
+                {data.registrationType === "proxy" && (
+                    <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded-full border border-indigo-500/30">
+                        <User size={14} />
+                        <span className="text-xs font-bold italic uppercase tracking-wide">
+                            Proxy Registration — Registered by {user?.displayName || "You"}
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

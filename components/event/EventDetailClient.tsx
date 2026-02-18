@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useRouter } from "next/navigation";
 import { RaceEvent } from "@/types/event";
@@ -17,6 +17,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { getUserRegistrations } from "@/lib/services/registrationService";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -30,6 +32,17 @@ interface EventDetailClientProps {
 export function EventDetailClient({ event }: EventDetailClientProps) {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<"info" | "categories" | "timeline" | "route">("info");
+    const { user } = useAuth();
+    const [userRegistration, setUserRegistration] = useState<any>(null);
+
+    useEffect(() => {
+        if (user?.uid && event.id) {
+            getUserRegistrations(user.uid).then(regs => {
+                const reg = regs.find(r => r.eventId === event.id && (r.status === 'paid' || r.status === 'pending'));
+                setUserRegistration(reg);
+            });
+        }
+    }, [user, event.id]);
 
     const eventDate = new Date(event.date as unknown as string);
 
@@ -54,7 +67,18 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         <ArrowLeft size={16} /> Back to Search
                     </Link>
                     <div className="space-y-2">
-                        <Badge variant="success" className="bg-cta text-white px-4 py-1.5 shadow-xl border-none">Registration Open</Badge>
+                        <div className="flex flex-wrap gap-2">
+                            <Badge variant="success" className="bg-cta text-white px-4 py-1.5 shadow-xl border-none">Registration Open</Badge>
+                            {userRegistration && (
+                                <Badge className={cn(
+                                    "px-4 py-1.5 shadow-xl border-none text-white",
+                                    userRegistration.status === "paid" ? "bg-green-500" : "bg-orange-500"
+                                )}>
+                                    {userRegistration.isProxy ? "You Registered Someone" : "You Are Registered"}
+                                    {userRegistration.status === "pending" && " (Pending)"}
+                                </Badge>
+                            )}
+                        </div>
                         <h1 className="text-4xl md:text-7xl lg:text-8xl font-black italic uppercase leading-none tracking-tighter text-white">
                             {event.name}
                         </h1>

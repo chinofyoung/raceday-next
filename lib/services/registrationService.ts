@@ -88,3 +88,36 @@ export async function getRegistrationsWithEvents(options: GetRegistrationsOption
 
     return { items: enrichedRegistrations, lastDoc };
 }
+
+export async function getProxyRegistrations(userId: string) {
+    try {
+        const q = query(
+            collection(db, "registrations"),
+            where("registeredByUserId", "==", userId),
+            where("isProxy", "==", true),
+            orderBy("createdAt", "desc")
+        );
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })) as Registration[];
+    } catch (error) {
+        console.error("Error fetching proxy registrations:", error);
+        // Fallback or return empty
+        return [];
+    }
+}
+
+export async function getUserRegistrations(userId: string) {
+    try {
+        const q = query(
+            collection(db, "registrations"),
+            where("userId", "==", userId),
+            where("status", "in", ["paid", "pending"]),
+            // We include pending so we can show "Pending" status too
+        );
+        const snap = await getDocs(q);
+        return snap.docs.map(d => ({ id: d.id, ...d.data() })) as Registration[];
+    } catch (error) {
+        console.error("Error fetching user registrations:", error);
+        return [];
+    }
+}

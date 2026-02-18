@@ -24,6 +24,11 @@ export interface Registration {
     categoryId: string;
     participantInfo: ParticipantInfo;
 
+    // Who is performing the registration
+    registeredByUserId: string;
+    registeredByName: string;
+    isProxy: boolean;
+
     // Pricing
     basePrice: number;
     vanityPremium: number;

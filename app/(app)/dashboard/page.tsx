@@ -229,6 +229,14 @@ export default function DashboardPage() {
                                                                 {reg.status}
                                                             </Badge>
                                                         </div>
+                                                        {reg.isProxy && (
+                                                            <div className="flex items-center gap-1.5 text-indigo-400">
+                                                                <User size={12} />
+                                                                <span className="text-[10px] font-bold italic uppercase tracking-wider">
+                                                                    Registered for: <span className="text-white">{reg.participantInfo.name}</span>
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                         <div className="flex flex-wrap gap-4 text-[10px] font-bold text-text-muted uppercase italic tracking-widest">
                                                             <span className="flex items-center gap-1"><MapPin size={12} className="text-cta" /> {reg.event?.location.name}</span>
                                                             <span className="flex items-center gap-1"><Trophy size={12} className="text-primary" /> {reg.categoryId}</span>

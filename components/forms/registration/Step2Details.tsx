@@ -14,13 +14,24 @@ interface Step2DetailsProps {
 const T_SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
 export function Step2Details({ event }: Step2DetailsProps) {
-    const { register, formState: { errors } } = useFormContext<RegistrationFormValues>();
+    const { register, watch, formState: { errors } } = useFormContext<RegistrationFormValues>();
+    const registrationType = watch("registrationType");
 
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-1">
                 <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Participant <span className="text-primary">Details</span></h2>
-                <p className="text-text-muted font-medium italic">We&apos;ve auto-filled this from your profile. Please double check before proceeding.</p>
+                {registrationType === "self" ? (
+                    <p className="text-text-muted font-medium italic">We&apos;ve auto-filled this from your profile. Please double check before proceeding.</p>
+                ) : (
+                    <div className="mt-2 p-4 bg-primary/10 border border-primary/20 rounded-lg flex items-start gap-3">
+                        <User className="text-primary shrink-0 mt-0.5" size={18} />
+                        <div className="space-y-1">
+                            <p className="text-sm font-bold text-white italic">You are registering someone else.</p>
+                            <p className="text-xs text-text-muted italic">Please enter the participant&apos;s details below. They will be registered under your account.</p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

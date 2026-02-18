@@ -268,6 +268,14 @@ export default function EventDetailPage() {
                                                             <div>
                                                                 <p className="text-sm font-bold text-white uppercase italic">{reg.participantInfo.name}</p>
                                                                 <p className="text-[10px] text-text-muted font-medium italic">{reg.participantInfo.email}</p>
+                                                                {reg.isProxy && reg.registeredByName && (
+                                                                    <div className="mt-1 flex items-center gap-1 text-indigo-400">
+                                                                        <Users size={10} />
+                                                                        <span className="text-[9px] font-bold italic uppercase tracking-wider">
+                                                                            By: {reg.registeredByName}
+                                                                        </span>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </td>
