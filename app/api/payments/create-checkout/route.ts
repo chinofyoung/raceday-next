@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, updateDoc, doc } from "firebase/firestore";
+import { generateBibAndQR } from "@/lib/bibUtils";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
@@ -13,13 +14,35 @@ export async function POST(req: Request) {
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
+            // Generate Bib & QR for free registration
+            const { raceNumber, qrCodeUrl } = await generateBibAndQR(
+                "temp-id", // will replace after adding doc
+                registrationData.eventId,
+                registrationData.categoryId,
+                registrationData.participantInfo.name,
+                registrationData.vanityNumber
+            );
+
             const regRef = await addDoc(collection(db, "registrations"), {
                 ...registrationData,
-                status: "confirmed",
+                status: "paid", // Free = Paid
                 paymentStatus: "free",
+                raceNumber,
+                qrCodeUrl,
+                paidAt: serverTimestamp(),
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             });
+
+            // Update QR code with real ID
+            const { qrCodeUrl: realQr } = await generateBibAndQR(
+                regRef.id,
+                registrationData.eventId,
+                registrationData.categoryId,
+                registrationData.participantInfo.name,
+                registrationData.vanityNumber
+            );
+            await updateDoc(doc(db, "registrations", regRef.id), { qrCodeUrl: realQr });
 
             return NextResponse.json({
                 checkoutUrl: null,
@@ -93,6 +116,13 @@ export async function POST(req: Request) {
             console.error("Xendit Error:", result);
             throw new Error(result.message || "Failed to create Xendit invoice");
         }
+
+        // 3. Update registration with invoice details
+        await updateDoc(regRef, {
+            xenditInvoiceId: result.id,
+            xenditInvoiceUrl: result.invoice_url,
+            updatedAt: serverTimestamp(),
+        });
 
         return NextResponse.json({
             checkoutUrl: result.invoice_url,

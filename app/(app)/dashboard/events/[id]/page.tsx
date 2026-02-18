@@ -26,6 +26,7 @@ export default function EventDetailPage() {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"participants" | "revenue" | "settings">("participants");
     const [searchQuery, setSearchQuery] = useState("");
+    const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending">("paid");
 
     useEffect(() => {
         if (id && user) {
@@ -86,11 +87,15 @@ export default function EventDetailPage() {
     const vanityCount = paidRegistrations.filter(r => r.vanityPremium > 0).length;
     const vanityRevenue = paidRegistrations.reduce((sum, r) => sum + (r.vanityPremium || 0), 0);
 
-    const filteredParticipants = registrations.filter(r =>
-        r.participantInfo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.raceNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        r.participantInfo.email.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredParticipants = registrations.filter(r => {
+        const matchesSearch = r.participantInfo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (r.raceNumber?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
+            r.participantInfo.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+        const matchesStatus = statusFilter === "all" || r.status === statusFilter;
+
+        return matchesSearch && matchesStatus;
+    });
 
     const eventDate = typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date);
 
@@ -131,12 +136,37 @@ export default function EventDetailPage() {
             </div>
 
             {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <Card className="p-6 bg-surface border-white/5 space-y-1">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+                <Card
+                    className={cn(
+                        "p-6 bg-surface border-white/5 space-y-1 cursor-pointer transition-all hover:border-primary/50",
+                        statusFilter === "paid" && activeTab === "participants" && "border-primary bg-primary/5 shadow-lg shadow-primary/5"
+                    )}
+                    onClick={() => {
+                        setActiveTab("participants");
+                        setStatusFilter("paid");
+                    }}
+                >
                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Registered</p>
                     <div className="flex items-center justify-between">
                         <p className="text-3xl font-black italic text-white">{paidRegistrations.length}</p>
                         <Users size={24} className="text-primary opacity-20" />
+                    </div>
+                </Card>
+                <Card
+                    className={cn(
+                        "p-6 bg-surface border-white/5 space-y-1 cursor-pointer transition-all hover:border-white/20",
+                        statusFilter === "pending" && activeTab === "participants" && "border-white/40 bg-white/5 shadow-lg"
+                    )}
+                    onClick={() => {
+                        setActiveTab("participants");
+                        setStatusFilter("pending");
+                    }}
+                >
+                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Pending</p>
+                    <div className="flex items-center justify-between">
+                        <p className="text-3xl font-black italic text-white">{registrations.length - paidRegistrations.length}</p>
+                        <Users size={24} className="text-white opacity-10" />
                     </div>
                 </Card>
                 <Card className="p-6 bg-surface border-white/5 space-y-1">
@@ -196,7 +226,20 @@ export default function EventDetailPage() {
                                     />
                                 </div>
                                 <div className="flex gap-3">
-                                    <Button variant="outline" size="sm" className="gap-2 font-black italic uppercase"><Filter size={14} /> Filter</Button>
+                                    <div className="flex bg-surface-lighter p-1 rounded-xl border border-white/5 h-fit">
+                                        {(["paid", "pending", "all"] as const).map((s) => (
+                                            <button
+                                                key={s}
+                                                onClick={() => setStatusFilter(s)}
+                                                className={cn(
+                                                    "px-4 py-1.5 text-[10px] font-black uppercase tracking-widest transition-all rounded-lg",
+                                                    statusFilter === s ? "bg-primary text-white shadow-lg" : "text-text-muted hover:text-white"
+                                                )}
+                                            >
+                                                {s}
+                                            </button>
+                                        ))}
+                                    </div>
                                     <Button variant="outline" size="sm" className="gap-2 font-black italic uppercase"><Download size={14} /> Export CSV</Button>
                                 </div>
                             </div>
@@ -211,6 +254,7 @@ export default function EventDetailPage() {
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-text-muted italic">Bib #</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-text-muted italic">Kit Status</th>
                                                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-text-muted italic text-right">Payment</th>
+                                                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-text-muted italic text-right"></th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
@@ -228,7 +272,9 @@ export default function EventDetailPage() {
                                                         </div>
                                                     </td>
                                                     <td className="px-6 py-4">
-                                                        <p className="text-xs font-bold text-white uppercase italic">{reg.categoryId}</p>
+                                                        <p className="text-xs font-bold text-white uppercase italic">
+                                                            {event.categories.find(c => (c.id || "0") === reg.categoryId)?.name || reg.categoryId}
+                                                        </p>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <p className="text-sm font-black text-primary italic">#{reg.raceNumber || "---"}</p>
@@ -249,10 +295,33 @@ export default function EventDetailPage() {
                                                         </p>
                                                         <p className="text-[11px] font-black text-white italic">₱{reg.totalPrice}</p>
                                                     </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        {reg.status === "pending" && (
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                className="text-red-500 hover:text-red-400 hover:bg-red-500/10 px-2 h-8 font-black uppercase italic text-[10px]"
+                                                                onClick={async () => {
+                                                                    if (confirm("Cancel this pending registration?")) {
+                                                                        try {
+                                                                            const { deleteDoc, doc: fireDoc } = await import("firebase/firestore");
+                                                                            await deleteDoc(fireDoc(db, "registrations", reg.id));
+                                                                            fetchEventData();
+                                                                        } catch (err) {
+                                                                            console.error(err);
+                                                                            alert("Failed to cancel registration.");
+                                                                        }
+                                                                    }
+                                                                }}
+                                                            >
+                                                                Cancel
+                                                            </Button>
+                                                        )}
+                                                    </td>
                                                 </tr>
                                             )) : (
                                                 <tr>
-                                                    <td colSpan={5} className="px-6 py-20 text-center space-y-4">
+                                                    <td colSpan={6} className="px-6 py-20 text-center space-y-4">
                                                         <Users className="mx-auto text-text-muted opacity-10" size={48} />
                                                         <p className="text-text-muted italic font-medium">No records found matching your search.</p>
                                                     </td>

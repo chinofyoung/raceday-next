@@ -47,7 +47,8 @@ export function Step3Vanity({ event }: Step3VanityProps) {
             const q = query(
                 collection(db, "registrations"),
                 where("eventId", "==", event.id),
-                where("vanityNumber", "==", vanityNumber)
+                where("vanityNumber", "==", vanityNumber),
+                where("status", "==", "paid")
             );
             const snap = await getDocs(q);
 

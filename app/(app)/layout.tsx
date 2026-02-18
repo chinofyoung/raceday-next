@@ -3,6 +3,8 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { firebaseUser, loading } = useAuth();
@@ -26,5 +28,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         );
     }
 
-    return <>{children}</>;
+    return (
+        <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white">
+            <Navbar />
+            <main className="flex-grow pt-24">
+                {children}
+            </main>
+            <Footer />
+        </div>
+    );
 }

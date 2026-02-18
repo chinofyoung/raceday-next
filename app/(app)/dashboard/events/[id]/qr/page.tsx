@@ -111,7 +111,7 @@ export default function RunnerQRPage() {
                                 <MapPin size={14} className="text-cta" /> {event?.location.name}
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase italic">
-                                <Clock size={14} className="text-white/40" /> Category: {registration?.categoryId}
+                                <Clock size={14} className="text-white/40" /> Category: {event?.categories.find((c: any) => (c.id || "0") === registration?.categoryId)?.name || registration?.categoryId}
                             </div>
                         </div>
                     </div>

@@ -12,6 +12,7 @@ import { CheckCircle2, Download, QrCode, ArrowRight, Share2, MapPin, Calendar } 
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function RegistrationSuccessPage() {
     const { id: eventId } = useParams();
@@ -19,6 +20,7 @@ export default function RegistrationSuccessPage() {
     const registrationId = searchParams.get("id");
 
     const [registration, setRegistration] = useState<any>(null);
+    const [event, setEvent] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -31,7 +33,26 @@ export default function RegistrationSuccessPage() {
             const docRef = doc(db, "registrations", registrationId!);
             const snap = await getDoc(docRef);
             if (snap.exists()) {
-                setRegistration(snap.data());
+                const data = snap.data();
+                setRegistration(data);
+
+                // Fetch event details
+                if (data.eventId) {
+                    const eventSnap = await getDoc(doc(db, "events", data.eventId));
+                    if (eventSnap.exists()) {
+                        setEvent(eventSnap.data());
+                    }
+                }
+
+                // If pending, sync immediately
+                if (data.status === "pending") {
+                    const syncRes = await fetch(`/api/payments/sync/${registrationId}`);
+                    const syncData = await syncRes.json();
+                    if (syncData.status === "paid") {
+                        const updatedSnap = await getDoc(docRef);
+                        setRegistration(updatedSnap.data());
+                    }
+                }
             }
         } catch (error) {
             console.error("Error fetching registration:", error);
@@ -71,22 +92,30 @@ export default function RegistrationSuccessPage() {
 
                     <div className="space-y-2 text-center relative z-10">
                         <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Your Race Pass</p>
-                        <h3 className="text-2xl font-black italic text-white uppercase tracking-tight">#{registration?.raceNumber || "PENDING"}</h3>
+                        <h3 className="text-2xl font-black italic text-white uppercase tracking-tight">
+                            {registration?.status === "paid" ? `#${registration?.raceNumber}` : "GENERATING..."}
+                        </h3>
                     </div>
 
                     <div className="relative z-10 p-4 bg-white rounded-3xl shadow-2xl scale-110 transition-transform hover:scale-125 duration-500">
-                        {registration?.qrCodeUrl ? (
+                        {registration?.status === "paid" && registration?.qrCodeUrl ? (
                             <Image src={registration.qrCodeUrl} alt="Race QR Code" width={200} height={200} className="rounded-xl" />
                         ) : (
-                            <div className="w-[200px] h-[200px] bg-gray-100 flex items-center justify-center text-gray-400">
-                                <QrCode size={48} />
+                            <div className="w-[200px] h-[200px] bg-white flex flex-col items-center justify-center text-cta gap-3">
+                                <QrCode size={48} className="animate-pulse" />
+                                <p className="text-[10px] font-black uppercase tracking-widest italic animate-pulse">Assigning Bib...</p>
                             </div>
                         )}
                     </div>
 
                     <div className="relative z-10 w-full pt-4">
-                        <Button variant="outline" className="w-full gap-2 font-black italic uppercase" onClick={() => window.print()}>
-                            <Download size={18} /> Download Pass
+                        <Button
+                            variant="outline"
+                            className="w-full gap-2 font-black italic uppercase"
+                            onClick={() => window.print()}
+                            disabled={registration?.status !== "paid"}
+                        >
+                            <Download size={18} /> {registration?.status === "paid" ? "Download Pass" : "Waiting for Payment..."}
                         </Button>
                     </div>
                 </Card>
@@ -107,16 +136,24 @@ export default function RegistrationSuccessPage() {
                             </div>
                             <div className="space-y-1">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Payment</p>
-                                <Badge variant="success" className="bg-cta text-white border-none shadow-md uppercase font-black">Success</Badge>
+                                <Badge
+                                    variant={registration?.status === "paid" ? "success" : "outline"}
+                                    className={cn(
+                                        "uppercase font-black border-none shadow-md",
+                                        registration?.status === "paid" ? "bg-cta text-white" : "bg-white/10 text-white/40"
+                                    )}
+                                >
+                                    {registration?.status === "paid" ? "Success" : registration?.status?.toUpperCase() || "PENDING"}
+                                </Badge>
                             </div>
                         </div>
 
                         <div className="pt-6 border-t border-white/5 space-y-4">
                             <div className="flex items-center gap-3 text-text-muted text-xs font-bold italic">
-                                <MapPin size={14} className="text-cta" /> BGC, Taguig City
+                                <MapPin size={14} className="text-cta" /> {event?.location?.name || "Location TBD"}
                             </div>
                             <div className="flex items-center gap-3 text-text-muted text-xs font-bold italic">
-                                <Calendar size={14} className="text-primary" /> February 15, 2026
+                                <Calendar size={14} className="text-primary" /> {event?.date ? format(event.date.toDate(), "MMMM d, yyyy") : "Date TBD"}
                             </div>
                         </div>
                     </Card>

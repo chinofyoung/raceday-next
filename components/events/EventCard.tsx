@@ -26,7 +26,28 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onDelete, mode = "management" }: EventCardProps) {
+    const [paidCount, setPaidCount] = React.useState<number>(0);
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
+
+    React.useEffect(() => {
+        const fetchPaidCount = async () => {
+            if (!event.id) return;
+            try {
+                const { collection, query, where, getDocs } = await import("firebase/firestore");
+                const { db } = await import("@/lib/firebase/config");
+                const q = query(
+                    collection(db, "registrations"),
+                    where("eventId", "==", event.id),
+                    where("status", "==", "paid")
+                );
+                const snap = await getDocs(q);
+                setPaidCount(snap.size);
+            } catch (err) {
+                console.error("Error fetching participant count:", err);
+            }
+        };
+        fetchPaidCount();
+    }, [event.id]);
 
     // Calculate price range
     const prices = event.categories?.map(c => c.price) || [];
@@ -38,10 +59,9 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
             : `₱${minPrice.toLocaleString()} - ₱${maxPrice.toLocaleString()}`
         : "Free / TBD";
 
-    // Calculate total participants
-    const totalParticipants = event.categories?.reduce((acc, cat) => acc + (cat.registeredCount || 0), 0) || 0;
+    // Calculate total capacity
     const capacity = event.categories?.reduce((acc, cat) => acc + (cat.maxParticipants || 0), 0) || 0;
-    const isNearlyFull = capacity > 0 && totalParticipants / capacity > 0.8;
+    const isNearlyFull = capacity > 0 && paidCount / capacity > 0.8;
 
     return (
         <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0">
@@ -122,7 +142,7 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                         <div className="flex items-center gap-2 justify-end">
                             <Users size={14} className={cn(isNearlyFull ? "text-orange-500" : "text-blue-400")} />
                             <span className="text-sm font-black italic text-white">
-                                {totalParticipants}{capacity > 0 && <span className="text-text-muted opacity-40 text-[10px] ml-1">/ {capacity}</span>}
+                                {paidCount}{capacity > 0 && <span className="text-text-muted opacity-40 text-[10px] ml-1">/ {capacity}</span>}
                             </span>
                         </div>
                     </div>

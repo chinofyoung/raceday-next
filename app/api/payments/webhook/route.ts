@@ -2,12 +2,14 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase/config";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { generateQRCode } from "@/lib/qr";
+import { generateBibAndQR } from "@/lib/bibUtils";
 
 export async function POST(req: Request) {
     try {
         // Xendit might send different event types, for Invoice paid:
         // { id, external_id, status, amount, ... }
         const body = await req.json();
+        console.log("Webhook received:", JSON.stringify(body, null, 2));
 
         // Optional: Verify callback token (from Xendit Dashboard)
         // const token = req.headers.get("x-callback-token");
@@ -28,22 +30,14 @@ export async function POST(req: Request) {
             if (regSnap.exists()) {
                 const regData = regSnap.data();
 
-                // 2. Generate Race Number (Simple format: DISTANCE-SEQ)
-                // In a production app, this would be more complex and checked for collisions
-                const randomSeq = Math.floor(Math.random() * 9000) + 1000;
-                const raceNumber = `${regData.categoryId.includes("5K") ? "5K" :
-                    regData.categoryId.includes("10K") ? "10K" :
-                        regData.categoryId.includes("21K") ? "21K" :
-                            regData.categoryId.includes("42K") ? "42K" : "RB"}-${regData.vanityNumber || randomSeq}`;
-
-                // 3. Generate QR Code
-                const qrData = JSON.stringify({
+                // 2. Generate Race Number & QR Code (Robust)
+                const { raceNumber, qrCodeUrl } = await generateBibAndQR(
                     registrationId,
-                    eventId: regData.eventId,
-                    runnerName: regData.participantInfo.name,
-                    raceNumber
-                });
-                const qrCodeUrl = await generateQRCode(qrData);
+                    regData.eventId,
+                    regData.categoryId,
+                    regData.participantInfo.name,
+                    regData.vanityNumber
+                );
 
                 // 4. Update Firestore
                 await updateDoc(regRef, {

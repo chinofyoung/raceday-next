@@ -139,7 +139,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 // Redirect to Xendit Checkout
                 window.location.href = result.checkoutUrl;
             } else {
-                router.push(`/events/${event.id}/register/summary?id=${result.registrationId}`);
+                throw new Error("Invalid server response. Please try again.");
             }
         } catch (error: any) {
             console.error("Error submitting registration:", error);
