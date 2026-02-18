@@ -20,18 +20,20 @@ import { getEvents } from "@/lib/services/eventService";
 import { toDate } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 
-const ResponsiveContainer = dynamic(() => import("recharts").then(mod => mod.ResponsiveContainer), { ssr: false });
-const BarChart = dynamic(() => import("recharts").then(mod => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import("recharts").then(mod => mod.Bar), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then(mod => mod.XAxis), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then(mod => mod.YAxis), { ssr: false });
-const CartesianGrid = dynamic(() => import("recharts").then(mod => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then(mod => mod.Tooltip), { ssr: false });
-const PieChart = dynamic(() => import("recharts").then(mod => mod.PieChart), { ssr: false });
-const Pie = dynamic(() => import("recharts").then(mod => mod.Pie), { ssr: false });
-const Cell = dynamic(() => import("recharts").then(mod => mod.Cell), { ssr: false });
-const LineChart = dynamic(() => import("recharts").then(mod => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import("recharts").then(mod => mod.Line), { ssr: false });
+import {
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    PieChart,
+    Pie,
+    Cell,
+    LineChart,
+    Line
+} from "recharts";
 
 export default function AnalyticsPage() {
     const [loading, setLoading] = useState(true);
@@ -39,7 +41,10 @@ export default function AnalyticsPage() {
     const [userDistribution, setUserDistribution] = useState<any[]>([]);
     const [eventCategories, setEventCategories] = useState<any[]>([]);
 
+    const [isClient, setIsClient] = useState(false);
+
     useEffect(() => {
+        setIsClient(true);
         fetchAnalytics();
     }, []);
 
@@ -57,7 +62,7 @@ export default function AnalyticsPage() {
             setUserDistribution([
                 { name: "Runners", value: stats.usersByRole.runner, color: "#f97316" },
                 { name: "Organizers", value: stats.usersByRole.organizer, color: "#22c55e" },
-                { name: "Admins", value: stats.usersByRole.admin, color: "#8b5cf6" }
+                { name: "Admins", value: stats.usersByRole.admin, color: "#3b82f6" }
             ]);
 
             // 2. Process Revenue & Registrations by Month (Last 6 months)
@@ -126,7 +131,7 @@ export default function AnalyticsPage() {
         }
     };
 
-    if (loading) {
+    if (loading || !isClient) {
         return (
             <PageWrapper className="flex items-center justify-center min-h-[60vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
@@ -196,8 +201,10 @@ export default function AnalyticsPage() {
                                         borderRadius: '12px',
                                         fontSize: '12px',
                                         fontWeight: 'bold',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)'
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
+                                        color: '#fff'
                                     }}
+                                    itemStyle={{ color: '#fff' }}
                                 />
                                 <Bar dataKey="revenue" fill="url(#revenueGradient)" radius={[6, 6, 0, 0]} />
                             </BarChart>
@@ -229,7 +236,18 @@ export default function AnalyticsPage() {
                                         <Cell key={`cell-${index}`} fill={entry.color} />
                                     ))}
                                 </Pie>
-                                <Tooltip contentStyle={{ backgroundColor: '#16161a', border: '1px solid rgba(255,255,255,0.05)' }} />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: '#1f2937',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold',
+                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
+                                        color: '#fff'
+                                    }}
+                                    itemStyle={{ color: '#fff' }}
+                                />
                             </PieChart>
                         </ResponsiveContainer>
                         <div className="space-y-4 min-w-[120px]">
@@ -282,9 +300,11 @@ export default function AnalyticsPage() {
                                         backgroundColor: '#1f2937',
                                         border: '1px solid rgba(255,255,255,0.1)',
                                         borderRadius: '12px',
-                                        fontSize: '12px',
-                                        fontWeight: 'bold'
+                                        fontSize: '10px',
+                                        fontWeight: 'bold',
+                                        color: '#fff'
                                     }}
+                                    itemStyle={{ color: '#fff' }}
                                 />
                                 <Line
                                     type="monotone"
