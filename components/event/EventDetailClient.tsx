@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
+import { EventGallery } from "./EventGallery";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -139,6 +140,9 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                         </div>
                                     </Card>
                                 </div>
+                                <div className="mt-10">
+                                    <EventGallery images={event.galleryImages} eventName={event.name} />
+                                </div>
                             </div>
                         )}
 
@@ -238,10 +242,10 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                             </div>
                         )}
                     </div>
-                </div>
+                </div >
 
                 {/* Sidebar Sticky Card */}
-                <div className="lg:block">
+                < div className="lg:block" >
                     <div className="sticky top-32 space-y-6">
                         <Card className="p-8 bg-surface border-white/5 shadow-2xl space-y-6">
                             <div className="space-y-1">
@@ -280,8 +284,8 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                             <Button variant="outline" className="flex-1 gap-2"><Users size={16} /> Followers</Button>
                         </div>
                     </div>
-                </div>
-            </PageWrapper>
-        </div>
+                </div >
+            </PageWrapper >
+        </div >
     );
 }

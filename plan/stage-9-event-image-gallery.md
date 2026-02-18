@@ -1,5 +1,8 @@
 # Stage 9: Event Image Gallery
 
+> **Status:** ✅ Completed
+
+
 ## Overview
 The `RaceEvent` type already has a `galleryImages: string[]` field (up to 5 Cloudinary URLs), but these images are **not currently displayed** anywhere on the event detail page. This stage adds a **thumbnail grid** and a **lightbox gallery** to showcase the uploaded event images.
 
