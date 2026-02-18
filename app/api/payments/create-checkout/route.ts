@@ -9,6 +9,25 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { registrationData, eventName, categoryName } = body;
 
+        const totalAmount = Math.round(registrationData.totalPrice || 0);
+
+        // Handle FREE registrations — skip Xendit entirely
+        if (totalAmount <= 0) {
+            const regRef = await addDoc(collection(db, "registrations"), {
+                ...registrationData,
+                status: "confirmed",
+                paymentStatus: "free",
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            });
+
+            return NextResponse.json({
+                checkoutUrl: null,
+                registrationId: regRef.id,
+                free: true,
+            });
+        }
+
         // 1. Create registration doc in Firestore (pending status)
         const regRef = await addDoc(collection(db, "registrations"), {
             ...registrationData,
@@ -20,37 +39,43 @@ export async function POST(req: Request) {
 
         // 2. Prepare Xendit Invoice Request
         const auth = Buffer.from(`${XENDIT_SECRET_KEY}:`).toString("base64");
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get("origin") || "http://localhost:3000";
 
-        const invoiceData = {
+        const invoiceData: any = {
             external_id: regRef.id,
-            amount: registrationData.totalPrice,
+            amount: totalAmount,
             description: `Registration for ${eventName} - ${categoryName}`,
             invoice_duration: 86400, // 24 hours
             currency: "PHP",
             reminder_time: 1,
-            success_redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/events/${registrationData.eventId}/register/success?id=${regRef.id}`,
-            failure_redirect_url: `${process.env.NEXT_PUBLIC_BASE_URL}/events/${registrationData.eventId}/register/failed?id=${regRef.id}`,
+            success_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/success?id=${regRef.id}`,
+            failure_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/failed?id=${regRef.id}`,
             customer: {
                 given_names: registrationData.participantInfo.name,
                 email: registrationData.participantInfo.email,
-                mobile_number: registrationData.participantInfo.phone,
             },
             items: [
                 {
                     name: `Base Fee: ${categoryName}`,
                     quantity: 1,
-                    price: registrationData.basePrice,
+                    price: Math.round(registrationData.basePrice),
                     category: "Registration",
                 },
                 ...(registrationData.vanityPremium > 0 ? [{
                     name: `Vanity Number: ${registrationData.vanityNumber}`,
                     quantity: 1,
-                    price: registrationData.vanityPremium,
+                    price: Math.round(registrationData.vanityPremium),
                     category: "Vanity Fee",
                 }] : [])
-            ],
-            fees: []
+            ]
         };
+
+        // Add mobile number if it exists and isn't empty
+        if (registrationData.participantInfo.phone && registrationData.participantInfo.phone.trim()) {
+            invoiceData.customer.mobile_number = registrationData.participantInfo.phone;
+        }
+
+        console.log("Xendit Invoice Data:", JSON.stringify(invoiceData, null, 2));
 
         const response = await fetch("https://api.xendit.co/v2/invoices", {
             method: "POST",
@@ -62,6 +87,7 @@ export async function POST(req: Request) {
         });
 
         const result = await response.json();
+        console.log("Xendit API Raw Result:", JSON.stringify(result, null, 2));
 
         if (!response.ok) {
             console.error("Xendit Error:", result);

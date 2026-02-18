@@ -13,7 +13,8 @@ export interface TimelineItem {
 export interface EventCategory {
     id: string;
     name: string;            // e.g. "42K Full Marathon"
-    distance: string;        // e.g. "42K"
+    distance: number;        // e.g. 42
+    distanceUnit: "km" | "mi"; // km or mi
     assemblyTime: string;
     gunStartTime: string;
     cutOffTime: string;

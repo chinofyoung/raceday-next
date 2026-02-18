@@ -6,6 +6,7 @@ import { Calendar, MapPin, AlignLeft, Ruler, Clock, Sparkles, Image as ImageIcon
 import { format } from "date-fns";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
+import { formatDistance } from "@/lib/utils";
 
 export function Step6Review() {
     const { watch } = useFormContext<EventFormValues>();
@@ -91,7 +92,7 @@ export function Step6Review() {
                                 <Card key={i} className="p-4 bg-white/5 border-white/5 flex items-center justify-between">
                                     <div className="space-y-1">
                                         <p className="text-sm font-black text-white italic uppercase">{cat.name}</p>
-                                        <p className="text-xs text-primary font-bold">{cat.distance}</p>
+                                        <p className="text-xs text-primary font-bold">{formatDistance(cat.distance, cat.distanceUnit)}</p>
                                     </div>
                                     <p className="text-lg font-black italic text-cta">₱{cat.price}</p>
                                 </Card>

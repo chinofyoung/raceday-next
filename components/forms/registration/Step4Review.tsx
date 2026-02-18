@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, User, Phone, Mail, Shirt, HeartPulse, FileText, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDistance } from "@/lib/utils";
 
 interface Step4ReviewProps {
     event: RaceEvent;
@@ -34,7 +35,7 @@ export function Step4Review({ event }: Step4ReviewProps) {
                         <div className="space-y-6 relative z-10">
                             <div className="flex items-center gap-3">
                                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black italic text-xl">
-                                    {selectedCategory?.distance}
+                                    {selectedCategory ? formatDistance(selectedCategory.distance, selectedCategory.distanceUnit) : ""}
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-black italic uppercase text-white leading-tight">{selectedCategory?.name}</h3>

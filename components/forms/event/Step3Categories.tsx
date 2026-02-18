@@ -23,7 +23,8 @@ export function Step3Categories() {
         append({
             id: uuidv4(),
             name: "",
-            distance: "",
+            distance: 0,
+            distanceUnit: "km",
             assemblyTime: "",
             gunStartTime: "",
             cutOffTime: "",
@@ -130,13 +131,27 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                 placeholder="e.g. 21K Half Marathon"
                             />
                         </div>
-                        <Input
-                            label="Distance"
-                            {...register(`categories.${index}.distance`)}
-                            error={errors.categories?.[index]?.distance?.message}
-                            placeholder="e.g. 21.1 km"
-                            icon={<Ruler size={16} />}
-                        />
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Distance</label>
+                            <div className="flex gap-2">
+                                <div className="flex-1">
+                                    <Input
+                                        type="number"
+                                        {...register(`categories.${index}.distance`, { valueAsNumber: true })}
+                                        error={errors.categories?.[index]?.distance?.message}
+                                        placeholder="e.g. 21"
+                                        icon={<Ruler size={16} />}
+                                    />
+                                </div>
+                                <select
+                                    {...register(`categories.${index}.distanceUnit`)}
+                                    className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm text-text focus:border-primary/50 focus:outline-none transition-all appearance-none cursor-pointer min-w-[80px]"
+                                >
+                                    <option value="km">km</option>
+                                    <option value="mi">mi</option>
+                                </select>
+                            </div>
+                        </div>
                         <Input
                             type="number"
                             label="Registration Price (PHP)"

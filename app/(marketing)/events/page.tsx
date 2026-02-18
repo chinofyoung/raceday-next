@@ -54,7 +54,7 @@ export default function EventsDirectoryPage() {
             event.location.name.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesDistance = activeFilter === "All" ||
-            event.categories?.some(cat => cat.name.includes(activeFilter) || cat.distance.includes(activeFilter));
+            event.categories?.some(cat => cat.name.includes(activeFilter) || String(cat.distance).includes(activeFilter.replace(/[^0-9.]/g, '')));
 
         return matchesSearch && matchesDistance;
     });

@@ -42,6 +42,12 @@ export default function EditEventPage() {
                         ...data,
                         id: snap.id,
                         date: (data.date as any).toDate ? (data.date as any).toDate() : new Date(data.date as any),
+                        // Ensure categories have numeric distance and distanceUnit (backward compat)
+                        categories: (data.categories || []).map((cat: any) => ({
+                            ...cat,
+                            distance: typeof cat.distance === "string" ? (parseFloat(cat.distance) || 0) : cat.distance,
+                            distanceUnit: cat.distanceUnit || "km",
+                        })),
                     };
                     setEventData(formattedData as any);
                 }

@@ -52,3 +52,13 @@ export function sanitizeForFirestore<T extends Record<string, any>>(data: T): T 
     Object.entries(data).map(([key, value]) => [key, value === undefined ? null : value])
   ) as T;
 }
+
+/**
+ * Formats a distance value for display.
+ * Handles both new format (number + unit) and legacy string format.
+ */
+export function formatDistance(distance: number | string, distanceUnit?: string): string {
+  if (typeof distance === "string") return distance; // Legacy format, return as-is
+  const unit = distanceUnit || "km";
+  return `${distance} ${unit}`;
+}

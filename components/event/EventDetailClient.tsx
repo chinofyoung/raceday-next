@@ -16,6 +16,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+import { formatDistance } from "@/lib/utils";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -128,7 +129,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                                 <div className="space-y-2">
                                                     <div className="flex items-center gap-3">
                                                         <h3 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-white">{cat.name}</h3>
-                                                        <Badge variant="outline" className="border-primary/20 text-primary">{cat.distance}</Badge>
+                                                        <Badge variant="outline" className="border-primary/20 text-primary">{formatDistance(cat.distance, cat.distanceUnit)}</Badge>
                                                     </div>
                                                     <div className="flex flex-wrap gap-4 text-xs text-text-muted font-bold italic uppercase tracking-widest">
                                                         <div className="flex items-center gap-1.5"><Clock size={14} className="text-primary" /> Start: {cat.gunStartTime}</div>

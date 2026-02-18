@@ -11,7 +11,8 @@ export const timelineItemSchema = z.object({
 export const eventCategorySchema = z.object({
     id: z.string(),
     name: z.string().min(3, "Category name is too short"),
-    distance: z.string().min(1, "Distance is required"),
+    distance: z.number().positive("Distance must be a positive number"),
+    distanceUnit: z.enum(["km", "mi"]).default("km"),
     assemblyTime: z.string().min(1, "Assembly time is required"),
     gunStartTime: z.string().min(1, "Gun start time is required"),
     cutOffTime: z.string().min(1, "Cut off time is required"),

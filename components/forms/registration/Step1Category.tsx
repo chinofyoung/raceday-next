@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, Clock, Timer, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDistance } from "@/lib/utils";
 
 interface Step1CategoryProps {
     event: RaceEvent;
@@ -17,9 +18,10 @@ export function Step1Category({ event }: Step1CategoryProps) {
     const selectedCategoryId = watch("categoryId");
 
     const selectCategory = (categoryId: string, price: number) => {
+        const numericPrice = Number(price) || 0;
         setValue("categoryId", categoryId);
-        setValue("basePrice", price);
-        setValue("totalPrice", price + watch("vanityPremium"));
+        setValue("basePrice", numericPrice);
+        setValue("totalPrice", numericPrice + (Number(watch("vanityPremium")) || 0));
     };
 
     return (
@@ -54,7 +56,7 @@ export function Step1Category({ event }: Step1CategoryProps) {
                                             "w-12 h-12 rounded-2xl flex items-center justify-center font-black italic text-xl transition-all",
                                             isSelected ? "bg-primary text-white scale-110" : "bg-white/5 text-text-muted"
                                         )}>
-                                            {cat.distance}
+                                            {formatDistance(cat.distance, cat.distanceUnit)}
                                         </div>
                                         <div className="space-y-1">
                                             <h3 className="text-xl font-black italic uppercase text-white leading-tight">{cat.name}</h3>

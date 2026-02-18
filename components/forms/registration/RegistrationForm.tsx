@@ -28,6 +28,12 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
 
+    // If a category is pre-selected via URL, look up its price
+    const initialCategory = initialCategoryId
+        ? event.categories.find(c => (c.id || "0") === initialCategoryId)
+        : null;
+    const initialBasePrice = initialCategory ? Number(initialCategory.price) || 0 : 0;
+
     const methods = useForm<RegistrationFormValues>({
         resolver: zodResolver(registrationSchema) as any,
         defaultValues: {
@@ -47,9 +53,9 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 medicalConditions: user?.medicalConditions || "",
             },
             vanityNumber: "",
-            basePrice: 0,
+            basePrice: initialBasePrice,
             vanityPremium: 0,
-            totalPrice: 0,
+            totalPrice: initialBasePrice,
             termsAccepted: false,
         },
         mode: "onChange"
@@ -126,8 +132,11 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
             if (!response.ok) throw new Error(result.error || "Failed to initiate payment");
 
-            // Redirect to Xendit Checkout
-            if (result.checkoutUrl) {
+            if (result.free) {
+                // Free registration — go straight to success
+                router.push(`/events/${event.id}/register/success?id=${result.registrationId}`);
+            } else if (result.checkoutUrl) {
+                // Redirect to Xendit Checkout
                 window.location.href = result.checkoutUrl;
             } else {
                 router.push(`/events/${event.id}/register/summary?id=${result.registrationId}`);

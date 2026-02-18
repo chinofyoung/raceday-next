@@ -42,6 +42,7 @@ export default function DashboardPage() {
                 ]);
 
                 const eventsList = eventsResult.items;
+                const activeEvents = eventsList.filter((e: any) => e.status === "published");
                 const myEventsIds = eventsList.map((e: any) => e.id);
                 // Filter registrations for this organizer's events (Stage 1.1)
                 const myRegs = regsResult.items.filter((r: any) => myEventsIds.includes(r.eventId));
@@ -52,7 +53,7 @@ export default function DashboardPage() {
                     secondary: myRegs.length,
                     revenue: totalRevenue
                 });
-                setItems(eventsList.slice(0, 3));
+                setItems(activeEvents.slice(0, 3));
             } else {
                 // Fetch Runner Stats (Stage 1.4: Fix N+1 Query)
                 const result = await getRegistrationsWithEvents({

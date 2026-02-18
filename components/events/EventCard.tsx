@@ -14,6 +14,7 @@ import {
     ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatDistance } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -59,7 +60,7 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                         <span className={cn(
                             "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md",
                             event.status === "published" ? "bg-green-500/80 text-white" :
-                                event.status === "draft" ? "bg-cta/80 text-white" : "bg-white/20 text-white"
+                                event.status === "draft" ? "bg-orange-500/80 text-white" : "bg-white/20 text-white"
                         )}>
                             {event.status}
                         </span>
@@ -75,7 +76,7 @@ export function EventCard({ event, onDelete, mode = "management" }: EventCardPro
                 <div className="absolute bottom-4 left-4 flex gap-2">
                     {event.categories?.slice(0, 3).map((cat, i) => (
                         <span key={i} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
-                            {cat.distance || cat.name}
+                            {formatDistance(cat.distance, cat.distanceUnit) || cat.name}
                         </span>
                     ))}
                     {event.categories?.length > 3 && (

@@ -14,7 +14,7 @@ export function PageWrapper({
         <div
             className={cn(
                 "animate-in fade-in duration-700",
-                container && "max-w-7xl mx-auto px-4 sm:px-6",
+                container && "max-w-7xl mx-auto px-4 sm:px-0",
                 className
             )}
             {...props}

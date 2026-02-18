@@ -9,6 +9,7 @@ import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
 import { format } from "date-fns";
 import Image from "next/image";
+import { formatDistance } from "@/lib/utils";
 
 async function getUpcomingEvents() {
     try {
@@ -163,7 +164,7 @@ export default async function HomePage() {
                                         </div>
                                         <div className="flex flex-wrap gap-2">
                                             {event.categories?.slice(0, 3).map((cat, idx) => (
-                                                <Badge key={idx} variant="outline" className="bg-white/5 border-none text-[9px] font-bold">{cat.distance}</Badge>
+                                                <Badge key={idx} variant="outline" className="bg-white/5 border-none text-[9px] font-bold">{formatDistance(cat.distance, cat.distanceUnit)}</Badge>
                                             )) || (
                                                     <Badge variant="outline" className="bg-white/5 border-none text-[9px] font-bold">Standard</Badge>
                                                 )}
