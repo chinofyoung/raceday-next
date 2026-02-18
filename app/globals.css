@@ -59,3 +59,13 @@ h6 {
 .input {
   @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200;
 }
+
+/* Leaflet Dark Mode Overrides */
+.leaflet-control-zoom a {
+  background-color: rgba(30, 30, 30, 0.9) !important;
+  color: white !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+.leaflet-control-zoom a:hover {
+  background-color: rgba(50, 50, 50, 0.9) !important;
+}

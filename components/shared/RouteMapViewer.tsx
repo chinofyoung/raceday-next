@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polyline, useMap, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Sun, Moon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Fix for default marker icons in Leaflet with Next.js
 const DefaultIcon = L.icon({
@@ -20,7 +22,21 @@ interface RouteMapViewerProps {
     center?: [number, number];
     zoom?: number;
     className?: string;
+    theme?: "light" | "dark";
 }
+
+const TILE_THEMES = {
+    dark: {
+        url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        routeColor: "#F97316", // Orange (primary) still looks good on dark
+    },
+    light: {
+        url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        routeColor: "#F97316",
+    },
+};
 
 function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }) {
     const map = useMap();
@@ -35,14 +51,14 @@ export function RouteMapViewer({
     points = [],
     center = [14.5491, 121.0450], // Default to BGC
     zoom = 13,
-    className
+    className,
+    theme = "dark"
 }: RouteMapViewerProps) {
     const [routePoints, setRoutePoints] = useState<[number, number][]>(points);
+    const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme);
 
     useEffect(() => {
         if (gpxUrl) {
-            // In a real app, we'd fetch and parse the GPX here
-            // For now, if it's a mock or we don't have a parser yet, we'll just use points if provided
             fetch(gpxUrl)
                 .then(res => res.text())
                 .then(xmlStr => {
@@ -62,23 +78,34 @@ export function RouteMapViewer({
         }
     }, [gpxUrl]);
 
+    // Update local state if prop changes
+    useEffect(() => {
+        setCurrentTheme(theme);
+    }, [theme]);
+
     const mapCenter = routePoints.length > 0 ? routePoints[0] : center;
+    const activeTheme = TILE_THEMES[currentTheme];
 
     return (
-        <div className={cn("rounded-2xl overflow-hidden border border-white/10 h-full w-full", className)}>
+        <div className={cn("rounded-2xl overflow-hidden border border-white/10 h-full w-full relative group", className)}>
             <MapContainer
                 center={mapCenter}
                 zoom={zoom}
-                style={{ height: "100%", width: "100%" }}
+                style={{ height: "100%", width: "100%", background: "#1f2937" }} // match app bg
                 scrollWheelZoom={false}
             >
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution={activeTheme.attribution}
+                    url={activeTheme.url}
                 />
                 {routePoints.length > 0 && (
                     <>
-                        <Polyline positions={routePoints} color="#F97316" weight={4} opacity={0.8} />
+                        <Polyline
+                            positions={routePoints}
+                            color={activeTheme.routeColor}
+                            weight={4}
+                            opacity={0.8}
+                        />
                         <Marker position={routePoints[0]}>
                             <Popup>Start</Popup>
                         </Marker>
@@ -89,11 +116,21 @@ export function RouteMapViewer({
                     </>
                 )}
             </MapContainer>
+
+            {/* Theme Toggle */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation(); // Prevent map click if any
+                    setCurrentTheme(t => t === "dark" ? "light" : "dark");
+                }}
+                className="absolute top-3 right-3 z-[1000] p-2 bg-gray-900/80 backdrop-blur-md rounded-lg border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
+                title={`Switch to ${currentTheme === "dark" ? "light" : "dark"} mode`}
+                type="button"
+            >
+                {currentTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
         </div>
     );
 }
 
-// Utility to merge classes since I can't import cn easily in this specific block without full path
-function cn(...classes: (string | undefined | boolean | null)[]) {
-    return classes.filter(Boolean).join(" ");
-}
+
