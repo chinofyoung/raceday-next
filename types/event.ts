@@ -19,6 +19,7 @@ export interface EventCategory {
     gunStartTime: string;
     cutOffTime: string;
     price: number;
+    earlyBirdPrice?: number;
     categoryImage?: string;  // Cloudinary URL
     routeMap?: {
         gpxFileUrl: string;    // Uploaded .gpx file
@@ -56,6 +57,16 @@ export interface RaceEvent {
         enabled: boolean;
         premiumPrice: number;   // Additional cost
     };
+
+    // Early Bird
+    earlyBird?: {
+        enabled: boolean;
+        startDate: Timestamp | Date;
+        endDate: Timestamp | Date;
+    };
+
+    // Registration Deadline
+    registrationEndDate: Timestamp | Date;
 
     // Timeline
     timeline: TimelineItem[];

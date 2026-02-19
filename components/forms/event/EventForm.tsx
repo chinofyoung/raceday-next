@@ -48,10 +48,12 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             name: "",
             description: "",
             date: new Date(),
+            registrationEndDate: new Date(),
             location: { name: "", address: "" },
             featuredImage: "",
             galleryImages: [],
             vanityRaceNumber: { enabled: false, premiumPrice: 0 },
+            earlyBird: { enabled: false },
             timeline: [],
             categories: [],
             status: "draft",
@@ -66,9 +68,9 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
     const nextStep = async () => {
         // Validate current step before proceeding
         let fieldsToValidate: any[] = [];
-        if (currentStep === 0) fieldsToValidate = ["name", "description", "date", "location.name", "location.address"];
+        if (currentStep === 0) fieldsToValidate = ["name", "description", "date", "registrationEndDate", "location.name", "location.address"];
         if (currentStep === 1) fieldsToValidate = ["featuredImage", "galleryImages"];
-        if (currentStep === 2) fieldsToValidate = ["categories"];
+        if (currentStep === 2) fieldsToValidate = ["categories", "earlyBird"];
         if (currentStep === 3) fieldsToValidate = ["timeline"];
 
         const isValid = await trigger(fieldsToValidate as any);

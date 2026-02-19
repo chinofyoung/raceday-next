@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, Clock, Timer, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
+import { getEffectivePrice } from "@/lib/earlyBirdUtils";
 
 interface Step1CategoryProps {
     event: RaceEvent;
@@ -34,11 +35,14 @@ export function Step1Category({ event }: Step1CategoryProps) {
             <div className="grid grid-cols-1 gap-4">
                 {event.categories.map((cat, i) => {
                     const isSelected = selectedCategoryId === (cat.id || i.toString());
+                    const effectivePrice = getEffectivePrice(event, cat);
+                    const isEarlyBird = effectivePrice < (Number(cat.price) || 0);
+
                     return (
                         <button
                             key={cat.id || i}
                             type="button"
-                            onClick={() => selectCategory(cat.id || i.toString(), cat.price)}
+                            onClick={() => selectCategory(cat.id || i.toString(), effectivePrice)}
                             className={cn(
                                 "text-left transition-all duration-300 relative group",
                                 isSelected ? "scale-[1.02] z-10" : "hover:scale-[1.01]"
@@ -67,7 +71,15 @@ export function Step1Category({ event }: Step1CategoryProps) {
                                         </div>
                                     </div>
                                     <div className="flex md:flex-col items-center md:items-end justify-between gap-1">
-                                        <p className="text-2xl font-black italic text-white">₱{cat.price}</p>
+                                        {isEarlyBird ? (
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-xs font-bold text-text-muted line-through italic">₱{cat.price}</span>
+                                                <span className="text-2xl font-black italic text-green-400">₱{effectivePrice}</span>
+                                                <Badge variant="success" className="bg-green-500/20 text-green-500 border-none px-2 py-0 text-[9px]">Early Bird</Badge>
+                                            </div>
+                                        ) : (
+                                            <p className="text-2xl font-black italic text-white">₱{effectivePrice}</p>
+                                        )}
                                         {isSelected && (
                                             <Badge variant="success" className="animate-in zoom-in duration-300">
                                                 Selected

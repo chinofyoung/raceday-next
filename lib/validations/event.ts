@@ -17,6 +17,7 @@ export const eventCategorySchema = z.object({
     gunStartTime: z.string().min(1, "Gun start time is required"),
     cutOffTime: z.string().min(1, "Cut off time is required"),
     price: z.number().min(0, "Price cannot be negative"),
+    earlyBirdPrice: z.number().min(0, "Early Bird Price cannot be negative").optional(),
     categoryImage: z.string().optional(),
     routeMap: z.object({
         gpxFileUrl: z.string(),
@@ -47,10 +48,53 @@ export const eventSchema = z.object({
         enabled: z.boolean().default(false),
         premiumPrice: z.number().min(0).default(0),
     }),
+    earlyBird: z.object({
+        enabled: z.boolean().default(false),
+        startDate: z.date().optional(),
+        endDate: z.date().optional(),
+    }).optional().refine((data) => {
+        if (data?.enabled) {
+            return data.startDate && data.endDate;
+        }
+        return true;
+    }, {
+        message: "Start and end dates are required when Early Bird is enabled",
+        path: ["startDate"], // highlight startDate on error
+    }).refine((data) => {
+        if (data?.enabled && data.startDate && data.endDate) {
+            return data.startDate <= data.endDate;
+        }
+        return true;
+    }, {
+        message: "End date must be after start date",
+        path: ["endDate"],
+    }),
+    registrationEndDate: z.date(),
     timeline: z.array(timelineItemSchema),
     categories: z.array(eventCategorySchema).min(1, "Add at least one distance category"),
     status: z.enum(["draft", "published", "cancelled", "completed"]).default("draft"),
     featured: z.boolean().default(false),
+}).refine((data) => {
+    if (data.earlyBird?.enabled) {
+        // specific check: every category must have earlyBirdPrice if enabled?
+        // Actually the plan says "Must be < regular price".
+        // Let's iterate categories
+        return data.categories.every(cat =>
+            cat.earlyBirdPrice !== undefined && cat.earlyBirdPrice < cat.price
+        );
+    }
+    return true;
+}, {
+    message: "All categories must have an Early Bird Price lower than the regular price",
+    path: ["categories"],
+}).refine((data) => {
+    if (data.registrationEndDate && data.date) {
+        return data.registrationEndDate <= data.date;
+    }
+    return true;
+}, {
+    message: "Registration end date must be before the event date",
+    path: ["registrationEndDate"],
 });
 
 export type EventFormValues = z.infer<typeof eventSchema>;

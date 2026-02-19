@@ -5,6 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, RegistrationFormValues } from "@/lib/validations/registration";
 import { RaceEvent } from "@/types/event";
+import { getEffectivePrice } from "@/lib/earlyBirdUtils";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -33,7 +34,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
     const initialCategory = initialCategoryId
         ? event.categories.find(c => (c.id || "0") === initialCategoryId)
         : null;
-    const initialBasePrice = initialCategory ? Number(initialCategory.price) || 0 : 0;
+    const initialBasePrice = initialCategory ? getEffectivePrice(event, initialCategory) : 0;
 
     const methods = useForm<RegistrationFormValues>({
         resolver: zodResolver(registrationSchema) as any,

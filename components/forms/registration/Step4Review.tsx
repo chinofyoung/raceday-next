@@ -77,7 +77,10 @@ export function Step4Review({ event }: Step4ReviewProps) {
                             <div className="pt-6 border-t border-white/5 space-y-3 font-black italic uppercase">
                                 <div className="flex items-center justify-between text-xs text-text-muted">
                                     <span>Registration Fee</span>
-                                    <span>₱{data.basePrice}</span>
+                                    <span>
+                                        {data.basePrice < (Number(selectedCategory.price) || 0) && <span className="text-green-400 font-bold italic mr-2">(Early Bird)</span>}
+                                        ₱{data.basePrice}
+                                    </span>
                                 </div>
                                 {data.vanityPremium > 0 && (
                                     <div className="flex items-center justify-between text-xs text-primary">

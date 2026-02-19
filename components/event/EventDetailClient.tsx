@@ -20,6 +20,7 @@ import { formatDistance } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
 import { EventGallery } from "./EventGallery";
+import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice } from "@/lib/earlyBirdUtils";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -166,9 +167,28 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                                     </div>
                                                 </div>
                                                 <div className="text-left md:text-right space-y-3">
-                                                    <p className="text-3xl font-black italic text-white tracking-tighter">₱{cat.price}</p>
-                                                    <Button asChild variant="primary" size="sm" className="w-full md:w-auto uppercase italic font-black shadow-lg shadow-primary/20">
-                                                        <Link href={`/events/${event.id}/register?category=${cat.id || i}`}>Register Now <ChevronRight size={16} /></Link>
+                                                    {isEarlyBirdActive(event) && cat.earlyBirdPrice != null && Number(cat.earlyBirdPrice) < Number(cat.price) ? (
+                                                        <div className="flex flex-col items-end">
+                                                            <span className="text-sm font-bold text-text-muted line-through italic">₱{cat.price}</span>
+                                                            <span className="text-3xl font-black italic text-green-400 tracking-tighter">₱{cat.earlyBirdPrice}</span>
+                                                            <Badge variant="success" className="bg-green-500/20 text-green-500 border-none mt-1 text-[10px] px-2">EARLY BIRD PROMO</Badge>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-3xl font-black italic text-white tracking-tighter">₱{cat.price}</p>
+                                                    )}
+
+                                                    <Button
+                                                        asChild
+                                                        variant="primary"
+                                                        size="sm"
+                                                        className={cn(
+                                                            "w-full md:w-auto uppercase italic font-black shadow-lg shadow-primary/20",
+                                                            isRegistrationClosed(event) && "opacity-50 pointer-events-none grayscale"
+                                                        )}
+                                                    >
+                                                        <Link href={`/events/${event.id}/register?category=${cat.id || i}`}>
+                                                            {isRegistrationClosed(event) ? "Registration Closed" : "Register Now"} <ChevronRight size={16} />
+                                                        </Link>
                                                     </Button>
                                                 </div>
                                             </div>
@@ -288,7 +308,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Starts from</p>
                                 <p className="text-4xl font-black italic text-white tracking-tighter">
                                     {event.categories?.length > 0
-                                        ? `₱${Math.min(...event.categories.map(c => c.price))}`
+                                        ? `₱${Math.min(...event.categories.map(c => getEffectivePrice(event, c)))}`
                                         : "TBD"}
                                 </p>
                             </div>
@@ -296,20 +316,36 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                             <div className="space-y-4 pt-6 border-t border-white/5">
                                 <div className="flex items-center justify-between text-xs font-bold uppercase italic text-text-muted">
                                     <span>Status</span>
-                                    <span className="text-cta">Open</span>
+                                    <span className={cn(
+                                        isRegistrationClosed(event) ? "text-red-500" : "text-cta"
+                                    )}>
+                                        {isRegistrationClosed(event) ? "Closed" : "Open"}
+                                    </span>
                                 </div>
                                 <div className="flex items-center justify-between text-xs font-bold uppercase italic text-text-muted">
                                     <span>Date</span>
                                     <span className="text-white">{format(eventDate, "MMM d, yyyy")}</span>
                                 </div>
+                                {isEarlyBirdActive(event) && (
+                                    <div className="flex items-center justify-between text-xs font-bold uppercase italic text-text-muted">
+                                        <span className="text-green-400">Early Bird Ends In</span>
+                                        <span className="text-white">{getEarlyBirdDaysRemaining(event)} Days</span>
+                                    </div>
+                                )}
                             </div>
 
                             <Button
                                 onClick={() => setActiveTab("categories")}
                                 variant="primary"
-                                className="w-full h-14 text-lg font-black italic uppercase tracking-wider bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20 group"
+                                disabled={isRegistrationClosed(event)}
+                                className={cn(
+                                    "w-full h-14 text-lg font-black italic uppercase tracking-wider bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20 group",
+                                    isRegistrationClosed(event) && "bg-white/10 hover:bg-white/10 text-text-muted shadow-none"
+                                )}
                             >
-                                Get Your Slot <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+                                {isRegistrationClosed(event) ? "Registration Closed" : (
+                                    <>Get Your Slot <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} /></>
+                                )}
                             </Button>
 
                             <p className="text-[10px] text-center text-text-muted font-bold italic uppercase tracking-widest">Secure Payment Processing</p>

@@ -47,7 +47,7 @@ export function Step6Review() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <Card className="p-6 bg-surface/50 border-white/5 flex items-start gap-4">
                                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
                                     <Calendar size={24} />
@@ -68,6 +68,19 @@ export function Step6Review() {
                                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Location</p>
                                     <p className="text-lg font-bold text-white uppercase italic">
                                         {data.location?.name || "TBD"}
+                                    </p>
+                                </div>
+                            </Card>
+
+
+                            <Card className="p-6 bg-surface/50 border-white/5 flex items-start gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-500 shrink-0">
+                                    <Clock size={24} />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Reg. Deadline</p>
+                                    <p className="text-lg font-bold text-white uppercase italic">
+                                        {data.registrationEndDate ? formatDateLabel(data.registrationEndDate) : "TBD"}
                                     </p>
                                 </div>
                             </Card>
@@ -94,7 +107,14 @@ export function Step6Review() {
                                         <p className="text-sm font-black text-white italic uppercase">{cat.name}</p>
                                         <p className="text-xs text-primary font-bold">{formatDistance(cat.distance, cat.distanceUnit)}</p>
                                     </div>
-                                    <p className="text-lg font-black italic text-cta">₱{cat.price}</p>
+                                    <div className="text-right">
+                                        {data.earlyBird?.enabled && cat.earlyBirdPrice && (
+                                            <p className="text-xs font-bold text-green-400 italic mb-1">
+                                                EB: ₱{cat.earlyBirdPrice}
+                                            </p>
+                                        )}
+                                        <p className="text-lg font-black italic text-cta">₱{cat.price}</p>
+                                    </div>
                                 </Card>
                             ))}
                             {(!data.categories || data.categories.length === 0) && (
@@ -143,10 +163,33 @@ export function Step6Review() {
                                 <span className="text-xs font-bold uppercase text-text-muted">Premium Fee</span>
                                 <span className="text-sm font-black italic text-cta">₱{data.vanityRaceNumber.premiumPrice}</span>
                             </div>
+
+                        )}
+
+                        <div className="flex items-center justify-between py-2 border-b border-white/5 pt-4">
+                            <span className="text-xs font-bold uppercase text-text-muted">Early Bird</span>
+                            <span className={cn(
+                                "text-[10px] font-black uppercase px-2 py-1 rounded",
+                                data.earlyBird?.enabled ? "bg-green-500/20 text-green-500" : "bg-white/5 text-text-muted"
+                            )}>
+                                {data.earlyBird?.enabled ? "Active" : "Disabled"}
+                            </span>
+                        </div>
+                        {data.earlyBird?.enabled && (
+                            <div className="space-y-2">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-bold uppercase text-text-muted">Start</span>
+                                    <span className="text-xs font-medium text-white">{data.earlyBird.startDate ? formatDateLabel(data.earlyBird.startDate) : "-"}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[10px] font-bold uppercase text-text-muted">End</span>
+                                    <span className="text-xs font-medium text-white">{data.earlyBird.endDate ? formatDateLabel(data.earlyBird.endDate) : "-"}</span>
+                                </div>
+                            </div>
                         )}
                     </Card>
-                </div>
-            </div>
-        </div>
+                </div >
+            </div >
+        </div >
     );
 }

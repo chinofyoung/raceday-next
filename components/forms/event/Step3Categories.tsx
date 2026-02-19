@@ -19,6 +19,8 @@ export function Step3Categories() {
         name: "categories"
     });
 
+    const isEarlyBirdEnabled = useFormContext<EventFormValues>().watch("earlyBird.enabled");
+
     const addCategory = () => {
         append({
             id: uuidv4(),
@@ -47,6 +49,46 @@ export function Step3Categories() {
                 </Button>
             </div>
 
+            {/* Early Bird Configuration */}
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 space-y-6">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                {...useFormContext<EventFormValues>().register("earlyBird.enabled")}
+                                className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
+                            />
+                            <span className="text-sm font-black italic uppercase tracking-wide text-white">Enable Early Bird Promo</span>
+                        </label>
+                        <p className="text-xs text-text-muted ml-8">Offer discounted rates for early registrants.</p>
+                    </div>
+                </div>
+
+                {isEarlyBirdEnabled && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 pt-4 border-t border-white/5">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo Start Date</label>
+                            <input
+                                type="date"
+                                {...useFormContext<EventFormValues>().register("earlyBird.startDate", { valueAsDate: true })}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
+                            />
+                            {errors.earlyBird?.startDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.startDate.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo End Date</label>
+                            <input
+                                type="date"
+                                {...useFormContext<EventFormValues>().register("earlyBird.endDate", { valueAsDate: true })}
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
+                            />
+                            {errors.earlyBird?.endDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.endDate.message}</p>}
+                        </div>
+                    </div>
+                )}
+            </div>
+
             <div className="space-y-8">
                 {fields.length === 0 && (
                     <div className="py-24 text-center space-y-6 bg-white/[0.02] rounded-[2rem] border-2 border-dashed border-white/5">
@@ -73,13 +115,15 @@ export function Step3Categories() {
                 ))}
             </div>
 
-            {errors.categories?.message && (
-                <div className="flex items-center justify-center gap-2 p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-red-500 text-sm font-bold uppercase italic tracking-wide">
-                    <Info size={16} />
-                    {errors.categories.message}
-                </div>
-            )}
-        </div>
+            {
+                errors.categories?.message && (
+                    <div className="flex items-center justify-center gap-2 p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-red-500 text-sm font-bold uppercase italic tracking-wide">
+                        <Info size={16} />
+                        {errors.categories.message}
+                    </div>
+                )
+            }
+        </div >
     );
 }
 
@@ -159,6 +203,18 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                             error={errors.categories?.[index]?.price?.message}
                             icon={<DollarSign size={16} />}
                         />
+
+                        {watch("earlyBird.enabled") && (
+                            <Input
+                                type="number"
+                                label="Early Bird Price"
+                                {...register(`categories.${index}.earlyBirdPrice`, { valueAsNumber: true })}
+                                error={errors.categories?.[index]?.earlyBirdPrice?.message}
+                                icon={<DollarSign size={16} />}
+                                className="border-primary/50 bg-primary/5 text-primary"
+                            />
+                        )}
+
                         <Input
                             label="Race Number Format"
                             {...register(`categories.${index}.raceNumberFormat`)}

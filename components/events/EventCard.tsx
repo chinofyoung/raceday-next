@@ -19,6 +19,7 @@ import { formatDistance } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { isEarlyBirdActive, isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
 
 interface EventCardProps {
     event: RaceEvent;
@@ -51,14 +52,24 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
         fetchPaidCount();
     }, [event.id]);
 
-    // Calculate price range
-    const prices = event.categories?.map(c => c.price) || [];
-    const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-    const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-    const priceDisplay = prices.length > 0
-        ? minPrice === maxPrice
-            ? `₱${minPrice.toLocaleString()}`
-            : `₱${minPrice.toLocaleString()} - ₱${maxPrice.toLocaleString()}`
+    // Calculate price ranges
+    const originalPrices = event.categories?.map(c => c.price) || [];
+    const minOriginal = originalPrices.length > 0 ? Math.min(...originalPrices) : 0;
+    const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0;
+
+    // Calculate effective price range
+    const effectivePrices = event.categories?.map(c => getEffectivePrice(event, c)) || [];
+    const minEffective = effectivePrices.length > 0 ? Math.min(...effectivePrices) : 0;
+    const maxEffective = effectivePrices.length > 0 ? Math.max(...effectivePrices) : 0;
+
+    const hasDiscount = minEffective < minOriginal || maxEffective < maxOriginal;
+
+    const displayOriginal = originalPrices.length > 0
+        ? minOriginal === maxOriginal ? `₱${minOriginal.toLocaleString()}` : `₱${minOriginal.toLocaleString()} - ₱${maxOriginal.toLocaleString()}`
+        : "";
+
+    const displayEffective = effectivePrices.length > 0
+        ? minEffective === maxEffective ? `₱${minEffective.toLocaleString()}` : `₱${minEffective.toLocaleString()} - ₱${maxEffective.toLocaleString()}`
         : "Free / TBD";
 
     // Calculate total capacity
@@ -88,8 +99,15 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                         </span>
                     )}
                     {mode === "discovery" && event.status === "published" && (
-                        <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md bg-cta text-white">
-                            Registration Open
+                        <span className={cn(
+                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md text-white",
+                            isRegistrationClosed(event) ? "bg-red-500" :
+                                isEarlyBirdActive(event) ? "bg-green-500" :
+                                    "bg-cta"
+                        )}>
+                            {isRegistrationClosed(event) ? "Registration Closed" :
+                                isEarlyBirdActive(event) ? "Early Bird Promo" :
+                                    "Registration Open"}
                         </span>
                     )}
                 </div>
@@ -148,7 +166,12 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                         <p className="text-[9px] font-black uppercase text-text-muted tracking-widest opacity-60">Entry Fee</p>
                         <div className="flex items-center gap-2">
                             <Tag size={14} className="text-cta" />
-                            <span className="text-sm font-black italic text-white">{priceDisplay}</span>
+                            <div className="flex flex-col items-start leading-none gap-0.5">
+                                {hasDiscount && (
+                                    <span className="text-[10px] font-bold text-text-muted line-through decoration-red-500/50">{displayOriginal}</span>
+                                )}
+                                <span className={cn("text-sm font-black italic", hasDiscount ? "text-green-400" : "text-white")}>{displayEffective}</span>
+                            </div>
                         </div>
                     </div>
                     <div className="space-y-1 text-right">

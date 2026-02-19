@@ -10,6 +10,7 @@ import { RegistrationForm } from "@/components/forms/registration/RegistrationFo
 import { Loader2, ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { isRegistrationClosed } from "@/lib/earlyBirdUtils";
 
 export default function RegisterPage() {
     const { id } = useParams();
@@ -53,6 +54,24 @@ export default function RegisterPage() {
                 <div className="text-center space-y-4">
                     <h1 className="text-2xl font-bold">Event not found</h1>
                     <Link href="/events" className="text-primary hover:underline">Back to Events</Link>
+                </div>
+            </PageWrapper>
+        );
+    }
+
+    if (isRegistrationClosed(event)) {
+        return (
+            <PageWrapper className="flex items-center justify-center min-h-[70vh]">
+                <div className="text-center space-y-6 animate-in fade-in zoom-in-95 duration-500">
+                    <div className="space-y-2">
+                        <h1 className="text-4xl md:text-6xl font-black italic uppercase text-red-500 tracking-tighter">Registration Closed</h1>
+                        <p className="text-lg text-text-muted font-medium italic">Sorry, registration for this event has ended.</p>
+                    </div>
+                    <div>
+                        <Link href={`/events/${event.id}`} className="inline-flex items-center gap-2 px-8 py-4 bg-white/5 hover:bg-white/10 rounded-full text-white font-black uppercase italic tracking-widest transition-all border border-white/5 hover:border-white/20 hover:scale-105">
+                            <ArrowLeft size={16} /> Back to Event Details
+                        </Link>
+                    </div>
                 </div>
             </PageWrapper>
         );

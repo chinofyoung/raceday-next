@@ -33,6 +33,22 @@ export async function generateMetadata(props: EventPageProps): Promise<Metadata>
     };
 }
 
+const toISOString = (date: any): string | null => {
+    if (!date) return null;
+    if (typeof date === 'string') return date;
+    if (typeof date.toDate === 'function') { // Firestore Timestamp
+        try {
+            return date.toDate().toISOString();
+        } catch (e) {
+            return null;
+        }
+    }
+    if (date instanceof Date) {
+        return date.toISOString();
+    }
+    return null;
+};
+
 export default async function EventDetailPage(props: EventPageProps) {
     const params = await props.params;
     const docRef = doc(db, "events", params.id);
@@ -46,9 +62,15 @@ export default async function EventDetailPage(props: EventPageProps) {
     const event = {
         ...data,
         id: snap.id,
-        date: (data?.date as any)?.toDate?.()?.toISOString() || data?.date,
-        createdAt: (data?.createdAt as any)?.toDate?.()?.toISOString() || null,
-        updatedAt: (data?.updatedAt as any)?.toDate?.()?.toISOString() || null,
+        date: toISOString(data?.date) || data?.date,
+        registrationEndDate: toISOString(data?.registrationEndDate),
+        earlyBird: data?.earlyBird ? {
+            ...data.earlyBird,
+            startDate: toISOString(data.earlyBird.startDate),
+            endDate: toISOString(data.earlyBird.endDate),
+        } : undefined,
+        createdAt: toISOString(data?.createdAt),
+        updatedAt: toISOString(data?.updatedAt),
     } as unknown as RaceEvent;
 
     // Structured Data (JSON-LD)
@@ -58,7 +80,7 @@ export default async function EventDetailPage(props: EventPageProps) {
         "name": event.name,
         "description": event.description,
         "image": event.featuredImage,
-        "startDate": event.date instanceof Date ? event.date.toISOString() : (event.date as any).toDate?.().toISOString(),
+        "startDate": event.date,
         "location": {
             "@type": "Place",
             "name": event.location.name,

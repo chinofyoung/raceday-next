@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase/config";
-import { collection, addDoc, serverTimestamp, updateDoc, doc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc } from "firebase/firestore";
 import { generateBibAndQR } from "@/lib/bibUtils";
+import { RaceEvent } from "@/types/event";
+import { isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
@@ -10,7 +12,40 @@ export async function POST(req: Request) {
         const body = await req.json();
         const { registrationData, eventName, categoryName } = body;
 
-        const totalAmount = Math.round(registrationData.totalPrice || 0);
+        // VERIFY EVENT & PRICE
+        const eventRef = doc(db, "events", registrationData.eventId);
+        const eventSnap = await getDoc(eventRef);
+
+        if (!eventSnap.exists()) {
+            return NextResponse.json({ error: "Event not found" }, { status: 404 });
+        }
+
+        const eventData = { id: eventSnap.id, ...eventSnap.data() } as RaceEvent;
+
+        // 1. Check Registration Deadline
+        if (isRegistrationClosed(eventData)) {
+            return NextResponse.json({ error: "Registration is closed for this event." }, { status: 400 });
+        }
+
+        // 2. Validate Price
+        const category = eventData.categories.find((c: any) => c.id === registrationData.categoryId);
+        if (!category) {
+            return NextResponse.json({ error: "Category not found" }, { status: 400 });
+        }
+
+        const expectedBasePrice = getEffectivePrice(eventData, category);
+        const sentBasePrice = registrationData.basePrice;
+
+        // Allow tiny floating point diff, though usually integers
+        if (Math.abs(expectedBasePrice - sentBasePrice) > 1) {
+            console.error(`Price Mismatch: Expected ${expectedBasePrice}, Got ${sentBasePrice}`);
+            return NextResponse.json({
+                error: "Price has changed or is invalid. Please refresh the page and try again."
+            }, { status: 400 });
+        }
+
+        // Recalculate total just in case
+        const totalAmount = Math.round(expectedBasePrice + (registrationData.vanityPremium || 0));
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
