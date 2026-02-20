@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useDashboardMode } from "@/components/providers/DashboardModeProvider";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -9,7 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import {
     Calendar, User, Settings, ArrowRight, Trophy,
     Plus, BarChart3, Users, DollarSign, QrCode,
-    Loader2, MapPin, CheckCircle2, Globe
+    Loader2, MapPin, CheckCircle2, Globe, Repeat
 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -19,26 +20,27 @@ import { computeProfileCompletion } from "@/lib/utils";
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
+    const { mode, setMode, canSwitchMode } = useDashboardMode();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0 });
     const [items, setItems] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
 
     const completion = computeProfileCompletion(user as any);
-    const isOrganizer = role === "organizer" || role === "admin";
+    const isOrganizerView = mode === "organizer";
 
     useEffect(() => {
         if (user) {
             fetchDashboardData();
         }
-    }, [user, role]);
+    }, [user, mode]);
 
     const fetchDashboardData = async () => {
         setLoading(true);
         setError(null);
         try {
-            if (isOrganizer) {
-                // Fetch Organizer Stats (Stage 3.1: Parallelize)
+            if (isOrganizerView) {
+                // Fetch Organizer Stats
                 const [eventsResult, regsResult] = await Promise.all([
                     getEvents({ organizerId: user?.uid, limitCount: 100, status: "all" }),
                     getRegistrations({ organizerId: user?.uid, status: "paid", limitCount: 100 })
@@ -57,7 +59,7 @@ export default function DashboardPage() {
                 });
                 setItems(activeEvents.slice(0, 3));
             } else {
-                // Fetch Runner Stats (Stage 1.4: Fix N+1 Query)
+                // Fetch Runner Stats
                 const result = await getRegistrationsWithEvents({
                     userId: user?.uid,
                     limitCount: 5
@@ -109,8 +111,33 @@ export default function DashboardPage() {
                     </h1>
                     <p className="text-text-muted font-medium italic">Welcome back to your race command center.</p>
                 </div>
-                <div className="flex gap-3">
-                    {isOrganizer && (
+                <div className="flex gap-3 items-center">
+                    {/* Mode Switcher */}
+                    {canSwitchMode && (
+                        <div className="flex items-center bg-surface border border-white/10 rounded-xl p-1 gap-0.5">
+                            <button
+                                onClick={() => setMode("runner")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase italic tracking-wider transition-all cursor-pointer ${mode === "runner"
+                                    ? "bg-primary text-white shadow-md"
+                                    : "text-text-muted hover:text-white"
+                                    }`}
+                            >
+                                <Trophy size={14} />
+                                Runner
+                            </button>
+                            <button
+                                onClick={() => setMode("organizer")}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black uppercase italic tracking-wider transition-all cursor-pointer ${mode === "organizer"
+                                    ? "bg-cta text-white shadow-md"
+                                    : "text-text-muted hover:text-white"
+                                    }`}
+                            >
+                                <BarChart3 size={14} />
+                                Organizer
+                            </button>
+                        </div>
+                    )}
+                    {isOrganizerView && (
                         <Button variant="primary" size="sm" asChild className="hidden md:flex bg-cta hover:bg-cta-hover border-none font-black italic uppercase">
                             <Link href="/dashboard/events/create"><Plus size={16} className="mr-2" /> New Event</Link>
                         </Button>
@@ -124,7 +151,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {isOrganizer && (
+            {isOrganizerView && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-4 duration-500">
                     <Card className="p-6 bg-surface border-white/5 flex items-center gap-6 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 p-8 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors" />
@@ -163,7 +190,7 @@ export default function DashboardPage() {
                 {/* Left Col: Main Stats & List */}
                 <div className="lg:col-span-2 space-y-12">
                     {/* Profile Completion Card */}
-                    {!isOrganizer && completion < 100 && (
+                    {!isOrganizerView && completion < 100 && (
                         <Card className="bg-primary/10 border border-primary/20 p-8 flex flex-col md:flex-row items-center gap-8 shadow-xl relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-16 bg-primary/10 rounded-full blur-3xl -mr-20 -mt-20" />
                             <div className="relative w-24 h-24 flex items-center justify-center shrink-0">
@@ -184,7 +211,7 @@ export default function DashboardPage() {
                     )}
 
                     {/* Organizer: My Events List */}
-                    {isOrganizer && (
+                    {isOrganizerView && (
                         <div className="space-y-6">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-2xl font-black italic uppercase tracking-tight">Active Events</h2>
@@ -201,7 +228,7 @@ export default function DashboardPage() {
                                                     </div>
                                                     <div>
                                                         <h4 className="font-bold italic uppercase text-white leading-tight">{event.name}</h4>
-                                                        <p className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest">{event.location.name}</p>
+                                                        <p className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest">{event.location?.name || "No location set"}</p>
                                                     </div>
                                                 </div>
                                                 <Button size="sm" variant="ghost" asChild className="text-primary font-black italic uppercase">
@@ -224,7 +251,7 @@ export default function DashboardPage() {
                     )}
 
                     {/* Runner: My Registered Events */}
-                    {!isOrganizer && (
+                    {!isOrganizerView && (
                         <div className="space-y-6">
                             <h2 className="text-2xl font-black italic uppercase tracking-tight">My Registered Events</h2>
                             {items.length > 0 ? (
@@ -235,7 +262,7 @@ export default function DashboardPage() {
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors shrink-0 overflow-hidden relative">
-                                                        {reg.event?.featuredImage && <img src={reg.event.featuredImage} alt={`${reg.event.name} featured image`} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
+                                                        {reg.event?.featuredImage && <img src={reg.event.featuredImage} alt={`${reg.event?.name || "Event"} featured image`} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
                                                         <Calendar size={32} className="relative z-10" />
                                                     </div>
                                                     <div className="space-y-1">
@@ -249,17 +276,17 @@ export default function DashboardPage() {
                                                             <div className="flex items-center gap-1.5 text-indigo-400">
                                                                 <User size={12} />
                                                                 <span className="text-[10px] font-bold italic uppercase tracking-wider">
-                                                                    Registered for: <span className="text-white">{reg.participantInfo.name}</span>
+                                                                    Registered for: <span className="text-white">{reg.participantInfo?.name || "Self"}</span>
                                                                 </span>
                                                             </div>
                                                         )}
                                                         <div className="flex flex-wrap gap-4 text-[10px] font-bold text-text-muted uppercase italic tracking-widest">
-                                                            <span className="flex items-center gap-1"><MapPin size={12} className="text-cta" /> {reg.event?.location.name}</span>
+                                                            <span className="flex items-center gap-1"><MapPin size={12} className="text-cta" /> {reg.event?.location?.name || "Location TBD"}</span>
                                                             <span className="flex items-center gap-1"><Trophy size={12} className="text-primary" /> {reg.categoryId}</span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="flex gap-3">
+                                                <div className="flex gap-3 shrink-0">
                                                     {reg.status === "paid" && (
                                                         <Button variant="primary" size="sm" asChild className="bg-cta hover:bg-cta-hover border-none font-black italic uppercase tracking-widest shadow-lg shadow-cta/20">
                                                             <Link href={`/dashboard/events/${reg.eventId}/qr`}><QrCode size={16} className="mr-2" /> View Pass</Link>
@@ -291,7 +318,7 @@ export default function DashboardPage() {
                     <div className="space-y-4">
                         <h2 className="text-xl font-black italic uppercase tracking-tight">Quick Actions</h2>
                         <div className="grid grid-cols-1 gap-3">
-                            {isOrganizer ? (
+                            {isOrganizerView ? (
                                 <>
                                     <Link href="/dashboard/events/create" className="block p-4 bg-primary rounded-xl border border-primary hover:scale-[1.02] transition-all group shadow-lg">
                                         <div className="flex items-center justify-between">
@@ -361,25 +388,25 @@ export default function DashboardPage() {
                     <Card className="p-6 bg-surface/50 border border-white/5 shadow-lg relative overflow-hidden group">
                         <div className="absolute top-0 left-0 p-12 bg-primary/5 rounded-full blur-3xl -ml-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
                         <h3 className="font-bold uppercase italic text-[10px] text-primary mb-6 tracking-widest text-center relative z-10">
-                            {isOrganizer ? "ORGNZR ANALYTICS" : "ATHLETE STATS"}
+                            {isOrganizerView ? "ORGNZR ANALYTICS" : "ATHLETE STATS"}
                         </h3>
                         <div className="grid grid-cols-2 gap-4 relative z-10">
                             <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
                                 <div className="text-3xl font-black italic text-white tracking-tighter">{stats.total}</div>
                                 <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">
-                                    {isOrganizer ? "Total Races" : "Confirmed"}
+                                    {isOrganizerView ? "Total Races" : "Confirmed"}
                                 </div>
                             </div>
                             <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
                                 <div className="text-3xl font-black italic text-white tracking-tighter">
-                                    {isOrganizer ? stats.secondary : 0}
+                                    {isOrganizerView ? stats.secondary : 0}
                                 </div>
                                 <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">
-                                    {isOrganizer ? "Total Runners" : "Finished"}
+                                    {isOrganizerView ? "Total Runners" : "Finished"}
                                 </div>
                             </div>
                         </div>
-                        {!isOrganizer && (
+                        {!isOrganizerView && (
                             <div className="mt-4 p-4 bg-cta/5 border border-cta/20 rounded-2xl flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center text-cta shrink-0">
                                     <CheckCircle2 size={16} />
@@ -393,3 +420,4 @@ export default function DashboardPage() {
         </PageWrapper>
     );
 }
+

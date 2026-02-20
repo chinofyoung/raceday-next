@@ -198,7 +198,7 @@ export default function BecomeOrganizerPage() {
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10 max-w-4xl mx-auto">
+        <PageWrapper className="pt-8 pb-12 space-y-10 max-w-7xl mx-auto">
             <div className="flex flex-col gap-4">
                 <Link href="/dashboard" className="text-primary text-xs font-black flex items-center gap-1 hover:underline uppercase tracking-widest italic opacity-70">
                     <ArrowLeft size={14} /> Back to Dashboard

@@ -22,11 +22,15 @@ export default function LoginPage() {
 
             if (idToken) {
                 // Set a secure, httpOnly cookie via an API route
-                await fetch("/api/auth/session", {
+                const res = await fetch("/api/auth/session", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ idToken }),
                 });
+
+                if (!res.ok) {
+                    console.error("Failed to create session:", await res.text());
+                }
             }
 
             if (isNewUser) {

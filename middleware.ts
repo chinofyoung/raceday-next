@@ -1,15 +1,43 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { jwtVerify, createRemoteJWKSet } from "jose";
+import { jwtVerify, importX509, decodeProtectedHeader } from "jose";
 
 const FIREBASE_PROJECT_ID = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_PROJECT_ID;
-const JWKS_URL = `https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com`;
-const JWKS = FIREBASE_PROJECT_ID ? createRemoteJWKSet(new URL(JWKS_URL)) : null;
+const SESSION_COOKIE_CERT_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/publicKeys";
+
+// Cache the certificates to avoid fetching on every request
+let cachedCerts: Record<string, string> | null = null;
+let cacheExpiry = 0;
+
+async function getSessionCookieCerts(): Promise<Record<string, string>> {
+    const now = Date.now();
+    if (cachedCerts && now < cacheExpiry) return cachedCerts;
+
+    const res = await fetch(SESSION_COOKIE_CERT_URL);
+    const certs = await res.json();
+
+    // Cache for 1 hour (certs rotate infrequently)
+    const cacheControl = res.headers.get("cache-control");
+    const maxAgeMatch = cacheControl?.match(/max-age=(\d+)/);
+    cacheExpiry = now + (maxAgeMatch ? parseInt(maxAgeMatch[1]) * 1000 : 3600000);
+    cachedCerts = certs;
+
+    return certs;
+}
 
 async function verifySessionCookie(cookie: string): Promise<boolean> {
-    if (!JWKS || !FIREBASE_PROJECT_ID) return false;
+    if (!FIREBASE_PROJECT_ID) return false;
     try {
-        await jwtVerify(cookie, JWKS, {
+        const header = decodeProtectedHeader(cookie);
+        const kid = header.kid;
+        if (!kid) return false;
+
+        const certs = await getSessionCookieCerts();
+        const cert = certs[kid];
+        if (!cert) return false;
+
+        const publicKey = await importX509(cert, "RS256");
+        await jwtVerify(cookie, publicKey, {
             issuer: `https://session.firebase.google.com/${FIREBASE_PROJECT_ID}`,
             audience: FIREBASE_PROJECT_ID,
         });
