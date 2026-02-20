@@ -17,6 +17,17 @@ export function toDate(value: any): Date {
   return isNaN(parsed.getTime()) ? new Date() : parsed;
 }
 
+/**
+ * Formats a date to YYYY-MM-DD string for native HTML date inputs
+ */
+export function toInputDate(date: any): string {
+  const d = toDate(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function formatDate(date: any, formatStr: "short" | "long" | "full" = "short") {
   if (!date) return "";
   const d = toDate(date);

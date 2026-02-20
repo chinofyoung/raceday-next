@@ -35,7 +35,7 @@ export function Step1Basic() {
                         <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Event Date</label>
                         <input
                             type="date"
-                            {...register("date", { valueAsDate: true })}
+                            {...register("date")}
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
                         {errors.date?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.date.message}</p>}
@@ -47,7 +47,7 @@ export function Step1Basic() {
                         <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Registration Deadline</label>
                         <input
                             type="date"
-                            {...register("registrationEndDate", { valueAsDate: true })}
+                            {...register("registrationEndDate")}
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
                         {errors.registrationEndDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.registrationEndDate.message}</p>}

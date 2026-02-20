@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { addDoc, collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useRouter } from "next/navigation";
+import { toInputDate } from "@/lib/utils";
 
 const STEPS = [
     "Basic Info",
@@ -47,8 +48,8 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
         defaultValues: initialData || {
             name: "",
             description: "",
-            date: new Date(),
-            registrationEndDate: new Date(),
+            date: toInputDate(new Date()),
+            registrationEndDate: toInputDate(new Date()),
             location: { name: "", address: "" },
             featuredImage: "",
             galleryImages: [],

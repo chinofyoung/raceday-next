@@ -31,7 +31,7 @@ export const eventCategorySchema = z.object({
 export const eventSchema = z.object({
     name: z.string().min(5, "Event name is too short"),
     description: z.string().min(20, "Description is too short"),
-    date: z.date({
+    date: z.coerce.date({
         message: "Event date is required",
     }),
     location: z.object({
@@ -50,8 +50,8 @@ export const eventSchema = z.object({
     }),
     earlyBird: z.object({
         enabled: z.boolean().default(false),
-        startDate: z.date().optional(),
-        endDate: z.date().optional(),
+        startDate: z.coerce.date().optional(),
+        endDate: z.coerce.date().optional(),
     }).optional().refine((data) => {
         if (data?.enabled) {
             return data.startDate && data.endDate;
@@ -69,7 +69,7 @@ export const eventSchema = z.object({
         message: "End date must be after start date",
         path: ["endDate"],
     }),
-    registrationEndDate: z.date(),
+    registrationEndDate: z.coerce.date(),
     timeline: z.array(timelineItemSchema),
     categories: z.array(eventCategorySchema).min(1, "Add at least one distance category"),
     status: z.enum(["draft", "published", "cancelled", "completed"]).default("draft"),

@@ -71,7 +71,7 @@ export function Step3Categories() {
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo Start Date</label>
                             <input
                                 type="date"
-                                {...useFormContext<EventFormValues>().register("earlyBird.startDate", { valueAsDate: true })}
+                                {...useFormContext<EventFormValues>().register("earlyBird.startDate")}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
                             {errors.earlyBird?.startDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.startDate.message}</p>}
@@ -80,7 +80,7 @@ export function Step3Categories() {
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo End Date</label>
                             <input
                                 type="date"
-                                {...useFormContext<EventFormValues>().register("earlyBird.endDate", { valueAsDate: true })}
+                                {...useFormContext<EventFormValues>().register("earlyBird.endDate")}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
                             {errors.earlyBird?.endDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.endDate.message}</p>}

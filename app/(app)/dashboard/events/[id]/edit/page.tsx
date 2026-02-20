@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import { Loader2, ArrowLeft, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { toInputDate } from "@/lib/utils";
 
 export default function EditEventPage() {
     const { role, loading: authLoading, user } = useAuth();
@@ -37,11 +38,12 @@ export default function EditEventPage() {
                 if (data.organizerId !== user?.uid && role !== "admin") {
                     setEventData(null);
                 } else {
-                    // Convert Firestore timestamps to JS Dates for the form
-                    const formattedData = {
+                    // Convert Firestore timestamps to YYYY-MM-DD strings for native inputs
+                    const formattedData: any = {
                         ...data,
                         id: snap.id,
-                        date: (data.date as any).toDate ? (data.date as any).toDate() : new Date(data.date as any),
+                        date: data.date ? toInputDate(data.date) : toInputDate(new Date()),
+                        registrationEndDate: data.registrationEndDate ? toInputDate(data.registrationEndDate) : toInputDate(new Date()),
                         // Ensure categories have numeric distance and distanceUnit (backward compat)
                         categories: (data.categories || []).map((cat: any) => ({
                             ...cat,
@@ -49,7 +51,17 @@ export default function EditEventPage() {
                             distanceUnit: cat.distanceUnit || "km",
                         })),
                     };
-                    setEventData(formattedData as any);
+
+                    // Convert Early Bird dates if they exist
+                    if (data.earlyBird) {
+                        formattedData.earlyBird = {
+                            ...data.earlyBird,
+                            startDate: data.earlyBird.startDate ? toInputDate(data.earlyBird.startDate) : undefined,
+                            endDate: data.earlyBird.endDate ? toInputDate(data.earlyBird.endDate) : undefined,
+                        };
+                    }
+
+                    setEventData(formattedData);
                 }
             }
         } catch (e) {

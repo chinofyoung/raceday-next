@@ -175,7 +175,7 @@ export default function RegistrationSuccessPage() {
 
             <div className="flex flex-col md:flex-row gap-4 pt-12">
                 <Button className="flex-1 h-14 bg-cta hover:bg-cta-hover border-none font-black italic uppercase tracking-widest shadow-xl shadow-cta/20 group" asChild>
-                    <Link href="/dashboard/events">
+                    <Link href="/dashboard">
                         Go to Dashboard <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </Button>
