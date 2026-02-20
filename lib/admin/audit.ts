@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 export type AdminActionType =
     | "approve_organizer"
     | "reject_organizer"
+    | "request_info_organizer"
     | "change_user_role"
     | "feature_event"
     | "unfeature_event"

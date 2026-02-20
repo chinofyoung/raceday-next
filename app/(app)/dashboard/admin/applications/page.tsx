@@ -2,26 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import {
-    UserCheck, UserX, Clock, Search, Filter,
-    ArrowLeft, Loader2, Mail, Phone, Calendar as CalendarIcon,
-    CheckCircle2, XCircle, MoreVertical, ExternalLink
+    UserCheck, ArrowLeft, Loader2, Download, Filter
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
 import { doc, updateDoc, Timestamp } from "firebase/firestore";
-import { format } from "date-fns";
 import { OrganizerApplication } from "@/types/user";
 import { cn, formatDate } from "@/lib/utils";
 import { logAdminAction } from "@/lib/admin/audit";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { exportToCSV } from "@/lib/admin/export";
-import { getOrganizerApplications } from "@/lib/services/applicationService";
+import { getOrganizerApplications, reviewApplication } from "@/lib/services/applicationService";
 import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
-import { Download } from "lucide-react";
+import { ApplicationCard } from "./components/ApplicationCard";
 
 export default function ApplicationsPage() {
     const { user: currentUser } = useAuth();
@@ -33,7 +28,6 @@ export default function ApplicationsPage() {
         pageSize: 20
     });
 
-    // Refresh when filter changes
     useEffect(() => {
         refresh();
     }, [filter]);
@@ -43,13 +37,9 @@ export default function ApplicationsPage() {
 
         setProcessing(app.id);
         try {
-            // 1. Update Application status
-            await updateDoc(doc(db, "organizerApplications", app.id), {
-                status: "approved",
-                reviewedAt: Timestamp.now()
-            });
+            await reviewApplication(app.id, "approved");
 
-            // 2. Update User role and organizer object
+            // Update User role
             const userRef = doc(db, "users", app.userId);
             await updateDoc(userRef, {
                 role: "organizer",
@@ -71,7 +61,7 @@ export default function ApplicationsPage() {
             refresh();
         } catch (error) {
             console.error("Error approving application:", error);
-            alert("Failed to approve application. Check console.");
+            alert("Failed to approve application.");
         } finally {
             setProcessing(null);
         }
@@ -83,11 +73,7 @@ export default function ApplicationsPage() {
 
         setProcessing(app.id);
         try {
-            await updateDoc(doc(db, "organizerApplications", app.id), {
-                status: "rejected",
-                rejectionReason: reason,
-                reviewedAt: Timestamp.now()
-            });
+            await reviewApplication(app.id, "rejected", { reason });
 
             // Log action
             if (currentUser) {
@@ -110,26 +96,49 @@ export default function ApplicationsPage() {
         }
     };
 
+    const handleNeedsInfo = async (app: OrganizerApplication) => {
+        const message = prompt("What information is missing?");
+        if (message === null) return;
+
+        setProcessing(app.id);
+        try {
+            await reviewApplication(app.id, "needs_info", { reason: message, adminNotes: `Info requested: ${message}` });
+
+            // Log action
+            if (currentUser) {
+                await logAdminAction(
+                    currentUser.uid,
+                    currentUser.displayName,
+                    "request_info_organizer",
+                    app.userId,
+                    app.organizerName,
+                    message
+                );
+            }
+
+            refresh();
+        } catch (error) {
+            console.error("Error requesting info:", error);
+            alert("Failed to request info.");
+        } finally {
+            setProcessing(null);
+        }
+    };
+
     const handleExport = () => {
-        const exportData = filteredApps.map(a => ({
+        const exportData = applications.map(a => ({
             Organizer: a.organizerName,
+            Type: a.organizerType,
             Email: a.contactEmail,
             Phone: a.phone,
+            TIN: a.organizerTIN || "",
+            Region: a.address?.region || "N/A",
+            Province: a.address?.province || "N/A",
             Status: a.status,
             Applied: formatDate(a.createdAt)
         }));
         exportToCSV(exportData, `raceday-applications-${formatDate(new Date())}`);
     };
-
-    const filteredApps = applications.filter(a => filter === "all" || a.status === filter);
-
-    if (loading) {
-        return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
-            </PageWrapper>
-        );
-    }
 
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10">
@@ -147,7 +156,7 @@ export default function ApplicationsPage() {
                     <p className="text-text-muted font-medium italic">Review and manage platform organizer requests.</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                    <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0">
+                    <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0 text-xs font-black uppercase italic">
                         <Download size={18} /> Export CSV
                     </Button>
                 </div>
@@ -156,7 +165,7 @@ export default function ApplicationsPage() {
             {/* Filters */}
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-surface/50 p-4 rounded-2xl border border-white/5">
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">
-                    {["all", "pending", "approved", "rejected"].map((s) => (
+                    {["all", "pending", "needs_info", "approved", "rejected"].map((s) => (
                         <button
                             key={s}
                             onClick={() => setFilter(s)}
@@ -165,14 +174,14 @@ export default function ApplicationsPage() {
                                 filter === s ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-text-muted hover:bg-white/10"
                             )}
                         >
-                            {s}
+                            {s.replace('_', ' ')}
                         </button>
                     ))}
                 </div>
             </div>
 
             {/* List */}
-            {filteredApps.length === 0 ? (
+            {applications.length === 0 && !loading ? (
                 <div className="py-20 text-center space-y-4">
                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-text-muted opacity-20">
                         <UserCheck size={48} />
@@ -184,90 +193,21 @@ export default function ApplicationsPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-6">
-                    {filteredApps.map((app) => (
-                        <Card key={app.id} className="p-8 bg-surface/40 border-white/5 hover:bg-surface/60 transition-all relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-12 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/5 transition-colors" />
-
-                            <div className="flex flex-col lg:flex-row justify-between gap-8 relative z-10">
-                                <div className="space-y-6 flex-1">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform shrink-0">
-                                            <UserCheck size={32} />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-3">
-                                                <h3 className="text-2xl font-black italic uppercase text-white leading-tight">{app.organizerName}</h3>
-                                                <Badge variant={app.status === "pending" ? "cta" : app.status === "approved" ? "success" : "destructive"} className="text-[10px] font-black uppercase italic tracking-widest px-3">
-                                                    {app.status}
-                                                </Badge>
-                                            </div>
-                                            <p className="text-text-muted font-medium italic">Applicant UID: {app.userId}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase text-text-muted tracking-widest italic">Contact Email</p>
-                                            <div className="flex items-center gap-2 text-white font-bold italic">
-                                                <Mail size={14} className="text-primary" />
-                                                {app.contactEmail}
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase text-text-muted tracking-widest italic">Phone Number</p>
-                                            <div className="flex items-center gap-2 text-white font-bold italic">
-                                                <Phone size={14} className="text-cta" />
-                                                {app.phone}
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase text-text-muted tracking-widest italic">Applied Date</p>
-                                            <div className="flex items-center gap-2 text-white font-bold italic">
-                                                <CalendarIcon size={14} className="text-blue-500" />
-                                                {formatDate(app.createdAt)}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {app.status === "rejected" && app.rejectionReason && (
-                                        <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
-                                            <p className="text-[10px] font-black uppercase text-red-500 tracking-widest italic mb-1">Rejection Reason</p>
-                                            <p className="text-sm font-medium italic text-text-muted">{app.rejectionReason}</p>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="flex flex-row lg:flex-col gap-3 justify-end items-end">
-                                    {app.status === "pending" ? (
-                                        <>
-                                            <Button
-                                                variant="primary"
-                                                className="w-full lg:w-40 font-black italic uppercase tracking-widest bg-success hover:bg-success/80 border-none shadow-lg shadow-success/20 h-12"
-                                                onClick={() => handleApprove(app)}
-                                                disabled={processing === app.id}
-                                            >
-                                                {processing === app.id ? <Loader2 className="animate-spin" size={18} /> : (
-                                                    <><CheckCircle2 size={18} className="mr-2" /> Approve</>
-                                                )}
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                className="w-full lg:w-40 font-black italic uppercase tracking-widest border-red-500/50 text-red-500 hover:bg-red-500/10 h-12"
-                                                onClick={() => handleReject(app)}
-                                                disabled={processing === app.id}
-                                            >
-                                                <XCircle size={18} className="mr-2" /> Reject
-                                            </Button>
-                                        </>
-                                    ) : (
-                                        <div className="text-[10px] font-black uppercase italic text-text-muted flex items-center gap-2">
-                                            Reviewed on {formatDate(app.reviewedAt) || "N/A"}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </Card>
+                    {applications.map((app) => (
+                        <ApplicationCard
+                            key={app.id}
+                            app={app}
+                            processing={processing === app.id}
+                            onApprove={handleApprove}
+                            onReject={handleReject}
+                            onNeedsInfo={handleNeedsInfo}
+                        />
                     ))}
+                    {loading && (
+                        <div className="py-10 flex justify-center">
+                            <Loader2 className="animate-spin text-primary" size={32} />
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -277,7 +217,7 @@ export default function ApplicationsPage() {
                     <Button
                         variant="outline"
                         size="lg"
-                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        className="min-w-48 gap-2 font-black italic uppercase tracking-widest text-xs"
                         onClick={() => loadMore()}
                         disabled={loading}
                     >
