@@ -20,20 +20,17 @@ import { getEvents } from "@/lib/services/eventService";
 import { toDate } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 
-import {
-    ResponsiveContainer,
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    PieChart,
-    Pie,
-    Cell,
-    LineChart,
-    Line
-} from "recharts";
+const RevenueBarChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.RevenueBarChart), {
+    ssr: false, loading: () => <div className="h-full w-full bg-white/5 animate-pulse rounded-xl" />
+});
+
+const UsersPieChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.UsersPieChart), {
+    ssr: false, loading: () => <div className="h-full w-full bg-white/5 animate-pulse rounded-xl" />
+});
+
+const RegistrationsLineChart = dynamic(() => import("@/components/admin/AnalyticsCharts").then(mod => mod.RegistrationsLineChart), {
+    ssr: false, loading: () => <div className="h-full w-full bg-white/5 animate-pulse rounded-xl" />
+});
 
 export default function AnalyticsPage() {
     const [loading, setLoading] = useState(true);
@@ -169,46 +166,7 @@ export default function AnalyticsPage() {
                         <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Monthly Gross Revenue (PHP)</p>
                     </div>
                     <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={revenueData}>
-                                <defs>
-                                    <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.8} />
-                                        <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0.2} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis
-                                    dataKey="name"
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
-                                />
-                                <YAxis
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
-                                />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{
-                                        backgroundColor: '#1f2937',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '12px',
-                                        fontSize: '12px',
-                                        fontWeight: 'bold',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-                                        color: '#fff'
-                                    }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
-                                <Bar dataKey="revenue" fill="url(#revenueGradient)" radius={[6, 6, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <RevenueBarChart data={revenueData} />
                     </div>
                 </Card>
 
@@ -221,36 +179,8 @@ export default function AnalyticsPage() {
                         <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Active Users by Role</p>
                     </div>
                     <div className="h-[300px] flex items-center justify-center">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={userDistribution}
-                                    cx="50%"
-                                    cy="50%"
-                                    innerRadius={60}
-                                    outerRadius={80}
-                                    paddingAngle={5}
-                                    dataKey="value"
-                                >
-                                    {userDistribution.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: '#1f2937',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '12px',
-                                        fontSize: '12px',
-                                        fontWeight: 'bold',
-                                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-                                        color: '#fff'
-                                    }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                        <div className="space-y-4 min-w-[120px]">
+                        <UsersPieChart data={userDistribution} />
+                        <div className="space-y-4 min-w-[120px] ml-4">
                             {userDistribution.map((entry, index) => (
                                 <div key={entry.name} className="flex items-center gap-3">
                                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
@@ -271,51 +201,7 @@ export default function AnalyticsPage() {
                         <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Signups over time</p>
                     </div>
                     <div className="h-[300px]">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={revenueData}>
-                                <defs>
-                                    <linearGradient id="lineOverlay" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--color-cta)" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="var(--color-cta)" stopOpacity={0} />
-                                    </linearGradient>
-                                </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis
-                                    dataKey="name"
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
-                                />
-                                <YAxis
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: '#1f2937',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        borderRadius: '12px',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold',
-                                        color: '#fff'
-                                    }}
-                                    itemStyle={{ color: '#fff' }}
-                                />
-                                <Line
-                                    type="monotone"
-                                    dataKey="registrations"
-                                    stroke="var(--color-cta)"
-                                    strokeWidth={4}
-                                    dot={{ fill: 'var(--color-cta)', strokeWidth: 2, r: 4 }}
-                                    activeDot={{ r: 6, strokeWidth: 0 }}
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        <RegistrationsLineChart data={revenueData} />
                     </div>
                 </Card>
 

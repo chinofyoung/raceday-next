@@ -15,14 +15,16 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { getEvents } from "@/lib/services/eventService";
 import { getRegistrations, getRegistrationsWithEvents } from "@/lib/services/registrationService";
+import { computeProfileCompletion } from "@/lib/utils";
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0 });
     const [items, setItems] = useState<any[]>([]);
+    const [error, setError] = useState<string | null>(null);
 
-    const completion = user?.profileCompletion || 0;
+    const completion = computeProfileCompletion(user as any);
     const isOrganizer = role === "organizer" || role === "admin";
 
     useEffect(() => {
@@ -33,19 +35,19 @@ export default function DashboardPage() {
 
     const fetchDashboardData = async () => {
         setLoading(true);
+        setError(null);
         try {
             if (isOrganizer) {
                 // Fetch Organizer Stats (Stage 3.1: Parallelize)
                 const [eventsResult, regsResult] = await Promise.all([
                     getEvents({ organizerId: user?.uid, limitCount: 100, status: "all" }),
-                    getRegistrations({ status: "paid", limitCount: 1000 })
+                    getRegistrations({ organizerId: user?.uid, status: "paid", limitCount: 100 })
                 ]);
 
                 const eventsList = eventsResult.items;
                 const activeEvents = eventsList.filter((e: any) => e.status === "published");
-                const myEventsIds = eventsList.map((e: any) => e.id);
-                // Filter registrations for this organizer's events (Stage 1.1)
-                const myRegs = regsResult.items.filter((r: any) => myEventsIds.includes(r.eventId));
+
+                const myRegs = regsResult.items;
                 const totalRevenue = myRegs.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
 
                 setStats({
@@ -70,6 +72,7 @@ export default function DashboardPage() {
             }
         } catch (error) {
             console.error("Error fetching dashboard data:", error);
+            setError("Failed to load your dashboard. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -79,6 +82,19 @@ export default function DashboardPage() {
         return (
             <PageWrapper className="flex items-center justify-center min-h-[60vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
+            </PageWrapper>
+        );
+    }
+
+    if (error) {
+        return (
+            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center space-y-4">
+                    <p className="text-red-400 font-bold italic uppercase">{error}</p>
+                    <Button variant="outline" onClick={fetchDashboardData}>
+                        Try Again
+                    </Button>
+                </div>
             </PageWrapper>
         );
     }
@@ -181,7 +197,7 @@ export default function DashboardPage() {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-4">
                                                     <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors overflow-hidden">
-                                                        {event.featuredImage ? <img src={event.featuredImage} className="w-full h-full object-cover" /> : <Calendar size={24} />}
+                                                        {event.featuredImage ? <img src={event.featuredImage} alt={`${event.name} featured image`} className="w-full h-full object-cover" /> : <Calendar size={24} />}
                                                     </div>
                                                     <div>
                                                         <h4 className="font-bold italic uppercase text-white leading-tight">{event.name}</h4>
@@ -219,7 +235,7 @@ export default function DashboardPage() {
                                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors shrink-0 overflow-hidden relative">
-                                                        {reg.event?.featuredImage && <img src={reg.event.featuredImage} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
+                                                        {reg.event?.featuredImage && <img src={reg.event.featuredImage} alt={`${reg.event.name} featured image`} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
                                                         <Calendar size={32} className="relative z-10" />
                                                     </div>
                                                     <div className="space-y-1">

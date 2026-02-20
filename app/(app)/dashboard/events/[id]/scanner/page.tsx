@@ -13,7 +13,19 @@ import {
     CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft
 } from "lucide-react";
 import Link from "next/link";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import dynamic from "next/dynamic";
+
+const QRScanner = dynamic(
+    () => import("@/components/shared/QRScannerWrapper"),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="w-full aspect-square bg-black/40 rounded-2xl flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+        ),
+    }
+);
 import { cn } from "@/lib/utils";
 
 export default function EventScannerPage() {
@@ -24,21 +36,7 @@ export default function EventScannerPage() {
     const [isUpdating, setIsUpdating] = useState(false);
     const scannerRef = useRef<any>(null);
 
-    useEffect(() => {
-        scannerRef.current = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            /* verbose= */ false
-        );
 
-        scannerRef.current.render(onScanSuccess, onScanFailure);
-
-        return () => {
-            if (scannerRef.current) {
-                scannerRef.current.clear();
-            }
-        };
-    }, []);
 
     async function onScanSuccess(decodedText: string) {
         try {
@@ -130,7 +128,7 @@ export default function EventScannerPage() {
                 {/* Scanner View */}
                 <div className="lg:col-span-2 space-y-6">
                     <Card className="p-4 bg-black border-white/10 overflow-hidden relative group">
-                        <div id="reader" className="w-full aspect-square bg-surface/20 rounded-xl overflow-hidden" />
+                        <QRScanner onScanSuccess={onScanSuccess} onScanFailure={onScanFailure} scannerRef={scannerRef} />
                         {!scanResult && (
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                 <Scan className="text-primary opacity-20 animate-ping" size={120} />

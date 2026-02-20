@@ -5,8 +5,7 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { EventForm } from "@/components/forms/event/EventForm";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter, useParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { getEventById } from "@/lib/services/eventService";
 import { RaceEvent } from "@/types/event";
 import { Card } from "@/components/ui/Card";
 import { Loader2, ArrowLeft, ShieldAlert } from "lucide-react";
@@ -30,40 +29,42 @@ export default function EditEventPage() {
     const fetchEvent = async () => {
         setLoading(true);
         try {
-            const docRef = doc(db, "events", id as string);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                const data = snap.data() as RaceEvent;
-                // Check if user is the organizer
-                if (data.organizerId !== user?.uid && role !== "admin") {
-                    setEventData(null);
-                } else {
-                    // Convert Firestore timestamps to YYYY-MM-DD strings for native inputs
-                    const formattedData: any = {
-                        ...data,
-                        id: snap.id,
-                        date: data.date ? toInputDate(data.date) : toInputDate(new Date()),
-                        registrationEndDate: data.registrationEndDate ? toInputDate(data.registrationEndDate) : toInputDate(new Date()),
-                        // Ensure categories have numeric distance and distanceUnit (backward compat)
-                        categories: (data.categories || []).map((cat: any) => ({
-                            ...cat,
-                            distance: typeof cat.distance === "string" ? (parseFloat(cat.distance) || 0) : cat.distance,
-                            distanceUnit: cat.distanceUnit || "km",
-                        })),
-                    };
+            const data = await getEventById(id as string);
 
-                    // Convert Early Bird dates if they exist
-                    if (data.earlyBird) {
-                        formattedData.earlyBird = {
-                            ...data.earlyBird,
-                            startDate: data.earlyBird.startDate ? toInputDate(data.earlyBird.startDate) : undefined,
-                            endDate: data.earlyBird.endDate ? toInputDate(data.earlyBird.endDate) : undefined,
-                        };
-                    }
-
-                    setEventData(formattedData);
-                }
+            if (!data) {
+                setEventData(null);
+                return;
             }
+
+            // Check if user is the organizer
+            if (data.organizerId !== user?.uid && role !== "admin") {
+                setEventData(null);
+                return;
+            }
+
+            // Convert Firestore timestamps to YYYY-MM-DD strings for native inputs
+            const formattedData: any = {
+                ...data,
+                date: data.date ? toInputDate(data.date) : toInputDate(new Date()),
+                registrationEndDate: data.registrationEndDate ? toInputDate(data.registrationEndDate) : toInputDate(new Date()),
+                // Ensure categories have numeric distance and distanceUnit (backward compat)
+                categories: (data.categories || []).map((cat: any) => ({
+                    ...cat,
+                    distance: typeof cat.distance === "string" ? (parseFloat(cat.distance) || 0) : cat.distance,
+                    distanceUnit: cat.distanceUnit || "km",
+                })),
+            };
+
+            // Convert Early Bird dates if they exist
+            if (data.earlyBird) {
+                formattedData.earlyBird = {
+                    ...data.earlyBird,
+                    startDate: data.earlyBird.startDate ? toInputDate(data.earlyBird.startDate) : undefined,
+                    endDate: data.earlyBird.endDate ? toInputDate(data.earlyBird.endDate) : undefined,
+                };
+            }
+
+            setEventData(formattedData);
         } catch (e) {
             console.error("Error fetching event:", e);
         } finally {

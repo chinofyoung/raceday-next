@@ -98,3 +98,15 @@ export const eventSchema = z.object({
 });
 
 export type EventFormValues = z.infer<typeof eventSchema>;
+
+// EventFormInput = what the form works with — dates are strings (YYYY-MM-DD)
+export type EventFormInput = Omit<EventFormValues, "date" | "registrationEndDate" | "earlyBird"> & {
+    id?: string;
+    date: string;
+    registrationEndDate: string;
+    earlyBird?: Omit<NonNullable<EventFormValues["earlyBird"]>, "startDate" | "endDate"> & {
+        enabled: boolean;
+        startDate?: string;
+        endDate?: string;
+    };
+};

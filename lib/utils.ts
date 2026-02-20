@@ -1,5 +1,26 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { User } from '@/types/user';
+
+export function computeProfileCompletion(user: User | null): number {
+  if (!user) return 0;
+
+  const checks = [
+    !!user.displayName,             // 10%
+    !!user.email,                   // 10%
+    !!user.phone,                   // 15%
+    !!user.photoURL,                // 5%
+    !!user.address?.street,         // 10%
+    !!user.address?.city,           // 10%
+    !!user.tShirtSize,              // 10%
+    !!user.emergencyContact?.name,  // 15%
+    !!user.emergencyContact?.phone, // 10%
+    !!user.medicalConditions,       // 5%
+  ];
+
+  const weights = [10, 10, 15, 5, 10, 10, 10, 15, 10, 5];
+  return checks.reduce((total, check, i) => total + (check ? weights[i] : 0), 0);
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

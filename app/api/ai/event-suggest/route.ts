@@ -1,11 +1,51 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { adminAuth } from "@/lib/firebase/admin";
+
+// Module-level rate limiter (persists per serverless instance)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 10;      // max 10 requests
+const WINDOW_MS = 60_000;   // per 1 minute
+
+function checkRateLimit(ip: string): boolean {
+    const now = Date.now();
+    const entry = rateLimitMap.get(ip);
+
+    if (!entry || now > entry.resetAt) {
+        rateLimitMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
+        return true;
+    }
+
+    if (entry.count >= RATE_LIMIT) return false;
+
+    entry.count++;
+    return true;
+}
 
 const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export async function POST(req: Request) {
+    // 1. Authenticate
+    const authHeader = req.headers.get("authorization");
+    const idToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+
+    if (!idToken) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    try {
+        await adminAuth.verifyIdToken(idToken);
+    } catch {
+        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+    }
+
+    const ip = req.headers.get("x-forwarded-for") ?? "unknown";
+    if (!checkRateLimit(ip)) {
+        return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
+
     try {
         const { prompt, type } = await req.json();
 

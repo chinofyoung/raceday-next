@@ -1,29 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { useFormContext, useFieldArray, Controller } from "react-hook-form";
+import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { EventFormValues } from "@/lib/validations/event";
 import { Plus, Trash2, Map, Shirt, Clock, Ruler, DollarSign, CloudUpload, Info } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
-import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";
-import { RouteMapViewer } from "@/components/shared/RouteMapViewer";
+import dynamic from "next/dynamic";
+
+const RouteMapViewer = dynamic(
+    () => import("@/components/shared/RouteMapViewer").then((mod) => mod.RouteMapViewer),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="w-full h-full flex items-center justify-center bg-black/20 rounded-3xl">
+                <div className="text-center space-y-2 opacity-40">
+                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Loading map...</p>
+                </div>
+            </div>
+        ),
+    }
+);
 
 export function Step3Categories() {
-    const { control, formState: { errors } } = useFormContext<EventFormValues>();
+    const { control, register, formState: { errors } } = useFormContext<EventFormValues>();
     const { fields, append, remove } = useFieldArray({
         control,
         name: "categories"
     });
 
-    const isEarlyBirdEnabled = useFormContext<EventFormValues>().watch("earlyBird.enabled");
+    const isEarlyBirdEnabled = useWatch({ control, name: "earlyBird.enabled" });
 
     const addCategory = () => {
         append({
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             name: "",
             distance: 0,
             distanceUnit: "km",
@@ -56,7 +70,7 @@ export function Step3Categories() {
                         <label className="flex items-center gap-3 cursor-pointer">
                             <input
                                 type="checkbox"
-                                {...useFormContext<EventFormValues>().register("earlyBird.enabled")}
+                                {...register("earlyBird.enabled")}
                                 className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
                             />
                             <span className="text-sm font-black italic uppercase tracking-wide text-white">Enable Early Bird Promo</span>
@@ -71,7 +85,7 @@ export function Step3Categories() {
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo Start Date</label>
                             <input
                                 type="date"
-                                {...useFormContext<EventFormValues>().register("earlyBird.startDate")}
+                                {...register("earlyBird.startDate")}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
                             {errors.earlyBird?.startDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.startDate.message}</p>}
@@ -80,7 +94,7 @@ export function Step3Categories() {
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo End Date</label>
                             <input
                                 type="date"
-                                {...useFormContext<EventFormValues>().register("earlyBird.endDate")}
+                                {...register("earlyBird.endDate")}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
                             {errors.earlyBird?.endDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.endDate.message}</p>}
@@ -129,10 +143,16 @@ export function Step3Categories() {
 
 function CategoryItem({ index, remove, field }: { index: number, remove: (index: number) => void, field: any }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<EventFormValues>();
-    const [inclusionsText, setInclusionsText] = useState(field.inclusions?.join(", ") || "");
 
-    const handleInclusionsBlur = () => {
-        const items = inclusionsText.split(",").map((item: string) => item.trim()).filter(Boolean);
+    // Watch the actual form value instead of local state
+    const currentInclusions = useWatch({ control, name: `categories.${index}.inclusions` }) as string[] | undefined;
+
+    // Derive the display string from the form value (always in sync)
+    const inclusionsText = (currentInclusions || []).join(", ");
+
+    const handleInclusionsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        // Parse comma-separated text and sync to form
+        const items = e.target.value.split(",").map((item: string) => item.trim()).filter(Boolean);
         setValue(`categories.${index}.inclusions`, items, { shouldValidate: true });
     };
 
@@ -156,6 +176,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                     onClick={() => remove(index)}
                     className="w-10 h-10 rounded-xl flex items-center justify-center text-text-muted hover:text-red-500 hover:bg-red-500/10 transition-all"
                     title="Remove category"
+                    aria-label={`Remove category ${index + 1}`}
                 >
                     <Trash2 size={20} />
                 </button>
@@ -259,8 +280,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                         placeholder="List inclusions separated by commas (e.g. Finisher Medal, Shirt, Bib, Food)"
                         className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-text text-sm focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all min-h-[100px] resize-none"
                         value={inclusionsText}
-                        onChange={(e) => setInclusionsText(e.target.value)}
-                        onBlur={handleInclusionsBlur}
+                        onChange={handleInclusionsChange}
                     />
                     <p className="text-[10px] text-text-muted italic font-medium opacity-50 ml-1">
                         Tip: Separate items with commas to display them as a list on the event page.

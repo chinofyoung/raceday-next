@@ -12,12 +12,17 @@ import {
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
 import { collection, query, where, getDocs, limit, orderBy } from "firebase/firestore";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { format, subDays, startOfDay } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
 import { getEvents } from "@/lib/services/eventService";
 import { getOrganizerApplications } from "@/lib/services/applicationService";
+import dynamic from "next/dynamic";
+
+const AdminOverviewChart = dynamic(
+    () => import("@/components/admin/AdminOverviewChart"),
+    { ssr: false, loading: () => <div className="h-full w-full bg-white/5 animate-pulse rounded-xl" /> }
+);
 
 export default function AdminDashboardPage() {
     const [loading, setLoading] = useState(true);
@@ -154,54 +159,7 @@ export default function AdminDashboardPage() {
                             </div>
                         </div>
                         <div className="h-[300px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={chartData}>
-                                    <defs>
-                                        <linearGradient id="colorRegs" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                    <XAxis
-                                        dataKey="name"
-                                        stroke="rgba(255,255,255,0.3)"
-                                        fontSize={10}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
-                                    />
-                                    <YAxis
-                                        stroke="rgba(255,255,255,0.3)"
-                                        fontSize={10}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
-                                    />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: '#1f2937',
-                                            border: '1px solid rgba(255,255,255,0.1)',
-                                            borderRadius: '12px'
-                                        }}
-                                        itemStyle={{
-                                            color: 'var(--color-primary)',
-                                            fontWeight: 'bold',
-                                            fontStyle: 'italic',
-                                            textTransform: 'uppercase',
-                                            fontSize: '10px'
-                                        }}
-                                    />
-                                    <Area
-                                        type="monotone"
-                                        dataKey="registrations"
-                                        stroke="var(--color-primary)"
-                                        fillOpacity={1}
-                                        fill="url(#colorRegs)"
-                                        strokeWidth={4}
-                                    />
-                                </AreaChart>
-                            </ResponsiveContainer>
+                            <AdminOverviewChart data={chartData} />
                         </div>
                     </Card>
 
@@ -294,7 +252,7 @@ export default function AdminDashboardPage() {
                                     <div className="flex gap-4">
                                         <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/5">
                                             {event.featuredImage ? (
-                                                <img src={event.featuredImage} className="w-full h-full object-cover" />
+                                                <img src={event.featuredImage} alt={`${event.name} featured image`} className="w-full h-full object-cover" />
                                             ) : (
                                                 <div className="w-full h-full bg-white/5 flex items-center justify-center text-text-muted">
                                                     <Calendar size={16} />

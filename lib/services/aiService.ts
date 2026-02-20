@@ -1,3 +1,5 @@
+import { auth } from "@/lib/firebase/config";
+
 export interface AISuggestion {
     title: string;
     description: string;
@@ -8,10 +10,20 @@ export interface AISuggestion {
     }[];
 }
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+    const user = auth.currentUser;
+    if (!user) return {};
+    const token = await user.getIdToken();
+    return { Authorization: `Bearer ${token}` };
+}
+
 export async function getAISuggestions(prompt: string): Promise<AISuggestion> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            ...(await getAuthHeaders()),
+        },
         body: JSON.stringify({ prompt, type: "complete" }),
     });
 
@@ -28,7 +40,10 @@ export async function getAISuggestions(prompt: string): Promise<AISuggestion> {
 export async function getAITimeline(eventInfo: string): Promise<{ timeline: { time: string; activity: string; description: string }[] }> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            ...(await getAuthHeaders()),
+        },
         body: JSON.stringify({ prompt: eventInfo, type: "timeline" }),
     });
 
@@ -43,7 +58,10 @@ export async function getAITimeline(eventInfo: string): Promise<{ timeline: { ti
 export async function improveText(text: string): Promise<{ improvedText: string }> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            ...(await getAuthHeaders()),
+        },
         body: JSON.stringify({ prompt: text, type: "improve" }),
     });
 

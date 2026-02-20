@@ -18,19 +18,21 @@ import { Registration } from "@/types/registration";
 export interface GetRegistrationsOptions {
     userId?: string;
     eventId?: string;
+    organizerId?: string;
     status?: string | "all";
     limitCount?: number;
     lastDoc?: DocumentSnapshot;
 }
 
 export async function getRegistrations(options: GetRegistrationsOptions = {}) {
-    const { userId, eventId, status = "all", limitCount = 20, lastDoc } = options;
+    const { userId, eventId, organizerId, status = "all", limitCount = 20, lastDoc } = options;
 
     try {
         let q = query(collection(db, "registrations"));
 
         if (userId) q = query(q, where("userId", "==", userId));
         if (eventId) q = query(q, where("eventId", "==", eventId));
+        if (organizerId) q = query(q, where("organizerId", "==", organizerId));
         if (status !== "all") q = query(q, where("status", "==", status));
 
         q = query(q, orderBy("createdAt", "desc"));

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { eventSchema, EventFormValues } from "@/lib/validations/event";
+import { eventSchema, EventFormValues, EventFormInput } from "@/lib/validations/event";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ import { Step4Timeline } from "./Step4Timeline";
 import { Step5Vanity } from "./Step5Vanity";
 import { Step6Review } from "./Step6Review";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useCallback } from "react";
 import { addDoc, collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useRouter } from "next/navigation";
@@ -31,7 +32,7 @@ const STEPS = [
 ];
 
 interface EventFormProps {
-    initialData?: any;
+    initialData?: EventFormInput;
     isEditing?: boolean;
 }
 
@@ -43,7 +44,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
     const [loading, setLoading] = useState(false);
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
 
-    const methods = useForm<EventFormValues>({
+    const methods = useForm<EventFormInput>({
         resolver: zodResolver(eventSchema) as any,
         defaultValues: initialData || {
             name: "",
@@ -63,8 +64,12 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
         mode: "onChange"
     });
 
-    const { handleSubmit, trigger, watch } = methods;
-    const values = watch();
+    const { handleSubmit, trigger, control } = methods;
+    const [watchName, watchDescription, watchDate, watchFeaturedImage, watchCategories, watchTimeline, watchVanity, watchLocationName, watchLocationAddress] =
+        useWatch({
+            control,
+            name: ["name", "description", "date", "featuredImage", "categories", "timeline", "vanityRaceNumber", "location.name", "location.address"],
+        });
 
     const nextStep = async () => {
         // Validate current step before proceeding
@@ -92,7 +97,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
         }
     };
 
-    const saveDraft = async () => {
+    const saveDraft = useCallback(async () => {
         if (!user) {
             toast.error("You must be logged in to save.", {
                 description: "Session may have expired. Please refresh."
@@ -128,14 +133,26 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                 description: "Please check your connection and try again."
             });
         }
-    };
+    }, [user, draftId, methods]);
 
-    const onSubmit = async (data: EventFormValues) => {
+    const onSubmit = async (data: EventFormInput) => {
         if (!user) return;
         setLoading(true);
+
+        const dataTransform: EventFormValues = {
+            ...data,
+            date: new Date(data.date),
+            registrationEndDate: new Date(data.registrationEndDate),
+            earlyBird: data.earlyBird ? {
+                enabled: data.earlyBird.enabled,
+                startDate: data.earlyBird.startDate ? new Date(data.earlyBird.startDate) : undefined,
+                endDate: data.earlyBird.endDate ? new Date(data.earlyBird.endDate) : undefined,
+            } : undefined
+        };
+
         try {
             const payload = {
-                ...data,
+                ...dataTransform,
                 organizerId: user.uid,
                 organizerName: user.displayName || "Unknown Organizer",
                 status: "published" as const,
@@ -151,8 +168,11 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                 });
             }
             router.push("/dashboard/events");
-        } catch (e) {
+        } catch (e: any) {
             console.error("Error publishing event:", e);
+            toast.error("Failed to publish event.", {
+                description: e?.message || "Please check your connection and try again."
+            });
         } finally {
             setLoading(false);
         }
@@ -167,11 +187,11 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                         const isClickable = i <= maxStepReached;
                         const isActive = currentStep === i;
                         const isAccomplished = (() => {
-                            if (i === 0) return !!(values.name?.length >= 5 && values.description?.length >= 20 && values.date && values.location?.name && values.location?.address);
-                            if (i === 1) return !!values.featuredImage;
-                            if (i === 2) return (values.categories?.length || 0) > 0;
-                            if (i === 3) return (values.timeline?.length || 0) > 0;
-                            if (i === 4) return i < currentStep || (isEditing && values.vanityRaceNumber);
+                            if (i === 0) return !!(watchName?.length >= 5 && watchDescription?.length >= 20 && watchDate && watchLocationName && watchLocationAddress);
+                            if (i === 1) return !!watchFeaturedImage;
+                            if (i === 2) return (watchCategories?.length || 0) > 0;
+                            if (i === 3) return (watchTimeline?.length || 0) > 0;
+                            if (i === 4) return i < currentStep || (isEditing && watchVanity);
                             return false;
                         })();
 

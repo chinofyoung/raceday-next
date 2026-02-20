@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { signOutUser } from "@/lib/firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const NAV_LINKS = [
     { label: "Events", href: "/events" },
@@ -27,12 +27,27 @@ export function Navbar() {
         router.push("/");
     };
 
+    const pathname = usePathname();
+
     React.useEffect(() => {
+        setIsOpen(false);
+    }, [pathname]);
+
+    React.useEffect(() => {
+        let rafId: number;
+
         const handleScroll = () => {
-            setIsScrolled(window.scrollY > 10);
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(() => {
+                setIsScrolled(window.scrollY > 10);
+            });
         };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            cancelAnimationFrame(rafId);
+        };
     }, []);
 
     return (
@@ -85,7 +100,7 @@ export function Navbar() {
                             <Link href="/dashboard" className="flex items-center gap-2 group/db">
                                 <div className="w-8 h-8 rounded-full border border-primary/20 bg-surface overflow-hidden group-hover/db:border-primary transition-all">
                                     {user?.photoURL ? (
-                                        <img src={user.photoURL} alt="" className="w-full h-full object-cover" />
+                                        <img src={user.photoURL} alt={`${user.displayName || 'User'}'s profile photo`} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10 italic font-bold text-xs">
                                             {user?.displayName?.[0] || "U"}
@@ -100,6 +115,7 @@ export function Navbar() {
                                 onClick={handleSignOut}
                                 className="p-2 text-text-muted hover:text-red-500 transition-colors"
                                 title="Sign Out"
+                                aria-label="Sign Out"
                             >
                                 <LogOut size={18} />
                             </button>
@@ -115,6 +131,9 @@ export function Navbar() {
                 <button
                     className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
                     onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-controls="mobile-nav-menu"
+                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
                 >
                     {isOpen ? <X /> : <Menu />}
                 </button>
@@ -122,7 +141,7 @@ export function Navbar() {
 
             {/* Mobile Nav */}
             {isOpen && (
-                <div className="md:hidden absolute top-full left-4 right-4 mt-2 bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-top-4">
+                <div id="mobile-nav-menu" className="md:hidden absolute top-full left-4 right-4 mt-2 bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-top-4">
                     <div className="flex flex-col gap-4">
                         {NAV_LINKS.map((link) => (
                             <Link

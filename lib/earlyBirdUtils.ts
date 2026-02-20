@@ -1,5 +1,5 @@
 import { RaceEvent, EventCategory } from "@/types/event";
-import { Timestamp } from "firebase/firestore";
+import { toDate } from "@/lib/utils";
 
 /**
  * Checks if the early bird promo is currently active for an event.
@@ -66,16 +66,3 @@ export function isRegistrationClosed(event: RaceEvent): boolean {
     return now > endDate;
 }
 
-/**
- * Helper to convert Firebase Timestamp or Date to Date object
- */
-function toDate(date: Timestamp | Date | string | number): Date {
-    if (!date) return new Date(); // Fallback, shouldn't happen with valid data
-    if (date instanceof Timestamp) {
-        return date.toDate();
-    }
-    if (date instanceof Date) {
-        return date;
-    }
-    return new Date(date);
-}

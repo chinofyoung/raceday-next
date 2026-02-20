@@ -17,7 +17,7 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
 export function ProfileForm() {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
     const isFirstRender = useRef(true);
 
@@ -62,6 +62,8 @@ export function ProfileForm() {
                 profileCompletion: completion,
                 updatedAt: serverTimestamp(),
             });
+
+            await refreshUser();
 
             // Reset form with current values to clear dirty state
             reset(data);
@@ -119,9 +121,10 @@ export function ProfileForm() {
                         <div className="relative group">
                             <ImageUpload
                                 value={user?.photoURL || ""}
-                                onChange={(url) => {
+                                onChange={async (url) => {
                                     if (user) {
-                                        updateDoc(doc(db, "users", user.uid), { photoURL: url });
+                                        await updateDoc(doc(db, "users", user.uid), { photoURL: url });
+                                        await refreshUser();
                                     }
                                 }}
                                 aspectRatio="square"

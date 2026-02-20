@@ -49,35 +49,31 @@ export async function POST(req: Request) {
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
-            // Generate Bib & QR for free registration
-            const { raceNumber, qrCodeUrl } = await generateBibAndQR(
-                "temp-id", // will replace after adding doc
-                registrationData.eventId,
-                registrationData.categoryId,
-                registrationData.participantInfo.name,
-                registrationData.vanityNumber
-            );
-
+            // 1. Create the registration document first (no QR yet)
             const regRef = await addDoc(collection(db, "registrations"), {
                 ...registrationData,
-                status: "paid", // Free = Paid
+                organizerId: eventData.organizerId,
+                status: "paid",
                 paymentStatus: "free",
-                raceNumber,
-                qrCodeUrl,
                 paidAt: serverTimestamp(),
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             });
 
-            // Update QR code with real ID
-            const { qrCodeUrl: realQr } = await generateBibAndQR(
-                regRef.id,
+            // 2. Generate bib + QR with the REAL document ID (one time only)
+            const { raceNumber, qrCodeUrl } = await generateBibAndQR(
+                regRef.id,                          // ← real ID now
                 registrationData.eventId,
                 registrationData.categoryId,
                 registrationData.participantInfo.name,
                 registrationData.vanityNumber
             );
-            await updateDoc(doc(db, "registrations", regRef.id), { qrCodeUrl: realQr });
+
+            // 3. Update with bib + QR in a single write
+            await updateDoc(doc(db, "registrations", regRef.id), {
+                raceNumber,
+                qrCodeUrl,
+            });
 
             return NextResponse.json({
                 checkoutUrl: null,
@@ -89,6 +85,7 @@ export async function POST(req: Request) {
         // 1. Create registration doc in Firestore (pending status)
         const regRef = await addDoc(collection(db, "registrations"), {
             ...registrationData,
+            organizerId: eventData.organizerId,
             status: "pending",
             paymentStatus: "unpaid",
             createdAt: serverTimestamp(),
@@ -133,7 +130,9 @@ export async function POST(req: Request) {
             invoiceData.customer.mobile_number = registrationData.participantInfo.phone;
         }
 
-        console.log("Xendit Invoice Data:", JSON.stringify(invoiceData, null, 2));
+        if (process.env.NODE_ENV === "development") {
+            console.log("Xendit Invoice Data:", JSON.stringify(invoiceData, null, 2));
+        }
 
         const response = await fetch("https://api.xendit.co/v2/invoices", {
             method: "POST",
@@ -145,7 +144,9 @@ export async function POST(req: Request) {
         });
 
         const result = await response.json();
-        console.log("Xendit API Raw Result:", JSON.stringify(result, null, 2));
+        if (process.env.NODE_ENV === "development") {
+            console.log("Xendit API Raw Result:", JSON.stringify(result, null, 2));
+        }
 
         if (!response.ok) {
             console.error("Xendit Error:", result);

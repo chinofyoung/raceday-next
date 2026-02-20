@@ -7,6 +7,7 @@ import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { signInWithGoogle } from "@/lib/firebase/auth";
+import { auth } from "@/lib/firebase/config";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default function LoginPage() {
@@ -17,6 +18,17 @@ export default function LoginPage() {
         setLoading(true);
         try {
             const { isNewUser } = await signInWithGoogle();
+            const idToken = await auth.currentUser?.getIdToken();
+
+            if (idToken) {
+                // Set a secure, httpOnly cookie via an API route
+                await fetch("/api/auth/session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idToken }),
+                });
+            }
+
             if (isNewUser) {
                 router.push("/dashboard/profile?setup=true");
             } else {

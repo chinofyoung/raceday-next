@@ -57,6 +57,9 @@ export const signInWithGoogle = async () => {
 export const signOutUser = async () => {
     try {
         await signOut(auth);
+
+        // Clear session cookie
+        await fetch("/api/auth/session", { method: "DELETE" });
     } catch (error) {
         console.error("Error signing out:", error);
         throw error;

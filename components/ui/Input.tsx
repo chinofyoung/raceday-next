@@ -31,6 +31,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                             error && "border-red-500/50 focus:border-red-500/50 focus:ring-red-500/5",
                             className
                         )}
+                        aria-describedby={error && props.name ? `${props.name}-error` : undefined}
+                        aria-invalid={!!error}
                         {...props}
                     />
                 </div>
@@ -38,7 +40,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     <p className="text-[10px] text-text-muted ml-1 italic opacity-50">{description}</p>
                 )}
                 {error && (
-                    <p className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">{error}</p>
+                    <p id={props.name ? `${props.name}-error` : undefined} className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">{error}</p>
                 )}
             </div>
         );

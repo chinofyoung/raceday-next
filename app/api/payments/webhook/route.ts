@@ -6,14 +6,18 @@ import { generateBibAndQR } from "@/lib/bibUtils";
 
 export async function POST(req: Request) {
     try {
+        const token = req.headers.get("x-callback-token");
+        if (!token || token !== process.env.XENDIT_CALLBACK_TOKEN) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         // Xendit might send different event types, for Invoice paid:
         // { id, external_id, status, amount, ... }
         const body = await req.json();
-        console.log("Webhook received:", JSON.stringify(body, null, 2));
 
-        // Optional: Verify callback token (from Xendit Dashboard)
-        // const token = req.headers.get("x-callback-token");
-        // if (token !== process.env.XENDIT_CALLBACK_TOKEN) { ... }
+        if (process.env.NODE_ENV === "development") {
+            console.log("Webhook received:", JSON.stringify(body, null, 2));
+        }
 
         if (body.status === "PAID" || body.status === "SETTLED") {
             const registrationId = body.external_id;
@@ -29,6 +33,12 @@ export async function POST(req: Request) {
 
             if (regSnap.exists()) {
                 const regData = regSnap.data();
+
+                // Idempotency: already processed — return success without re-processing
+                if (regData.status === "paid") {
+                    console.log(`Webhook already processed for registration: ${registrationId}`);
+                    return NextResponse.json({ success: true });
+                }
 
                 // 2. Generate Race Number & QR Code (Robust)
                 const { raceNumber, qrCodeUrl } = await generateBibAndQR(

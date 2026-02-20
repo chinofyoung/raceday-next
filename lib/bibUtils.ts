@@ -1,5 +1,9 @@
 import { db } from "@/lib/firebase/config";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import {
+    doc,
+    getDoc,
+    runTransaction,
+} from "firebase/firestore";
 import { generateQRCode } from "@/lib/qr";
 
 /**
@@ -23,27 +27,31 @@ export async function generateBibNumber(
     );
     const format = category?.raceNumberFormat || "{number}";
 
-    // 2. Determine the raw number portion
-    let bibNumber: string;
-
+    // 2. If vanity number is chosen, skip counter entirely
     if (vanityNumber) {
-        bibNumber = vanityNumber;
-    } else {
-        // Count existing paid registrations for this event + category
-        const existingSnap = await getDocs(
-            query(
-                collection(db, "registrations"),
-                where("eventId", "==", eventId),
-                where("categoryId", "==", categoryId),
-                where("status", "==", "paid")
-            )
-        );
-        bibNumber = String(existingSnap.size + 1).padStart(3, "0");
+        return format.replace("{number}", vanityNumber);
     }
 
-    // 3. Format using the category template
-    const raceNumber = format.replace("{number}", bibNumber);
-    return raceNumber;
+    // 3. Atomically increment the counter document
+    const counterRef = doc(db, "bibCounters", `${eventId}_${categoryId}`);
+
+    const nextCount = await runTransaction(db, async (transaction) => {
+        const counterSnap = await transaction.get(counterRef);
+
+        if (!counterSnap.exists()) {
+            // First registration for this event+category — initialize at 1
+            transaction.set(counterRef, { count: 1 });
+            return 1;
+        }
+
+        const newCount = (counterSnap.data().count || 0) + 1;
+        transaction.update(counterRef, { count: newCount });
+        return newCount;
+    });
+
+    // 4. Format using the category template
+    const paddedNumber = String(nextCount).padStart(3, "0");
+    return format.replace("{number}", paddedNumber);
 }
 
 /**

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     siteName: "RaceDay",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og",
         width: 1200,
         height: 630,
         alt: "RaceDay - The Ultimate Running Platform"
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RaceDay | Running Events Platform",
     description: "Discover and register for the best running events in the Philippines.",
-    images: ["/og-image.png"],
+    images: ["/og"],
   },
 };
 

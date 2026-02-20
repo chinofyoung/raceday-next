@@ -1,13 +1,30 @@
-const admin = require('firebase-admin');
-const serviceAccount = require('./service-account.json');
+// Run with: node scripts/list-pending.js
+// Lists pending registrations for debugging
 
-if (!admin.apps.length) {
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+const { initializeApp, getApps, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
+const { loadEnvConfig } = require('@next/env');
+const path = require('path');
+
+// Load env vars from .env.local
+loadEnvConfig(path.resolve(__dirname, '..'));
+
+if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
+    console.error("Missing FIREBASE Admin credentials in .env.local");
+    process.exit(1);
 }
 
-const db = admin.firestore();
+const adminApp = getApps().length === 0
+    ? initializeApp({
+        credential: cert({
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+        }),
+    })
+    : getApps()[0];
+
+const db = getFirestore(adminApp);
 
 async function listPendingRegistrations() {
     try {

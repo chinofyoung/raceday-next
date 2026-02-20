@@ -6,7 +6,6 @@ import { EventFormValues } from "@/lib/validations/event";
 import { Plus, Trash2, Calendar, Clock, AlignLeft, Sparkles, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
-import { v4 as uuidv4 } from "uuid";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -37,7 +36,7 @@ export function Step4Timeline() {
             const { getAITimeline } = await import("@/lib/services/aiService");
             const result = await getAITimeline(`${eventName}. ${eventDescription}`);
             const newTimeline = result.timeline.map((item, idx) => ({
-                id: uuidv4(),
+                id: crypto.randomUUID(),
                 activity: item.activity,
                 description: item.description,
                 time: item.time,
@@ -55,7 +54,7 @@ export function Step4Timeline() {
 
     const addTimelineItem = () => {
         append({
-            id: uuidv4(),
+            id: crypto.randomUUID(),
             activity: "",
             description: "",
             time: "",

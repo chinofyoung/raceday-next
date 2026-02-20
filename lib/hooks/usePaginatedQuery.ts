@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { DocumentSnapshot } from "firebase/firestore";
 
 interface UsePaginatedQueryOptions<T> {
@@ -16,14 +16,26 @@ export function usePaginatedQuery<T>({ fetchFn, pageSize = 20 }: UsePaginatedQue
     const [lastDoc, setLastDoc] = useState<DocumentSnapshot | undefined>(undefined);
     const [hasMore, setHasMore] = useState(true);
 
+    // useRef holds the latest fetchFn without triggering re-renders or effect loops
+    const fetchFnRef = useRef(fetchFn);
+    useEffect(() => {
+        fetchFnRef.current = fetchFn;
+    });
+
+    const lastDocRef = useRef(lastDoc);
+    useEffect(() => {
+        lastDocRef.current = lastDoc;
+    });
+
     const loadMore = useCallback(async (isInitial = false) => {
-        if (loading || (!hasMore && !isInitial)) return;
+        if (loading) return;
+        if (!isInitial && !hasMore) return;
 
         setLoading(true);
         setError(null);
         try {
-            const result = await fetchFn({
-                lastDoc: isInitial ? undefined : lastDoc,
+            const result = await fetchFnRef.current({
+                lastDoc: isInitial ? undefined : lastDocRef.current,
                 limitCount: pageSize
             });
 
@@ -41,14 +53,21 @@ export function usePaginatedQuery<T>({ fetchFn, pageSize = 20 }: UsePaginatedQue
         } finally {
             setLoading(false);
         }
-    }, [fetchFn, lastDoc, loading, hasMore, pageSize]);
+    }, [loading, hasMore, pageSize]); // ← fetchFn and lastDoc removed from deps
 
-    const refresh = useCallback(() => loadMore(true), [loadMore]);
-
-    // Initial load
+    // Stable initial load — runs once
     useEffect(() => {
-        refresh();
+        loadMore(true);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const refresh = useCallback(() => {
+        setLastDoc(undefined);
+        setHasMore(true);
+        loadMore(true);
+    }, [loadMore]);
+
+
 
     return { data, loading, error, hasMore, loadMore, refresh };
 }
