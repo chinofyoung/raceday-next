@@ -66,3 +66,16 @@ export function isRegistrationClosed(event: RaceEvent): boolean {
     return now > endDate;
 }
 
+/**
+ * Checks if the event date is in the past.
+ */
+export function isEventOver(event: RaceEvent): boolean {
+    if (!event.date) return false;
+
+    const now = new Date();
+    const eventDate = toDate(event.date);
+    // Consider it over at the end of the event day
+    eventDate.setHours(23, 59, 59, 999);
+
+    return now > eventDate;
+}

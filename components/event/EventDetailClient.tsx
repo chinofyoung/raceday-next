@@ -20,7 +20,7 @@ import { formatDistance } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
 import { EventGallery } from "./EventGallery";
-import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice } from "@/lib/earlyBirdUtils";
+import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice, isEventOver } from "@/lib/earlyBirdUtils";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -36,11 +36,42 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     const { user } = useAuth();
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
     const [userRegistration, setUserRegistration] = useState<any>(null);
+    const [activeSection, setActiveSection] = useState<string>("info");
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setActiveSection(entry.target.id);
+                }
+            });
+        }, {
+            // Trigger when the element crosses the middle of the viewport
+            rootMargin: '-140px 0px -60% 0px'
+        });
+
+        const sections = ["info", "categories", "timeline", "route"];
+        sections.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                observer.observe(element);
+            }
+        });
+
+        return () => {
+            sections.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    observer.unobserve(element);
+                }
+            });
+        };
+    }, []);
 
     const scrollToSection = (id: string) => {
         const element = document.getElementById(id);
         if (element) {
-            const offset = 140;
+            const offset = 180;
             const bodyRect = document.body.getBoundingClientRect().top;
             const elementRect = element.getBoundingClientRect().top;
             const elementPosition = elementRect - bodyRect;
@@ -66,7 +97,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     return (
         <div className="relative">
             {/* Hero Parallax Area */}
-            <div className="relative h-[50vh] md:h-[70vh] w-full overflow-hidden">
+            <div className="relative h-[30vh] md:h-[50vh] w-full overflow-hidden">
                 {event.featuredImage && (
                     <Image
                         src={event.featuredImage}
@@ -85,7 +116,13 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                     </Link>
                     <div className="space-y-2">
                         <div className="flex flex-wrap gap-2">
-                            <Badge variant="success" className="bg-cta text-white px-4 py-1.5 shadow-xl border-none">Registration Open</Badge>
+                            {isEventOver(event) ? (
+                                <Badge variant="secondary" className="bg-white/10 text-white px-4 py-1.5 shadow-xl border-none">Event Ended</Badge>
+                            ) : isRegistrationClosed(event) ? (
+                                <Badge variant="destructive" className="bg-red-500/20 text-red-500 px-4 py-1.5 shadow-xl border-none">Registration Closed</Badge>
+                            ) : (
+                                <Badge variant="success" className="bg-cta text-white px-4 py-1.5 shadow-xl border-none">Registration Open</Badge>
+                            )}
                             {userRegistration && (
                                 <Badge className={cn(
                                     "px-4 py-1.5 shadow-xl border-none text-white",
@@ -118,14 +155,19 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                     <button
                                         key={tab}
                                         onClick={() => scrollToSection(tab)}
-                                        className="px-4 py-2 rounded-md text-[10px] md:text-xs font-black uppercase tracking-widest transition-all bg-white/5 text-text-muted hover:bg-white/10 hover:text-white active:scale-95 whitespace-nowrap"
+                                        className={cn(
+                                            "px-4 py-2 rounded-md text-[10px] md:text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap hover:cursor-pointer hover:scale-105 active:scale-95",
+                                            activeSection === tab
+                                                ? "bg-primary text-white shadow-lg shadow-primary/20 scale-105"
+                                                : "bg-white/5 text-text-muted hover:bg-white/10 hover:text-white"
+                                        )}
                                     >
                                         {tab}
                                     </button>
                                 ))}
                             </div>
 
-                            {!isRegistrationClosed(event) && (
+                            {!isEventOver(event) && !isRegistrationClosed(event) && (
                                 <div className="hidden lg:block ml-8">
                                     <Button
                                         onClick={() => scrollToSection("categories")}
@@ -206,17 +248,22 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                                 )}
 
                                                 <Button
-                                                    asChild
+                                                    asChild={!isEventOver(event) && !isRegistrationClosed(event)}
                                                     variant="primary"
                                                     size="sm"
+                                                    disabled={isEventOver(event) || isRegistrationClosed(event)}
                                                     className={cn(
                                                         "w-full md:w-auto uppercase italic font-black shadow-lg shadow-primary/20",
-                                                        isRegistrationClosed(event) && "opacity-50 pointer-events-none grayscale"
+                                                        (isEventOver(event) || isRegistrationClosed(event)) && "opacity-50 pointer-events-none grayscale"
                                                     )}
                                                 >
-                                                    <Link href={`/events/${event.id}/register?category=${cat.id || i}`}>
-                                                        {isRegistrationClosed(event) ? "Registration Closed" : "Register Now"} <ChevronRight size={16} />
-                                                    </Link>
+                                                    {isEventOver(event) || isRegistrationClosed(event) ? (
+                                                        isEventOver(event) ? "Event Ended" : "Registration Closed"
+                                                    ) : (
+                                                        <Link href={`/events/${event.id}/register?category=${cat.id || i}`}>
+                                                            Register Now <ChevronRight size={16} />
+                                                        </Link>
+                                                    )}
                                                 </Button>
                                             </div>
                                         </div>
@@ -241,7 +288,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         </div>
 
                         {/* Timeline Section */}
-                        <div id="timeline" className="space-y-8 max-w-2xl mx-auto px-4 md:px-0">
+                        <div id="timeline" className="space-y-8 max-w-4xl mx-auto px-4 md:px-0">
                             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white text-center">Event <span className="text-primary">Timeline</span></h2>
                             <div className="space-y-0">
                                 {event.timeline?.map((item, i) => (
@@ -328,7 +375,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             </PageWrapper >
 
             {/* Mobile Sticky Register CTA */}
-            {!isRegistrationClosed(event) && (
+            {!isEventOver(event) && !isRegistrationClosed(event) && (
                 <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden">
                     <Button
                         asChild

@@ -4,23 +4,25 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { collection, query, where, getDocs, limit, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
 import { format } from "date-fns";
 import Image from "next/image";
 import { formatDistance } from "@/lib/utils";
+import { isEventOver } from "@/lib/earlyBirdUtils";
 
 async function getUpcomingEvents() {
     try {
         const q = query(
             collection(db, "events"),
             where("status", "==", "published"),
-            orderBy("date", "asc"),
-            limit(3)
+            orderBy("date", "asc")
         );
         const snap = await getDocs(q);
-        return snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as RaceEvent[];
+        const allEvents = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as RaceEvent[];
+        const upcoming = allEvents.filter(e => !isEventOver(e));
+        return upcoming.slice(0, 3);
     } catch (e) {
         console.error("Error fetching homepage events:", e);
         return [];

@@ -73,6 +73,7 @@ export async function POST(req: Request) {
         } else if (type === "timeline") {
             userPrompt = `Based on this event: "${prompt}", generate a professional race day timeline/schedule.
             Include standard activities like: Race kit collection, assembly time, gun start for different categories, awarding, and post-race activities.
+            Keep the schedule well-paced and limit the timeline to exactly 10 entries.
             
             Return the response in JSON format:
             {

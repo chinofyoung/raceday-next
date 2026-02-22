@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { EventCardSkeleton } from "@/components/shared/Skeleton";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
+import { isEventOver } from "@/lib/earlyBirdUtils";
 
 const DISTANCE_FILTERS = ["All", "5K", "10K", "21K", "42K"];
 
@@ -81,6 +82,10 @@ export default function EventsDirectoryPage() {
         return matchesSearch && matchesDistance;
     });
 
+    const upcomingEvents = filteredEvents.filter(e => !isEventOver(e));
+    // Reverse past events to show the most recently ended events first
+    const pastEvents = filteredEvents.filter(e => isEventOver(e)).reverse();
+
     return (
         <PageWrapper className="pt-12 pb-24 space-y-12">
             {/* Header & Search */}
@@ -138,15 +143,38 @@ export default function EventsDirectoryPage() {
                     ))}
                 </div>
             ) : filteredEvents.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {filteredEvents.map((event) => (
-                        <EventCard
-                            key={event.id}
-                            event={event}
-                            mode="discovery"
-                            registrationStatus={getRegistrationStatus(event.id)}
-                        />
-                    ))}
+                <div className="space-y-16">
+                    {upcomingEvents.length > 0 && (
+                        <div className="space-y-8">
+                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Upcoming <span className="text-primary">Races</span></h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {upcomingEvents.map((event) => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        mode="discovery"
+                                        registrationStatus={getRegistrationStatus(event.id)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {pastEvents.length > 0 && (
+                        <div className="space-y-8 border-t border-white/5 pt-12">
+                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-text-muted">Past <span className="opacity-50">Events</span></h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-75 grayscale-[20%]">
+                                {pastEvents.map((event) => (
+                                    <EventCard
+                                        key={event.id}
+                                        event={event}
+                                        mode="discovery"
+                                        registrationStatus={getRegistrationStatus(event.id)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="py-32 text-center space-y-6 bg-surface/20 rounded-[3rem] border border-dashed border-white/10">
