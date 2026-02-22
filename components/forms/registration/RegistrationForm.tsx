@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, RegistrationFormValues } from "@/lib/validations/registration";
@@ -16,6 +16,10 @@ import { Step3Vanity } from "./Step3Vanity";
 import { Step4Review } from "./Step4Review";
 import { Step0Who } from "./Step0Who";
 import { cn } from "@/lib/utils";
+import { LoginPromptModal } from "@/components/shared/LoginPromptModal";
+import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { calculateCompletion } from "@/lib/validations/profile";
 
 const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
 
@@ -25,10 +29,12 @@ interface RegistrationFormProps {
 }
 
 export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
-    const { user } = useAuth();
+    const { user, refreshUser } = useAuth();
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [pendingSubmitData, setPendingSubmitData] = useState<RegistrationFormValues | null>(null);
 
     // If a category is pre-selected via URL, look up its price
     const initialCategory = initialCategoryId
@@ -138,7 +144,50 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
-    const onSubmit = async (data: RegistrationFormValues) => {
+    // Sync user profile from registration data (for "self" registrations)
+    const syncProfileFromRegistration = useCallback(async (userId: string, formData: RegistrationFormValues) => {
+        if (formData.registrationType !== "self") return;
+
+        try {
+            const profileData = {
+                displayName: formData.participantInfo.name,
+                phone: formData.participantInfo.phone,
+                tShirtSize: formData.participantInfo.tShirtSize,
+                singletSize: formData.participantInfo.singletSize,
+                emergencyContact: formData.participantInfo.emergencyContact,
+                medicalConditions: formData.participantInfo.medicalConditions || "",
+            };
+
+            // We need to get the full profile data to calculate completion correctly
+            const userDocRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userDocRef);
+            const existingData = userSnap.exists() ? userSnap.data() : {};
+
+            const fullProfileForCalc = {
+                displayName: profileData.displayName || existingData.displayName || "",
+                phone: profileData.phone || existingData.phone || "",
+                tShirtSize: profileData.tShirtSize || existingData.tShirtSize || "",
+                singletSize: profileData.singletSize || existingData.singletSize || "",
+                address: existingData.address || { street: "", city: "", province: "", zipCode: "", country: "" },
+                emergencyContact: profileData.emergencyContact,
+                medicalConditions: profileData.medicalConditions,
+            };
+
+            const completion = calculateCompletion(fullProfileForCalc as any);
+
+            await updateDoc(userDocRef, {
+                ...profileData,
+                profileCompletion: completion,
+                updatedAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Error syncing profile from registration:", error);
+            // Non-fatal — don't block registration
+        }
+    }, []);
+
+    // Submit registration to payment API
+    const submitRegistration = useCallback(async (data: RegistrationFormValues, userId: string, displayName: string) => {
         setLoading(true);
         try {
             const selectedCategory = event.categories.find(c => (c.id || "0") === data.categoryId) || event.categories[0];
@@ -149,9 +198,9 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 body: JSON.stringify({
                     registrationData: {
                         ...data,
-                        userId: user?.uid,
-                        registeredByUserId: user?.uid,
-                        registeredByName: user?.displayName || "Unknown",
+                        userId: userId,
+                        registeredByUserId: userId,
+                        registeredByName: displayName || "Unknown",
                         isProxy: data.registrationType === "proxy",
                     },
                     eventName: event.name,
@@ -164,10 +213,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
             if (!response.ok) throw new Error(result.error || "Failed to initiate payment");
 
             if (result.free) {
-                // Free registration — go straight to success
                 router.push(`/events/${event.id}/register/success?id=${result.registrationId}`);
             } else if (result.checkoutUrl) {
-                // Redirect to Xendit Checkout
                 window.location.href = result.checkoutUrl;
             } else {
                 throw new Error("Invalid server response. Please try again.");
@@ -177,6 +224,40 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
             alert(error.message || "An error occurred during registration. Please try again.");
         } finally {
             setLoading(false);
+        }
+    }, [event, router]);
+
+    const onSubmit = async (data: RegistrationFormValues) => {
+        if (!user) {
+            // Not logged in — save data and show login modal
+            setPendingSubmitData(data);
+            setShowLoginModal(true);
+            return;
+        }
+
+        // Logged in — sync profile and proceed
+        await syncProfileFromRegistration(user.uid, data);
+        await submitRegistration(data, user.uid, user.displayName);
+    };
+
+    const handleLoginSuccess = async (userId: string) => {
+        setShowLoginModal(false);
+
+        // Refresh user data in context
+        await refreshUser();
+
+        if (pendingSubmitData) {
+            // Sync profile from registration data
+            await syncProfileFromRegistration(userId, pendingSubmitData);
+
+            // Now get the display name (may have been just created)
+            const userDocRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userDocRef);
+            const displayName = userSnap.exists() ? userSnap.data().displayName : "Unknown";
+
+            // Submit the pending registration
+            await submitRegistration(pendingSubmitData, userId, displayName);
+            setPendingSubmitData(null);
         }
     };
 
@@ -250,6 +331,16 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                         )}
                     </div>
                 </form>
+
+                {/* Login Prompt Modal for non-logged-in users */}
+                <LoginPromptModal
+                    isOpen={showLoginModal}
+                    onClose={() => {
+                        setShowLoginModal(false);
+                        setPendingSubmitData(null);
+                    }}
+                    onLoginSuccess={handleLoginSuccess}
+                />
             </div>
         </FormProvider>
     );
