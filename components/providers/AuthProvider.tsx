@@ -38,8 +38,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const refreshUser = useCallback(async () => {
-        if (!firebaseUser) return;
-        await fetchUserDoc(firebaseUser.uid);
+        const currentUser = firebaseUser || auth.currentUser;
+        if (!currentUser) return;
+        await fetchUserDoc(currentUser.uid);
     }, [firebaseUser, fetchUserDoc]);
 
     useEffect(() => {

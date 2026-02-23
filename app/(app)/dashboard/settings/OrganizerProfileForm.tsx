@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,11 +8,12 @@ import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
     Check, Loader2, Building2, Mail, Phone, Globe,
-    ShieldCheck, CalendarCheck, AlertCircle
+    ShieldCheck, CalendarCheck, AlertCircle, Save
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrganizerType } from "@/types/user";
@@ -38,14 +39,15 @@ type OrganizerProfileFormValues = z.infer<typeof organizerProfileSchema>;
 export function OrganizerProfileForm() {
     const { user, refreshUser } = useAuth();
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-    const isFirstRender = useRef(true);
 
     const organizer = user?.organizer;
 
     const {
         register,
+        handleSubmit,
         watch,
         reset,
+        setValue,
         formState: { errors, isDirty },
     } = useForm<OrganizerProfileFormValues>({
         resolver: zodResolver(organizerProfileSchema),
@@ -69,7 +71,7 @@ export function OrganizerProfileForm() {
         }
     }, [organizer, reset]);
 
-    const saveProfile = useCallback(async (data: OrganizerProfileFormValues) => {
+    const onSubmit = useCallback(async (data: OrganizerProfileFormValues) => {
         if (!user) return;
         setSaveStatus("saving");
         try {
@@ -95,23 +97,6 @@ export function OrganizerProfileForm() {
 
     const watchedFields = watch();
 
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-
-        if (!isDirty) return;
-
-        const timer = setTimeout(() => {
-            if (!errors.name && !errors.contactEmail) {
-                saveProfile(watchedFields);
-            }
-        }, 1500);
-
-        return () => clearTimeout(timer);
-    }, [watchedFields, saveProfile, errors.name, errors.contactEmail, isDirty]);
-
     if (!organizer) {
         return (
             <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-4">
@@ -122,23 +107,7 @@ export function OrganizerProfileForm() {
     }
 
     return (
-        <div className="space-y-8 mx-auto">
-            {/* Autosave Status Indicator */}
-            <div className="fixed bottom-8 right-8 z-[100]">
-                <div className={cn(
-                    "px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl transition-all duration-500 border",
-                    saveStatus === "saving" ? "bg-surface border-primary text-primary opacity-100 translate-y-0" :
-                        saveStatus === "saved" ? "bg-cta/20 border-cta text-cta opacity-100 translate-y-0" :
-                            "opacity-0 translate-y-10"
-                )}>
-                    {saveStatus === "saving" && <Loader2 size={18} className="animate-spin" />}
-                    {saveStatus === "saved" && <Check size={18} />}
-                    <span className="font-bold uppercase italic tracking-widest text-xs">
-                        {saveStatus === "saving" ? "Saving Changes..." : "Changes Saved"}
-                    </span>
-                </div>
-            </div>
-
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mx-auto">
             {/* Approval Status Banner */}
             <Card className={cn(
                 "p-5 flex items-center gap-4 border",
@@ -202,11 +171,9 @@ export function OrganizerProfileForm() {
                                     <button
                                         key={type.value}
                                         type="button"
-                                        onClick={() => {
-                                            saveProfile({ ...watchedFields, organizerType: type.value });
-                                        }}
+                                        onClick={() => setValue("organizerType", type.value, { shouldDirty: true })}
                                         className={cn(
-                                            "p-3 rounded-xl border text-left transition-all",
+                                            "p-3 rounded-xl border text-left transition-all cursor-pointer",
                                             watchedFields.organizerType === type.value
                                                 ? "bg-primary/10 border-primary/40 shadow-lg"
                                                 : "bg-white/5 border-white/10 hover:border-primary/30"
@@ -251,6 +218,28 @@ export function OrganizerProfileForm() {
                     </div>
                 </Card>
             </div>
-        </div>
+
+            {/* Save Button */}
+            <div className="flex items-center justify-end gap-4 pt-4">
+                {saveStatus === "saved" && (
+                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase italic tracking-widest animate-in fade-in duration-300">
+                        <Check size={16} /> Changes Saved
+                    </span>
+                )}
+                <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    disabled={!isDirty || saveStatus === "saving"}
+                    className="font-black italic uppercase tracking-wider px-8"
+                >
+                    {saveStatus === "saving" ? (
+                        <><Loader2 size={18} className="animate-spin mr-2" /> Saving...</>
+                    ) : (
+                        <><Save size={18} className="mr-2" /> Save Changes</>
+                    )}
+                </Button>
+            </div>
+        </form>
     );
 }

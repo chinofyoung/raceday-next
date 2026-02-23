@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase/config";
-import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, increment } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, increment, query, where, getDocs } from "firebase/firestore";
 import { generateBibAndQR, isBibTaken, getRaceNumberFormat, formatBibNumber } from "@/lib/bibUtils";
 import { RaceEvent } from "@/types/event";
 import { isRegistrationClosed, getEffectivePrice, isCategoryFull } from "@/lib/earlyBirdUtils";
@@ -21,6 +21,25 @@ export async function POST(req: Request) {
         }
 
         const eventData = { id: eventSnap.id, ...eventSnap.data() } as RaceEvent;
+
+        // 0. Check for duplicate "myself" registration
+        if (!registrationData.isProxy && registrationData.userId) {
+            const regsRef = collection(db, "registrations");
+            const q = query(
+                regsRef,
+                where("userId", "==", registrationData.userId),
+                where("eventId", "==", registrationData.eventId),
+                where("categoryId", "==", registrationData.categoryId),
+                where("isProxy", "==", false),
+                where("status", "in", ["paid", "pending"])
+            );
+            const existingSnap = await getDocs(q);
+            if (!existingSnap.empty) {
+                return NextResponse.json({
+                    error: "You are already registered for this category in this event."
+                }, { status: 400 });
+            }
+        }
 
         // 1. Check Registration Deadline
         if (isRegistrationClosed(eventData)) {

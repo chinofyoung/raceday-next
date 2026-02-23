@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Verify session
-        const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
+        const decodedToken = await adminAuth.verifySessionCookie(sessionCookie);
         const uid = decodedToken.uid;
         const email = decodedToken.email;
 

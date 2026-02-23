@@ -16,15 +16,18 @@ import {
     ArrowUpRight, Activity, Zap
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format, formatDistanceToNow, isAfter } from "date-fns";
 import { getEvents } from "@/lib/services/eventService";
 import { getRegistrations, getRegistrationsWithEvents } from "@/lib/services/registrationService";
 import { computeProfileCompletion } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
+import { signOutUser } from "@/lib/firebase/auth";
 
 export default function DashboardPage() {
-    const { user, role } = useAuth();
+    const { user, firebaseUser, role, loading: authLoading } = useAuth();
+    const router = useRouter(); // We already have useRouter imported
     const { mode, setMode, canSwitchMode } = useDashboardMode();
     const [loading, setLoading] = useState(true);
     const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0 });
@@ -37,19 +40,26 @@ export default function DashboardPage() {
     const isOrganizerView = mode === "organizer";
 
     useEffect(() => {
-        if (user) {
-            fetchDashboardData();
+        if (!authLoading) {
+            if (user) {
+                fetchDashboardData();
+            } else {
+                // Auth is done but no profile yet (or ever)
+                // Stop loading so we can show empty states/setup prompts
+                setLoading(false);
+            }
         }
-    }, [user, mode]);
+    }, [user, authLoading, mode]);
 
     const fetchDashboardData = async () => {
+        if (!user) return;
         setLoading(true);
         setError(null);
         try {
             if (isOrganizerView) {
                 const [eventsResult, regsResult] = await Promise.all([
-                    getEvents({ organizerId: user?.uid, limitCount: 100, status: "all" }),
-                    getRegistrations({ organizerId: user?.uid, status: "paid", limitCount: 200 })
+                    getEvents({ organizerId: user.uid, limitCount: 100, status: "all" }),
+                    getRegistrations({ organizerId: user.uid, status: "paid", limitCount: 200 })
                 ]);
 
                 const eventsList = eventsResult.items;
@@ -67,7 +77,7 @@ export default function DashboardPage() {
                 setItems(activeEvents.slice(0, 5));
             } else {
                 const result = await getRegistrationsWithEvents({
-                    userId: user?.uid,
+                    userId: user.uid,
                     limitCount: 5
                 });
 

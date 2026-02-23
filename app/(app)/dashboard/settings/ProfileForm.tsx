@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
@@ -10,7 +10,7 @@ import { profileSchema, ProfileFormValues, calculateCompletion } from "@/lib/val
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Check, Loader2, User as UserIcon, MapPin, ShieldAlert, Shirt, CloudUpload } from "lucide-react";
+import { Check, Loader2, User as UserIcon, MapPin, ShieldAlert, Shirt, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 
@@ -19,13 +19,13 @@ const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 export function ProfileForm() {
     const { user, refreshUser } = useAuth();
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
-    const isFirstRender = useRef(true);
 
     const {
         register,
         handleSubmit,
         watch,
         reset,
+        setValue,
         formState: { errors, isDirty },
     } = useForm<ProfileFormValues>({
         resolver: zodResolver(profileSchema),
@@ -50,7 +50,7 @@ export function ProfileForm() {
         },
     });
 
-    const saveProfile = useCallback(async (data: ProfileFormValues) => {
+    const onSubmit = useCallback(async (data: ProfileFormValues) => {
         if (!user) return;
         setSaveStatus("saving");
         try {
@@ -64,56 +64,20 @@ export function ProfileForm() {
             });
 
             await refreshUser();
-
-            // Reset form with current values to clear dirty state
             reset(data);
 
             setSaveStatus("saved");
             setTimeout(() => setSaveStatus("idle"), 3000);
         } catch (error) {
-            console.error("Autosave error:", error);
+            console.error("Save error:", error);
             setSaveStatus("idle");
         }
-    }, [user, reset]);
+    }, [user, reset, refreshUser]);
 
     const watchedFields = watch();
 
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-
-        // Only save if there are changes (isDirty is true)
-        if (!isDirty) return;
-
-        const timer = setTimeout(() => {
-            if (!errors.displayName) {
-                saveProfile(watchedFields);
-            }
-        }, 1500);
-
-        return () => clearTimeout(timer);
-    }, [watchedFields, saveProfile, errors.displayName, isDirty]);
-
     return (
-        <div className="space-y-8 mx-auto">
-            {/* Autosave Status Indicator */}
-            <div className="fixed bottom-8 right-8 z-[100]">
-                <div className={cn(
-                    "px-6 py-3 rounded-full flex items-center gap-3 shadow-2xl transition-all duration-500 border",
-                    saveStatus === "saving" ? "bg-surface border-primary text-primary opacity-100 translate-y-0" :
-                        saveStatus === "saved" ? "bg-cta/20 border-cta text-cta opacity-100 translate-y-0" :
-                            "opacity-0 translate-y-10"
-                )}>
-                    {saveStatus === "saving" && <Loader2 size={18} className="animate-spin" />}
-                    {saveStatus === "saved" && <Check size={18} />}
-                    <span className="font-bold uppercase italic tracking-widest text-xs">
-                        {saveStatus === "saving" ? "Saving Changes..." : "Changes Saved"}
-                    </span>
-                </div>
-            </div>
-
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Section: Profile Photo */}
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5 md:col-span-2">
@@ -216,9 +180,9 @@ export function ProfileForm() {
                                     <button
                                         key={size}
                                         type="button"
-                                        onClick={() => saveProfile({ ...watchedFields, tShirtSize: size as any })}
+                                        onClick={() => setValue("tShirtSize", size as any, { shouldDirty: true })}
                                         className={cn(
-                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all",
+                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all cursor-pointer",
                                             watchedFields.tShirtSize === size
                                                 ? "bg-primary border-primary text-white shadow-lg scale-105"
                                                 : "bg-white/5 border-white/10 text-text-muted hover:border-primary/50"
@@ -236,9 +200,9 @@ export function ProfileForm() {
                                     <button
                                         key={size}
                                         type="button"
-                                        onClick={() => saveProfile({ ...watchedFields, singletSize: size as any })}
+                                        onClick={() => setValue("singletSize", size as any, { shouldDirty: true })}
                                         className={cn(
-                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all",
+                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all cursor-pointer",
                                             watchedFields.singletSize === size
                                                 ? "bg-cta border-cta text-white shadow-lg scale-105"
                                                 : "bg-white/5 border-white/10 text-text-muted hover:border-cta/50"
@@ -252,6 +216,28 @@ export function ProfileForm() {
                     </div>
                 </Card>
             </div>
-        </div>
+
+            {/* Save Button */}
+            <div className="flex items-center justify-end gap-4 pt-4">
+                {saveStatus === "saved" && (
+                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase italic tracking-widest animate-in fade-in duration-300">
+                        <Check size={16} /> Changes Saved
+                    </span>
+                )}
+                <Button
+                    type="submit"
+                    variant="primary"
+                    size="lg"
+                    disabled={!isDirty || saveStatus === "saving"}
+                    className="font-black italic uppercase tracking-wider px-8"
+                >
+                    {saveStatus === "saving" ? (
+                        <><Loader2 size={18} className="animate-spin mr-2" /> Saving...</>
+                    ) : (
+                        <><Save size={18} className="mr-2" /> Save Changes</>
+                    )}
+                </Button>
+            </div>
+        </form>
     );
 }

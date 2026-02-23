@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -9,10 +9,13 @@ import { Card } from "@/components/ui/Card";
 import { signInWithGoogle } from "@/lib/firebase/auth";
 import { auth } from "@/lib/firebase/config";
 import { PageWrapper } from "@/components/layout/PageWrapper";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { refreshUser } = useAuth();
 
     const handleLogin = async () => {
         setLoading(true);
@@ -33,10 +36,14 @@ export default function LoginPage() {
                 }
             }
 
+            // Re-fetch user doc so AuthProvider has fresh data before navigating
+            await refreshUser();
+
+            const redirectTo = searchParams.get("redirect");
             if (isNewUser) {
-                router.push("/dashboard/profile?setup=true");
+                router.push("/dashboard/settings?setup=true");
             } else {
-                router.push("/dashboard");
+                router.push(redirectTo || "/dashboard");
             }
         } catch (error) {
             console.error("Login failed:", error);
@@ -44,6 +51,7 @@ export default function LoginPage() {
             setLoading(false);
         }
     };
+
 
     return (
         <PageWrapper className="flex items-center justify-center min-h-[70vh]">
