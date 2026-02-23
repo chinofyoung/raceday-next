@@ -30,6 +30,12 @@ export interface EventCategory {
     showMaxParticipants: boolean;
     showRegisteredCount: boolean;
     registeredCount: number;
+    bibAssignment?: {
+        enabled: boolean;
+        rangeStart: number;
+        rangeEnd: number;
+        currentSequential: number;
+    };
 }
 
 export interface RaceEvent {

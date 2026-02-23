@@ -9,9 +9,10 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import {
     Calendar, MapPin, Clock, Trophy, Users,
-    ArrowLeft, ArrowRight, ChevronRight, CheckCircle2, Info, Timer
+    ArrowLeft, ArrowRight, ChevronRight, CheckCircle2, Info, Timer, Megaphone
 } from "lucide-react";
 import Link from "next/link";
+
 import { format } from "date-fns";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -21,6 +22,8 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
 import { EventGallery } from "./EventGallery";
 import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice, isEventOver, isCategoryFull } from "@/lib/earlyBirdUtils";
+import { Announcement } from "@/types/announcement";
+import { formatDistanceToNow } from "date-fns";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -37,6 +40,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
     const [userRegistration, setUserRegistration] = useState<any>(null);
     const [activeSection, setActiveSection] = useState<string>("info");
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -50,7 +54,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             rootMargin: '-140px 0px -60% 0px'
         });
 
-        const sections = ["info", "categories", "timeline", "route"];
+        const sections = ["info", "announcements", "categories", "timeline", "route"];
         sections.forEach(id => {
             const element = document.getElementById(id);
             if (element) {
@@ -91,6 +95,15 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             });
         }
     }, [user, event.id]);
+
+    useEffect(() => {
+        if (event.id) {
+            fetch(`/api/events/${event.id}/announcements`)
+                .then(res => res.json())
+                .then(data => setAnnouncements(data || []))
+                .catch(err => console.error("Failed to fetch announcements:", err));
+        }
+    }, [event.id]);
 
     const eventDate = new Date(event.date as unknown as string);
     const isValidDate = !isNaN(eventDate.getTime());
@@ -151,8 +164,8 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                     {/* Sticky Tabs Navigation */}
                     <div className="sticky top-[84px] z-40 bg-background/95 backdrop-blur-2xl border-b border-white/5 py-4 w-full px-4 md:px-0">
                         <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar mask-linear-fade flex-1">
-                                {(["info", "categories", "timeline", "route"] as const).map((tab) => (
+                            <div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden py-2 -my-2 no-scrollbar mask-linear-fade flex-1">
+                                {(["info", "announcements", "categories", "timeline", "route"] as const).map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => scrollToSection(tab)}
@@ -215,6 +228,39 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                             <div className="mt-10">
                                 <EventGallery images={event.galleryImages} eventName={event.name} />
                             </div>
+                        </div>
+
+                        {/* Announcements Section */}
+                        <div id="announcements" className="space-y-8 px-4 md:px-0">
+                            <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Latest <span className="text-primary">Updates</span></h2>
+                            {announcements.length > 0 ? (
+                                <div className="space-y-4">
+                                    {announcements.map((announcement) => (
+                                        <Card key={announcement.id} className="p-6 md:p-8 bg-surface/40 hover:bg-surface/60 border-white/5 transition-all">
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div>
+                                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white">{announcement.title}</h3>
+                                                    <p className="text-xs text-text-muted font-bold italic uppercase tracking-widest mt-1 flex items-center gap-1.5">
+                                                        <Clock size={12} className="text-primary" />
+                                                        {formatDistanceToNow(new Date(announcement.createdAt as any), { addSuffix: true })}
+                                                    </p>
+                                                </div>
+                                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+                                                    <Megaphone size={18} />
+                                                </div>
+                                            </div>
+                                            <p className="text-sm md:text-base text-text-muted leading-relaxed whitespace-pre-wrap font-medium">
+                                                {announcement.message}
+                                            </p>
+                                        </Card>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="py-16 text-center bg-surface/20 rounded-[2.5rem] border border-dashed border-white/10 flex flex-col items-center gap-4">
+                                    <Megaphone className="text-text-muted opacity-20" size={48} />
+                                    <p className="text-text-muted font-bold uppercase italic tracking-widest">No updates at this time</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Categories Section */}

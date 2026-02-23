@@ -21,6 +21,7 @@ import { getEvents } from "@/lib/services/eventService";
 import { getRegistrations, getRegistrationsWithEvents } from "@/lib/services/registrationService";
 import { computeProfileCompletion } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
 
 export default function DashboardPage() {
     const { user, role } = useAuth();
@@ -619,10 +620,13 @@ export default function DashboardPage() {
                                     <p className="text-sm text-text-muted leading-relaxed font-medium italic">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
                                 </div>
                                 <Button variant="primary" asChild className="relative z-10 font-black italic uppercase">
-                                    <Link href="/dashboard/profile">Complete Now</Link>
+                                    <Link href="/dashboard/settings">Complete Now</Link>
                                 </Button>
                             </Card>
                         )}
+
+                        {/* Announcements */}
+                        <RunnerAnnouncements />
 
                         {/* My Registered Events */}
                         <div className="space-y-6">
@@ -636,7 +640,6 @@ export default function DashboardPage() {
                                                 <div className="flex items-center gap-6">
                                                     <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors shrink-0 overflow-hidden relative">
                                                         {reg.event?.featuredImage && <img src={reg.event.featuredImage} alt={`${reg.event?.name || "Event"} featured image`} className="absolute inset-0 w-full h-full object-cover opacity-50" />}
-                                                        <Calendar size={32} className="relative z-10" />
                                                     </div>
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2">
@@ -690,11 +693,11 @@ export default function DashboardPage() {
                         <div className="space-y-4">
                             <h2 className="text-xl font-black italic uppercase tracking-tight">Quick Actions</h2>
                             <div className="grid grid-cols-1 gap-3">
-                                <Link href="/dashboard/profile" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-primary/50 transition-all group">
+                                <Link href="/dashboard/settings" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-primary/50 transition-all group">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3 text-text">
                                             <User size={18} className="text-primary" />
-                                            <span className="font-bold uppercase italic text-sm">View Profile</span>
+                                            <span className="font-bold uppercase italic text-sm">Edit Profile</span>
                                         </div>
                                         <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-primary" />
                                     </div>

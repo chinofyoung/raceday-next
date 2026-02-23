@@ -12,11 +12,12 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
     Loader2, ArrowLeft, Users, DollarSign, Calendar, MapPin,
-    MoreVertical, Edit2, Download, Filter, Search, QrCode, CheckCircle2
+    MoreVertical, Edit2, Download, Filter, Search, QrCode, CheckCircle2, Copy
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { AnnouncementsTab } from "@/components/dashboard/AnnouncementsTab";
 
 export default function EventDetailPage() {
     const { id } = useParams();
@@ -24,7 +25,7 @@ export default function EventDetailPage() {
     const [event, setEvent] = useState<RaceEvent | null>(null);
     const [registrations, setRegistrations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<"participants" | "revenue" | "settings">("participants");
+    const [activeTab, setActiveTab] = useState<"participants" | "revenue" | "bibs" | "announcements">("participants");
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending">("paid");
 
@@ -127,6 +128,23 @@ export default function EventDetailPage() {
                     </div>
                 </div>
                 <div className="flex gap-3">
+                    <Button variant="outline" className="gap-2 font-black italic uppercase" onClick={async () => {
+                        if (confirm("Create a copy of this event?")) {
+                            try {
+                                const res = await fetch(`/api/events/${id}/clone`, { method: "POST" });
+                                const data = await res.json();
+                                if (data.success) {
+                                    alert("Event cloned successfully!");
+                                    window.location.href = `/dashboard/events/${data.newId}/edit`;
+                                } else throw new Error("Clone failed");
+                            } catch (err) {
+                                console.error(err);
+                                alert("Failed to duplicate event.");
+                            }
+                        }
+                    }}>
+                        <Copy size={16} /> Clone
+                    </Button>
                     <Button variant="outline" className="gap-2 font-black italic uppercase" asChild>
                         <Link href={`/dashboard/events/${id}/edit`}><Edit2 size={16} /> Edit Event</Link>
                     </Button>
@@ -196,8 +214,8 @@ export default function EventDetailPage() {
 
             {/* Tabs & Content */}
             <div className="space-y-6">
-                <div className="flex gap-8 border-b border-white/5 pb-px">
-                    {(["participants", "revenue", "settings"] as const).map((tab) => (
+                <div className="flex gap-8 border-b border-white/5 pb-px overflow-x-auto scrollbar-none">
+                    {(["participants", "revenue", "bibs", "announcements"] as const).map((tab) => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
@@ -241,7 +259,11 @@ export default function EventDetailPage() {
                                             </button>
                                         ))}
                                     </div>
-                                    <Button variant="outline" size="sm" className="gap-2 font-black italic uppercase"><Download size={14} /> Export CSV</Button>
+                                    <Button asChild variant="outline" size="sm" className="gap-2 font-black italic uppercase">
+                                        <a href={`/api/events/${id}/export?status=${statusFilter}&q=${encodeURIComponent(searchQuery)}`} download>
+                                            <Download size={14} /> Export CSV
+                                        </a>
+                                    </Button>
                                 </div>
                             </div>
 
@@ -389,6 +411,86 @@ export default function EventDetailPage() {
                                     <p className="text-[8px] text-text-muted italic text-right">* After 5% processing fees</p>
                                 </div>
                             </Card>
+                        </div>
+                    )}
+
+                    {activeTab === "bibs" && (
+                        <div className="space-y-6">
+                            <Card className="p-8 bg-surface border-white/5 space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xl font-bold uppercase italic tracking-tight text-white">Bib Number Management</h3>
+                                    <Button
+                                        variant="primary"
+                                        className="gap-2 font-black italic uppercase bg-cta hover:bg-cta/90 border-none"
+                                        onClick={async () => {
+                                            if (confirm("This will auto-assign sequential bib numbers to all paid registrations without a bib. Continue?")) {
+                                                try {
+                                                    const res = await fetch(`/api/events/${id}/bibs/auto-assign`, { method: "POST" });
+                                                    if (!res.ok) throw new Error("Failed to assign bibs");
+                                                    alert("Bibs assigned successfully!");
+                                                    fetchEventData();
+                                                } catch (err) {
+                                                    console.error(err);
+                                                    alert("Failed to auto-assign bibs.");
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        Auto-Assign All
+                                    </Button>
+                                </div>
+                                <div className="space-y-4">
+                                    {event.categories.map((cat, i) => (
+                                        <div key={i} className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-white/5 pb-4 last:border-0 last:pb-0 gap-4">
+                                            <div className="space-y-1">
+                                                <p className="font-bold text-white uppercase italic">{cat.name}</p>
+                                                <p className="text-xs text-text-muted">Current next bib: {cat.bibAssignment?.currentSequential || cat.bibAssignment?.rangeStart || "Not set"}</p>
+                                            </div>
+                                            <div className="flex gap-4 items-center flex-wrap">
+                                                <div className="space-y-1">
+                                                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Starts At</label>
+                                                    <input
+                                                        type="number"
+                                                        placeholder="e.g. 1000"
+                                                        value={cat.bibAssignment?.rangeStart || ""}
+                                                        onChange={async (e) => {
+                                                            const val = parseInt(e.target.value);
+                                                            if (isNaN(val)) return;
+                                                            const newCategories = [...event.categories];
+                                                            newCategories[i] = {
+                                                                ...cat,
+                                                                bibAssignment: {
+                                                                    ...cat.bibAssignment,
+                                                                    rangeStart: val,
+                                                                    currentSequential: Math.max(val, cat.bibAssignment?.currentSequential || val),
+                                                                    enabled: true,
+                                                                    rangeEnd: cat.bibAssignment?.rangeEnd || val + 999
+                                                                }
+                                                            };
+                                                            setEvent({ ...event, categories: newCategories });
+                                                            try {
+                                                                const { updateDoc, doc: fireDoc } = await import("firebase/firestore");
+                                                                await updateDoc(fireDoc(db, "events", event.id), {
+                                                                    categories: newCategories
+                                                                });
+                                                            } catch (err) {
+                                                                console.error("Failed to update bib config", err);
+                                                            }
+                                                        }}
+                                                        className="w-24 px-3 py-2 bg-white/5 border border-white/5 rounded-lg text-sm focus:outline-none focus:border-primary transition-all font-medium italic"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        </div>
+                    )}
+
+                    {activeTab === "announcements" && (
+                        <div className="space-y-6">
+                            <AnnouncementsTab eventId={event.id} />
                         </div>
                     )}
                 </div>
