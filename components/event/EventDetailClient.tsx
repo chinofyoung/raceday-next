@@ -367,7 +367,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
                             {event.categories?.[activeRouteCategoryIndex]?.routeMap?.gpxFileUrl ? (
                                 <div key={activeRouteCategoryIndex} className="space-y-6 animate-in fade-in duration-500">
-                                    <div className="aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden border-4 border-white/5 shadow-2xl relative">
+                                    <div className="aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden border-4 border-white/5 shadow-2xl relative isolate">
                                         <RouteMapViewer
                                             // Key is important to force re-render when switching GPX files
                                             key={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
@@ -403,7 +403,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
             {/* Mobile Sticky Register CTA */}
             {!isEventOver(event) && !isRegistrationClosed(event) && (
-                <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden">
+                <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden">
                     <Button
                         asChild
                         variant="primary"
