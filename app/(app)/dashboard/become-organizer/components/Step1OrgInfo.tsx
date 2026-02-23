@@ -65,33 +65,33 @@ export function Step1OrgInfo() {
                     <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">
                         Organization Type
                     </label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                         {ORGANIZER_TYPES.map((type) => (
                             <button
                                 key={type.value}
                                 type="button"
                                 onClick={() => setValue("organizerType", type.value, { shouldValidate: true })}
                                 className={cn(
-                                    "flex flex-col items-center justify-center p-4 rounded-2xl border-2 transition-all duration-300 text-center space-y-2 group",
+                                    "flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all duration-300 text-center space-y-3 group cursor-pointer",
                                     selectedType === type.value
-                                        ? "bg-primary/10 border-primary text-primary"
+                                        ? "bg-primary/10 border-primary shadow-lg shadow-primary/10"
                                         : "bg-surface border-white/5 text-text-muted hover:border-white/20"
                                 )}
                             >
                                 <div className={cn(
-                                    "transition-transform duration-300 group-hover:scale-110",
-                                    selectedType === type.value ? "text-primary" : "text-text-muted/50 group-hover:text-white"
+                                    "transition-all duration-300",
+                                    selectedType === type.value ? "text-primary scale-110" : "text-text-muted/50 group-hover:text-white"
                                 )}>
                                     {type.icon}
                                 </div>
                                 <div className="space-y-0.5">
                                     <span className={cn(
-                                        "block text-[10px] font-black uppercase italic tracking-wider",
+                                        "block text-xs font-black uppercase italic tracking-wider leading-none",
                                         selectedType === type.value ? "text-primary" : "text-white"
                                     )}>
                                         {type.label}
                                     </span>
-                                    <span className="block text-[8px] font-medium opacity-50 uppercase leading-tight">
+                                    <span className="block text-[8px] font-bold opacity-50 uppercase tracking-widest mt-1">
                                         {type.description}
                                     </span>
                                 </div>

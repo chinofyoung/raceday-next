@@ -24,6 +24,8 @@ import { computeProfileCompletion } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
 import { signOutUser } from "@/lib/firebase/auth";
+import { checkExistingApplication } from "@/lib/services/applicationService";
+
 
 export default function DashboardPage() {
     const { user, firebaseUser, role, loading: authLoading } = useAuth();
@@ -35,6 +37,8 @@ export default function DashboardPage() {
     const [allRegistrations, setAllRegistrations] = useState<any[]>([]);
     const [allEvents, setAllEvents] = useState<any[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [hasApplication, setHasApplication] = useState(false);
+
 
     const completion = computeProfileCompletion(user as any);
     const isOrganizerView = mode === "organizer";
@@ -43,7 +47,9 @@ export default function DashboardPage() {
         if (!authLoading) {
             if (user) {
                 fetchDashboardData();
+                checkApp();
             } else {
+
                 // Auth is done but no profile yet (or ever)
                 // Stop loading so we can show empty states/setup prompts
                 setLoading(false);
@@ -95,6 +101,17 @@ export default function DashboardPage() {
             setLoading(false);
         }
     };
+
+    const checkApp = async () => {
+        if (!user) return;
+        try {
+            const app = await checkExistingApplication(user.uid);
+            setHasApplication(!!app);
+        } catch (error) {
+            console.error("Error checking app:", error);
+        }
+    };
+
 
     // Derived organizer stats
     const claimedKits = useMemo(() => allRegistrations.filter(r => r.raceKitClaimed).length, [allRegistrations]);
@@ -725,13 +742,16 @@ export default function DashboardPage() {
                                     <Link href="/dashboard/become-organizer" className="block p-4 bg-primary rounded-xl border border-primary transition-all group shadow-lg">
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <Plus size={18} className="text-white" />
-                                                <span className="font-bold uppercase italic text-sm text-white">Apply as Organizer</span>
+                                                {hasApplication ? <Settings size={18} className="text-white" /> : <Plus size={18} className="text-white" />}
+                                                <span className="font-bold uppercase italic text-sm text-white">
+                                                    {hasApplication ? "Edit Application" : "Apply as Organizer"}
+                                                </span>
                                             </div>
                                             <ArrowRight size={14} className="text-white opacity-0 group-hover:opacity-100 transition-all" />
                                         </div>
                                     </Link>
                                 )}
+
                                 <Link href="/" className="block p-4 bg-white/5 rounded-xl border border-white/5 hover:border-cta/50 transition-all group">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">

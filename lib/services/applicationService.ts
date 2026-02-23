@@ -80,6 +80,31 @@ export async function submitOrganizerApplication(
     return docRef.id;
 }
 
+export async function updateOrganizerApplication(
+    applicationId: string,
+    userId: string,
+    data: OrganizerFormValues
+): Promise<void> {
+    // 1. Update the application document
+    const appDocRef = doc(db, "organizerApplications", applicationId);
+    await updateDoc(appDocRef, {
+        ...data,
+        status: "pending",
+        updatedAt: serverTimestamp(),
+    });
+
+    // 2. Update user profile with organizer info
+    const userDocRef = doc(db, "users", userId);
+    await updateDoc(userDocRef, {
+        "organizer.name": data.organizerName,
+        "organizer.contactEmail": data.contactEmail,
+        "organizer.phone": data.phone,
+        "organizer.organizerType": data.organizerType,
+        "organizer.updatedAt": serverTimestamp(),
+        "organizer.approved": false,
+    });
+}
+
 export async function checkExistingApplication(userId: string): Promise<OrganizerApplication | null> {
     const q = query(
         collection(db, "organizerApplications"),

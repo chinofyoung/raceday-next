@@ -19,7 +19,8 @@ import {
     organizerStep3Schema,
     organizerStep4Schema
 } from "@/lib/validations/organizer";
-import { submitOrganizerApplication, checkExistingApplication } from "@/lib/services/applicationService";
+import { submitOrganizerApplication, checkExistingApplication, updateOrganizerApplication } from "@/lib/services/applicationService";
+
 import { OrganizerFormStepper } from "./components/OrganizerFormStepper";
 import { Step1OrgInfo } from "./components/Step1OrgInfo";
 import { Step2Contact } from "./components/Step2Contact";
@@ -44,6 +45,8 @@ export default function BecomeOrganizerPage() {
     const [loading, setLoading] = useState(false);
     const [checking, setChecking] = useState(true);
     const [existingApp, setExistingApp] = useState<OrganizerApplication | null>(null);
+    const [isModifying, setIsModifying] = useState(false);
+
 
     const methods = useForm<OrganizerFormValues>({
         resolver: zodResolver(fullOrganizerSchema) as any,
@@ -90,9 +93,14 @@ export default function BecomeOrganizerPage() {
         checkApp();
     }, [user]);
 
-    // Pre-fill user data when user is loaded
+    // Pre-fill data when existing app or user is loaded
     useEffect(() => {
-        if (user) {
+        if (existingApp) {
+            reset({
+                ...existingApp as any,
+                // Ensure some fields are properly structured if they were flat
+            });
+        } else if (user) {
             reset({
                 ...methods.getValues(),
                 contactPerson: user.displayName || "",
@@ -100,7 +108,8 @@ export default function BecomeOrganizerPage() {
                 phone: user.phone || "",
             });
         }
-    }, [user, reset]);
+    }, [user, existingApp, reset]);
+
 
     const handleNext = async () => {
         const stepSchema = STEPS.find(s => s.id === currentStep)?.schema;
@@ -134,7 +143,11 @@ export default function BecomeOrganizerPage() {
         if (!user) return;
         setLoading(true);
         try {
-            await submitOrganizerApplication(user.uid, data);
+            if (existingApp) {
+                await updateOrganizerApplication(existingApp.id, user.uid, data);
+            } else {
+                await submitOrganizerApplication(user.uid, data);
+            }
             setSubmitted(true);
         } catch (error) {
             console.error("Error submitting application:", error);
@@ -142,6 +155,7 @@ export default function BecomeOrganizerPage() {
             setLoading(false);
         }
     };
+
 
     if (checking) {
         return (
@@ -151,7 +165,7 @@ export default function BecomeOrganizerPage() {
         );
     }
 
-    if (existingApp) {
+    if (existingApp && !isModifying) {
         return (
             <PageWrapper className="flex items-center justify-center min-h-[70vh]">
                 <Card className="max-w-md p-10 text-center space-y-6 bg-surface shadow-2xl border-white/5">
@@ -168,13 +182,25 @@ export default function BecomeOrganizerPage() {
                                     : "We need more information regarding your application. Please check your email for details."}
                         </p>
                     </div>
-                    <Button variant="primary" className="w-full" asChild>
-                        <Link href="/dashboard">Go to Dashboard</Link>
-                    </Button>
+                    <div className="flex flex-col gap-3">
+                        <Button variant="primary" className="w-full font-black italic uppercase" asChild>
+                            <Link href="/dashboard">Go to Dashboard</Link>
+                        </Button>
+                        {existingApp.status !== 'approved' && (
+                            <Button
+                                variant="outline"
+                                className="w-full font-black italic uppercase border-white/10"
+                                onClick={() => setIsModifying(true)}
+                            >
+                                Edit My Application
+                            </Button>
+                        )}
+                    </div>
                 </Card>
             </PageWrapper>
         );
     }
+
 
     if (submitted) {
         return (
@@ -200,14 +226,14 @@ export default function BecomeOrganizerPage() {
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10 max-w-7xl mx-auto">
             <div className="flex flex-col gap-4">
-                <Link href="/dashboard" className="text-primary text-xs font-black flex items-center gap-1 hover:underline uppercase tracking-widest italic opacity-70">
-                    <ArrowLeft size={14} /> Back to Dashboard
+                <Link href="/dashboard" className="text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors">
+                    <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
-                <div className="space-y-2">
-                    <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tight text-white leading-none">
+                <div className="space-y-1">
+                    <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
                         Become an <span className="text-primary">Organizer</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic">Complete the verification process to start hosting races.</p>
+                    <p className="text-lg text-text-muted font-medium italic leading-none">Complete the verification process to start hosting races.</p>
                 </div>
             </div>
 
@@ -217,7 +243,7 @@ export default function BecomeOrganizerPage() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
 
                 <FormProvider {...methods}>
-                    <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-8 relative z-10">
+                    <div className="space-y-8 relative z-10">
                         {currentStep === 1 && <Step1OrgInfo />}
                         {currentStep === 2 && <Step2Contact />}
                         {currentStep === 3 && <Step3Address />}
@@ -235,27 +261,28 @@ export default function BecomeOrganizerPage() {
                                 <ArrowLeft size={18} /> Back
                             </Button>
 
-                            {currentStep < STEPS.length ? (
+                            {currentStep === STEPS.length ? (
+                                <Button
+                                    type="button"
+                                    variant="primary"
+                                    onClick={handleSubmit(onSubmit as any)}
+                                    className="gap-2 px-10 h-14 uppercase italic font-black text-lg shadow-xl shadow-primary/30"
+                                    isLoading={loading}
+                                >
+                                    Submit Application <CheckCircle2 size={20} />
+                                </Button>
+                            ) : (
                                 <Button
                                     type="button"
                                     variant="primary"
                                     onClick={handleNext}
                                     className="gap-2 px-8 h-12 uppercase italic font-black shadow-lg shadow-primary/20"
                                 >
-                                    Next Step <ArrowRight size={18} />
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    variant="primary"
-                                    className="gap-2 px-10 h-14 uppercase italic font-black text-lg shadow-xl shadow-primary/30"
-                                    isLoading={loading}
-                                >
-                                    Submit Application <CheckCircle2 size={20} />
+                                    Continue <ArrowRight size={18} />
                                 </Button>
                             )}
                         </div>
-                    </form>
+                    </div>
                 </FormProvider>
             </Card>
 
