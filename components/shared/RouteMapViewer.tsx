@@ -6,6 +6,7 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LiveTracker } from "@/lib/services/liveTrackingService";
 
 // Fix for default marker icons in Leaflet with Next.js
 const DefaultIcon = L.icon({
@@ -23,6 +24,8 @@ interface RouteMapViewerProps {
     zoom?: number;
     className?: string;
     theme?: "light" | "dark";
+    liveTrackers?: LiveTracker[];
+    currentUserId?: string;
 }
 
 const TILE_THEMES = {
@@ -52,7 +55,9 @@ export function RouteMapViewer({
     center = [14.5491, 121.0450], // Default to BGC
     zoom = 13,
     className,
-    theme = "dark"
+    theme = "dark",
+    liveTrackers = [],
+    currentUserId
 }: RouteMapViewerProps) {
     const [routePoints, setRoutePoints] = useState<[number, number][]>(points);
     const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme);
@@ -115,6 +120,16 @@ export function RouteMapViewer({
                         <MapUpdater center={routePoints[Math.floor(routePoints.length / 2)]} zoom={zoom} />
                     </>
                 )}
+                {liveTrackers.map(tracker => {
+                    const isMe = tracker.userId === currentUserId;
+                    const color = isMe ? "#F97316" : "#3b82f6"; // orange for me, blue for others
+                    const html = `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${color};"></div>`;
+                    const icon = L.divIcon({ html, className: 'custom-live-marker', iconSize: [14, 14], iconAnchor: [7, 7] });
+
+                    return (
+                        <Marker key={tracker.userId} position={[tracker.lat, tracker.lng]} icon={icon} />
+                    );
+                })}
             </MapContainer>
 
             {/* Theme Toggle */}

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import {
     Calendar, MapPin, Clock, Trophy, Users,
-    ArrowLeft, ArrowRight, ChevronRight, CheckCircle2, Info, Timer, Megaphone
+    ArrowLeft, ArrowRight, ChevronRight, CheckCircle2, Info, Timer, Megaphone, Activity
 } from "lucide-react";
 import Link from "next/link";
 
@@ -182,7 +182,17 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                             </div>
 
                             {!isEventOver(event) && !isRegistrationClosed(event) && (
-                                <div className="hidden lg:block ml-8">
+                                <div className="hidden lg:flex ml-8 items-center gap-4">
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-10 px-6 uppercase italic font-black text-xs border-primary/30 text-primary hover:bg-primary/10 tracking-widest hidden xl:flex"
+                                    >
+                                        <Link href={`/events/${event.id}/live`}>
+                                            <Activity size={14} className="mr-2 animate-pulse" /> Live Track
+                                        </Link>
+                                    </Button>
                                     <Button
                                         onClick={() => scrollToSection("categories")}
                                         variant="primary"
@@ -449,11 +459,20 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
             {/* Mobile Sticky Register CTA */}
             {!isEventOver(event) && !isRegistrationClosed(event) && (
-                <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden">
+                <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden flex gap-3">
+                    <Button
+                        asChild
+                        variant="outline"
+                        className="h-14 px-6 text-sm font-black italic uppercase tracking-wider border-primary/30 text-primary bg-background shadow-xl hover:bg-primary/5 group shrink-0"
+                    >
+                        <Link href={`/events/${event.id}/live`}>
+                            <Activity className="animate-pulse" size={20} />
+                        </Link>
+                    </Button>
                     <Button
                         asChild
                         variant="primary"
-                        className="w-full h-14 text-lg font-black italic uppercase tracking-wider bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20 group"
+                        className="w-full h-14 text-lg font-black italic uppercase tracking-wider bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20 group flex-1"
                     >
                         <Link href={`/events/${event.id}/register`}>
                             Register Now <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
