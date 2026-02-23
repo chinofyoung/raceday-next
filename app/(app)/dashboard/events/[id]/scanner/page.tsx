@@ -37,6 +37,9 @@ export default function EventScannerPage() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [stats, setStats] = useState({ total: 0, claimed: 0 });
     const scannerRef = useRef<any>(null);
+    const lastScannedRef = useRef<string | null>(null);
+    const lastScanTimeRef = useRef<number>(0);
+    const registrationRef = useRef<HTMLDivElement>(null);
 
     const fetchStats = async () => {
         if (!eventId) return;
@@ -59,9 +62,29 @@ export default function EventScannerPage() {
         fetchStats();
     }, [eventId]);
 
+    useEffect(() => {
+        if (registration && registrationRef.current) {
+            registrationRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, [registration]);
+
 
 
     async function onScanSuccess(decodedText: string) {
+        const now = Date.now();
+        // Prevent processing the same code multiple times within 2 seconds
+        if (decodedText === lastScannedRef.current && (now - lastScanTimeRef.current < 2000)) {
+            return;
+        }
+
+        // If we already have a success result, ignore subsequent scans until reset
+        if (scanResult && decodedText === lastScannedRef.current) {
+            return;
+        }
+
+        lastScannedRef.current = decodedText;
+        lastScanTimeRef.current = now;
+
         try {
             console.log("Decoded QR:", decodedText);
             const data = JSON.parse(decodedText);
@@ -130,6 +153,8 @@ export default function EventScannerPage() {
     const resetScanner = () => {
         setScanResult(null);
         setRegistration(null);
+        lastScannedRef.current = null;
+        lastScanTimeRef.current = 0;
         if (scannerRef.current) scannerRef.current.resume();
     };
 
@@ -185,7 +210,7 @@ export default function EventScannerPage() {
                             <Scan className="animate-spin text-primary" size={48} />
                         </div>
                     ) : registration ? (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500" ref={registrationRef}>
                             <Card className={cn(
                                 "p-8 border-2 relative overflow-hidden",
                                 registration.raceKitClaimed ? "bg-cta/5 border-cta/20" : "bg-primary/5 border-primary/20"

@@ -15,8 +15,12 @@ export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scanner
         scannerRef.current = html5QrCode;
 
         const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
+            fps: 5,
+            qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+                const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+                const size = Math.floor(minEdge * 0.6);
+                return { width: size, height: size };
+            },
             aspectRatio: 1.0
         };
 
@@ -50,15 +54,15 @@ export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scanner
 
             {/* Visual Scan Frame Overlay */}
             <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                <div className="w-[250px] h-[250px] border-2 border-primary/50 rounded-2xl relative shadow-[0_0_0_1000px_rgba(0,0,0,0.5)]">
+                <div className="w-[65%] aspect-square border-2 border-white/20 rounded-[3rem] relative shadow-[0_0_0_1000px_rgba(0,0,0,0.6)]">
                     {/* Corners */}
-                    <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-primary rounded-tl-lg" />
-                    <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-primary rounded-tr-lg" />
-                    <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-primary rounded-bl-lg" />
-                    <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-primary rounded-br-lg" />
+                    <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white rounded-tl-[2rem]" />
+                    <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white rounded-tr-[2rem]" />
+                    <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white rounded-bl-[2rem]" />
+                    <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white rounded-br-[2rem]" />
 
                     {/* Scanning Line Animation */}
-                    <div className="absolute left-0 right-0 h-0.5 bg-primary/40 shadow-[0_0_15px_rgba(249,115,22,0.8)] animate-scan-line top-0" />
+                    <div className="absolute left-0 right-0 h-1 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] animate-scan-line top-0" />
                 </div>
             </div>
 
