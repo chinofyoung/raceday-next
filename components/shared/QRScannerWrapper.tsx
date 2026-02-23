@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Html5QrcodeScanner } from "html5-qrcode";
+import { Html5Qrcode } from "html5-qrcode";
 
 interface QRScannerWrapperProps {
     onScanSuccess: (decodedText: string) => void;
@@ -11,20 +11,38 @@ interface QRScannerWrapperProps {
 
 export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scannerRef }: QRScannerWrapperProps) {
     useEffect(() => {
-        scannerRef.current = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            /* verbose= */ false
-        );
+        const html5QrCode = new Html5Qrcode("reader");
+        scannerRef.current = html5QrCode;
 
-        scannerRef.current.render(onScanSuccess, onScanFailure);
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+        };
+
+        // Start scanning with rear camera
+        html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            onScanSuccess,
+            onScanFailure
+        ).catch((err) => {
+            console.error("Scanner start error:", err);
+            // Fallback to any camera if environment camera fails
+            html5QrCode.start(
+                { facingMode: "user" },
+                config,
+                onScanSuccess,
+                onScanFailure
+            ).catch(e => console.error("Scanner fallback error:", e));
+        });
 
         return () => {
-            if (scannerRef.current) {
-                scannerRef.current.clear();
+            if (html5QrCode.isScanning) {
+                html5QrCode.stop().catch((err) => console.error("Scanner stop error:", err));
             }
         };
     }, [onScanFailure, onScanSuccess, scannerRef]);
 
-    return <div id="reader" className="w-full aspect-square bg-surface/20 rounded-xl overflow-hidden" />;
+    return <div id="reader" className="w-full aspect-square bg-surface/20 rounded-xl overflow-hidden shadow-2xl border border-white/5" />;
 }

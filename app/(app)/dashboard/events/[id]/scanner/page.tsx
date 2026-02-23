@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams } from "next/navigation";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -34,7 +34,29 @@ export default function EventScannerPage() {
     const [registration, setRegistration] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [stats, setStats] = useState({ total: 0, claimed: 0 });
     const scannerRef = useRef<any>(null);
+
+    const fetchStats = async () => {
+        if (!eventId) return;
+        try {
+            const q = query(
+                collection(db, "registrations"),
+                where("eventId", "==", eventId),
+                where("status", "==", "paid")
+            );
+            const snap = await getDocs(q);
+            const total = snap.size;
+            const claimed = snap.docs.filter(doc => doc.data().raceKitClaimed).length;
+            setStats({ total, claimed });
+        } catch (e) {
+            console.error("Error fetching stats:", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchStats();
+    }, [eventId]);
 
 
 
@@ -84,6 +106,7 @@ export default function EventScannerPage() {
                 updatedAt: serverTimestamp(),
             });
             setRegistration({ ...registration, raceKitClaimed: true });
+            fetchStats(); // Refresh stats after claiming
         } catch (e) {
             console.error("Error updating claim status:", e);
         } finally {
@@ -118,7 +141,9 @@ export default function EventScannerPage() {
                         </div>
                         <div className="space-y-0.5">
                             <p className="text-[10px] font-black uppercase text-text-muted italic">Total Claimed</p>
-                            <p className="text-xl font-black italic text-white leading-none tracking-tighter">1,248 / 2,000</p>
+                            <p className="text-xl font-black italic text-white leading-none tracking-tighter">
+                                {stats.claimed.toLocaleString()} / {stats.total.toLocaleString()}
+                            </p>
                         </div>
                     </div>
                 </div>
