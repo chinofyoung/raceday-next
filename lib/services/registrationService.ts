@@ -123,3 +123,27 @@ export async function getUserRegistrations(userId: string) {
         return [];
     }
 }
+export async function getCategoryCounts(eventId: string) {
+    try {
+        const q = query(
+            collection(db, "registrations"),
+            where("eventId", "==", eventId),
+            where("status", "in", ["paid", "pending"])
+        );
+        const snap = await getDocs(q);
+        const counts: Record<string, number> = {};
+
+        snap.docs.forEach(doc => {
+            const data = doc.data();
+            const catId = data.categoryId;
+            if (catId) {
+                counts[catId] = (counts[catId] || 0) + 1;
+            }
+        });
+
+        return counts;
+    } catch (error) {
+        console.error("Error fetching category counts:", error);
+        return {};
+    }
+}

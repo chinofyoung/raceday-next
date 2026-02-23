@@ -19,15 +19,29 @@ export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scanner
         const config = {
             fps: 10,
             qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+                // Handle cases where viewfinder dimensions are 0 or too small
+                if (viewfinderWidth < 50 || viewfinderHeight < 50) {
+                    return { width: 250, height: 250 }; // Sensible default
+                }
                 const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-                const size = Math.floor(minEdge * 0.7);
+                const size = Math.max(Math.floor(minEdge * 0.7), 50); // Ensure at least 50px
                 return { width: size, height: size };
             },
             aspectRatio: 1.0
         };
 
+        const isMounted = { current: true };
+
         // Handle the camera start logic
         const startScanner = async () => {
+            // Small delay to ensure the DOM element is fully ready and visible
+            await new Promise(resolve => setTimeout(resolve, 300));
+
+            if (!isMounted.current) return;
+
+            const element = document.getElementById("reader");
+            if (!element) return;
+
             try {
                 onPermissionStatus?.("prompt");
                 // If we get an explicit list of devices, ALWAYS grab the first one by ID. 
@@ -80,6 +94,7 @@ export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scanner
         startScanner();
 
         return () => {
+            isMounted.current = false;
             if (html5QrCode.isScanning) {
                 html5QrCode.stop().catch((err) => console.error("Scanner stop error:", err));
             }

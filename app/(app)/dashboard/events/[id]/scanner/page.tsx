@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams } from "next/navigation";
 import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
@@ -70,7 +70,7 @@ export default function EventScannerPage() {
         }
     }, [registration]);
 
-    async function onScanSuccess(decodedText: string) {
+    const onScanSuccess = useCallback(async (decodedText: string) => {
         const now = Date.now();
         // Prevent processing the same code multiple times within 2 seconds
         if (decodedText === lastScannedRef.current && (now - lastScanTimeRef.current < 2000)) {
@@ -110,11 +110,11 @@ export default function EventScannerPage() {
             console.error("QR Parse Error:", e);
             toast.error("Unrecognized QR Code");
         }
-    }
+    }, [eventId, scanResult]);
 
-    function onScanFailure(error: any) {
+    const onScanFailure = useCallback((error: any) => {
         // Just consume
-    }
+    }, []);
 
     const fetchParticipant = async (regId: string) => {
         setLoading(true);
@@ -150,13 +150,17 @@ export default function EventScannerPage() {
         }
     };
 
-    const resetScanner = () => {
+    const resetScanner = useCallback(() => {
         setScanResult(null);
         setRegistration(null);
         lastScannedRef.current = null;
         lastScanTimeRef.current = 0;
         if (scannerRef.current) scannerRef.current.resume();
-    };
+    }, []);
+
+    const handlePermissionStatus = useCallback((status: "granted" | "denied" | "prompt") => {
+        setPermissionStatus(status);
+    }, []);
 
     return (
         <PageWrapper className="pt-8 pb-24 max-w-7xl mx-auto space-y-12">
@@ -196,7 +200,7 @@ export default function EventScannerPage() {
                                 onScanSuccess={onScanSuccess}
                                 onScanFailure={onScanFailure}
                                 scannerRef={scannerRef}
-                                onPermissionStatus={setPermissionStatus}
+                                onPermissionStatus={handlePermissionStatus}
                             />
                         ) : (
                             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 p-8 text-center bg-black/60 backdrop-blur-sm z-20">

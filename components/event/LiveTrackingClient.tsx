@@ -351,7 +351,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 {gpxUrl && (
                     <button
                         onClick={toggleFullscreen}
-                        className="absolute top-4 left-4 z-[1000] p-3 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
+                        className="absolute bottom-4 right-4 z-[1000] p-3 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
                         title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                     >
                         {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}

@@ -671,9 +671,20 @@ export default function DashboardPage() {
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2">
                                                             <h4 className="text-xl font-black italic uppercase text-white leading-tight">{reg.event?.name}</h4>
-                                                            <Badge variant={reg.status === "paid" ? "success" : "secondary"} className="text-[8px] font-black italic uppercase px-2 py-0 border-none">
-                                                                {reg.status}
-                                                            </Badge>
+                                                            <div className="flex gap-1.5 shrink-0">
+                                                                <Badge variant={reg.status === "paid" ? "success" : "secondary"} className="text-[8px] font-black italic uppercase px-2 py-0 border-none">
+                                                                    {reg.status}
+                                                                </Badge>
+                                                                {reg.status === "paid" && (
+                                                                    <Badge variant={reg.raceKitClaimed ? "cta" : "outline"} className={cn(
+                                                                        "text-[8px] font-black italic uppercase px-2 py-0 border-none",
+                                                                        !reg.raceKitClaimed && "bg-white/5 text-text-muted opacity-60"
+                                                                    )}>
+                                                                        <Package size={10} className="mr-1" />
+                                                                        {reg.raceKitClaimed ? "Kit Collected" : "Kit Pending"}
+                                                                    </Badge>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                         {reg.isProxy && (
                                                             <div className="flex items-center gap-1.5 text-indigo-400">
@@ -686,6 +697,9 @@ export default function DashboardPage() {
                                                         <div className="flex flex-wrap gap-4 text-[10px] font-bold text-text-muted uppercase italic tracking-widest">
                                                             <span className="flex items-center gap-1"><MapPin size={12} className="text-cta" /> {reg.event?.location?.name || "Location TBD"}</span>
                                                             <span className="flex items-center gap-1"><Trophy size={12} className="text-primary" /> {reg.categoryId}</span>
+                                                            {reg.raceNumber && (
+                                                                <span className="flex items-center gap-1 bg-white/5 px-2 py-0.5 rounded text-white"><span className="text-cta font-black">#</span> {reg.raceNumber}</span>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
