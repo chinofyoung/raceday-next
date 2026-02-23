@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase/config";
-import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc } from "firebase/firestore";
-import { generateBibAndQR } from "@/lib/bibUtils";
+import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, increment } from "firebase/firestore";
+import { generateBibAndQR, isBibTaken, getRaceNumberFormat, formatBibNumber } from "@/lib/bibUtils";
 import { RaceEvent } from "@/types/event";
-import { isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
+import { isRegistrationClosed, getEffectivePrice, isCategoryFull } from "@/lib/earlyBirdUtils";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
@@ -33,6 +33,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Category not found" }, { status: 400 });
         }
 
+        // 3. Check Capacity
+        if (isCategoryFull(category)) {
+            return NextResponse.json({
+                error: `The category "${category.name}" is already sold out!`
+            }, { status: 400 });
+        }
+
         const expectedBasePrice = getEffectivePrice(eventData, category);
         const sentBasePrice = registrationData.basePrice;
 
@@ -46,6 +53,22 @@ export async function POST(req: Request) {
 
         // Recalculate total just in case
         const totalAmount = Math.round(expectedBasePrice + (registrationData.vanityPremium || 0));
+
+        // 3. Validate vanity number is still available (last line of defense)
+        if (registrationData.vanityNumber) {
+            const format = await getRaceNumberFormat(
+                registrationData.eventId,
+                registrationData.categoryId
+            );
+            const formattedVanity = formatBibNumber(format, registrationData.vanityNumber);
+            const taken = await isBibTaken(registrationData.eventId, formattedVanity);
+
+            if (taken) {
+                return NextResponse.json({
+                    error: `Vanity bib number "${registrationData.vanityNumber}" is no longer available. Please choose a different number.`
+                }, { status: 409 });
+            }
+        }
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
@@ -74,6 +97,20 @@ export async function POST(req: Request) {
                 raceNumber,
                 qrCodeUrl,
             });
+
+            // 4. Increment registeredCount for the event category
+            // Since categories are in an array on the event doc, we need to find the index and update that specific element
+            const categoryIndex = eventData.categories.findIndex(c => c.id === registrationData.categoryId);
+            if (categoryIndex !== -1) {
+                const updatedCategories = [...eventData.categories];
+                updatedCategories[categoryIndex] = {
+                    ...updatedCategories[categoryIndex],
+                    registeredCount: (updatedCategories[categoryIndex].registeredCount || 0) + 1
+                };
+                await updateDoc(eventRef, {
+                    categories: updatedCategories
+                });
+            }
 
             return NextResponse.json({
                 checkoutUrl: null,

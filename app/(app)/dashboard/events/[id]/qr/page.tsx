@@ -69,7 +69,8 @@ export default function RunnerQRPage() {
         );
     }
 
-    const eventDate = event?.date && typeof event.date.toDate === 'function' ? event.date.toDate() : new Date(event?.date as string | number | Date);
+    const parsedDate = event?.date ? (typeof event.date.toDate === 'function' ? event.date.toDate() : new Date(event.date as string | number | Date)) : null;
+    const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
 
     return (
         <PageWrapper className="pt-8 pb-24 max-w-2xl mx-auto space-y-12">
@@ -105,7 +106,7 @@ export default function RunnerQRPage() {
                         <h4 className="text-sm font-black italic text-white uppercase tracking-tight">{event?.name}</h4>
                         <div className="flex flex-wrap gap-x-6 gap-y-3">
                             <div className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase italic">
-                                <Calendar size={14} className="text-primary" /> {format(eventDate, "MMMM d, yyyy")}
+                                <Calendar size={14} className="text-primary" /> {isValidDate ? format(parsedDate, "MMMM d, yyyy") : "TBA"}
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase italic">
                                 <MapPin size={14} className="text-cta" /> {event?.location.name}

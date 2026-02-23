@@ -20,7 +20,7 @@ import { formatDistance } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getUserRegistrations } from "@/lib/services/registrationService";
 import { EventGallery } from "./EventGallery";
-import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice, isEventOver } from "@/lib/earlyBirdUtils";
+import { isEarlyBirdActive, isRegistrationClosed, getEarlyBirdDaysRemaining, getEffectivePrice, isEventOver, isCategoryFull } from "@/lib/earlyBirdUtils";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -93,6 +93,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     }, [user, event.id]);
 
     const eventDate = new Date(event.date as unknown as string);
+    const isValidDate = !isNaN(eventDate.getTime());
 
     return (
         <div className="relative">
@@ -138,7 +139,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         </h1>
                     </div>
                     <div className="flex flex-wrap gap-6 text-white/90 font-bold italic">
-                        <div className="flex items-center gap-2"><Calendar size={20} className="text-primary" /> {format(eventDate, "MMMM d, yyyy")}</div>
+                        <div className="flex items-center gap-2"><Calendar size={20} className="text-primary" /> {isValidDate ? format(eventDate, "MMMM d, yyyy") : "TBD"}</div>
                         <div className="flex items-center gap-2"><MapPin size={20} className="text-cta" /> {event.location?.name || "Multiple Locations"}</div>
                     </div>
                 </div>
@@ -219,7 +220,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         {/* Categories Section */}
                         <div id="categories" className="space-y-8 px-4 md:px-0 relative">
                             {/* Decorative background element */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-primary/5 blur-[120px] rounded-full -z-10 pointer-events-none" />
+                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[150%] bg-primary/5 blur-[120px] rounded-full -z-10 pointer-events-none" />
                             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Race <span className="text-primary">Categories</span></h2>
                             <div className="grid grid-cols-1 gap-6">
                                 {event.categories?.map((cat, i) => (
@@ -247,18 +248,44 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                                                     <p className="text-3xl font-black italic text-white tracking-tighter">₱{cat.price}</p>
                                                 )}
 
+                                                {cat.showMaxParticipants && cat.maxParticipants && cat.maxParticipants > 0 && (
+                                                    <div className="text-right mt-1">
+                                                        <p className={cn(
+                                                            "text-[10px] font-black uppercase tracking-widest italic",
+                                                            isCategoryFull(cat) ? "text-red-500" : "text-primary"
+                                                        )}>
+                                                            {isCategoryFull(cat)
+                                                                ? "SOLD OUT"
+                                                                : `${cat.maxParticipants - (cat.registeredCount || 0)} slots remaining`}
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                {cat.showRegisteredCount && (
+                                                    <div className="text-right mt-0.5 flex items-center justify-end gap-1.5 text-text-muted opacity-80">
+                                                        <Users size={10} className="text-white/40" />
+                                                        <p className="text-[10px] font-bold uppercase tracking-widest italic">
+                                                            {cat.registeredCount || 0} registered
+                                                        </p>
+                                                    </div>
+                                                )}
+
                                                 <Button
-                                                    asChild={!isEventOver(event) && !isRegistrationClosed(event)}
+                                                    asChild={!isEventOver(event) && !isRegistrationClosed(event) && !isCategoryFull(cat)}
                                                     variant="primary"
                                                     size="sm"
-                                                    disabled={isEventOver(event) || isRegistrationClosed(event)}
+                                                    disabled={isEventOver(event) || isRegistrationClosed(event) || isCategoryFull(cat)}
                                                     className={cn(
                                                         "w-full md:w-auto uppercase italic font-black shadow-lg shadow-primary/20",
-                                                        (isEventOver(event) || isRegistrationClosed(event)) && "opacity-50 pointer-events-none grayscale"
+                                                        (isEventOver(event) || isRegistrationClosed(event) || isCategoryFull(cat)) && "opacity-50 pointer-events-none grayscale"
                                                     )}
                                                 >
-                                                    {isEventOver(event) || isRegistrationClosed(event) ? (
-                                                        isEventOver(event) ? "Event Ended" : "Registration Closed"
+                                                    {isEventOver(event) || isRegistrationClosed(event) || isCategoryFull(cat) ? (
+                                                        isEventOver(event)
+                                                            ? "Event Ended"
+                                                            : isRegistrationClosed(event)
+                                                                ? "Registration Closed"
+                                                                : "Sold Out"
                                                     ) : (
                                                         <Link href={`/events/${event.id}/register?category=${cat.id || i}`}>
                                                             Register Now <ChevronRight size={16} />

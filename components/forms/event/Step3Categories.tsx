@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { EventFormValues } from "@/lib/validations/event";
-import { Plus, Trash2, Map, Shirt, Clock, Ruler, DollarSign, CloudUpload, Info } from "lucide-react";
+import { Plus, Trash2, Map, Shirt, Clock, Ruler, DollarSign, CloudUpload, Info, Users } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
-import { cn } from "@/lib/utils";
+import { cn, generateId } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import dynamic from "next/dynamic";
 
@@ -37,7 +37,7 @@ export function Step3Categories() {
 
     const addCategory = () => {
         append({
-            id: crypto.randomUUID(),
+            id: generateId(),
             name: "",
             distance: 0,
             distanceUnit: "km",
@@ -47,6 +47,9 @@ export function Step3Categories() {
             price: 0,
             inclusions: ["Race Bib"],
             raceNumberFormat: "{number}",
+            maxParticipants: 0,
+            showMaxParticipants: true,
+            showRegisteredCount: false,
             registeredCount: 0
         });
     };
@@ -243,6 +246,46 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                             placeholder="e.g. 21K-{number}"
                             description="Use {number} as placeholder."
                         />
+
+                        <div className="space-y-4 md:col-span-3 pt-4 border-t border-white/5">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                                <Input
+                                    type="number"
+                                    label="Max Participants"
+                                    {...register(`categories.${index}.maxParticipants`, { valueAsNumber: true })}
+                                    error={errors.categories?.[index]?.maxParticipants?.message}
+                                    placeholder="0 for unlimited"
+                                    icon={<Users size={16} />}
+                                    description="Maximum number of registrants allowed for this category."
+                                />
+                                <div className="pb-4">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            {...register(`categories.${index}.showMaxParticipants`)}
+                                            className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
+                                        />
+                                        <div className="space-y-0.5">
+                                            <span className="text-sm font-black italic uppercase tracking-wide text-white group-hover:text-primary transition-colors">Show Slots Remaining</span>
+                                            <p className="text-[10px] text-text-muted font-medium italic">Display remaining slots to the public.</p>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div className="pb-4">
+                                    <label className="flex items-center gap-3 cursor-pointer group">
+                                        <input
+                                            type="checkbox"
+                                            {...register(`categories.${index}.showRegisteredCount`)}
+                                            className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
+                                        />
+                                        <div className="space-y-0.5">
+                                            <span className="text-sm font-black italic uppercase tracking-wide text-white group-hover:text-primary transition-colors">Show Participant Count</span>
+                                            <p className="text-[10px] text-text-muted font-medium italic">Display total registered count to the public.</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Timing Fields */}

@@ -79,3 +79,11 @@ export function isEventOver(event: RaceEvent): boolean {
 
     return now > eventDate;
 }
+
+/**
+ * Checks if a category is full.
+ */
+export function isCategoryFull(category: EventCategory): boolean {
+    if (!category.maxParticipants || category.maxParticipants <= 0) return false;
+    return (category.registeredCount || 0) >= category.maxParticipants;
+}

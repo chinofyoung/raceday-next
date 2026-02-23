@@ -20,7 +20,7 @@ import { useCallback } from "react";
 import { addDoc, collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { toInputDate } from "@/lib/utils";
+import { toInputDate, sanitizeForFirestore } from "@/lib/utils";
 
 const STEPS = [
     "Basic Info",
@@ -110,19 +110,19 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
         const values = methods.getValues();
         try {
             if (draftId && typeof draftId === "string" && draftId.length > 0) {
-                await updateDoc(doc(db, "events", draftId), {
+                await updateDoc(doc(db, "events", draftId), sanitizeForFirestore({
                     ...values,
                     updatedAt: serverTimestamp(),
-                });
+                }));
             } else {
-                const res = await addDoc(collection(db, "events"), {
+                const res = await addDoc(collection(db, "events"), sanitizeForFirestore({
                     ...values,
                     organizerId: user.uid,
                     organizerName: user.displayName || "Unknown Organizer",
                     status: "draft",
                     createdAt: serverTimestamp(),
                     updatedAt: serverTimestamp(),
-                });
+                }));
                 setDraftId(res.id);
             }
             toast.success("Draft saved successfully!", { id: loadingToast });
@@ -141,8 +141,8 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
 
         const dataTransform: EventFormValues = {
             ...data,
-            date: new Date(data.date),
-            registrationEndDate: new Date(data.registrationEndDate),
+            date: data.date ? new Date(data.date) : new Date(),
+            registrationEndDate: data.registrationEndDate ? new Date(data.registrationEndDate) : new Date(),
             earlyBird: data.earlyBird ? {
                 enabled: data.earlyBird.enabled,
                 startDate: data.earlyBird.startDate ? new Date(data.earlyBird.startDate) : undefined,
@@ -160,12 +160,12 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             };
 
             if (draftId && typeof draftId === "string" && draftId.length > 0) {
-                await updateDoc(doc(db, "events", draftId), payload);
+                await updateDoc(doc(db, "events", draftId), sanitizeForFirestore(payload));
             } else {
-                await addDoc(collection(db, "events"), {
+                await addDoc(collection(db, "events"), sanitizeForFirestore({
                     ...payload,
                     createdAt: serverTimestamp(),
-                });
+                }));
             }
             router.push("/dashboard/events");
         } catch (e: any) {
@@ -251,6 +251,17 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                             <Button variant="ghost" onClick={saveDraft} disabled={loading} className="hidden md:flex gap-2">
                                 <Save size={18} /> Save Draft
                             </Button>
+
+                            {initialData?.status === "published" && currentStep < STEPS.length - 1 && (
+                                <Button
+                                    variant="outline"
+                                    onClick={handleSubmit(onSubmit)}
+                                    disabled={loading}
+                                    className="hidden md:flex gap-2 px-8 border-primary/20 hover:bg-primary/5 text-primary italic font-black uppercase text-[10px] tracking-widest"
+                                >
+                                    <Send size={18} /> Save & Publish
+                                </Button>
+                            )}
 
                             {currentStep < STEPS.length - 1 ? (
                                 <Button variant="primary" onClick={nextStep} disabled={loading} className="gap-2 px-8">

@@ -31,6 +31,7 @@ interface EventCardProps {
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const [paidCount, setPaidCount] = React.useState<number>(0);
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
+    const isValidDate = eventDate && !isNaN(eventDate.getTime());
 
     React.useEffect(() => {
         const fetchPaidCount = async () => {
@@ -72,9 +73,11 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
         ? minEffective === maxEffective ? `₱${minEffective.toLocaleString()}` : `₱${minEffective.toLocaleString()} - ₱${maxEffective.toLocaleString()}`
         : "Free / TBD";
 
-    // Calculate total capacity
     const capacity = event.categories?.reduce((acc, cat) => acc + (cat.maxParticipants || 0), 0) || 0;
     const isNearlyFull = capacity > 0 && paidCount / capacity > 0.8;
+
+    // Show participants if in management mode OR if at least one category has it enabled for public view
+    const showParticipants = mode === "management" || (event.categories?.some(cat => cat.showRegisteredCount) ?? false);
 
     return (
         <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative">
@@ -151,7 +154,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                     <div className="flex flex-wrap gap-y-2 gap-x-4">
                         <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold italic">
                             <Calendar size={14} className="text-primary" />
-                            {eventDate ? format(eventDate, "MMM d, yyyy") : "TBD"}
+                            {isValidDate ? format(eventDate, "MMM d, yyyy") : "TBD"}
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold italic">
                             <MapPin size={14} className="text-primary" />
@@ -174,15 +177,17 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                             </div>
                         </div>
                     </div>
-                    <div className="space-y-1 text-right">
-                        <p className="text-[9px] font-black uppercase text-text-muted tracking-widest opacity-60">Participants</p>
-                        <div className="flex items-center gap-2 justify-end">
-                            <Users size={14} className={cn(isNearlyFull ? "text-orange-500" : "text-blue-400")} />
-                            <span className="text-sm font-black italic text-white">
-                                {paidCount}{capacity > 0 && <span className="text-text-muted opacity-40 text-[10px] ml-1">/ {capacity}</span>}
-                            </span>
+                    {showParticipants && (
+                        <div className="space-y-1 text-right">
+                            <p className="text-[9px] font-black uppercase text-text-muted tracking-widest opacity-60">Participants</p>
+                            <div className="flex items-center gap-2 justify-end">
+                                <Users size={14} className={cn(isNearlyFull ? "text-orange-500" : "text-blue-400")} />
+                                <span className="text-sm font-black italic text-white">
+                                    {paidCount}{capacity > 0 && <span className="text-text-muted opacity-40 text-[10px] ml-1">/ {capacity}</span>}
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Footer Actions */}

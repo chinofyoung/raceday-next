@@ -7,8 +7,6 @@ import { RegistrationFormValues } from "@/lib/validations/registration";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Search, CheckCircle2, AlertCircle, Loader2, Sparkles, Hash, ShieldAlert } from "lucide-react";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 import { cn } from "@/lib/utils";
 
 interface Step3VanityProps {
@@ -43,16 +41,19 @@ export function Step3Vanity({ event }: Step3VanityProps) {
         setIsAvailable(null);
 
         try {
-            // In a real app, we check the 'registrations' collection for the same event and bib number
-            const q = query(
-                collection(db, "registrations"),
-                where("eventId", "==", event.id),
-                where("vanityNumber", "==", vanityNumber),
-                where("status", "==", "paid")
+            // Server-side check against formatted raceNumber (catches vanity + sequential collisions)
+            const res = await fetch(
+                `/api/registrations/check-vanity?eventId=${event.id}&categoryId=${categoryId}&vanityNumber=${encodeURIComponent(vanityNumber)}`
             );
-            const snap = await getDocs(q);
+            const data = await res.json();
 
-            const available = snap.empty;
+            if (!res.ok) {
+                console.error("Vanity check error:", data.error);
+                setIsAvailable(false);
+                return;
+            }
+
+            const available = data.available;
             setIsAvailable(available);
             setLastChecked(vanityNumber);
 
@@ -65,6 +66,7 @@ export function Step3Vanity({ event }: Step3VanityProps) {
             }
         } catch (error) {
             console.error("Error checking vanity number:", error);
+            setIsAvailable(false);
         } finally {
             setIsChecking(false);
         }

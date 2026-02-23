@@ -41,13 +41,34 @@ export async function POST(req: Request) {
                 }
 
                 // 2. Generate Race Number & QR Code (Robust)
-                const { raceNumber, qrCodeUrl } = await generateBibAndQR(
-                    registrationId,
-                    regData.eventId,
-                    regData.categoryId,
-                    regData.participantInfo.name,
-                    regData.vanityNumber
-                );
+                let raceNumber: string;
+                let qrCodeUrl: string;
+
+                try {
+                    const result = await generateBibAndQR(
+                        registrationId,
+                        regData.eventId,
+                        regData.categoryId,
+                        regData.participantInfo.name,
+                        regData.vanityNumber
+                    );
+                    raceNumber = result.raceNumber;
+                    qrCodeUrl = result.qrCodeUrl;
+                } catch (bibError: any) {
+                    // Vanity number was claimed between checkout and payment — fallback to sequential
+                    console.warn(
+                        `Vanity bib conflict for reg ${registrationId}: ${bibError.message}. Falling back to sequential.`
+                    );
+                    const result = await generateBibAndQR(
+                        registrationId,
+                        regData.eventId,
+                        regData.categoryId,
+                        regData.participantInfo.name,
+                        null // force sequential
+                    );
+                    raceNumber = result.raceNumber;
+                    qrCodeUrl = result.qrCodeUrl;
+                }
 
                 // 4. Update Firestore
                 await updateDoc(regRef, {
@@ -59,6 +80,25 @@ export async function POST(req: Request) {
                     updatedAt: serverTimestamp(),
                     xenditPaymentId: body.id,
                 });
+
+                // 5. Increment registeredCount for the event category
+                const eventRef = doc(db, "events", regData.eventId);
+                const eventSnap = await getDoc(eventRef);
+                if (eventSnap.exists()) {
+                    const eventData = eventSnap.data();
+                    const categories = eventData.categories || [];
+                    const categoryIndex = categories.findIndex((c: any) => c.id === regData.categoryId);
+                    if (categoryIndex !== -1) {
+                        const updatedCategories = [...categories];
+                        updatedCategories[categoryIndex] = {
+                            ...updatedCategories[categoryIndex],
+                            registeredCount: (updatedCategories[categoryIndex].registeredCount || 0) + 1
+                        };
+                        await updateDoc(eventRef, {
+                            categories: updatedCategories
+                        });
+                    }
+                }
 
                 console.log(`Payment confirmed for registration: ${registrationId}`);
             }

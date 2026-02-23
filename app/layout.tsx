@@ -45,7 +45,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark scroll-smooth">
-      <body className="antialiased selection:bg-primary/30 selection:text-white">
+      <body className="antialiased selection:bg-primary/30 selection:text-white overflow-x-hidden">
         <AuthProvider>
           {children}
           <Toaster richColors closeButton position="top-right" />

@@ -97,7 +97,8 @@ export default function EventDetailPage() {
         return matchesSearch && matchesStatus;
     });
 
-    const eventDate = typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date);
+    const parsedDate = event?.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
+    const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
 
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10">
@@ -120,7 +121,7 @@ export default function EventDetailPage() {
                             </span>
                         </div>
                         <div className="flex flex-wrap gap-4 text-sm text-text-muted font-medium italic">
-                            <div className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" /> {format(eventDate, "MMMM d, yyyy")}</div>
+                            <div className="flex items-center gap-1.5"><Calendar size={14} className="text-primary" /> {isValidDate ? format(parsedDate, "MMMM d, yyyy") : "TBA"}</div>
                             <div className="flex items-center gap-1.5"><MapPin size={14} className="text-cta" /> {event.location.name}</div>
                         </div>
                     </div>

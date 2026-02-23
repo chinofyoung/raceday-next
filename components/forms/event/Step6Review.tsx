@@ -12,11 +12,13 @@ export function Step6Review() {
     const { watch } = useFormContext<EventFormValues>();
     const data = watch();
 
-    const formatDateLabel = (date: Date) => {
+    const formatDateLabel = (date: any) => {
         try {
-            return format(date, "MMMM d, yyyy");
+            const d = date instanceof Date ? date : new Date(date);
+            if (isNaN(d.getTime())) return "TBD";
+            return format(d, "MMMM d, yyyy");
         } catch {
-            return "Invalid Date";
+            return "TBD";
         }
     };
 

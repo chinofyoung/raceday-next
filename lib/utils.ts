@@ -79,10 +79,33 @@ export function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export function sanitizeForFirestore<T extends Record<string, any>>(data: T): T {
-  return Object.fromEntries(
-    Object.entries(data).map(([key, value]) => [key, value === undefined ? null : value])
-  ) as T;
+export function sanitizeForFirestore(data: any): any {
+  if (data === null || data === undefined) {
+    return data === undefined ? null : data;
+  }
+
+  // Don't recurse into Dates or Firestore FieldValues (sentinels)
+  if (data instanceof Date) {
+    return isNaN(data.getTime()) ? null : data;
+  }
+
+  if (typeof data === 'object' && data.constructor.name === 'FieldValue') {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(sanitizeForFirestore);
+  }
+
+  if (typeof data !== 'object') {
+    return data;
+  }
+
+  const entries = Object.entries(data)
+    .filter(([_, value]) => value !== undefined)
+    .map(([key, value]) => [key, sanitizeForFirestore(value)]);
+
+  return Object.fromEntries(entries);
 }
 
 /**
@@ -93,4 +116,16 @@ export function formatDistance(distance: number | string, distanceUnit?: string)
   if (typeof distance === "string") return distance; // Legacy format, return as-is
   const unit = distanceUnit || "km";
   return `${distance} ${unit}`;
+}
+/**
+ * Generates a unique ID using crypto.randomUUID if available,
+ * otherwise falls back to a custom implementation.
+ */
+export function generateId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // Fallback for non-secure contexts or older browsers
+  return Math.random().toString(36).substring(2, 11) +
+    Math.random().toString(36).substring(2, 11);
 }

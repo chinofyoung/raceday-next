@@ -27,6 +27,8 @@ export interface EventCategory {
     inclusions: string[];    // e.g. ["Race bib", "Finisher medal", "T-shirt"]
     raceNumberFormat: string; // e.g. "42K-{number}" or "42{number}"
     maxParticipants?: number;
+    showMaxParticipants: boolean;
+    showRegisteredCount: boolean;
     registeredCount: number;
 }
 

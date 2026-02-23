@@ -48,13 +48,34 @@ export async function GET(
 
         if (invoice.status === "PAID" || invoice.status === "SETTLED") {
             // Manual Sync: Update the registration if Xendit says it's paid
-            const { raceNumber, qrCodeUrl } = await generateBibAndQR(
-                registrationId,
-                regData.eventId,
-                regData.categoryId,
-                regData.participantInfo.name,
-                regData.vanityNumber
-            );
+            let raceNumber: string;
+            let qrCodeUrl: string;
+
+            try {
+                const result = await generateBibAndQR(
+                    registrationId,
+                    regData.eventId,
+                    regData.categoryId,
+                    regData.participantInfo.name,
+                    regData.vanityNumber
+                );
+                raceNumber = result.raceNumber;
+                qrCodeUrl = result.qrCodeUrl;
+            } catch (bibError: any) {
+                // Vanity number was claimed between checkout and sync — fallback to sequential
+                console.warn(
+                    `Vanity bib conflict for reg ${registrationId}: ${bibError.message}. Falling back to sequential.`
+                );
+                const result = await generateBibAndQR(
+                    registrationId,
+                    regData.eventId,
+                    regData.categoryId,
+                    regData.participantInfo.name,
+                    null // force sequential
+                );
+                raceNumber = result.raceNumber;
+                qrCodeUrl = result.qrCodeUrl;
+            }
 
             await updateDoc(regRef, {
                 status: "paid",

@@ -24,7 +24,9 @@ export const eventCategorySchema = z.object({
     }).optional(),
     inclusions: z.array(z.string()).min(1, "Add at least one inclusion"),
     raceNumberFormat: z.string().min(1, "Format is required"),
-    maxParticipants: z.number().optional(),
+    maxParticipants: z.number().min(0).optional(),
+    showMaxParticipants: z.boolean().default(true),
+    showRegisteredCount: z.boolean().default(false),
     registeredCount: z.number().default(0),
 });
 

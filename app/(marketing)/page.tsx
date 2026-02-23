@@ -133,6 +133,7 @@ export default async function HomePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {upcomingEvents.length > 0 ? upcomingEvents.map((event) => {
                         const eventDate = typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date);
+                        const isValidDate = eventDate && !isNaN(eventDate.getTime());
                         return (
                             <Link key={event.id} href={`/events/${event.id}`}>
                                 <Card className="group overflow-hidden border border-white/5 hover:border-primary/50 p-0 transition-all hover:-translate-y-2 bg-surface/30">
@@ -147,7 +148,7 @@ export default async function HomePage() {
                                         <div className="absolute bottom-4 left-4 z-20 space-y-1">
                                             <div className="flex items-center gap-1.5 text-primary text-[10px] font-black uppercase tracking-widest italic">
                                                 <Calendar size={12} />
-                                                <span>{format(eventDate, "MMM d, yyyy")}</span>
+                                                <span>{isValidDate ? format(eventDate, "MMM d, yyyy") : "TBD"}</span>
                                             </div>
                                             <h3 className="text-xl font-black uppercase italic text-white group-hover:text-primary transition-colors tracking-tighter leading-tight">{event.name}</h3>
                                         </div>
