@@ -8,11 +8,12 @@ export interface LiveTracker {
     displayName: string;
     lat: number;
     lng: number;
+    bearing?: number;
     lastUpdatedAt: Date;
     isActive: boolean;
 }
 
-export const startUserTracking = async (eventId: string, categoryId: string | undefined, userId: string, displayName: string, lat: number, lng: number) => {
+export const startUserTracking = async (eventId: string, categoryId: string | undefined, userId: string, displayName: string, lat: number, lng: number, bearing?: number) => {
     const trackingRef = ref(rtdb, `live_tracking/${eventId}/participants/${userId}`);
     await set(trackingRef, {
         userId,
@@ -21,26 +22,38 @@ export const startUserTracking = async (eventId: string, categoryId: string | un
         displayName,
         lat,
         lng,
+        bearing: bearing ?? 0,
         lastUpdatedAt: serverTimestamp(),
         isActive: true
     });
 };
 
-export const updateUserLocation = async (eventId: string, userId: string, lat: number, lng: number) => {
-    // In RTDB, update properties using set on specific paths or updating the whole object
-    // For simplicity, we can update the specific fields or fetch/update
-    // The easiest way to update a few fields in place is `update` or simply overwriting the specific node properties
-    // Actually, RTDB has an `update` method, but let's just use `set` on the child paths to be safe, or import `update`
-    // Alternatively, update the exact fields via generic set:
-    const latRef = ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lat`);
-    const lngRef = ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lng`);
-    const timeRef = ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lastUpdatedAt`);
+export const updateUserLocation = async (eventId: string, userId: string, lat: number, lng: number, bearing?: number) => {
+    const updates: Record<string, any> = {
+        lat,
+        lng,
+        lastUpdatedAt: serverTimestamp()
+    };
 
-    await Promise.all([
-        set(latRef, lat),
-        set(lngRef, lng),
-        set(timeRef, serverTimestamp()),
-    ]);
+    if (bearing !== undefined) {
+        updates.bearing = bearing;
+    }
+
+    const participantRef = ref(rtdb, `live_tracking/${eventId}/participants/${userId}`);
+
+    // Instead of set on individual paths, we can just use set on the properties we want to preserve
+    // Or just set on individual paths as before but let's be more efficient
+    const promises = [
+        set(ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lat`), lat),
+        set(ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lng`), lng),
+        set(ref(rtdb, `live_tracking/${eventId}/participants/${userId}/lastUpdatedAt`), serverTimestamp()),
+    ];
+
+    if (bearing !== undefined) {
+        promises.push(set(ref(rtdb, `live_tracking/${eventId}/participants/${userId}/bearing`), bearing));
+    }
+
+    await Promise.all(promises);
 };
 
 export const stopUserTracking = async (eventId: string, userId: string) => {
@@ -64,6 +77,7 @@ export const subscribeToEventLocations = (eventId: string, onUpdate: (trackers: 
                         displayName: data.displayName || "Anonymous Runner",
                         lat: data.lat,
                         lng: data.lng,
+                        bearing: data.bearing || 0,
                         // RTDB serverTimestamp() resolves to a number (milliseconds since epoch)
                         lastUpdatedAt: new Date(data.lastUpdatedAt),
                         isActive: data.isActive

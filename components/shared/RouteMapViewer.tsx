@@ -122,12 +122,40 @@ export function RouteMapViewer({
                 )}
                 {liveTrackers.map(tracker => {
                     const isMe = tracker.userId === currentUserId;
-                    const color = isMe ? "#F97316" : "#3b82f6"; // orange for me, blue for others
-                    const html = `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px ${color};"></div>`;
-                    const icon = L.divIcon({ html, className: 'custom-live-marker', iconSize: [14, 14], iconAnchor: [7, 7] });
+                    const color = isMe ? "#22c55e" : "#3b82f6"; // green for me, blue for others
+
+                    // Create a cohesive teardrop "navigator" shape that feels like one unit
+                    const html = `
+                        <div style="transform: rotate(${tracker.bearing || 0}deg); width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));">
+                                <path 
+                                    d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" 
+                                    fill="${color}" 
+                                    stroke="white" 
+                                    stroke-width="2.5" 
+                                    stroke-linejoin="round"
+                                />
+                                <circle cx="12" cy="13.5" r="2.5" fill="white" fill-opacity="0.3" />
+                            </svg>
+                        </div>
+                    `;
+
+                    const icon = L.divIcon({
+                        html,
+                        className: 'custom-live-marker',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9],
+                        popupAnchor: [0, -9]
+                    });
 
                     return (
-                        <Marker key={tracker.userId} position={[tracker.lat, tracker.lng]} icon={icon} />
+                        <Marker key={tracker.userId} position={[tracker.lat, tracker.lng]} icon={icon}>
+                            <Popup>
+                                <div className="text-xs font-black italic uppercase tracking-tight">
+                                    {tracker.displayName} {isMe && "(You)"}
+                                </div>
+                            </Popup>
+                        </Marker>
                     );
                 })}
             </MapContainer>

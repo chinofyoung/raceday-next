@@ -35,8 +35,21 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const mapContainerRef = useRef<HTMLDivElement>(null);
-    const lastLocationRef = useRef<{ lat: number, lng: number, time: number } | null>(null);
+    const lastLocationRef = useRef<{ lat: number, lng: number, time: number, bearing: number } | null>(null);
     const router = useRouter();
+
+    const calculateBearing = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const y = Math.sin(Δλ) * Math.cos(φ2);
+        const x = Math.cos(φ1) * Math.sin(φ2) -
+            Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+        const θ = Math.atan2(y, x);
+        const bearing = (θ * 180 / Math.PI + 360) % 360;
+        return bearing;
+    };
 
     const category = event.categories?.[activeRouteCategoryIndex];
     const gpxUrl = category?.routeMap?.gpxFileUrl;
@@ -111,10 +124,11 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         setIsLoading(true);
         navigator.geolocation.getCurrentPosition(
             async (position) => {
-                const { latitude, longitude } = position.coords;
+                const { latitude, longitude, heading } = position.coords;
                 try {
-                    await startUserTracking(event.id, category?.id, userId, displayName, latitude, longitude);
-                    lastLocationRef.current = { lat: latitude, lng: longitude, time: Date.now() };
+                    const initialBearing = heading || 0;
+                    await startUserTracking(event.id, category?.id, userId, displayName, latitude, longitude, initialBearing);
+                    lastLocationRef.current = { lat: latitude, lng: longitude, time: Date.now(), bearing: initialBearing };
 
                     const id = navigator.geolocation.watchPosition(
                         async (pos) => {
@@ -141,12 +155,17 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
 
                                 // Only update if 15 seconds have passed AND moved at least 15 meters
                                 if (timeElapsed > 15000 && distance > 15) {
-                                    await updateUserLocation(event.id!, userId, newLat, newLng); // the ! is safe because event.id is checked at the top of function
-                                    lastLocationRef.current = { lat: newLat, lng: newLng, time: now };
+                                    const calculatedBearing = pos.coords.heading !== null && pos.coords.heading !== undefined
+                                        ? pos.coords.heading
+                                        : calculateBearing(last.lat, last.lng, newLat, newLng);
+
+                                    await updateUserLocation(event.id!, userId, newLat, newLng, calculatedBearing);
+                                    lastLocationRef.current = { lat: newLat, lng: newLng, time: now, bearing: calculatedBearing };
                                 }
                             } else {
-                                await updateUserLocation(event.id!, userId, newLat, newLng);
-                                lastLocationRef.current = { lat: newLat, lng: newLng, time: now };
+                                const initialHeading = pos.coords.heading || 0;
+                                await updateUserLocation(event.id!, userId, newLat, newLng, initialHeading);
+                                lastLocationRef.current = { lat: newLat, lng: newLng, time: now, bearing: initialHeading };
                             }
                         },
                         (err) => console.error("Error watching position", err),
@@ -381,7 +400,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         {(isTracking ? liveTrackers : []).slice(0, 3).map((t, i) => (
                             <div key={t.userId} className="w-8 h-8 rounded-full border-2 border-black bg-primary/20 flex items-center justify-center relative shadow-sm" style={{ zIndex: 10 - i }}>
                                 <span className="text-[10px] font-black text-white">{t.displayName.charAt(0).toUpperCase()}</span>
-                                <div className={cn("absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black", t.userId === userId ? "bg-primary" : "bg-blue-500")} />
+                                <div className={cn("absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black", t.userId === userId ? "bg-green-500" : "bg-blue-500")} />
                             </div>
                         ))}
                     </div>
