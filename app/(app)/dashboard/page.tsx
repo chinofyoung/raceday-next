@@ -231,9 +231,14 @@ export default function DashboardPage() {
                                                         <p className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest">{event.location?.name || "No location set"}</p>
                                                     </div>
                                                 </div>
-                                                <Button size="sm" variant="ghost" asChild className="text-primary font-black italic uppercase">
-                                                    <Link href={`/dashboard/events/${event.id}`}>Manage <ArrowRight size={14} className="ml-1" /></Link>
-                                                </Button>
+                                                <div className="flex gap-2">
+                                                    <Button size="sm" variant="outline" asChild className="text-cta border-cta/20 hover:bg-cta/5 font-black italic uppercase hidden sm:flex">
+                                                        <Link href={`/dashboard/events/${event.id}/scanner`}><QrCode size={14} className="mr-1" /> Scan</Link>
+                                                    </Button>
+                                                    <Button size="sm" variant="ghost" asChild className="text-primary font-black italic uppercase">
+                                                        <Link href={`/dashboard/events/${event.id}`}>Manage <ArrowRight size={14} className="ml-1" /></Link>
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </Card>
                                     ))}

@@ -12,6 +12,7 @@ import {
     Camera, Scan, ShieldCheck, XCircle,
     CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft
 } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
@@ -62,17 +63,29 @@ export default function EventScannerPage() {
 
     async function onScanSuccess(decodedText: string) {
         try {
+            console.log("Decoded QR:", decodedText);
             const data = JSON.parse(decodedText);
-            if (data.registrationId && data.eventId === eventId) {
+
+            // Normalize IDs for comparison
+            const scannedEventId = String(data.eventId || "").trim();
+            const currentEventId = String(eventId || "").trim();
+
+            if (data.registrationId && scannedEventId === currentEventId) {
                 setScanResult(data);
                 fetchParticipant(data.registrationId);
                 // Pause scanner or stop it
                 if (scannerRef.current) scannerRef.current.pause();
             } else {
-                alert("Invalid QR code for this event!");
+                console.warn("Event ID mismatch:", { scanned: scannedEventId, current: currentEventId });
+                toast.error("Invalid QR code", {
+                    description: scannedEventId !== currentEventId
+                        ? "This QR code belongs to a different event."
+                        : "Unsupported QR format."
+                });
             }
         } catch (e) {
             console.error("QR Parse Error:", e);
+            toast.error("Unrecognized QR Code");
         }
     }
 
