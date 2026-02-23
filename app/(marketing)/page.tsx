@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, MapPin, TrendingUp, Users, Zap, Trophy, Timer } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, TrendingUp, Users, Zap, Trophy, Timer, Navigation, Activity } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -211,6 +211,126 @@ export default async function HomePage() {
                 </div>
             </section>
 
+            {/* Live Tracking Feature Highlight */}
+            <section className="relative rounded-[3rem] overflow-hidden border border-white/5 bg-surface/40 p-12 md:p-24 space-y-16 group isolate">
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-[150px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[150px] pointer-events-none" />
+
+                {/* Simulated Map Background lines */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+                    <div className="space-y-8">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-green-500/30 rounded-full text-green-400 bg-green-500/10 uppercase font-black italic tracking-widest text-[10px]">
+                            <Activity size={12} className="animate-pulse" /> New Feature
+                        </div>
+
+                        <div className="space-y-4">
+                            <h2 className="text-4xl md:text-6xl font-black italic uppercase leading-[0.9] tracking-tighter text-white">
+                                Never Run <br />
+                                <span className="text-green-400">Alone</span> Again.
+                            </h2>
+                            <p className="text-text-muted text-lg md:text-xl font-medium italic leading-relaxed max-w-lg">
+                                Experience race day like never before with real-time <span className="text-white font-bold">Live Tracking</span>. See exactly where you are on the interactive course map, monitor your heading, and track your friends and the entire field live.
+                            </p>
+                        </div>
+
+                        <ul className="space-y-4 pt-4">
+                            <li className="flex items-start gap-4">
+                                <div className="mt-1 w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0 border border-green-500/30">
+                                    <Navigation size={14} className="text-green-400" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="text-white font-bold italic uppercase tracking-wide text-sm">Personal Navigator</h4>
+                                    <p className="text-text-muted text-sm italic pr-4">A vibrant emerald directional marker shows your exact location and real-time heading based on your device's compass.</p>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-4">
+                                <div className="mt-1 w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0 border border-blue-500/30">
+                                    <Users size={14} className="text-blue-400" />
+                                </div>
+                                <div className="space-y-1">
+                                    <h4 className="text-white font-bold italic uppercase tracking-wide text-sm">Field Radar</h4>
+                                    <p className="text-text-muted text-sm italic pr-4">Spot other runners instantly with blue markers, allowing you to gauge your pace and position against the pack.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Highly Styled Mockup */}
+                    <div className="relative aspect-square lg:aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 shadow-2xl shadow-green-500/10 bg-[#1f2937] flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-700">
+                        {/* Map base simulation */}
+                        <div className="absolute inset-0 opacity-20" style={{
+                            backgroundImage: `repeating-linear-gradient(45deg, #374151 25%, transparent 25%, transparent 75%, #374151 75%, #374151), repeating-linear-gradient(45deg, #374151 25%, #1f2937 25%, #1f2937 75%, #374151 75%, #374151)`,
+                            backgroundPosition: `0 0, 20px 20px`,
+                            backgroundSize: `40px 40px`
+                        }} />
+
+                        {/* Glowing Route Line */}
+                        <svg className="absolute inset-0 w-full h-full stroke-primary opacity-80" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="M 0 80 Q 20 70, 40 40 T 80 20 T 100 50" fill="none" strokeWidth="1.5" strokeLinecap="round" className="drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+                        </svg>
+
+                        {/* Simulated Current User Marker */}
+                        <div className="absolute top-[40%] left-[40%] -translate-x-1/2 -translate-y-1/2 z-20">
+                            <div className="w-12 h-12 flex items-center justify-center animate-bounce duration-[2000ms]">
+                                <div style={{ transform: 'rotate(45deg)' }} className="w-10 h-10 flex items-center justify-center relative">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+                                        <path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#22c55e" stroke="white" strokeWidth="2.5" strokeLinejoin="round" />
+                                        <circle cx="12" cy="13.5" r="2.5" fill="white" fillOpacity="0.4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            {/* Popup Simulation */}
+                            <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 shadow-xl whitespace-nowrap">
+                                <span className="text-[10px] font-black italic uppercase tracking-wider text-white">Jane Doe <span className="text-green-400">(You)</span></span>
+                            </div>
+                        </div>
+
+                        {/* Simulated Other Runner 1 */}
+                        <div className="absolute top-[30%] left-[65%] -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-1000 animate-pulse">
+                            <div style={{ transform: 'rotate(15deg)' }} className="w-6 h-6 flex items-center justify-center">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md opacity-90">
+                                    <path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#3b82f6" stroke="white" strokeWidth="2.5" strokeLinejoin="round" />
+                                    <circle cx="12" cy="13.5" r="2.5" fill="white" fillOpacity="0.4" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Simulated Other Runner 2 */}
+                        <div className="absolute top-[65%] left-[25%] -translate-x-1/2 -translate-y-1/2 z-10 transition-all duration-1000 animate-pulse">
+                            <div style={{ transform: 'rotate(70deg)' }} className="w-6 h-6 flex items-center justify-center">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md opacity-90">
+                                    <path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#3b82f6" stroke="white" strokeWidth="2.5" strokeLinejoin="round" />
+                                    <circle cx="12" cy="13.5" r="2.5" fill="white" fillOpacity="0.4" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Background Field Runners Simulation */}
+                        <div className="absolute top-[20%] left-[20%] z-0 opacity-40" style={{ transform: 'rotate(50deg)' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#3b82f6" stroke="white" strokeWidth="2" /></svg></div>
+                        <div className="absolute top-[80%] left-[80%] z-0 opacity-40" style={{ transform: 'rotate(-40deg)' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#3b82f6" stroke="white" strokeWidth="2" /></svg></div>
+                        <div className="absolute top-[75%] left-[50%] z-0 opacity-40" style={{ transform: 'rotate(80deg)' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3 L18 13 A 7 7 0 1 1 6 13 L 12 3 Z" fill="#3b82f6" stroke="white" strokeWidth="2" /></svg></div>
+
+                        {/* Live Tracking overlay simulation */}
+                        <div className="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-md rounded-xl p-3 border border-white/10 flex justify-between items-center z-30 shadow-2xl">
+                            <div className="flex items-center gap-3">
+                                <div className="flex -space-x-2">
+                                    <div className="w-7 h-7 rounded-full border-2 border-black bg-surface flex items-center justify-center z-30 relative"><span className="text-[10px] font-black text-white">C</span><div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black bg-green-500" /></div>
+                                    <div className="w-7 h-7 rounded-full border-2 border-black bg-surface flex items-center justify-center z-20 relative"><span className="text-[10px] font-black text-white">M</span><div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black bg-blue-500" /></div>
+                                    <div className="w-7 h-7 rounded-full border-2 border-black bg-surface flex items-center justify-center z-10 relative"><span className="text-[10px] font-black text-white">A</span><div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black bg-blue-500" /></div>
+                                </div>
+                                <span className="text-[10px] font-black uppercase italic tracking-wider text-text-muted"><span className="text-white">1,024</span> Active</span>
+                            </div>
+                            <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded">
+                                <Activity size={12} className="text-green-400 animate-pulse" />
+                                <span className="text-[10px] font-black uppercase text-white italic tracking-widest">Live</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Organizer CTA */}
             <section className="relative rounded-[3rem] overflow-hidden border border-white/5 bg-surface/30 p-12 md:p-24 text-center space-y-10 group">
                 {/* Decorative background elements */}
@@ -222,7 +342,7 @@ export default async function HomePage() {
                         Organizers Hub
                     </div>
 
-                    <h2 className="text-4xl md:text-7xl font-black italic uppercase leading-[0.9] tracking-tighter text-whitemax-w-7xlmx-auto">
+                    <h2 className="text-4xl md:text-7xl font-black italic uppercase leading-[0.9] tracking-tighter text-white max-w-7xl mx-auto">
                         Empowering <span className="text-primary italic">Organizers</span>, <br />
                         Igniting <span className="text-cta">Communities</span>.
                     </h2>

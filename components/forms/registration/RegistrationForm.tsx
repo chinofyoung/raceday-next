@@ -316,7 +316,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                                 className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 italic font-black"
                                 disabled={loading}
                             >
-                                {loading ? <Loader2 className="animate-spin mr-2" /> : "Complete Registration"}
+                                {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
                             </Button>
                         ) : (
                             <Button

@@ -58,7 +58,7 @@ export default function AboutPage() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8max-w-7xlmx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
                     <a href="mailto:hello@raceday.io" className="group">
                         <Card className="p-8 text-center space-y-4 hover:border-cta/50 hover:bg-cta/5 transition-all">
                             <Mail className="mx-auto text-cta group-hover:scale-110 transition-transform" size={24} />

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
     Loader2, ArrowLeft, Users, DollarSign, Calendar, MapPin,
-    MoreVertical, Edit2, Download, Filter, Search, QrCode, CheckCircle2, Copy
+    MoreVertical, Edit2, Download, Filter, Search, QrCode, CheckCircle2, Copy, Monitor
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -104,7 +104,7 @@ export default function EventDetailPage() {
     return (
         <PageWrapper className="pt-8 pb-12 space-y-10">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div className="flex flex-col  md:items-start justify-between gap-6">
                 <div className="space-y-4">
                     <Link href="/dashboard/events" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
                         <ArrowLeft size={14} /> Back to Events
@@ -127,7 +127,7 @@ export default function EventDetailPage() {
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-3 text-xs flex-wrap">
                     <Button variant="outline" className="gap-2 font-black italic uppercase" onClick={async () => {
                         if (confirm("Create a copy of this event?")) {
                             try {
@@ -150,6 +150,9 @@ export default function EventDetailPage() {
                     </Button>
                     <Button variant="primary" className="gap-2 bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 font-black italic uppercase" asChild>
                         <Link href={`/dashboard/events/${id}/scanner`}><QrCode size={16} /> Scanner Mode</Link>
+                    </Button>
+                    <Button variant="outline" className="gap-2 border-amber-500/30 text-amber-500 hover:bg-amber-500/10 font-black italic uppercase" asChild>
+                        <Link href={`/dashboard/events/${id}/kiosk`}><Monitor size={16} /> Kiosk Mode</Link>
                     </Button>
                 </div>
             </div>

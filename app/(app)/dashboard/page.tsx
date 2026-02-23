@@ -13,7 +13,7 @@ import {
     Loader2, MapPin, CheckCircle2, Globe, Repeat,
     Package, Scan, Download, Eye, Clock,
     TrendingUp, ShieldCheck, AlertTriangle, Shirt,
-    ArrowUpRight, Activity, Zap
+    ArrowUpRight, Activity, Zap, Monitor
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -262,6 +262,20 @@ export default function DashboardPage() {
                                     <div>
                                         <p className="text-sm font-bold text-white uppercase italic leading-tight">Scanner</p>
                                         <p className="text-[9px] text-text-muted font-medium italic">Race kit scan</p>
+                                    </div>
+                                </Link>
+                            )}
+                            {items.length > 0 && (
+                                <Link
+                                    href={`/dashboard/events/${items[0]?.id}/kiosk`}
+                                    className="flex items-center gap-3 p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-xl hover:bg-amber-500/20 hover:border-amber-500/40 transition-all group"
+                                >
+                                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                                        <Monitor size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-white uppercase italic leading-tight">Kiosk Mode</p>
+                                        <p className="text-[9px] text-text-muted font-medium italic">Tablet station</p>
                                     </div>
                                 </Link>
                             )}

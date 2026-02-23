@@ -422,7 +422,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         </div>
 
                         {/* Timeline Section */}
-                        <div id="timeline" className="space-y-8max-w-7xlmx-auto px-4 md:px-0">
+                        <div id="timeline" className="space-y-8 max-w-7xl mx-auto px-4 md:px-0">
                             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white text-center">Event <span className="text-primary">Timeline</span></h2>
                             <div className="space-y-0">
                                 {event.timeline?.map((item, i) => (

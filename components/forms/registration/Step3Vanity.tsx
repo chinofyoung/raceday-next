@@ -107,7 +107,7 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                                 {...register("vanityNumber")}
                                 type="text"
                                 placeholder="e.g. 777"
-                                className="flex-1 px-6 py-4 bg-background border border-white/10 rounded-2xl text-2xl font-black text-center italic tracking-widest focus:outline-none focus:border-primary transition-all"
+                                className="flex-1 px-6 py-4 bg-background border w-full border-white/10 rounded-2xl text-2xl font-black text-center italic tracking-widest focus:outline-none focus:border-primary transition-all"
                                 maxLength={6}
                             />
                             <button
