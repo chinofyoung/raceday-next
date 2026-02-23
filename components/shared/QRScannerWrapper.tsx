@@ -53,18 +53,18 @@ export default function QRScannerWrapper({ onScanSuccess, onScanFailure, scanner
             <div id="reader" className="w-full h-full" />
 
             {/* Visual Scan Frame Overlay */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                <div className="w-[65%] aspect-square border-2 border-white/20 rounded-[3rem] relative shadow-[0_0_0_1000px_rgba(0,0,0,0.6)]">
-                    {/* Corners */}
-                    <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white rounded-tl-[2rem]" />
+            {/* <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+                <div className="w-[65%] aspect-square border-2 border-white/20 rounded-[3rem] relative shadow-[0_0_0_1000px_rgba(0,0,0,0.6)]"> */}
+            {/* Corners */}
+            {/* <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-white rounded-tl-[2rem]" />
                     <div className="absolute top-0 right-0 w-10 h-10 border-t-4 border-r-4 border-white rounded-tr-[2rem]" />
                     <div className="absolute bottom-0 left-0 w-10 h-10 border-b-4 border-l-4 border-white rounded-bl-[2rem]" />
-                    <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white rounded-br-[2rem]" />
+                    <div className="absolute bottom-0 right-0 w-10 h-10 border-b-4 border-r-4 border-white rounded-br-[2rem]" /> */}
 
-                    {/* Scanning Line Animation */}
-                    <div className="absolute left-0 right-0 h-1 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] animate-scan-line top-0" />
+            {/* Scanning Line Animation */}
+            {/* <div className="absolute left-0 right-0 h-1 bg-white/40 shadow-[0_0_15px_rgba(255,255,255,0.5)] animate-scan-line top-0" />
                 </div>
-            </div>
+            </div> */}
 
             <style jsx global>{`
                 @keyframes scan-line {
