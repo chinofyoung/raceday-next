@@ -723,6 +723,13 @@ export default function DashboardPage() {
                                                             <Link href={`/dashboard/events/${reg.eventId}/qr`}><QrCode size={16} className="mr-2" /> View Pass</Link>
                                                         </Button>
                                                     )}
+                                                    {reg.event?.isLiveTrackingEnabled && (
+                                                        <Button variant="outline" size="sm" asChild className="font-black italic uppercase border-primary/20 text-primary hover:bg-primary/10">
+                                                            <Link href={`/events/${reg.eventId}/live`}>
+                                                                <Activity size={16} className="mr-2" /> Live
+                                                            </Link>
+                                                        </Button>
+                                                    )}
                                                     <Button variant="outline" size="sm" asChild className="font-black italic uppercase border-white/10">
                                                         <Link href={`/events/${reg.eventId}`}>Details</Link>
                                                     </Button>
