@@ -182,7 +182,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
         <FormProvider {...methods}>
             <div className="space-y-8 mx-auto">
                 {/* Progress Header */}
-                <div className="flex items-center justify-between gap-2 overflow-x-auto pb-4 no-scrollbar">
+                <div className="flex items-center gap-2 md:justify-between overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth whitespace-nowrap">
                     {STEPS.map((step, i) => {
                         const isClickable = i <= maxStepReached;
                         const isActive = currentStep === i;
@@ -196,14 +196,14 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                         })();
 
                         return (
-                            <div key={i} className={cn("flex items-center", i < STEPS.length - 1 && "flex-1")}>
+                            <div key={i} className={cn("flex items-center shrink-0", i < STEPS.length - 1 && "md:flex-1")}>
                                 <button
                                     type="button"
                                     onClick={() => handleStepClick(i)}
                                     disabled={!isClickable}
                                     className={cn(
                                         "flex items-center gap-2 transition-all p-2 rounded-xl shrink-0",
-                                        isClickable ? "cursor-pointer hover:bg-white/5" : "cursor-not-allowed opacity-50",
+                                        isClickable ? "cursor-pointer hover:bg-white/5 font-bold" : "cursor-not-allowed opacity-50",
                                         isActive && "bg-white/5"
                                     )}
                                 >
@@ -216,14 +216,20 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                                         {isAccomplished ? "✓" : isActive ? i + 1 : "!"}
                                     </div>
                                     <span className={cn(
-                                        "hidden md:block text-[10px] uppercase font-black italic tracking-widest transition-colors",
-                                        isActive ? "text-white" : isAccomplished ? "text-cta" : "text-text-muted opacity-50",
+                                        "text-[10px] uppercase font-black italic tracking-widest transition-colors",
+                                        isActive ? "text-white block" : "hidden md:block text-text-muted opacity-50",
+                                        isAccomplished && !isActive && "text-cta",
                                         isClickable && !isActive && "group-hover:text-white"
                                     )}>
                                         {step}
                                     </span>
                                 </button>
-                                {i < STEPS.length - 1 && <div className="flex-1 h-px bg-white/10 mx-4" />}
+                                {i < STEPS.length - 1 && (
+                                    <div className={cn(
+                                        "h-px bg-white/10 mx-2 md:mx-4 shrink-0",
+                                        "w-4 md:w-auto md:flex-1"
+                                    )} />
+                                )}
                             </div>
                         );
                     })}
