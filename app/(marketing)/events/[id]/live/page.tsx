@@ -68,6 +68,24 @@ export default async function LiveTrackingPage(props: LiveEventPageProps) {
         updatedAt: toISOString(data?.updatedAt),
     } as unknown as RaceEvent;
 
+    if (event.isLiveTrackingEnabled === false) {
+        return (
+            <div className="h-screen w-full flex items-center justify-center bg-background p-6">
+                <div className="bg-surface/40 p-10 rounded-3xl border border-white/10 text-center max-w-md w-full shadow-2xl space-y-6">
+                    <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Live Tracking Disabled</h2>
+                    <p className="text-text-muted font-medium italic">
+                        The organizer has disabled the Live Tracking feature for this event.
+                    </p>
+                    <div className="pt-4">
+                        <a href={`/events/${event.id}`} className="block w-full py-3 px-4 bg-white/10 hover:bg-white/20 text-white font-black italic uppercase rounded-lg transition-colors border border-white/10">
+                            Go Back to Event
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <LiveTrackingClient event={event} />
     );

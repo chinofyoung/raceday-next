@@ -45,7 +45,7 @@ export function Step3Categories() {
             gunStartTime: "",
             cutOffTime: "",
             price: 0,
-            inclusions: ["Race Bib"],
+            inclusions: ["", "", ""],
             raceNumberFormat: "{number}",
             maxParticipants: 0,
             showMaxParticipants: true,
@@ -146,18 +146,10 @@ export function Step3Categories() {
 
 function CategoryItem({ index, remove, field }: { index: number, remove: (index: number) => void, field: any }) {
     const { register, control, watch, setValue, formState: { errors } } = useFormContext<EventFormValues>();
-
-    // Watch the actual form value instead of local state
-    const currentInclusions = useWatch({ control, name: `categories.${index}.inclusions` }) as string[] | undefined;
-
-    // Derive the display string from the form value (always in sync)
-    const inclusionsText = (currentInclusions || []).join(", ");
-
-    const handleInclusionsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        // Parse comma-separated text and sync to form
-        const items = e.target.value.split(",").map((item: string) => item.trim()).filter(Boolean);
-        setValue(`categories.${index}.inclusions`, items, { shouldValidate: true });
-    };
+    const { fields: inclusionFields, append: appendInclusion, remove: removeInclusion } = useFieldArray({
+        control,
+        name: `categories.${index}.inclusions` as any
+    });
 
     const gpxUrl = watch(`categories.${index}.routeMap.gpxFileUrl`);
 
@@ -313,20 +305,45 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
 
                 {/* Middle Section: Inclusions */}
                 <div className="space-y-4 pt-8 border-t border-white/5">
-                    <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
-                            <Shirt size={16} />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                <Shirt size={16} />
+                            </div>
+                            <label className="text-xs font-black uppercase tracking-widest text-text-muted italic">Category Inclusions</label>
                         </div>
-                        <label className="text-xs font-black uppercase tracking-widest text-text-muted italic">Category Inclusions</label>
+                        <Button
+                            type="button"
+                            onClick={() => appendInclusion("")}
+                            variant="outline"
+                            size="sm"
+                            className="h-8 px-3 gap-2 border-white/10 text-text-muted hover:text-white hover:bg-white/5"
+                        >
+                            <Plus size={14} /> Add Inclusion
+                        </Button>
                     </div>
-                    <textarea
-                        placeholder="List inclusions separated by commas (e.g. Finisher Medal, Shirt, Bib, Food)"
-                        className="w-full px-6 py-4 bg-white/5 border border-white/10 rounded-2xl text-text text-sm focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all min-h-[100px] resize-none"
-                        value={inclusionsText}
-                        onChange={handleInclusionsChange}
-                    />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {inclusionFields.map((field, inclusionIndex) => (
+                            <div key={field.id} className="relative group/inclusion">
+                                <input
+                                    {...register(`categories.${index}.inclusions.${inclusionIndex}` as const)}
+                                    placeholder="e.g. Finisher Medal"
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text text-sm focus:outline-none focus:border-blue-500/50 transition-all pr-10"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => removeInclusion(inclusionIndex)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted opacity-0 group-hover/inclusion:opacity-100 hover:text-red-500 transition-all"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
                     <p className="text-[10px] text-text-muted italic font-medium opacity-50 ml-1">
-                        Tip: Separate items with commas to display them as a list on the event page.
+                        Define items included in this specific distance category.
                     </p>
                 </div>
 

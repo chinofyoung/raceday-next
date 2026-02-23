@@ -222,7 +222,7 @@ export default async function HomePage() {
                         Organizers Hub
                     </div>
 
-                    <h2 className="text-4xl md:text-7xl font-black italic uppercase leading-[0.9] tracking-tighter text-white max-w-4xl mx-auto">
+                    <h2 className="text-4xl md:text-7xl font-black italic uppercase leading-[0.9] tracking-tighter text-whitemax-w-7xlmx-auto">
                         Empowering <span className="text-primary italic">Organizers</span>, <br />
                         Igniting <span className="text-cta">Communities</span>.
                     </h2>

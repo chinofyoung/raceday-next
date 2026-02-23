@@ -36,6 +36,8 @@ export default function EventScannerPage() {
     const [loading, setLoading] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [stats, setStats] = useState({ total: 0, claimed: 0 });
+    const [permissionStatus, setPermissionStatus] = useState<"granted" | "denied" | "prompt">("prompt");
+    const [showScanner, setShowScanner] = useState(false);
     const scannerRef = useRef<any>(null);
     const lastScannedRef = useRef<string | null>(null);
     const lastScanTimeRef = useRef<number>(0);
@@ -67,8 +69,6 @@ export default function EventScannerPage() {
             registrationRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }, [registration]);
-
-
 
     async function onScanSuccess(decodedText: string) {
         const now = Date.now();
@@ -159,7 +159,7 @@ export default function EventScannerPage() {
     };
 
     return (
-        <PageWrapper className="pt-8 pb-24 max-w-4xl mx-auto space-y-12">
+        <PageWrapper className="pt-8 pb-24 max-w-7xl mx-auto space-y-12">
             <Link href={`/dashboard/events/${eventId}`} className="inline-flex items-center gap-2 text-text-muted hover:text-white mb-2 text-xs font-black uppercase tracking-widest italic transition-colors">
                 <ArrowLeft size={14} /> Back to Event
             </Link>
@@ -190,11 +190,56 @@ export default function EventScannerPage() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
                 {/* Scanner View */}
                 <div className="lg:col-span-2 space-y-6">
-                    <Card className="p-4 bg-black border-white/10 overflow-hidden relative group">
-                        <QRScanner onScanSuccess={onScanSuccess} onScanFailure={onScanFailure} scannerRef={scannerRef} />
-                        {!scanResult && (
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                <Scan className="text-primary opacity-20 animate-ping" size={120} />
+                    <Card className="p-4 bg-black border-white/10 overflow-hidden relative group min-h-[300px]">
+                        {showScanner ? (
+                            <QRScanner
+                                onScanSuccess={onScanSuccess}
+                                onScanFailure={onScanFailure}
+                                scannerRef={scannerRef}
+                                onPermissionStatus={setPermissionStatus}
+                            />
+                        ) : (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 p-8 text-center bg-black/60 backdrop-blur-sm z-20">
+                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                    <Camera size={32} />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black italic uppercase text-white">Camera Access Required</p>
+                                    <p className="text-[10px] text-text-muted italic leading-relaxed max-w-[200px]">
+                                        Scanner needs webcam access to process QR codes.
+                                    </p>
+                                </div>
+                                <Button
+                                    onClick={() => setShowScanner(true)}
+                                    className="bg-primary hover:bg-primary/80 border-none text-[10px] font-black italic uppercase tracking-widest px-6"
+                                >
+                                    Enable Camera
+                                </Button>
+                            </div>
+                        )}
+                        {showScanner && !scanResult && permissionStatus === "granted" && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                                <div className="w-48 h-48 border-2 border-primary/40 rounded-[2rem] animate-pulse flex items-center justify-center">
+                                    <Scan className="text-primary/20" size={80} />
+                                </div>
+                            </div>
+                        )}
+                        {showScanner && permissionStatus === "denied" && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 p-8 text-center bg-black/80 z-20">
+                                <XCircle className="text-red-500" size={48} />
+                                <div className="space-y-1">
+                                    <p className="text-sm font-black italic uppercase text-white">Access Denied</p>
+                                    <p className="text-[10px] text-text-muted italic leading-relaxed">
+                                        Please enable camera access in your browser settings and refresh the page.
+                                    </p>
+                                </div>
+                                <Button
+                                    onClick={() => window.location.reload()}
+                                    variant="outline"
+                                    className="border-white/10 text-white text-[10px] font-black italic uppercase"
+                                >
+                                    Refresh Page
+                                </Button>
                             </div>
                         )}
                     </Card>

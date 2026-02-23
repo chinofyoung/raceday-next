@@ -26,7 +26,7 @@ export default function ForOrganizersPage() {
     return (
         <PageWrapper className="pb-24 space-y-24">
             {/* Hero */}
-            <section className="pt-12 text-center space-y-6 max-w-4xl mx-auto">
+            <section className="pt-12 text-center space-y-6max-w-7xlmx-auto">
                 <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tight">
                     Host Your Next <br />
                     <span className="text-primary">Great Race</span> With Us.

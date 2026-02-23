@@ -35,6 +35,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const mapContainerRef = useRef<HTMLDivElement>(null);
+    const lastLocationRef = useRef<{ lat: number, lng: number, time: number } | null>(null);
     const router = useRouter();
 
     const category = event.categories?.[activeRouteCategoryIndex];
@@ -113,10 +114,40 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 const { latitude, longitude } = position.coords;
                 try {
                     await startUserTracking(event.id, category?.id, userId, displayName, latitude, longitude);
+                    lastLocationRef.current = { lat: latitude, lng: longitude, time: Date.now() };
 
                     const id = navigator.geolocation.watchPosition(
                         async (pos) => {
-                            await updateUserLocation(event.id, userId, pos.coords.latitude, pos.coords.longitude);
+                            const newLat = pos.coords.latitude;
+                            const newLng = pos.coords.longitude;
+                            const now = Date.now();
+
+                            if (lastLocationRef.current) {
+                                const last = lastLocationRef.current;
+                                const timeElapsed = now - last.time;
+
+                                // Calculate distance in meters using Haversine formula
+                                const R = 6371e3; // Earth radius in meters
+                                const φ1 = last.lat * Math.PI / 180;
+                                const φ2 = newLat * Math.PI / 180;
+                                const Δφ = (newLat - last.lat) * Math.PI / 180;
+                                const Δλ = (newLng - last.lng) * Math.PI / 180;
+
+                                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                                    Math.cos(φ1) * Math.cos(φ2) *
+                                    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                                const distance = R * c;
+
+                                // Only update if 15 seconds have passed AND moved at least 15 meters
+                                if (timeElapsed > 15000 && distance > 15) {
+                                    await updateUserLocation(event.id!, userId, newLat, newLng); // the ! is safe because event.id is checked at the top of function
+                                    lastLocationRef.current = { lat: newLat, lng: newLng, time: now };
+                                }
+                            } else {
+                                await updateUserLocation(event.id!, userId, newLat, newLng);
+                                lastLocationRef.current = { lat: newLat, lng: newLng, time: now };
+                            }
                         },
                         (err) => console.error("Error watching position", err),
                         { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
@@ -158,6 +189,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         try {
             await stopUserTracking(event.id, userId);
             setIsTracking(false);
+            lastLocationRef.current = null;
             localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
             toast.success("Live tracking stopped");
         } catch (err) {
@@ -300,9 +332,9 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         {isLoading ? (
                             <><Loader2 className="animate-spin mr-2" size={16} /> updating...</>
                         ) : isTracking ? (
-                            <><Square size={14} fill="currentColor" className="mr-2" /> Stop Broadcasting</>
+                            <><Square size={14} fill="currentColor" className="mr-2" /> Stop Tracker</>
                         ) : (
-                            <><Navigation size={14} className="mr-2" /> Broadcast My Location</>
+                            <><Navigation size={14} className="mr-2" /> Start Tracker</>
                         )}
                     </Button>
                 </div>
@@ -332,7 +364,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         gpxUrl={gpxUrl}
                         zoom={14}
                         theme="dark"
-                        liveTrackers={liveTrackers}
+                        liveTrackers={isTracking ? liveTrackers : []}
                         currentUserId={userId}
                         className="rounded-none border-none h-full w-full"
                     />
@@ -346,19 +378,23 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 {/* Tracking stats overlay */}
                 <div className="absolute bottom-6 left-6 z-[1000] bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-4">
                     <div className="flex -space-x-3">
-                        {liveTrackers.slice(0, 3).map((t, i) => (
+                        {(isTracking ? liveTrackers : []).slice(0, 3).map((t, i) => (
                             <div key={t.userId} className="w-8 h-8 rounded-full border-2 border-black bg-primary/20 flex items-center justify-center relative shadow-sm" style={{ zIndex: 10 - i }}>
                                 <span className="text-[10px] font-black text-white">{t.displayName.charAt(0).toUpperCase()}</span>
                                 <div className={cn("absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black", t.userId === userId ? "bg-primary" : "bg-blue-500")} />
                             </div>
                         ))}
                     </div>
-                    {liveTrackers.length === 0 ? (
-                        <p className="text-xs font-bold text-text-muted italic">No active runners</p>
+                    {isTracking ? (
+                        liveTrackers.length === 0 ? (
+                            <p className="text-xs font-bold text-text-muted italic">No active runners</p>
+                        ) : (
+                            <p className="text-xs font-black text-white uppercase tracking-wider italic">
+                                <span className="text-primary">{liveTrackers.length}</span> Active Runner{liveTrackers.length > 1 ? 's' : ''}
+                            </p>
+                        )
                     ) : (
-                        <p className="text-xs font-black text-white uppercase tracking-wider italic">
-                            <span className="text-primary">{liveTrackers.length}</span> Active Runner{liveTrackers.length > 1 ? 's' : ''}
-                        </p>
+                        <p className="text-xs font-bold text-text-muted italic">Tracking off</p>
                     )}
                 </div>
             </div>

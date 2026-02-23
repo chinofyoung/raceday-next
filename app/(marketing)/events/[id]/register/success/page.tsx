@@ -70,7 +70,7 @@ export default function RegistrationSuccessPage() {
     }
 
     return (
-        <PageWrapper className="pt-12 pb-24 max-w-4xl mx-auto space-y-12">
+        <PageWrapper className="pt-12 pb-24max-w-7xlmx-auto space-y-12">
             <div className="text-center space-y-6">
                 <div className="w-24 h-24 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta animate-bounce shadow-2xl shadow-cta/20">
                     <CheckCircle2 size={56} />

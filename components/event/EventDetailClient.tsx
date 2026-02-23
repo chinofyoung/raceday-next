@@ -183,16 +183,18 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
                             {!isEventOver(event) && !isRegistrationClosed(event) && (
                                 <div className="hidden lg:flex ml-8 items-center gap-4">
-                                    <Button
-                                        asChild
-                                        variant="outline"
-                                        size="sm"
-                                        className="h-10 px-6 uppercase italic font-black text-xs border-primary/30 text-primary hover:bg-primary/10 tracking-widest hidden xl:flex"
-                                    >
-                                        <Link href={`/events/${event.id}/live`}>
-                                            <Activity size={14} className="mr-2 animate-pulse" /> Live Track
-                                        </Link>
-                                    </Button>
+                                    {event.isLiveTrackingEnabled !== false && (
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-10 px-6 uppercase italic font-black text-xs border-primary/30 text-primary hover:bg-primary/10 tracking-widest hidden xl:flex"
+                                        >
+                                            <Link href={`/events/${event.id}/live`}>
+                                                <Activity size={14} className="mr-2 animate-pulse" /> Live Track
+                                            </Link>
+                                        </Button>
+                                    )}
                                     <Button
                                         onClick={() => scrollToSection("categories")}
                                         variant="primary"
@@ -371,7 +373,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                         </div>
 
                         {/* Timeline Section */}
-                        <div id="timeline" className="space-y-8 max-w-4xl mx-auto px-4 md:px-0">
+                        <div id="timeline" className="space-y-8max-w-7xlmx-auto px-4 md:px-0">
                             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white text-center">Event <span className="text-primary">Timeline</span></h2>
                             <div className="space-y-0">
                                 {event.timeline?.map((item, i) => (
@@ -460,15 +462,17 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             {/* Mobile Sticky Register CTA */}
             {!isEventOver(event) && !isRegistrationClosed(event) && (
                 <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden flex gap-3">
-                    <Button
-                        asChild
-                        variant="outline"
-                        className="h-14 px-6 text-sm font-black italic uppercase tracking-wider border-primary/30 text-primary bg-background shadow-xl hover:bg-primary/5 group shrink-0"
-                    >
-                        <Link href={`/events/${event.id}/live`}>
-                            <Activity className="animate-pulse" size={20} />
-                        </Link>
-                    </Button>
+                    {event.isLiveTrackingEnabled !== false && (
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="h-14 px-6 text-sm font-black italic uppercase tracking-wider border-primary/30 text-primary bg-background shadow-xl hover:bg-primary/5 group shrink-0"
+                        >
+                            <Link href={`/events/${event.id}/live`}>
+                                <Activity className="animate-pulse" size={20} />
+                            </Link>
+                        </Button>
+                    )}
                     <Button
                         asChild
                         variant="primary"

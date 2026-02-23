@@ -13,7 +13,7 @@ import { Step1Basic } from "./Step1Basic";
 import { Step2Images } from "./Step2Images";
 import { Step3Categories } from "./Step3Categories";
 import { Step4Timeline } from "./Step4Timeline";
-import { Step5Vanity } from "./Step5Vanity";
+import { Step5Features } from "./Step5Features";
 import { Step6Review } from "./Step6Review";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useCallback } from "react";
@@ -27,7 +27,7 @@ const STEPS = [
     "Images",
     "Categories",
     "Timeline",
-    "Vanity Bibs",
+    "Features",
     "Review"
 ];
 
@@ -60,6 +60,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             categories: [],
             status: "draft",
             featured: false,
+            isLiveTrackingEnabled: true,
         },
         mode: "onChange"
     });
@@ -240,7 +241,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                     {currentStep === 1 && <Step2Images />}
                     {currentStep === 2 && <Step3Categories />}
                     {currentStep === 3 && <Step4Timeline />}
-                    {currentStep === 4 && <Step5Vanity />}
+                    {currentStep === 4 && <Step5Features />}
                     {currentStep === 5 && <Step6Review />}
 
                     <div className="flex items-center justify-between mt-12 pt-8 border-t border-white/5">

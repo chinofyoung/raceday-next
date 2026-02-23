@@ -152,6 +152,16 @@ export function Step6Review() {
                             <Sparkles size={16} /> Features
                         </div>
                         <div className="flex items-center justify-between py-2 border-b border-white/5">
+                            <span className="text-xs font-bold uppercase text-text-muted">Live Tracking</span>
+                            <span className={cn(
+                                "text-[10px] font-black uppercase px-2 py-1 rounded",
+                                data.isLiveTrackingEnabled ? "bg-primary/20 text-primary" : "bg-white/5 text-text-muted"
+                            )}>
+                                {data.isLiveTrackingEnabled ? "Enabled" : "Disabled"}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center justify-between py-2 border-b border-white/5">
                             <span className="text-xs font-bold uppercase text-text-muted">Vanity Numbers</span>
                             <span className={cn(
                                 "text-[10px] font-black uppercase px-2 py-1 rounded",
