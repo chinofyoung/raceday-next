@@ -11,13 +11,14 @@ interface EventNavigationProps {
     event: RaceEvent;
     activeSection: string;
     scrollToSection: (id: string) => void;
+    isRegistered?: boolean;
 }
 
-export function EventNavigation({ event, activeSection, scrollToSection }: EventNavigationProps) {
+export function EventNavigation({ event, activeSection, scrollToSection, isRegistered }: EventNavigationProps) {
     const tabs = ["info", "announcements", "categories", "timeline", "route"] as const;
 
     return (
-        <div className="sticky top-[84px] z-40 bg-background/95 backdrop-blur-2xl border-b border-white/5 py-4 w-full px-4 md:px-0">
+        <div className="sticky top-[84px] z-40 bg-background/95 backdrop-blur-2xl border-b border-white/5 py-4 max-w-7xl mx-auto w-full px-4 md:px-0">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 overflow-x-auto overflow-y-hidden py-2 -my-2 no-scrollbar mask-linear-fade flex-1">
                     {tabs.map((tab) => (
@@ -38,7 +39,7 @@ export function EventNavigation({ event, activeSection, scrollToSection }: Event
 
                 {!isEventOver(event) && !isRegistrationClosed(event) && (
                     <div className="hidden lg:flex ml-8 items-center gap-4">
-                        {event.isLiveTrackingEnabled !== false && (
+                        {isRegistered && event.isLiveTrackingEnabled !== false && (
                             <Button
                                 asChild
                                 variant="outline"

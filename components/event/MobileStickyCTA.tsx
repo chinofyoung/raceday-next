@@ -8,14 +8,15 @@ import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";
 
 interface MobileStickyCTAProps {
     event: RaceEvent;
+    isRegistered?: boolean;
 }
 
-export function MobileStickyCTA({ event }: MobileStickyCTAProps) {
+export function MobileStickyCTA({ event, isRegistered }: MobileStickyCTAProps) {
     if (isEventOver(event) || isRegistrationClosed(event)) return null;
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden flex gap-3">
-            {event.isLiveTrackingEnabled !== false && (
+            {isRegistered && event.isLiveTrackingEnabled !== false && (
                 <Button
                     asChild
                     variant="outline"

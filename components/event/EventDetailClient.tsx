@@ -128,13 +128,15 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                 userRegistration={userRegistration}
             />
 
+            <EventNavigation
+                event={event}
+                activeSection={activeSection}
+                scrollToSection={scrollToSection}
+                isRegistered={!!userRegistration || user?.uid === event.organizerId}
+            />
+
             <PageWrapper className="pt-0 pb-36 lg:pb-24 max-w-7xl mx-auto flex flex-col gap-16">
                 <div className="w-full space-y-24">
-                    <EventNavigation
-                        event={event}
-                        activeSection={activeSection}
-                        scrollToSection={scrollToSection}
-                    />
 
                     <div className="space-y-32">
                         <EventInfo event={event} />
@@ -159,7 +161,10 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                 </div>
             </PageWrapper>
 
-            <MobileStickyCTA event={event} />
+            <MobileStickyCTA
+                event={event}
+                isRegistered={!!userRegistration || user?.uid === event.organizerId}
+            />
         </div>
     );
 }
