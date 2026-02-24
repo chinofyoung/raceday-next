@@ -91,23 +91,44 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         });
 
         const handleFullscreenChange = () => {
-            setIsFullscreen(!!document.fullscreenElement);
+            const doc = document as any;
+            setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement));
         };
+
         document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
         return () => {
             unsubscribe();
             document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('msfullscreenchange', handleFullscreenChange);
         };
     }, [event.id]);
 
     const toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            mapContainerRef.current?.requestFullscreen().catch(err => {
-                toast.error(`Error attempting to enable fullscreen: ${err.message}`);
-            });
+        if (!mapContainerRef.current) return;
+
+        const elem = mapContainerRef.current as any;
+        const doc = document as any;
+
+        if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+            const requestMethod = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
+            if (requestMethod) {
+                requestMethod.call(elem).catch((err: any) => {
+                    toast.error(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                toast.error("Fullscreen is not supported on this device/browser.");
+            }
         } else {
-            document.exitFullscreen();
+            const exitMethod = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
+            if (exitMethod) {
+                exitMethod.call(doc);
+            }
         }
     };
 
@@ -373,16 +394,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     isFullscreen ? "h-screen rounded-none" : "h-[60vh] min-h-[500px] rounded-[2.5rem] border-4 border-white/5 shadow-2xl"
                 )}
             >
-                {/* Fullscreen Toggle Button */}
-                {gpxUrl && (
-                    <button
-                        onClick={toggleFullscreen}
-                        className="absolute top-2 right-14 z-[1000] p-3 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
-                        title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-                    >
-                        {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
-                    </button>
-                )}
+
 
                 {gpxUrl ? (
                     <RouteMapViewer
@@ -401,8 +413,19 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     </div>
                 )}
 
+                {/* Fullscreen Toggle Button - Move after map to ensure it's on top */}
+                {gpxUrl && (
+                    <button
+                        onClick={toggleFullscreen}
+                        className="absolute bottom-4 right-4 z-[1100] p-3 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
+                        title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                    >
+                        {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                    </button>
+                )}
+
                 {/* Tracking stats overlay */}
-                <div className="absolute bottom-6 left-6 z-[1000] bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-4">
+                <div className="absolute bottom-6 left-6 z-[1100] bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-4">
                     <div className="flex -space-x-3">
                         {(isTracking ? liveTrackers : []).slice(0, 3).map((t, i) => (
                             <div key={t.userId} className="w-8 h-8 rounded-full border-2 border-black bg-primary/20 flex items-center justify-center relative shadow-sm" style={{ zIndex: 10 - i }}>

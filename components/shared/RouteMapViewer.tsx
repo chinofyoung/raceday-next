@@ -166,7 +166,7 @@ export function RouteMapViewer({
                     e.stopPropagation(); // Prevent map click if any
                     setCurrentTheme(t => t === "dark" ? "light" : "dark");
                 }}
-                className="absolute top-4 right-4 z-[1000] p-2 bg-gray-900/80 backdrop-blur-md rounded-lg border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
+                className="absolute top-4 right-4 z-[1100] p-2 bg-gray-900/80 backdrop-blur-md rounded-lg border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
                 title={`Switch to ${currentTheme === "dark" ? "light" : "dark"} mode`}
                 type="button"
             >
