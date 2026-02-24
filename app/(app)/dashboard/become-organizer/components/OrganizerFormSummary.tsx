@@ -33,65 +33,72 @@ export function OrganizerFormSummary() {
     );
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
-            <SummarySection title="Organization Info" icon={<Building2 size={18} />}>
-                <DetailItem label="Name" value={data.organizerName} />
-                <DetailItem label="Type" value={data.organizerType} />
-                <DetailItem label="Description" value={data.description} fullWidth />
-            </SummarySection>
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-2 border-b border-white/5 pb-4">
+                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Review Application</h2>
+                <p className="text-text-muted font-medium">Verify your information before submitting.</p>
+            </div>
 
-            <SummarySection title="Contact Details" icon={<User size={18} />}>
-                <DetailItem label="Contact Person" value={data.contactPerson} />
-                <DetailItem label="Business Email" value={data.contactEmail} />
-                <DetailItem label="Phone" value={data.phone} />
-                <DetailItem label="Alternate Phone" value={data.alternatePhone} />
-                <DetailItem label="Website" value={data.website} fullWidth />
-            </SummarySection>
+            <div className="space-y-6">
+                <SummarySection title="Organization Info" icon={<Building2 size={18} />}>
+                    <DetailItem label="Name" value={data.organizerName} />
+                    <DetailItem label="Type" value={data.organizerType} />
+                    <DetailItem label="Description" value={data.description} fullWidth />
+                </SummarySection>
 
-            <SummarySection title="Address" icon={<MapPin size={18} />}>
-                <DetailItem label="Street" value={data.address?.street} />
-                <DetailItem label="Barangay" value={data.address?.barangay} />
-                <DetailItem label="City" value={data.address?.city} />
-                <DetailItem label="Province" value={data.address?.province} />
-                <DetailItem label="Region" value={regionName} />
-                <DetailItem label="ZIP Code" value={data.address?.zipCode} />
-            </SummarySection>
+                <SummarySection title="Contact Details" icon={<User size={18} />}>
+                    <DetailItem label="Contact Person" value={data.contactPerson} />
+                    <DetailItem label="Business Email" value={data.contactEmail} />
+                    <DetailItem label="Phone" value={data.phone} />
+                    <DetailItem label="Alternate Phone" value={data.alternatePhone} />
+                    <DetailItem label="Website" value={data.website} fullWidth />
+                </SummarySection>
 
-            <SummarySection title="Verification" icon={<ShieldCheck size={18} />}>
-                <DetailItem label="TIN" value={data.organizerTIN} />
-                <DetailItem label="DTI/SEC No." value={data.dtiSecRegistration} />
-                <DetailItem label="ID Type" value={idTypeName} />
-                <DetailItem label="ID Number" value={data.governmentId?.idNumber} />
-                <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                    <div className="space-y-2">
-                        <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Front</span>
-                        <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
-                            <img src={data.governmentId?.frontImageUrl} alt="ID Front" className="w-full h-full object-cover" />
+                <SummarySection title="Address" icon={<MapPin size={18} />}>
+                    <DetailItem label="Street" value={data.address?.street} />
+                    <DetailItem label="Barangay" value={data.address?.barangay} />
+                    <DetailItem label="City" value={data.address?.city} />
+                    <DetailItem label="Province" value={data.address?.province} />
+                    <DetailItem label="Region" value={regionName} />
+                    <DetailItem label="ZIP Code" value={data.address?.zipCode} />
+                </SummarySection>
+
+                <SummarySection title="Verification" icon={<ShieldCheck size={18} />}>
+                    <DetailItem label="TIN" value={data.organizerTIN} />
+                    <DetailItem label="DTI/SEC No." value={data.dtiSecRegistration} />
+                    <DetailItem label="ID Type" value={idTypeName} />
+                    <DetailItem label="ID Number" value={data.governmentId?.idNumber} />
+                    <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+                        <div className="space-y-2">
+                            <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Front</span>
+                            <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
+                                <img src={data.governmentId?.frontImageUrl} alt="ID Front" className="w-full h-full object-cover" />
+                            </div>
                         </div>
+                        {data.governmentId.backImageUrl && (
+                            <div className="space-y-2">
+                                <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Back</span>
+                                <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
+                                    <img src={data.governmentId.backImageUrl} alt="ID Back" className="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                        )}
+                        {data.businessPermitUrl && (
+                            <div className="space-y-2">
+                                <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">Business Permit</span>
+                                <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
+                                    <img src={data.businessPermitUrl} alt="Permit" className="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    {data.governmentId.backImageUrl && (
-                        <div className="space-y-2">
-                            <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Back</span>
-                            <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
-                                <img src={data.governmentId.backImageUrl} alt="ID Back" className="w-full h-full object-cover" />
-                            </div>
-                        </div>
-                    )}
-                    {data.businessPermitUrl && (
-                        <div className="space-y-2">
-                            <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">Business Permit</span>
-                            <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
-                                <img src={data.businessPermitUrl} alt="Permit" className="w-full h-full object-cover" />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </SummarySection>
+                </SummarySection>
 
-            <SummarySection title="Additional Info" icon={<Calendar size={18} />}>
-                <DetailItem label="Past Events" value={data.pastEventsDescription} fullWidth />
-                <DetailItem label="Est. Events/Year" value={data.estimatedEventsPerYear} />
-            </SummarySection>
+                <SummarySection title="Additional Info" icon={<Calendar size={18} />}>
+                    <DetailItem label="Past Events" value={data.pastEventsDescription} fullWidth />
+                    <DetailItem label="Est. Events/Year" value={data.estimatedEventsPerYear} />
+                </SummarySection>
+            </div>
         </div>
     );
 }

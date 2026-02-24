@@ -51,8 +51,13 @@ export function Step1OrgInfo() {
     const selectedType = watch("organizerType");
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="space-y-4">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-2 border-b border-white/5 pb-4">
+                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Organization Profile</h2>
+                <p className="text-text-muted font-medium">Define your organization type and basic details.</p>
+            </div>
+
+            <div className="space-y-6">
                 <Input
                     label="Organization / Name"
                     {...register("organizerName")}

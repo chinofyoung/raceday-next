@@ -239,7 +239,7 @@ export default function BecomeOrganizerPage() {
 
             <OrganizerFormStepper steps={STEPS} currentStep={currentStep} />
 
-            <Card className="p-6 md:p-10 space-y-8 bg-surface border-white/5 shadow-2xl relative overflow-hidden">
+            <div className="bg-surface/30 backdrop-blur-sm border border-white/5 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden space-y-8">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
 
                 <FormProvider {...methods}>
@@ -284,7 +284,7 @@ export default function BecomeOrganizerPage() {
                         </div>
                     </div>
                 </FormProvider>
-            </Card>
+            </div>
 
             <div className="text-center p-6 bg-surface/30 border border-white/5 rounded-3xl">
                 <p className="text-[10px] text-text-muted uppercase tracking-widest font-black italic">

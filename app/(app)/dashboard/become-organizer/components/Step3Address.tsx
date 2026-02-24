@@ -22,7 +22,11 @@ export function Step3Address() {
     }, [selectedRegion, setValue, watch]);
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-2 border-b border-white/5 pb-4">
+                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Location & Address</h2>
+                <p className="text-text-muted font-medium">Official business or operating address.</p>
+            </div>
             <div className="grid grid-cols-1 gap-6">
                 <Input
                     label="Street Address / Bldg / Suite"
