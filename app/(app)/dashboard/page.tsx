@@ -129,18 +129,41 @@ export default function DashboardPage() {
         });
     }, [items, allRegistrations]);
 
-    // Per-category revenue
-    const categoryRevenue = useMemo(() => {
-        const catMap = new Map<string, { name: string; count: number; revenue: number }>();
+    // Per-event revenue
+    const eventRevenue = useMemo(() => {
+        const eventMap = new Map<string, { id: string, name: string; count: number; revenue: number }>();
         allRegistrations.forEach(r => {
-            const catId = r.categoryId || "Unknown";
-            const existing = catMap.get(catId) || { name: catId, count: 0, revenue: 0 };
+            const eventId = r.eventId;
+            const event = allEvents.find(e => e.id === eventId);
+            const eventTitle = event?.name || "Unknown Event";
+
+            const existing = eventMap.get(eventId) || { id: eventId, name: eventTitle, count: 0, revenue: 0 };
             existing.count += 1;
             existing.revenue += r.totalPrice || 0;
-            catMap.set(catId, existing);
+            eventMap.set(eventId, existing);
+        });
+        return Array.from(eventMap.values()).sort((a, b) => b.revenue - a.revenue);
+    }, [allRegistrations, allEvents]);
+
+    // Per-category revenue
+    const categoryRevenue = useMemo(() => {
+        const catMap = new Map<string, { name: string; eventInfo: string; count: number; revenue: number }>();
+        allRegistrations.forEach(r => {
+            const catId = r.categoryId || "Unknown";
+            const eventId = r.eventId || "Unknown";
+            const event = allEvents.find(e => e.id === eventId);
+            const eventTitle = event?.name || "Unknown Event";
+            const category = event?.categories?.find((c: any) => c.id === catId);
+            const categoryName = category?.name || catId;
+
+            const key = `${eventId}_${catId}`;
+            const existing = catMap.get(key) || { name: categoryName, eventInfo: eventTitle, count: 0, revenue: 0 };
+            existing.count += 1;
+            existing.revenue += r.totalPrice || 0;
+            catMap.set(key, existing);
         });
         return Array.from(catMap.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-    }, [allRegistrations]);
+    }, [allRegistrations, allEvents]);
 
 
     if (loading) {
@@ -192,6 +215,7 @@ export default function DashboardPage() {
                     eventKitStats={eventKitStats}
                     recentRegistrations={recentRegistrations}
                     categoryRevenue={categoryRevenue}
+                    eventRevenue={eventRevenue}
                 />
             ) : (
                 <RunnerView

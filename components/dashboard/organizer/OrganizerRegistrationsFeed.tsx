@@ -4,6 +4,7 @@ import { Activity, Users } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 
 interface OrganizerRegistrationsFeedProps {
     recentRegistrations: any[];
@@ -18,6 +19,9 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                     <Activity size={14} className="text-cta" />
                     <h3 className="text-sm font-black uppercase italic tracking-tight text-white">Recent Sign-ups</h3>
                 </div>
+                <Link href="/dashboard/registrations" className="text-[10px] uppercase font-black italic tracking-widest text-cta hover:text-white transition-colors flex items-center">
+                    View All &rarr;
+                </Link>
             </div>
             <div className="space-y-2 relative z-10">
                 {recentRegistrations.length > 0 ? (

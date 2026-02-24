@@ -19,6 +19,7 @@ interface OrganizerViewProps {
     eventKitStats: any[];
     recentRegistrations: any[];
     categoryRevenue: any[];
+    eventRevenue: any[];
 }
 
 export function OrganizerView({
@@ -31,7 +32,8 @@ export function OrganizerView({
     claimPercentage,
     eventKitStats,
     recentRegistrations,
-    categoryRevenue
+    categoryRevenue,
+    eventRevenue
 }: OrganizerViewProps) {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -59,6 +61,7 @@ export function OrganizerView({
 
                     <OrganizerRevenueStats
                         categoryRevenue={categoryRevenue}
+                        eventRevenue={eventRevenue}
                         totalRevenue={stats.revenue}
                     />
 
