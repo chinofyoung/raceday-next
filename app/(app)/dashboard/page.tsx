@@ -69,7 +69,7 @@ export default function DashboardPage() {
             } else {
                 const result = await getRegistrationsWithEvents({
                     userId: user.uid,
-                    limitCount: 5
+                    limitCount: 100
                 });
 
                 setStats({
