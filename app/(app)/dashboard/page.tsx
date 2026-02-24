@@ -6,7 +6,7 @@ import { useDashboardMode } from "@/components/providers/DashboardModeProvider";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/Button";
 import { getEvents } from "@/lib/services/eventService";
-import { getRegistrations, getRegistrationsWithEvents } from "@/lib/services/registrationService";
+import { getRegistrations, getRegistrationsWithEvents, getOrganizerStats, getCategoryCounts } from "@/lib/services/registrationService";
 import { computeProfileCompletion } from "@/lib/utils";
 import { checkExistingApplication } from "@/lib/services/applicationService";
 
@@ -20,7 +20,7 @@ export default function DashboardPage() {
     const { user, firebaseUser, role, loading: authLoading } = useAuth();
     const { mode, setMode, canSwitchMode } = useDashboardMode();
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0 });
+    const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0, claimedKits: 0 });
     const [items, setItems] = useState<any[]>([]);
     const [allRegistrations, setAllRegistrations] = useState<any[]>([]);
     const [allEvents, setAllEvents] = useState<any[]>([]);
@@ -48,22 +48,24 @@ export default function DashboardPage() {
         setError(null);
         try {
             if (isOrganizerView) {
-                const [eventsResult, regsResult] = await Promise.all([
+                // Fetch stats via aggregate queries + small batch of recent registrations
+                const [eventsResult, regsResult, aggregateStats] = await Promise.all([
                     getEvents({ organizerId: user.uid, limitCount: 100, status: "all" }),
-                    getRegistrations({ organizerId: user.uid, status: "paid", limitCount: 200 })
+                    getRegistrations({ organizerId: user.uid, status: "paid", limitCount: 50 }), // Only fetch 50 for the feed and basic category estimation if needed
+                    getOrganizerStats(user.uid)
                 ]);
 
                 const eventsList = eventsResult.items;
                 const activeEvents = eventsList.filter((e: any) => e.status === "published");
                 const myRegs = regsResult.items;
-                const totalRevenue = myRegs.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
 
                 setAllEvents(eventsList);
                 setAllRegistrations(myRegs);
                 setStats({
                     total: eventsList.length,
-                    secondary: myRegs.length,
-                    revenue: totalRevenue
+                    secondary: aggregateStats.totalRegistrations,
+                    revenue: aggregateStats.totalRevenue,
+                    claimedKits: aggregateStats.claimedKits
                 });
                 setItems(activeEvents.slice(0, 5));
             } else {
@@ -75,7 +77,8 @@ export default function DashboardPage() {
                 setStats({
                     total: result.items.filter((r: any) => r.status === "paid").length,
                     secondary: 0,
-                    revenue: 0
+                    revenue: 0,
+                    claimedKits: 0
                 });
                 setItems(result.items);
             }
@@ -98,9 +101,10 @@ export default function DashboardPage() {
     };
 
 
-    // Derived organizer stats
-    const claimedKits = useMemo(() => allRegistrations.filter(r => r.raceKitClaimed).length, [allRegistrations]);
-    const claimPercentage = useMemo(() => allRegistrations.length > 0 ? Math.round((claimedKits / allRegistrations.length) * 100) : 0, [claimedKits, allRegistrations]);
+    // Derived organizer stats (using aggregate queries from backend now)
+    const claimedKits = stats.claimedKits || 0;
+    const totalRegistrations = stats.secondary || 0;
+    const claimPercentage = totalRegistrations > 0 ? Math.round((claimedKits / totalRegistrations) * 100) : 0;
     const publishedEvents = useMemo(() => allEvents.filter(e => e.status === "published"), [allEvents]);
     const draftEvents = useMemo(() => allEvents.filter(e => e.status === "draft"), [allEvents]);
 

@@ -91,7 +91,12 @@ export function Navbar() {
                             </Link>
                         ))}
 
-                        {!loading && firebaseUser ? (
+                        {loading ? (
+                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                                <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
+                                <div className="w-20 h-4 bg-white/5 rounded animate-pulse hidden md:block" />
+                            </div>
+                        ) : firebaseUser ? (
                             <div className="flex items-center gap-4 pl-4 border-l border-white/10">
                                 {user?.role === "admin" && (
                                     <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin mr-4">
@@ -164,7 +169,12 @@ export function Navbar() {
                                 </Link>
                             ))}
                             <div className="pt-4 border-t border-white/5 space-y-4">
-                                {!loading && firebaseUser ? (
+                                {loading ? (
+                                    <div className="flex items-center gap-3 px-1">
+                                        <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
+                                        <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
+                                    </div>
+                                ) : firebaseUser ? (
                                     <>
                                         <Link
                                             href="/dashboard"

@@ -9,10 +9,19 @@ import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";
 interface MobileStickyCTAProps {
     event: RaceEvent;
     isRegistered?: boolean;
+    loadingAuth?: boolean;
 }
 
-export function MobileStickyCTA({ event, isRegistered }: MobileStickyCTAProps) {
+export function MobileStickyCTA({ event, isRegistered, loadingAuth }: MobileStickyCTAProps) {
     if (isEventOver(event) || isRegistrationClosed(event)) return null;
+
+    if (loadingAuth) {
+        return (
+            <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden flex gap-3">
+                <div className="w-full h-14 bg-white/5 rounded-xl animate-pulse" />
+            </div>
+        );
+    }
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-[2000] p-4 bg-background/95 backdrop-blur-md border-t border-white/10 lg:hidden flex gap-3">

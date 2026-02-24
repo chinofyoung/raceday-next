@@ -29,7 +29,7 @@ interface EventDetailClientProps {
 }
 
 export function EventDetailClient({ event }: EventDetailClientProps) {
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
     const [userRegistration, setUserRegistration] = useState<any>(null);
     const [activeSection, setActiveSection] = useState<string>("info");
@@ -81,14 +81,21 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
         }
     };
 
+    const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
+
     useEffect(() => {
-        if (user?.uid && event.id) {
-            getUserRegistrations(user.uid).then(regs => {
-                const reg = regs.find(r => r.eventId === event.id && (r.status === 'paid' || r.status === 'pending'));
-                setUserRegistration(reg);
-            });
+        if (!authLoading) {
+            if (user?.uid && event.id) {
+                getUserRegistrations(user.uid).then(regs => {
+                    const reg = regs.find(r => r.eventId === event.id && (r.status === 'paid' || r.status === 'pending'));
+                    setUserRegistration(reg);
+                    setIsCheckingRegistration(false);
+                });
+            } else {
+                setIsCheckingRegistration(false);
+            }
         }
-    }, [user, event.id]);
+    }, [user, event.id, authLoading]);
 
     useEffect(() => {
         if (event.id) {
@@ -126,6 +133,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             <EventHero
                 event={event}
                 userRegistration={userRegistration}
+                loadingAuth={isCheckingRegistration}
             />
 
             <EventNavigation
@@ -164,6 +172,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             <MobileStickyCTA
                 event={event}
                 isRegistered={!!userRegistration || user?.uid === event.organizerId}
+                loadingAuth={isCheckingRegistration}
             />
         </div>
     );

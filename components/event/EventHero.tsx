@@ -12,9 +12,10 @@ import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";
 interface EventHeroProps {
     event: RaceEvent;
     userRegistration: any;
+    loadingAuth?: boolean;
 }
 
-export function EventHero({ event, userRegistration }: EventHeroProps) {
+export function EventHero({ event, userRegistration, loadingAuth }: EventHeroProps) {
     const eventDate = new Date(event.date as unknown as string);
     const isValidDate = !isNaN(eventDate.getTime());
 
@@ -45,7 +46,9 @@ export function EventHero({ event, userRegistration }: EventHeroProps) {
                         ) : (
                             <Badge variant="success" className="bg-cta text-white px-4 py-1.5 shadow-xl border-none">Registration Open</Badge>
                         )}
-                        {userRegistration && (
+                        {loadingAuth ? (
+                            <div className="w-32 h-8 bg-white/10 rounded-full animate-pulse shadow-xl" />
+                        ) : userRegistration && (
                             <Badge className={cn(
                                 "px-4 py-1.5 shadow-xl border-none text-white",
                                 userRegistration.status === "paid" ? "bg-green-500" : "bg-orange-500"

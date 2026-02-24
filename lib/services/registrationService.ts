@@ -11,7 +11,11 @@ import {
     startAfter,
     DocumentSnapshot,
     updateDoc,
-    documentId
+    documentId,
+    getCountFromServer,
+    getAggregateFromServer,
+    count,
+    sum
 } from "firebase/firestore";
 import { Registration } from "@/types/registration";
 
@@ -145,5 +149,43 @@ export async function getCategoryCounts(eventId: string) {
     } catch (error) {
         console.error("Error fetching category counts:", error);
         return {};
+    }
+}
+
+export async function getOrganizerStats(organizerId: string) {
+    try {
+        const baseQuery = query(
+            collection(db, "registrations"),
+            where("organizerId", "==", organizerId),
+            where("status", "==", "paid")
+        );
+
+        // Fetch Total Revenue & Total Registrations in one aggregate query
+        const aggregateSnapshot = await getAggregateFromServer(baseQuery, {
+            totalRegistrations: count(),
+            totalRevenue: sum('totalPrice')
+        });
+
+        const totalRevenue = aggregateSnapshot.data().totalRevenue || 0;
+        const totalRegistrations = aggregateSnapshot.data().totalRegistrations || 0;
+
+        // Fetch Claimed Kits Count
+        const claimedKitsQuery = query(
+            collection(db, "registrations"),
+            where("organizerId", "==", organizerId),
+            where("status", "==", "paid"),
+            where("raceKitClaimed", "==", true)
+        );
+        const claimedKitsSnapshot = await getCountFromServer(claimedKitsQuery);
+        const claimedKits = claimedKitsSnapshot.data().count || 0;
+
+        return {
+            totalRevenue,
+            totalRegistrations,
+            claimedKits
+        };
+    } catch (error) {
+        console.error("Error fetching organizer stats:", error);
+        return { totalRevenue: 0, totalRegistrations: 0, claimedKits: 0 };
     }
 }

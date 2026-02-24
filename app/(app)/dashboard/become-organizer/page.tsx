@@ -41,6 +41,7 @@ export default function BecomeOrganizerPage() {
     const { user } = useAuth();
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(1);
+    const [highestStep, setHighestStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
     const [checking, setChecking] = useState(true);
@@ -125,17 +126,30 @@ export default function BecomeOrganizerPage() {
 
             const isValid = await trigger(fields);
             if (isValid) {
-                setCurrentStep(prev => prev + 1);
+                const nextStep = currentStep + 1;
+                setCurrentStep(nextStep);
+                setHighestStep(prev => Math.max(prev, nextStep));
                 window.scrollTo(0, 0);
             }
         } else if (currentStep < STEPS.length) {
-            setCurrentStep(prev => prev + 1);
+            const nextStep = currentStep + 1;
+            setCurrentStep(nextStep);
+            setHighestStep(prev => Math.max(prev, nextStep));
             window.scrollTo(0, 0);
         }
     };
 
     const handleBack = () => {
         setCurrentStep(prev => prev - 1);
+        window.scrollTo(0, 0);
+    };
+
+    const handleStepClick = async (step: number) => {
+        if (step === currentStep) return;
+
+        // If trying to navigate to another step, we might want to trigger validation for the current step
+        // However, since they are navigating via the stepper, we can just let them navigate if the target is <= highestStep
+        setCurrentStep(step);
         window.scrollTo(0, 0);
     };
 
@@ -237,7 +251,12 @@ export default function BecomeOrganizerPage() {
                 </div>
             </div>
 
-            <OrganizerFormStepper steps={STEPS} currentStep={currentStep} />
+            <OrganizerFormStepper
+                steps={STEPS}
+                currentStep={currentStep}
+                highestStep={highestStep}
+                onStepClick={handleStepClick}
+            />
 
             <div className="bg-surface/30 backdrop-blur-sm border border-white/5 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden space-y-8">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />

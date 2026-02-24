@@ -12,21 +12,28 @@ interface Step {
 interface OrganizerFormStepperProps {
     steps: Step[];
     currentStep: number;
+    highestStep?: number;
+    onStepClick?: (step: number) => void;
 }
 
-export function OrganizerFormStepper({ steps, currentStep }: OrganizerFormStepperProps) {
+export function OrganizerFormStepper({ steps, currentStep, highestStep = 1, onStepClick }: OrganizerFormStepperProps) {
     return (
         <div className="flex items-center gap-2 md:justify-between overflow-x-auto pb-6 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth whitespace-nowrap">
             {steps.map((step, i) => {
                 const isActive = currentStep === step.id;
                 const isCompleted = currentStep > step.id;
+                const isReachable = step.id <= highestStep;
 
                 return (
                     <div key={step.id} className={cn("flex items-center shrink-0", i < steps.length - 1 && "md:flex-1")}>
-                        <div
+                        <button
+                            type="button"
+                            onClick={() => isReachable && onStepClick?.(step.id)}
+                            disabled={!isReachable}
                             className={cn(
-                                "flex items-center gap-2 transition-all p-2 rounded-xl shrink-0",
-                                (isActive || isCompleted) ? "font-bold" : "opacity-50"
+                                "flex items-center gap-2 transition-all p-2 rounded-xl shrink-0 text-left outline-none",
+                                (isActive || isCompleted) ? "font-bold" : "opacity-50",
+                                isReachable && !isActive ? "hover:bg-white/5 cursor-pointer" : "cursor-default"
                             )}
                         >
                             <div className={cn(
@@ -50,7 +57,7 @@ export function OrganizerFormStepper({ steps, currentStep }: OrganizerFormSteppe
                                     </span>
                                 )}
                             </div>
-                        </div>
+                        </button>
                         {i < steps.length - 1 && (
                             <div className={cn(
                                 "h-px bg-white/10 mx-2 md:mx-4 shrink-0",

@@ -45,71 +45,74 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                 </Link>
             </div>
 
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {eventKitStats.map((event) => {
                     const parsedDate = event.date ? (typeof event.date?.toDate === 'function' ? event.date.toDate() : new Date(event.date)) : null;
                     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
                     const isUpcoming = isValidDate && isAfter(parsedDate, new Date());
 
                     return (
-                        <Card key={event.id} className="p-0 bg-surface/50 border-white/5 hover:border-white/10 transition-all group overflow-hidden">
-                            <div className="p-5">
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex items-start gap-4 min-w-0 flex-1">
-                                        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors overflow-hidden shrink-0">
-                                            {event.featuredImage ? (
-                                                <img src={event.featuredImage} alt={event.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <Calendar size={24} />
+                        <Card key={event.id} className="bg-white/5 border-white/10 hover:border-cta/30 transition-all group overflow-hidden flex flex-col h-full relative">
+                            {/* Background Glow */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-cta/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                            <div className="p-4 flex-1 flex flex-col gap-4 relative z-10">
+                                {/* Header: Image & Title */}
+                                <div className="flex items-start gap-4">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-cta transition-colors overflow-hidden shrink-0 border border-white/10 shadow-lg">
+                                        {event.featuredImage ? (
+                                            <img src={event.featuredImage} alt={event.name} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <Calendar size={28} />
+                                        )}
+                                    </div>
+                                    <div className="min-w-0 flex-1 pt-1">
+                                        <h4 className="font-black italic uppercase text-lg text-white leading-tight truncate group-hover:text-cta transition-colors">{event.name}</h4>
+                                        <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted font-bold uppercase italic tracking-widest mt-2">
+                                            {isValidDate && (
+                                                <span className="flex items-center gap-1.5">
+                                                    <Clock size={12} className="text-primary" />
+                                                    {isUpcoming ? formatDistanceToNow(parsedDate, { addSuffix: true }) : format(parsedDate, "MMM d, yyyy")}
+                                                </span>
                                             )}
                                         </div>
-                                        <div className="min-w-0 space-y-1.5">
-                                            <h4 className="font-bold italic uppercase text-white leading-tight truncate">{event.name}</h4>
-                                            <div className="flex flex-wrap items-center gap-3 text-[10px] text-text-muted font-bold uppercase italic tracking-widest">
-                                                <span className="flex items-center gap-1">
-                                                    <MapPin size={10} className="text-cta" />
-                                                    {event.location?.name || "TBA"}
-                                                </span>
-                                                {isValidDate && (
-                                                    <span className="flex items-center gap-1">
-                                                        <Clock size={10} className="text-primary" />
-                                                        {isUpcoming ? formatDistanceToNow(parsedDate, { addSuffix: true }) : format(parsedDate, "MMM d, yyyy")}
-                                                    </span>
-                                                )}
-                                                <span className="flex items-center gap-1">
-                                                    <Users size={10} className="text-cta" />
-                                                    {event.regCount} runners
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex gap-2 shrink-0">
-                                        <Button size="sm" variant="outline" asChild className="text-cta border-cta/20 hover:bg-cta/10 font-black italic uppercase text-[10px] px-3 h-8">
-                                            <Link href={`/dashboard/events/${event.id}/scanner`}>
-                                                <Scan size={12} className="mr-1.5" /> Scan
-                                            </Link>
-                                        </Button>
-                                        <Button size="sm" variant="ghost" asChild className="text-primary font-black italic uppercase text-[10px] px-3 h-8">
-                                            <Link href={`/dashboard/events/${event.id}`}>
-                                                Manage <ArrowRight size={12} className="ml-1" />
-                                            </Link>
-                                        </Button>
                                     </div>
                                 </div>
 
+                                {/* Stats Grid */}
+                                <div className="grid grid-cols-2 gap-2 mt-2">
+                                    <div className="bg-black/20 rounded-xl p-3 border border-white/5">
+                                        <div className="flex items-center gap-1.5 mb-1 opacity-70">
+                                            <Users size={12} className="text-cta" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Runners</span>
+                                        </div>
+                                        <p className="text-2xl font-black italic text-white">{event.regCount}</p>
+                                    </div>
+                                    <div className="bg-black/20 rounded-xl p-3 border border-white/5">
+                                        <div className="flex items-center gap-1.5 mb-1 opacity-70">
+                                            <MapPin size={12} className="text-primary" />
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Location</span>
+                                        </div>
+                                        <p className="text-sm font-bold italic text-white truncate">{event.location?.name || "TBA"}</p>
+                                    </div>
+                                </div>
+
+                                {/* Spacer to push buttons/progress to bottom */}
+                                <div className="flex-1" />
+
+                                {/* Kit Fulfillment Progress */}
                                 {event.regCount > 0 && (
-                                    <div className="mt-4 pt-4 border-t border-white/5">
+                                    <div className="mt-2 pt-4 border-t border-white/5">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
-                                                <Package size={10} className="text-amber-500" />
-                                                Race Kit Fulfillment
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                                                <Package size={12} className="text-amber-500" />
+                                                Kit Fulfillment
                                             </span>
-                                            <span className="text-[10px] font-black italic text-white">
-                                                {event.claimedCount}/{event.regCount}
-                                                <span className="text-text-muted ml-1">({event.claimPercent}%)</span>
+                                            <span className="text-xs font-black italic text-white">
+                                                {event.claimPercent}%
                                             </span>
                                         </div>
-                                        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                                        <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
                                             <div
                                                 className={cn(
                                                     "h-full rounded-full transition-all duration-1000",
@@ -122,6 +125,20 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                                         </div>
                                     </div>
                                 )}
+
+                                {/* Action Buttons */}
+                                <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20">
+                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs h-10">
+                                        <Link href={`/dashboard/events/${event.id}`}>
+                                            Manage
+                                        </Link>
+                                    </Button>
+                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-xs h-10">
+                                        <Link href={`/dashboard/events/${event.id}/scanner`}>
+                                            <Scan size={14} className="mr-2" /> Scan
+                                        </Link>
+                                    </Button>
+                                </div>
                             </div>
                         </Card>
                     );
