@@ -62,47 +62,62 @@ export function ConfirmModal({
             {/* Modal */}
             <div
                 className={cn(
-                    "relative w-full max-w-sm rounded-2xl border border-white/10 bg-surface p-8 shadow-2xl",
+                    "relative w-full max-w-sm rounded-2xl border border-white/[0.08] bg-surface shadow-2xl overflow-hidden",
                     "animate-in fade-in zoom-in-95 slide-in-from-bottom-4 duration-200"
                 )}
             >
-                {icon && (
-                    <div className="flex justify-center mb-5">
-                        <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center">
-                            {icon}
+                {/* Top accent line */}
+                <div className={cn(
+                    "h-[2px] w-full",
+                    confirmVariant === "danger"
+                        ? "bg-gradient-to-r from-transparent via-red-500 to-transparent"
+                        : "bg-gradient-to-r from-transparent via-primary to-transparent"
+                )} />
+
+                <div className="p-8">
+                    {icon && (
+                        <div className="flex justify-center mb-5">
+                            <div className={cn(
+                                "w-12 h-12 rounded-xl flex items-center justify-center",
+                                confirmVariant === "danger" ? "bg-red-500/10" : "bg-primary/10"
+                            )}>
+                                {icon}
+                            </div>
                         </div>
+                    )}
+
+                    <h2 className="text-xl font-black italic uppercase tracking-tight text-text text-center">
+                        {title}
+                    </h2>
+
+                    {description && (
+                        <p className="mt-2 text-sm text-text-muted text-center leading-relaxed">
+                            {description}
+                        </p>
+                    )}
+
+                    <div className="mt-6 mb-6 h-[1px] bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+
+                    <div className="flex gap-3">
+                        <Button
+                            variant="ghost"
+                            size="md"
+                            className="flex-1 border border-white/[0.08]"
+                            onClick={onCancel}
+                            disabled={isLoading}
+                        >
+                            {cancelLabel}
+                        </Button>
+                        <Button
+                            variant={confirmVariant}
+                            size="md"
+                            className="flex-1"
+                            onClick={onConfirm}
+                            isLoading={isLoading}
+                        >
+                            {confirmLabel}
+                        </Button>
                     </div>
-                )}
-
-                <h2 className="text-xl font-black italic uppercase tracking-tight text-text text-center">
-                    {title}
-                </h2>
-
-                {description && (
-                    <p className="mt-2 text-sm text-text-muted text-center leading-relaxed">
-                        {description}
-                    </p>
-                )}
-
-                <div className="mt-8 flex gap-3">
-                    <Button
-                        variant="ghost"
-                        size="md"
-                        className="flex-1 border border-white/10"
-                        onClick={onCancel}
-                        disabled={isLoading}
-                    >
-                        {cancelLabel}
-                    </Button>
-                    <Button
-                        variant={confirmVariant}
-                        size="md"
-                        className="flex-1"
-                        onClick={onConfirm}
-                        isLoading={isLoading}
-                    >
-                        {confirmLabel}
-                    </Button>
                 </div>
             </div>
         </div>
