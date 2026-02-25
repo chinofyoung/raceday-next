@@ -40,9 +40,6 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                         {items.length} Live
                     </Badge>
                 </div>
-                <Link href="/dashboard/events" className="text-xs font-bold uppercase text-primary hover:underline italic flex items-center gap-1">
-                    All Events <ArrowRight size={12} />
-                </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

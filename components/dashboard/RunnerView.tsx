@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
 import { RunnerQuickActions } from "@/components/dashboard/RunnerQuickActions";
+import { VolunteerDashboard } from "@/components/dashboard/volunteer/VolunteerDashboard";
+import { toDate } from "@/lib/utils";
 
 interface RunnerViewProps {
     completion: number;
@@ -32,21 +34,21 @@ export function RunnerView({
     // Sort items so most recent/upcoming makes sense. For upcoming we could sort asc, for past desc.
     const upcomingEvents = items.filter(reg => {
         if (!reg.event) return true;
-        const eventDate = reg.event?.date?.seconds ? new Date(reg.event.date.seconds * 1000) : new Date(reg.event?.date || 0);
+        const eventDate = toDate(reg.event.date);
         return eventDate >= now && reg.event?.status !== "completed";
     }).sort((a, b) => {
-        const dA = a.event?.date?.seconds ? a.event.date.seconds * 1000 : new Date(a.event?.date || 0).getTime();
-        const dB = b.event?.date?.seconds ? b.event.date.seconds * 1000 : new Date(b.event?.date || 0).getTime();
+        const dA = toDate(a.event?.date).getTime();
+        const dB = toDate(b.event?.date).getTime();
         return dA - dB;
     });
 
     const pastEvents = items.filter(reg => {
         if (!reg.event) return false; // Hide missing events from past
-        const eventDate = reg.event?.date?.seconds ? new Date(reg.event.date.seconds * 1000) : new Date(reg.event?.date || 0);
+        const eventDate = toDate(reg.event.date);
         return eventDate < now || reg.event?.status === "completed";
     }).sort((a, b) => {
-        const dA = a.event?.date?.seconds ? a.event.date.seconds * 1000 : new Date(a.event?.date || 0).getTime();
-        const dB = b.event?.date?.seconds ? b.event.date.seconds * 1000 : new Date(b.event?.date || 0).getTime();
+        const dA = toDate(a.event?.date).getTime();
+        const dB = toDate(b.event?.date).getTime();
         return dB - dA; // most recent past first
     });
 
@@ -184,6 +186,9 @@ export function RunnerView({
 
                     {/* Announcements */}
                     <RunnerAnnouncements />
+
+                    {/* Volunteer Dashboard */}
+                    <VolunteerDashboard />
 
                     {/* My Registered Events */}
                     <div className="space-y-6">

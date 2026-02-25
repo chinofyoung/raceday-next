@@ -33,7 +33,8 @@ export function toDate(value: any): Date {
   if (!value) return new Date();
   if (value instanceof Date) return value;
   if (typeof value.toDate === 'function') return value.toDate();
-  if (value?.seconds) return new Date(value.seconds * 1000); // Handle raw timestamp objects if any
+  const seconds = value?.seconds ?? value?._seconds;
+  if (seconds !== undefined) return new Date(seconds * 1000);
   const parsed = new Date(value);
   return isNaN(parsed.getTime()) ? new Date() : parsed;
 }

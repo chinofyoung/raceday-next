@@ -54,3 +54,54 @@ export async function sendEmailBlast({
         return { success: false, error };
     }
 }
+
+export async function sendVolunteerInvitation({
+    to,
+    eventName,
+    organizerName,
+    acceptUrl,
+    permissions,
+}: {
+    to: string;
+    eventName: string;
+    organizerName: string;
+    acceptUrl: string;
+    permissions: string[];
+}) {
+    const permissionsList = permissions.map(p => {
+        if (p === 'kiosk') return 'Race Kit Claiming (Kiosk Mode)';
+        if (p === 'participants') return 'Participant Management';
+        if (p === 'announcements') return 'Send Announcements';
+        return p;
+    }).join(', ');
+
+    const html = `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
+            <h2 style="color: #111;">You're invited to volunteer!</h2>
+            <p><strong>${organizerName}</strong> has invited you to help manage <strong>${eventName}</strong>.</p>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin-top: 0; font-weight: bold;">Permissions granted:</p>
+                <p style="color: #4b5563;">${permissionsList}</p>
+            </div>
+
+            <p>To accept this invitation and get started, click the button below:</p>
+            
+            <a href="${acceptUrl}" 
+               style="display: inline-block; background-color: #111; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; margin: 10px 0;">
+               Accept Invitation
+            </a>
+
+            <p style="font-size: 14px; color: #666; margin-top: 30px;">
+                Note: You will need to sign in with your Google/Gmail account to accept this invitation.
+            </p>
+        </div>
+    `;
+
+    return sendEmailBlast({
+        to: [to],
+        subject: `Volunteer Invitation: ${eventName}`,
+        html,
+    });
+}
+
