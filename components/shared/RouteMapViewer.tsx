@@ -120,11 +120,41 @@ export function RouteMapViewer({
                             weight={4}
                             opacity={0.8}
                         />
-                        <Marker position={routePoints[0]}>
-                            <Popup>Start</Popup>
+                        <Marker
+                            position={routePoints[0]}
+                            icon={L.divIcon({
+                                html: `
+                                    <div style="background-color: #22c55e; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-size: 11px; font-weight: 900; font-family: system-ui;">
+                                        S
+                                    </div>
+                                `,
+                                className: 'custom-start-marker',
+                                iconSize: [24, 24],
+                                iconAnchor: [12, 12],
+                                popupAnchor: [0, -12]
+                            })}
+                        >
+                            <Popup>
+                                <div className="text-xs font-black italic uppercase tracking-tight">Race Start</div>
+                            </Popup>
                         </Marker>
-                        <Marker position={routePoints[routePoints.length - 1]}>
-                            <Popup>Finish</Popup>
+                        <Marker
+                            position={routePoints[routePoints.length - 1]}
+                            icon={L.divIcon({
+                                html: `
+                                    <div style="background-color: #1f2937; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.4); font-size: 11px; font-weight: 900; font-family: system-ui;">
+                                        🏁
+                                    </div>
+                                `,
+                                className: 'custom-finish-marker',
+                                iconSize: [24, 24],
+                                iconAnchor: [12, 12],
+                                popupAnchor: [0, -12]
+                            })}
+                        >
+                            <Popup>
+                                <div className="text-xs font-black italic uppercase tracking-tight">Race Finish</div>
+                            </Popup>
                         </Marker>
                         <MapUpdater center={routePoints[Math.floor(routePoints.length / 2)]} zoom={zoom} />
                     </>

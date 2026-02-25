@@ -40,7 +40,7 @@ export function EventRoute({ event, activeRouteCategoryIndex, setActiveRouteCate
 
             {event.categories?.[activeRouteCategoryIndex]?.routeMap?.gpxFileUrl ? (
                 <div key={activeRouteCategoryIndex} className="space-y-6 animate-in fade-in duration-500">
-                    <div className="aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden border-4 border-white/5 shadow-2xl relative isolate">
+                    <div className="aspect-square md:aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden border-4 border-white/5 shadow-2xl relative isolate">
                         <RouteMapViewer
                             // Key is important to force re-render when switching GPX files
                             key={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
