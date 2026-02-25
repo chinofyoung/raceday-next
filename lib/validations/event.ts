@@ -60,6 +60,7 @@ export const eventSchema = z.object({
     vanityRaceNumber: z.object({
         enabled: z.boolean().default(false),
         premiumPrice: z.number().min(0).default(0),
+        maxDigits: z.number().min(1).max(10).default(4),
     }),
     earlyBird: z.object({
         enabled: z.boolean().default(false),

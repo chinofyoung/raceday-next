@@ -77,6 +77,7 @@ export interface RaceEvent {
     vanityRaceNumber: {
         enabled: boolean;
         premiumPrice: number;   // Additional cost
+        maxDigits: number;      // e.g. 4
     };
 
     // Early Bird

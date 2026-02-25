@@ -171,11 +171,16 @@ export function Step6Review() {
                             </span>
                         </div>
                         {data.vanityRaceNumber?.enabled && (
-                            <div className="flex items-center justify-between py-2">
-                                <span className="text-xs font-bold uppercase text-text-muted">Premium Fee</span>
-                                <span className="text-sm font-black italic text-cta">₱{data.vanityRaceNumber.premiumPrice}</span>
-                            </div>
-
+                            <>
+                                <div className="flex items-center justify-between py-2 border-b border-white/5">
+                                    <span className="text-xs font-bold uppercase text-text-muted">Premium Fee</span>
+                                    <span className="text-sm font-black italic text-cta">₱{data.vanityRaceNumber.premiumPrice}</span>
+                                </div>
+                                <div className="flex items-center justify-between py-2">
+                                    <span className="text-xs font-bold uppercase text-text-muted">Max Digits</span>
+                                    <span className="text-sm font-black italic text-white">{data.vanityRaceNumber.maxDigits}</span>
+                                </div>
+                            </>
                         )}
 
                         <div className="flex items-center justify-between py-2 border-b border-white/5 pt-4">

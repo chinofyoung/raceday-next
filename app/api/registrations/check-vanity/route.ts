@@ -25,9 +25,19 @@ export async function GET(req: Request) {
             );
         }
 
-        // Format the vanity number using the category template
-        const format = await getRaceNumberFormat(eventId, categoryId);
-        const formattedBib = formatBibNumber(format, vanityNumber);
+        // Fetch the event and category to get format and maxDigits
+        const { db } = await import("@/lib/firebase/config");
+        const { getDoc, doc } = await import("firebase/firestore");
+        const eventDoc = await getDoc(doc(db, "events", eventId));
+        const eventData = eventDoc.data();
+        const category = eventData?.categories?.find((c: any) => (c.id || "0") === categoryId);
+
+        const format = category?.raceNumberFormat || "{number}";
+        const maxDigits = eventData?.vanityRaceNumber?.maxDigits || 3;
+
+        // Format the vanity number (pad with zeros) and use the category template
+        const paddedVanity = vanityNumber.padStart(maxDigits, "0");
+        const formattedBib = formatBibNumber(format, paddedVanity);
 
         // Check if it's already taken
         const taken = await isBibTaken(eventId, formattedBib);

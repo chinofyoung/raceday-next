@@ -54,7 +54,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             location: { name: "", address: "" },
             featuredImage: "",
             galleryImages: [],
-            vanityRaceNumber: { enabled: false, premiumPrice: 0 },
+            vanityRaceNumber: { enabled: false, premiumPrice: 0, maxDigits: 4 },
             earlyBird: { enabled: false },
             timeline: [],
             categories: [],

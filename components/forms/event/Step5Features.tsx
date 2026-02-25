@@ -111,6 +111,35 @@ export function Step5Features() {
                             </p>
                         </div>
 
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cta italic">
+                                <Sparkles size={16} /> Max Digits Allowed
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <Input
+                                    type="number"
+                                    {...register("vanityRaceNumber.maxDigits", {
+                                        valueAsNumber: true,
+                                        min: 1,
+                                        max: 10
+                                    })}
+                                    error={errors.vanityRaceNumber?.maxDigits?.message}
+                                    placeholder="e.g. 4"
+                                    className="text-2xl font-black w-32"
+                                />
+                                <div className="flex-1 flex gap-2">
+                                    {Array.from({ length: watch("vanityRaceNumber.maxDigits") || 4 }).map((_, i) => (
+                                        <div key={i} className="flex-1 aspect-square md:aspect-auto md:h-12 border-2 border-dashed border-cta/30 rounded-lg flex items-center justify-center text-cta/40 font-black italic text-xl">
+                                            {i + 1}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <p className="text-xs text-text-muted font-medium italic">
+                                Defines the length of the vanity number (e.g., 4 digits = 0001 to 9999).
+                            </p>
+                        </div>
+
                         <div className="p-6 bg-cta/10 border border-cta/20 rounded-2xl space-y-3">
                             <h4 className="text-xs font-bold uppercase tracking-widest text-cta">Revenue Boost</h4>
                             <p className="text-xs text-text-muted leading-relaxed font-medium">

@@ -65,12 +65,18 @@ export async function generateBibNumber(
     categoryId: string,
     vanityNumber?: string | null
 ): Promise<string> {
-    // 1. Fetch the category's raceNumberFormat
-    const format = await getRaceNumberFormat(eventId, categoryId);
+    // 1. Fetch the category's raceNumberFormat and event's vanity config
+    const eventDoc = await getDoc(doc(db, "events", eventId));
+    const eventData = eventDoc.data();
+    const category = eventData?.categories?.find((c: any) => (c.id || "0") === categoryId);
+    const format = category?.raceNumberFormat || "{number}";
+    const maxDigits = eventData?.vanityRaceNumber?.maxDigits || 3;
 
     // 2. If vanity number is chosen, validate it's still available
     if (vanityNumber) {
-        const formatted = formatBibNumber(format, vanityNumber);
+        // Enforce maxDigits for vanity if configured
+        const paddedVanity = vanityNumber.padStart(maxDigits, "0");
+        const formatted = formatBibNumber(format, paddedVanity);
         const taken = await isBibTaken(eventId, formatted);
         if (taken) {
             throw new Error(
@@ -100,7 +106,7 @@ export async function generateBibNumber(
             return newCount;
         });
 
-        const paddedNumber = String(nextCount).padStart(3, "0");
+        const paddedNumber = String(nextCount).padStart(maxDigits, "0");
         const formatted = formatBibNumber(format, paddedNumber);
 
         // Check if this number was already claimed (e.g. by a vanity registration)
