@@ -3,6 +3,8 @@ import { z } from "zod";
 export const profileSchema = z.object({
     displayName: z.string().min(2, "Name is too short"),
     phone: z.string().min(10, "Phone number is too short").or(z.literal("")),
+    gender: z.enum(["", "male", "female", "other"]),
+    birthDate: z.string().or(z.literal("")),
     medicalConditions: z.string().optional(),
     tShirtSize: z.enum(["", "XS", "S", "M", "L", "XL", "2XL", "3XL"]),
     singletSize: z.enum(["", "XS", "S", "M", "L", "XL", "2XL", "3XL"]),
@@ -26,6 +28,8 @@ export const calculateCompletion = (data: ProfileFormValues): number => {
     const fields = [
         !!data.displayName,
         !!data.phone,
+        !!data.gender,
+        !!data.birthDate,
         !!data.address.street,
         !!data.address.city,
         !!data.address.province,

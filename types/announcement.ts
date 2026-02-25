@@ -7,6 +7,7 @@ export interface Announcement {
     organizerId: string;
     title: string;
     message: string;         // Support for rich text or multiline text
+    imageUrl?: string;
     sendEmail: boolean;
     sentCount?: number;      // Number of emails sent if sendEmail was true
     createdAt: Timestamp | Date;

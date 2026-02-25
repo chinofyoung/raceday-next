@@ -8,6 +8,8 @@ export const registrationSchema = z.object({
         name: z.string().min(2, "Name is required"),
         email: z.string().email("Invalid email"),
         phone: z.string().min(10, "Invalid phone number"),
+        gender: z.enum(["male", "female", "other"], { message: "Gender is required" }),
+        birthDate: z.string().min(1, "Birth date is required"),
         tShirtSize: z.string().min(1, "Required"),
         singletSize: z.string().min(1, "Required"),
         emergencyContact: z.object({

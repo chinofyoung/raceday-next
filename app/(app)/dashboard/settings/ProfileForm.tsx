@@ -32,6 +32,8 @@ export function ProfileForm() {
         defaultValues: {
             displayName: user?.displayName || "",
             phone: user?.phone || "",
+            gender: user?.gender || "",
+            birthDate: user?.birthDate || "",
             medicalConditions: user?.medicalConditions || "",
             tShirtSize: user?.tShirtSize || "",
             singletSize: user?.singletSize || "",
@@ -123,6 +125,27 @@ export function ProfileForm() {
                             error={errors.phone?.message}
                             placeholder="e.g. 09123456789"
                         />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
+                                <select
+                                    {...register("gender")}
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text text-sm focus:outline-none focus:border-primary transition-all appearance-none"
+                                >
+                                    <option value="" className="bg-surface">Select</option>
+                                    <option value="male" className="bg-surface">Male</option>
+                                    <option value="female" className="bg-surface">Female</option>
+                                    <option value="other" className="bg-surface">Other</option>
+                                </select>
+                                {errors.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.gender.message}</p>}
+                            </div>
+                            <Input
+                                type="date"
+                                label="Birth Date"
+                                {...register("birthDate")}
+                                error={errors.birthDate?.message}
+                            />
+                        </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Medical Conditions</label>
                             <textarea

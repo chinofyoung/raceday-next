@@ -15,7 +15,7 @@ interface ImageUploadProps {
     label?: string;
     className?: string;
     description?: string;
-    aspectRatio?: "square" | "video" | "wide"; // basic presets for aspect ratio class
+    aspectRatio?: "square" | "video" | "wide" | "banner"; // basic presets for aspect ratio class
     resourceType?: "image" | "raw" | "auto";
     acceptedFileTypes?: string;
     variant?: "default" | "compact";
@@ -121,7 +121,8 @@ export function ImageUpload({
     const aspectRatioClass = {
         square: "aspect-square",
         video: "aspect-video",
-        wide: "aspect-[16/9]" // default wide
+        wide: "aspect-[16/9]",
+        banner: "aspect-[4/1]" // even smaller vertical footprint
     }[aspectRatio];
 
     if (variant === "compact") {

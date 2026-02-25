@@ -52,6 +52,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 name: user?.displayName || "",
                 email: user?.email || "",
                 phone: user?.phone || "",
+                gender: (user?.gender || "") as any,
+                birthDate: user?.birthDate || "",
                 tShirtSize: user?.tShirtSize || "",
                 singletSize: user?.singletSize || "",
                 emergencyContact: {
@@ -85,6 +87,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                     name: user.displayName || "",
                     email: user.email || "",
                     phone: user.phone || "",
+                    gender: user.gender || "" as any,
+                    birthDate: user.birthDate || "",
                     tShirtSize: user.tShirtSize || "",
                     singletSize: user.singletSize || "",
                     emergencyContact: {
@@ -103,6 +107,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                     name: "",
                     email: "",
                     phone: "",
+                    gender: "" as any,
+                    birthDate: "",
                     tShirtSize: "",
                     singletSize: "",
                     emergencyContact: {
@@ -124,6 +130,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
             "participantInfo.name",
             "participantInfo.email",
             "participantInfo.phone",
+            "participantInfo.gender",
+            "participantInfo.birthDate",
             "participantInfo.tShirtSize",
             "participantInfo.singletSize",
             "participantInfo.emergencyContact.name",
@@ -152,6 +160,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
             const profileData = {
                 displayName: formData.participantInfo.name,
                 phone: formData.participantInfo.phone,
+                gender: formData.participantInfo.gender,
+                birthDate: formData.participantInfo.birthDate,
                 tShirtSize: formData.participantInfo.tShirtSize,
                 singletSize: formData.participantInfo.singletSize,
                 emergencyContact: formData.participantInfo.emergencyContact,

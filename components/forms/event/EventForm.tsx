@@ -210,16 +210,16 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                                 >
                                     <div className={cn(
                                         "w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all shrink-0",
-                                        isActive ? "bg-primary text-white scale-110 shadow-lg shadow-primary/20" :
+                                        isActive ? "bg-primary text-white scale-110 shadow-lg shadow-primary/40 ring-4 ring-primary/10" :
                                             isAccomplished ? "bg-cta/20 text-cta" :
-                                                "bg-amber-500/15 text-amber-500 border border-amber-500/30"
+                                                "bg-white/5 text-text-muted border border-white/10"
                                     )}>
-                                        {isAccomplished ? "✓" : isActive ? i + 1 : "!"}
+                                        {isAccomplished ? "✓" : i + 1}
                                     </div>
                                     <span className={cn(
                                         "text-[10px] uppercase font-black italic tracking-widest transition-colors",
-                                        isActive ? "text-white block" : "hidden md:block text-text-muted opacity-50",
-                                        isAccomplished && !isActive && "text-cta",
+                                        isActive ? "text-white block" : "block text-text-muted opacity-40",
+                                        isAccomplished && !isActive && "text-cta opacity-70",
                                         isClickable && !isActive && "group-hover:text-white"
                                     )}>
                                         {step}

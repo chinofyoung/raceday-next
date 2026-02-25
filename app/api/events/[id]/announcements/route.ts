@@ -53,7 +53,7 @@ export async function POST(
         }
 
         const body = await request.json();
-        const { title, message, sendEmail } = body;
+        const { title, message, sendEmail, imageUrl } = body;
 
         if (!title || !message) {
             return new NextResponse("Missing title or message", { status: 400 });
@@ -64,6 +64,7 @@ export async function POST(
             organizerId: uid,
             title,
             message,
+            imageUrl,
             sendEmail,
             createdBy: uid,
         };

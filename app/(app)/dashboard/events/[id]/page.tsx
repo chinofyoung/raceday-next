@@ -18,6 +18,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { AnnouncementsTab } from "@/components/dashboard/AnnouncementsTab";
+import { DemographicsTab } from "@/components/dashboard/organizer/DemographicsTab";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { VolunteerManagement } from "@/components/dashboard/organizer/VolunteerManagement";
 import { toast } from "sonner";
@@ -82,7 +83,7 @@ export default function EventDetailPage() {
 
     const isOrganizer = event?.organizerId === user?.uid || role === "admin";
 
-    const availableTabs = (["participants", "revenue", "bibs", "announcements", "volunteers"] as const).filter(tab => {
+    const availableTabs = (["participants", "stats", "revenue", "bibs", "announcements", "volunteers"] as const).filter(tab => {
         if (isOrganizer) return true;
         if (tab === "participants") return permissions.includes("participants") || permissions.includes("kiosk");
         if (tab === "announcements") return permissions.includes("announcements");
@@ -371,6 +372,10 @@ export default function EventDetailPage() {
                                 </div>
                             </Card>
                         </div>
+                    )}
+
+                    {activeTab === "stats" && isOrganizer && (
+                        <DemographicsTab event={event} registrations={registrations} />
                     )}
 
                     {activeTab === "revenue" && isOrganizer && (

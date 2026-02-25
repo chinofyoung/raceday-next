@@ -11,6 +11,8 @@ import { Announcement } from "@/types/announcement";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { auth } from "@/lib/firebase/config";
 import { cn } from "@/lib/utils";
+import { ImageUpload } from "@/components/ui/ImageUpload";
+import Image from "next/image";
 
 interface AnnouncementsTabProps {
     eventId: string;
@@ -26,6 +28,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
     // Form state
     const [title, setTitle] = useState("");
     const [message, setMessage] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
     const [sendEmail, setSendEmail] = useState(false);
 
     // AI State
@@ -115,13 +118,14 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         title: editingAnnouncement.title,
-                        message: editingAnnouncement.message
+                        message: editingAnnouncement.message,
+                        imageUrl: editingAnnouncement.imageUrl
                     }),
                 });
 
                 if (res.ok) {
                     setAnnouncements(announcements.map(a =>
-                        a.id === editingAnnouncement.id ? { ...a, title: editingAnnouncement.title, message: editingAnnouncement.message } : a
+                        a.id === editingAnnouncement.id ? { ...a, title: editingAnnouncement.title, message: editingAnnouncement.message, imageUrl: editingAnnouncement.imageUrl } : a
                     ));
                     setEditingAnnouncement(null);
                 } else {
@@ -143,7 +147,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             const res = await fetch(`/api/events/${eventId}/announcements`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, message, sendEmail }),
+                body: JSON.stringify({ title, message, sendEmail, imageUrl }),
             });
 
             if (res.ok) {
@@ -151,6 +155,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                 setAnnouncements([newAnnouncement, ...announcements]);
                 setTitle("");
                 setMessage("");
+                setImageUrl("");
                 setSendEmail(false);
                 setIsCreating(false);
             } else {
@@ -227,6 +232,14 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 className="text-lg font-bold"
                             />
                         </div>
+
+                        <ImageUpload
+                            value={imageUrl}
+                            onChange={setImageUrl}
+                            label="Post Header Image"
+                            className="w-full border-white/10"
+                            aspectRatio="banner"
+                        />
 
                         <div className="space-y-6 relative group">
                             <div className="flex items-center justify-between">
@@ -341,6 +354,14 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                             />
                         </div>
 
+                        <ImageUpload
+                            value={editingAnnouncement.imageUrl || ""}
+                            onChange={(url) => setEditingAnnouncement({ ...editingAnnouncement, imageUrl: url })}
+                            label="Post Header Image"
+                            className="w-full border-white/10"
+                            aspectRatio="banner"
+                        />
+
                         <div className="space-y-6">
                             <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">Message & Details</label>
                             <textarea
@@ -429,7 +450,17 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="pt-2 border-t border-white/5">
+                            <div className="pt-2 border-t border-white/5 space-y-4">
+                                {announcement.imageUrl && (
+                                    <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-black/20">
+                                        <Image
+                                            src={announcement.imageUrl}
+                                            alt={announcement.title}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                )}
                                 <p className="text-sm text-text-muted whitespace-pre-wrap leading-relaxed">
                                     {announcement.message}
                                 </p>

@@ -19,6 +19,8 @@ export interface User {
 
     // Profile fields
     phone: string;
+    gender: "male" | "female" | "other" | "";
+    birthDate: string;
     address: {
         street: string;
         city: string;

@@ -404,9 +404,47 @@ export default function KioskModePage() {
                                 </p>
                             </div>
 
+                        </div>
+
+                        {/* RIGHT: Stats + Result + Recent */}
+                        <div className="lg:col-span-3 flex flex-col overflow-hidden">
+                            {/* Stat Cards */}
+                            <div className="grid grid-cols-3 gap-3 p-4 shrink-0">
+                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-cta/5 rounded-full blur-3xl -translate-x-8 -translate-y-8 group-hover:bg-cta/10 transition-colors" />
+                                    <div className="relative z-10">
+                                        <div className="w-9 h-9 rounded-xl bg-cta/10 flex items-center justify-center text-cta mx-auto mb-2">
+                                            <Users size={18} />
+                                        </div>
+                                        <p className="text-3xl font-black italic tracking-tighter text-white">{stats.total}</p>
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Total Runners</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-emerald-500/5 rounded-full blur-3xl translate-x-8 -translate-y-8 group-hover:bg-emerald-500/10 transition-colors" />
+                                    <div className="relative z-10">
+                                        <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mx-auto mb-2">
+                                            <CheckCircle2 size={18} />
+                                        </div>
+                                        <p className="text-3xl font-black italic tracking-tighter text-white">{stats.claimed}</p>
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Kits Claimed</p>
+                                    </div>
+                                </div>
+                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
+                                    <div className="absolute inset-0 bg-amber-500/5 rounded-full blur-3xl -translate-x-8 translate-y-8 group-hover:bg-amber-500/10 transition-colors" />
+                                    <div className="relative z-10">
+                                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-2">
+                                            <Package size={18} />
+                                        </div>
+                                        <p className="text-3xl font-black italic tracking-tighter text-white">{remaining}</p>
+                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Remaining</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Manual Search Panel */}
                             {searchMode && (
-                                <div className="p-4 border-t border-white/5 bg-surface/30 space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                <div className="px-4 pb-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                                     <div className="flex gap-2">
                                         <input
                                             ref={searchInputRef}
@@ -453,43 +491,6 @@ export default function KioskModePage() {
                                     )}
                                 </div>
                             )}
-                        </div>
-
-                        {/* RIGHT: Stats + Result + Recent */}
-                        <div className="lg:col-span-3 flex flex-col overflow-hidden">
-                            {/* Stat Cards */}
-                            <div className="grid grid-cols-3 gap-3 p-4 shrink-0">
-                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-cta/5 rounded-full blur-3xl -translate-x-8 -translate-y-8 group-hover:bg-cta/10 transition-colors" />
-                                    <div className="relative z-10">
-                                        <div className="w-9 h-9 rounded-xl bg-cta/10 flex items-center justify-center text-cta mx-auto mb-2">
-                                            <Users size={18} />
-                                        </div>
-                                        <p className="text-3xl font-black italic tracking-tighter text-white">{stats.total}</p>
-                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Total Runners</p>
-                                    </div>
-                                </div>
-                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-emerald-500/5 rounded-full blur-3xl translate-x-8 -translate-y-8 group-hover:bg-emerald-500/10 transition-colors" />
-                                    <div className="relative z-10">
-                                        <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mx-auto mb-2">
-                                            <CheckCircle2 size={18} />
-                                        </div>
-                                        <p className="text-3xl font-black italic tracking-tighter text-white">{stats.claimed}</p>
-                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Kits Claimed</p>
-                                    </div>
-                                </div>
-                                <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
-                                    <div className="absolute inset-0 bg-amber-500/5 rounded-full blur-3xl -translate-x-8 translate-y-8 group-hover:bg-amber-500/10 transition-colors" />
-                                    <div className="relative z-10">
-                                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-2">
-                                            <Package size={18} />
-                                        </div>
-                                        <p className="text-3xl font-black italic tracking-tighter text-white">{remaining}</p>
-                                        <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Remaining</p>
-                                    </div>
-                                </div>
-                            </div>
 
                             {/* Result Area */}
                             <div className="flex-1 p-4 pt-0 overflow-y-auto">

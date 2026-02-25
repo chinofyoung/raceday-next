@@ -56,6 +56,27 @@ export function Step2Details({ event }: Step2DetailsProps) {
                             {...register("participantInfo.phone")}
                             error={errors.participantInfo?.phone?.message}
                         />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
+                                <select
+                                    {...register("participantInfo.gender")}
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text text-sm focus:outline-none focus:border-primary transition-all appearance-none"
+                                >
+                                    <option value="" className="bg-surface">Select</option>
+                                    <option value="male" className="bg-surface">Male</option>
+                                    <option value="female" className="bg-surface">Female</option>
+                                    <option value="other" className="bg-surface">Other</option>
+                                </select>
+                                {errors.participantInfo?.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.participantInfo.gender.message}</p>}
+                            </div>
+                            <Input
+                                type="date"
+                                label="Birth Date"
+                                {...register("participantInfo.birthDate")}
+                                error={errors.participantInfo?.birthDate?.message}
+                            />
+                        </div>
                     </Card>
 
                     <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cta italic mt-8">

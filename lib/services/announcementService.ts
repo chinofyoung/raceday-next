@@ -22,6 +22,7 @@ export async function getAnnouncementsByEventId(eventId: string): Promise<Announ
             organizerId: data.organizerId,
             title: data.title,
             message: data.message,
+            imageUrl: data.imageUrl,
             sendEmail: data.sendEmail,
             sentCount: data.sentCount,
             createdBy: data.createdBy,
