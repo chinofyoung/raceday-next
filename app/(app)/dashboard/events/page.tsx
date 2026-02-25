@@ -12,6 +12,7 @@ import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPi
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { OrganizerQuickActions } from "@/components/dashboard/organizer/OrganizerQuickActions";
 
 export default function EventsManagementPage() {
     const { user, role } = useAuth();
@@ -78,10 +79,9 @@ export default function EventsManagementPage() {
                         <p className="text-text-muted font-medium italic">Track registrations, manage categories, and update event details.</p>
                     </div>
                 </div>
-                <Button variant="primary" asChild className="gap-2">
-                    <Link href="/dashboard/events/create"><Plus size={20} /> Create New Event</Link>
-                </Button>
             </div>
+
+            <OrganizerQuickActions items={events} />
 
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-surface/50 p-4 rounded-2xl border border-white/5">
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">

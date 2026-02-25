@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
+import { RunnerQuickActions } from "@/components/dashboard/RunnerQuickActions";
 
 interface RunnerViewProps {
     completion: number;
@@ -155,141 +156,99 @@ export function RunnerView({
     };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 animate-in fade-in duration-500">
-            <div className="lg:col-span-2 space-y-12">
-                {/* Profile Completion Card */}
-                {completion < 100 && (
-                    <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8 shadow-xl hover:shadow-2xl transition-all relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -mr-20 -mt-20 opacity-50 mix-blend-screen" />
-                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0 drop-shadow-lg">
-                            <svg className="w-full h-full transform -rotate-90">
-                                <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" className="text-white/10" />
-                                <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" strokeDasharray={`${2 * Math.PI * 40}%`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - completion / 100)}%`} className="text-primary transition-all duration-1000 ease-out" />
-                            </svg>
-                            <span className="absolute font-black italic text-xl sm:text-2xl text-white">{completion}%</span>
-                        </div>
-                        <div className="flex-1 text-center md:text-left space-y-2 md:space-y-3 relative z-10 w-full">
-                            <h3 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white drop-shadow-sm">Complete your profile</h3>
-                            <p className="text-sm sm:text-base text-text-muted leading-relaxed font-medium italic">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
-                        </div>
-                        <Button variant="primary" asChild className="relative z-10 w-full md:w-auto font-black italic uppercase text-white shadow-lg shadow-primary/20 h-12 md:h-auto whitespace-nowrap">
-                            <Link href="/dashboard/settings">Complete Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
-                        </Button>
-                    </Card>
-                )}
+        <div className="space-y-8 animate-in fade-in duration-500 pb-12">
+            <RunnerQuickActions hasApplication={hasApplication} userRole={userRole} />
 
-                {/* Announcements */}
-                <RunnerAnnouncements />
-
-                {/* My Registered Events */}
-                <div className="space-y-6">
-                    <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">My Registered Events</h2>
-                    {upcomingEvents.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-4 lg:gap-4">
-                            {upcomingEvents.map(renderEventCard)}
-                        </div>
-                    ) : (
-                        <Card className="p-10 md:p-16 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-6 text-white rounded-3xl relative overflow-hidden group">
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cta/5 rounded-full blur-3xl group-hover:bg-cta/10 transition-colors duration-700" />
-                            <div className="relative z-10 space-y-5">
-                                <div className="w-20 h-20 mx-auto bg-white/5 rounded-3xl flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
-                                    <Calendar className="text-text-muted opacity-40 group-hover:text-cta group-hover:opacity-100 transition-colors duration-500" size={32} />
-                                </div>
-                                <div className="space-y-2">
-                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white drop-shadow-sm">No Upcoming Races</h3>
-                                    <p className="text-sm md:text-base text-text-muted italic font-medium max-w-md mx-auto leading-relaxed">Your race calendar is currently empty. Find your next challenge and start training today!</p>
-                                </div>
-                                <Button variant="primary" asChild className="italic font-black uppercase text-white bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 h-12 px-8">
-                                    <Link href="/events">Explore Races <ArrowRight size={18} className="ml-2" /></Link>
-                                </Button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 space-y-12">
+                    {/* Profile Completion Card */}
+                    {completion < 100 && (
+                        <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8 shadow-xl hover:shadow-2xl transition-all relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[80px] -mr-20 -mt-20 opacity-50 mix-blend-screen" />
+                            <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center shrink-0 drop-shadow-lg">
+                                <svg className="w-full h-full transform -rotate-90">
+                                    <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" className="text-white/10" />
+                                    <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" strokeDasharray={`${2 * Math.PI * 40}%`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - completion / 100)}%`} className="text-primary transition-all duration-1000 ease-out" />
+                                </svg>
+                                <span className="absolute font-black italic text-xl sm:text-2xl text-white">{completion}%</span>
                             </div>
+                            <div className="flex-1 text-center md:text-left space-y-2 md:space-y-3 relative z-10 w-full">
+                                <h3 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white drop-shadow-sm">Complete your profile</h3>
+                                <p className="text-sm sm:text-base text-text-muted leading-relaxed font-medium italic">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
+                            </div>
+                            <Button variant="primary" asChild className="relative z-10 w-full md:w-auto font-black italic uppercase text-white shadow-lg shadow-primary/20 h-12 md:h-auto whitespace-nowrap">
+                                <Link href="/dashboard/settings">Complete Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                            </Button>
                         </Card>
+                    )}
+
+                    {/* Announcements */}
+                    <RunnerAnnouncements />
+
+                    {/* My Registered Events */}
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">My Registered Events</h2>
+                        {upcomingEvents.length > 0 ? (
+                            <div className="grid grid-cols-1 gap-4 lg:gap-4">
+                                {upcomingEvents.map(renderEventCard)}
+                            </div>
+                        ) : (
+                            <Card className="p-10 md:p-16 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-6 text-white rounded-3xl relative overflow-hidden group">
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-cta/5 rounded-full blur-3xl group-hover:bg-cta/10 transition-colors duration-700" />
+                                <div className="relative z-10 space-y-5">
+                                    <div className="w-20 h-20 mx-auto bg-white/5 rounded-3xl flex items-center justify-center border border-white/10 shadow-inner group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500">
+                                        <Calendar className="text-text-muted opacity-40 group-hover:text-cta group-hover:opacity-100 transition-colors duration-500" size={32} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white drop-shadow-sm">No Upcoming Races</h3>
+                                        <p className="text-sm md:text-base text-text-muted italic font-medium max-w-md mx-auto leading-relaxed">Your race calendar is currently empty. Find your next challenge and start training today!</p>
+                                    </div>
+                                    <Button variant="primary" asChild className="italic font-black uppercase text-white bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 h-12 px-8">
+                                        <Link href="/events">Explore Races <ArrowRight size={18} className="ml-2" /></Link>
+                                    </Button>
+                                </div>
+                            </Card>
+                        )}
+                    </div>
+
+                    {/* My Past Events */}
+                    {pastEvents.length > 0 && (
+                        <div className="space-y-6 pt-6">
+                            <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">My Past Events</h2>
+                            <div className="grid grid-cols-1 gap-4 lg:gap-4 opacity-90">
+                                {pastEvents.map(renderEventCard)}
+                            </div>
+                        </div>
                     )}
                 </div>
 
-                {/* My Past Events */}
-                {pastEvents.length > 0 && (
-                    <div className="space-y-6 pt-6">
-                        <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">My Past Events</h2>
-                        <div className="grid grid-cols-1 gap-4 lg:gap-4 opacity-90">
-                            {pastEvents.map(renderEventCard)}
+                {/* Runner Sidebar */}
+                <div className="space-y-8">
+
+                    {/* Athlete Stats */}
+                    <Card className="p-6 bg-surface/50 border border-white/5 shadow-lg relative overflow-hidden group">
+                        <div className="absolute top-0 left-0 p-12 bg-primary/5 rounded-full blur-3xl -ml-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
+                        <h3 className="font-bold uppercase italic text-[10px] text-primary mb-6 tracking-widest text-center relative z-10">
+                            ATHLETE STATS
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4 relative z-10 text-white">
+                            <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
+                                <div className="text-3xl font-black italic text-white tracking-tighter">{upcomingEvents.length}</div>
+                                <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">Upcoming</div>
+                            </div>
+                            <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
+                                <div className="text-3xl font-black italic text-white tracking-tighter">{pastEvents.length}</div>
+                                <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">Finished</div>
+                            </div>
                         </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Runner Sidebar */}
-            <div className="space-y-8">
-                <div className="space-y-4">
-                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Quick Actions</h2>
-                    <div className="grid grid-cols-1 gap-3">
-                        <Link href="/dashboard/settings" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-primary/50 transition-all group">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 text-white">
-                                    <User size={18} className="text-primary" />
-                                    <span className="font-bold uppercase italic text-sm">Edit Profile</span>
-                                </div>
-                                <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-primary" />
+                        <div className="mt-4 p-4 bg-cta/5 border border-cta/20 rounded-2xl flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center text-cta shrink-0">
+                                <CheckCircle2 size={16} />
                             </div>
-                        </Link>
-                        <Link href="/events" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-cta/50 transition-all group">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 text-white">
-                                    <Trophy size={18} className="text-cta" />
-                                    <span className="font-bold uppercase italic text-sm">Find Races</span>
-                                </div>
-                                <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-cta" />
-                            </div>
-                        </Link>
-                        {userRole === "runner" && (
-                            <Link href="/dashboard/become-organizer" className="block p-4 bg-primary rounded-xl border border-primary transition-all group shadow-lg">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3 text-white">
-                                        {hasApplication ? <Settings size={18} className="text-white" /> : <Plus size={18} className="text-white" />}
-                                        <span className="font-bold uppercase italic text-sm text-white">
-                                            {hasApplication ? "Edit Application" : "Apply as Organizer"}
-                                        </span>
-                                    </div>
-                                    <ArrowRight size={14} className="text-white opacity-0 group-hover:opacity-100 transition-all" />
-                                </div>
-                            </Link>
-                        )}
-
-                        <Link href="/" className="block p-4 bg-white/5 rounded-xl border border-white/5 hover:border-cta/50 transition-all group">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 text-white">
-                                    <Globe size={18} className="text-cta" />
-                                    <span className="font-bold uppercase italic text-sm text-white">Back to Website</span>
-                                </div>
-                                <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-cta" />
-                            </div>
-                        </Link>
-                    </div>
+                            <p className="text-[10px] font-bold italic text-white uppercase leading-tight">You have {upcomingEvents.length} upcoming races scheduled!</p>
+                        </div>
+                    </Card>
                 </div>
-
-                {/* Athlete Stats */}
-                <Card className="p-6 bg-surface/50 border border-white/5 shadow-lg relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 p-12 bg-primary/5 rounded-full blur-3xl -ml-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
-                    <h3 className="font-bold uppercase italic text-[10px] text-primary mb-6 tracking-widest text-center relative z-10">
-                        ATHLETE STATS
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 relative z-10 text-white">
-                        <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
-                            <div className="text-3xl font-black italic text-white tracking-tighter">{upcomingEvents.length}</div>
-                            <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">Upcoming</div>
-                        </div>
-                        <div className="text-center p-4 bg-background/50 rounded-2xl border border-white/5">
-                            <div className="text-3xl font-black italic text-white tracking-tighter">{pastEvents.length}</div>
-                            <div className="text-[8px] uppercase font-black text-text-muted italic tracking-widest">Finished</div>
-                        </div>
-                    </div>
-                    <div className="mt-4 p-4 bg-cta/5 border border-cta/20 rounded-2xl flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-cta/10 flex items-center justify-center text-cta shrink-0">
-                            <CheckCircle2 size={16} />
-                        </div>
-                        <p className="text-[10px] font-bold italic text-white uppercase leading-tight">You have {upcomingEvents.length} upcoming races scheduled!</p>
-                    </div>
-                </Card>
             </div>
         </div>
     );
