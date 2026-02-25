@@ -49,6 +49,7 @@ export function OrganizerView({
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-12">
+            <OrganizerQuickActions items={items} />
 
             {/* Tab Navigation */}
             <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/10 w-full sm:w-fit mx-auto lg:mx-0 overflow-x-auto no-scrollbar scroll-smooth">
@@ -79,8 +80,6 @@ export function OrganizerView({
                         claimedKits={claimedKits}
                     />
 
-                    <OrganizerQuickActions items={items} />
-
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <OrganizerRevenueStats
                             categoryRevenue={categoryRevenue}
@@ -99,7 +98,6 @@ export function OrganizerView({
             {/* Events Tab */}
             {activeTab === "events" && (
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-                    <OrganizerQuickActions items={items} />
                     <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
                         <div className="xl:col-span-2 space-y-8">
                             <OrganizerActiveEvents
