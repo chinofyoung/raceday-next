@@ -18,6 +18,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { AnnouncementsTab } from "@/components/dashboard/AnnouncementsTab";
+import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 
 export default function EventDetailPage() {
     const { id } = useParams();
@@ -127,33 +128,45 @@ export default function EventDetailPage() {
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-3 text-xs flex-wrap">
-                    <Button variant="outline" className="gap-2 font-black italic uppercase" onClick={async () => {
-                        if (confirm("Create a copy of this event?")) {
-                            try {
-                                const res = await fetch(`/api/events/${id}/clone`, { method: "POST" });
-                                const data = await res.json();
-                                if (data.success) {
-                                    alert("Event cloned successfully!");
-                                    window.location.href = `/dashboard/events/${data.newId}/edit`;
-                                } else throw new Error("Clone failed");
-                            } catch (err) {
-                                console.error(err);
-                                alert("Failed to duplicate event.");
+                <div className="flex gap-3 flex-wrap">
+                    <BaseQuickAction
+                        icon={Copy}
+                        label="Clone"
+                        variant="secondary"
+                        onClick={async () => {
+                            if (confirm("Create a copy of this event?")) {
+                                try {
+                                    const res = await fetch(`/api/events/${id}/clone`, { method: "POST" });
+                                    const data = await res.json();
+                                    if (data.success) {
+                                        alert("Event cloned successfully!");
+                                        window.location.href = `/dashboard/events/${data.newId}/edit`;
+                                    } else throw new Error("Clone failed");
+                                } catch (err) {
+                                    console.error(err);
+                                    alert("Failed to duplicate event.");
+                                }
                             }
-                        }
-                    }}>
-                        <Copy size={16} /> Clone
-                    </Button>
-                    <Button variant="outline" className="gap-2 font-black italic uppercase" asChild>
-                        <Link href={`/dashboard/events/${id}/edit`}><Edit2 size={16} /> Edit Event</Link>
-                    </Button>
-                    <Button variant="primary" className="gap-2 bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 font-black italic uppercase" asChild>
-                        <Link href={`/dashboard/events/${id}/scanner`}><QrCode size={16} /> Scanner Mode</Link>
-                    </Button>
-                    <Button variant="outline" className="gap-2 border-amber-500/30 text-amber-500 hover:bg-amber-500/10 font-black italic uppercase" asChild>
-                        <Link href={`/dashboard/events/${id}/kiosk`}><Monitor size={16} /> Kiosk Mode</Link>
-                    </Button>
+                        }}
+                    />
+                    <BaseQuickAction
+                        href={`/dashboard/events/${id}/edit`}
+                        icon={Edit2}
+                        label="Edit Event"
+                        variant="primary"
+                    />
+                    <BaseQuickAction
+                        href={`/dashboard/events/${id}/scanner`}
+                        icon={QrCode}
+                        label="Scanner Mode"
+                        variant="cta"
+                    />
+                    <BaseQuickAction
+                        href={`/dashboard/events/${id}/kiosk`}
+                        icon={Monitor}
+                        label="Kiosk Mode"
+                        variant="amber"
+                    />
                 </div>
             </div>
 
