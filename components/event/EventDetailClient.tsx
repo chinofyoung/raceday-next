@@ -108,8 +108,15 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     useEffect(() => {
         if (event.id) {
             fetch(`/api/events/${event.id}/announcements`)
-                .then(res => res.json())
-                .then(data => setAnnouncements(data || []))
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to fetch");
+                    return res.json();
+                })
+                .then(data => {
+                    if (Array.isArray(data)) {
+                        setAnnouncements(data);
+                    }
+                })
                 .catch(err => console.error("Failed to fetch announcements:", err));
         }
     }, [event.id]);

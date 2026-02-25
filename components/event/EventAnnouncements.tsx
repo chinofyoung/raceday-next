@@ -18,32 +18,44 @@ export function EventAnnouncements({ announcements }: EventAnnouncementsProps) {
                 <div className="space-y-4">
                     {announcements.map((announcement) => (
                         <Card key={announcement.id} className="p-6 md:p-8 bg-surface/40 hover:bg-surface/60 border-white/5 transition-all">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white">{announcement.title}</h3>
-                                    <p className="text-xs text-text-muted font-bold italic uppercase tracking-widest mt-1 flex items-center gap-1.5">
-                                        <Clock size={12} className="text-primary" />
-                                        {formatDistanceToNow(new Date(announcement.createdAt as any), { addSuffix: true })}
-                                    </p>
-                                </div>
-                                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
-                                    <Megaphone size={18} />
-                                </div>
-                            </div>
-                            <div className="space-y-4">
+                            <div className="flex flex-col md:flex-row gap-6 md:gap-8 overflow-hidden">
                                 {announcement.imageUrl && (
-                                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/20">
-                                        <Image
-                                            src={announcement.imageUrl}
-                                            alt={announcement.title}
-                                            fill
-                                            className="object-cover"
-                                        />
+                                    <div className="w-full md:w-1/3 shrink-0">
+                                        <div className="relative aspect-video md:aspect-square rounded-2xl overflow-hidden border border-white/10 bg-black/20">
+                                            <Image
+                                                src={announcement.imageUrl}
+                                                alt={announcement.title}
+                                                fill
+                                                className="object-cover object-center"
+                                                sizes="(max-width: 768px) 100vw, 33vw"
+                                            />
+                                        </div>
                                     </div>
                                 )}
-                                <p className="text-sm md:text-base text-text-muted leading-relaxed whitespace-pre-wrap font-medium">
-                                    {announcement.message}
-                                </p>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex justify-between items-start mb-4 gap-4">
+                                        <div className="min-w-0">
+                                            <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white truncate md:whitespace-normal">{announcement.title}</h3>
+                                            <p className="text-xs text-text-muted font-bold italic uppercase tracking-widest mt-1 flex items-center gap-1.5">
+                                                <Clock size={12} className="text-primary" />
+                                                {announcement.createdAt ? (() => {
+                                                    try {
+                                                        const date = new Date(announcement.createdAt as any);
+                                                        return isNaN(date.getTime()) ? "Recent" : formatDistanceToNow(date, { addSuffix: true });
+                                                    } catch (e) {
+                                                        return "Recent";
+                                                    }
+                                                })() : "Recent"}
+                                            </p>
+                                        </div>
+                                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+                                            <Megaphone size={18} />
+                                        </div>
+                                    </div>
+                                    <p className="text-sm md:text-base text-text-muted leading-relaxed whitespace-pre-wrap font-medium">
+                                        {announcement.message}
+                                    </p>
+                                </div>
                             </div>
                         </Card>
                     ))}
