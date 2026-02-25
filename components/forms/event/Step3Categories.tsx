@@ -50,7 +50,8 @@ export function Step3Categories() {
             maxParticipants: 0,
             showMaxParticipants: true,
             showRegisteredCount: false,
-            registeredCount: 0
+            registeredCount: 0,
+            stations: []
         });
     };
 
