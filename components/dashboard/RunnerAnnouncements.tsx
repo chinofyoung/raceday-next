@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Megaphone, X, Clock } from "lucide-react";
+import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { Announcement } from "@/types/announcement";
 
@@ -51,6 +52,16 @@ export function RunnerAnnouncements() {
                                     {announcement.eventName}
                                 </span>
                             </div>
+                            {announcement.imageUrl && (
+                                <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-black/20 mb-3 grayscale-[0.5] hover:grayscale-0 transition-all">
+                                    <Image
+                                        src={announcement.imageUrl}
+                                        alt={announcement.title}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                            )}
                             <p className="text-sm text-text-muted leading-relaxed whitespace-pre-wrap">
                                 {announcement.message}
                             </p>

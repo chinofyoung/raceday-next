@@ -32,9 +32,9 @@ export async function PATCH(
         }
 
         const body = await request.json();
-        const { title, message } = body;
+        const { title, message, imageUrl } = body;
 
-        await updateAnnouncement(eventId, announcementId, { title, message });
+        await updateAnnouncement(eventId, announcementId, { title, message, imageUrl });
 
         return NextResponse.json({ success: true });
     } catch (error) {

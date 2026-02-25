@@ -4,6 +4,7 @@ import { Announcement } from "@/types/announcement";
 import { Card } from "@/components/ui/Card";
 import { Clock, Megaphone } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import Image from "next/image";
 
 interface EventAnnouncementsProps {
     announcements: Announcement[];
@@ -29,9 +30,21 @@ export function EventAnnouncements({ announcements }: EventAnnouncementsProps) {
                                     <Megaphone size={18} />
                                 </div>
                             </div>
-                            <p className="text-sm md:text-base text-text-muted leading-relaxed whitespace-pre-wrap font-medium">
-                                {announcement.message}
-                            </p>
+                            <div className="space-y-4">
+                                {announcement.imageUrl && (
+                                    <div className="relative w-full aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/20">
+                                        <Image
+                                            src={announcement.imageUrl}
+                                            alt={announcement.title}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                )}
+                                <p className="text-sm md:text-base text-text-muted leading-relaxed whitespace-pre-wrap font-medium">
+                                    {announcement.message}
+                                </p>
+                            </div>
                         </Card>
                     ))}
                 </div>
