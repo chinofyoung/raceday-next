@@ -1,5 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
+
 import { format } from "date-fns";
 import {
     Calendar,
@@ -81,13 +83,15 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
     const showParticipants = mode === "management" || (event.categories?.some(cat => cat.showRegisteredCount) ?? false);
 
     return (
-        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative">
+        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative hover:border-white/20 transition-all duration-300 cursor-pointer">
             {/* Image Section */}
             <div className="aspect-[16/9] relative overflow-hidden">
-                <img
+                <Image
                     src={event.featuredImage || "/placeholder.jpg"}
                     alt={event.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-black/10 to-transparent" />
 

@@ -2,9 +2,10 @@
 
 import {
     Calendar, User, ArrowRight, Trophy, QrCode,
-    Package, MapPin, CheckCircle2, Globe, Plus, Settings, Activity
+    Package, MapPin, CheckCircle2, Globe, Plus, Settings, Activity, Image as ImageIcon
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -62,9 +63,19 @@ export function RunnerView({
                 {/* Event Image */}
                 <div className="w-full sm:w-40 lg:w-56 aspect-[2/1] sm:aspect-[3/4] lg:aspect-[4/3] rounded-xl bg-black/40 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors shrink-0 overflow-hidden relative border border-white/5 shadow-inner z-10">
                     {reg.event?.featuredImage ? (
-                        <img src={reg.event.featuredImage} alt={`${reg.event?.name || "Event"} featured image`} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-1000 ease-out" />
+                        <Image
+                            src={reg.event.featuredImage}
+                            alt={`${reg.event?.name || "Event"} featured image`}
+                            fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 160px, 224px"
+                            className="object-cover opacity-60 group-hover:opacity-90 group-hover:scale-110 transition-all duration-1000 ease-out"
+                        />
                     ) : (
-                        <Trophy size={48} className="opacity-20 group-hover:scale-110 transition-transform duration-500" />
+                        <div className="w-full h-full bg-gradient-to-br from-surface to-surface-muted flex flex-col items-center justify-center opacity-80 group-hover:opacity-100 transition-all duration-500">
+                            <span className="text-4xl font-black italic text-white/10 group-hover:scale-110 transition-transform uppercase">
+                                {reg.event?.name?.[0] || "?"}
+                            </span>
+                        </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent sm:hidden" />
                     <h4 className="absolute bottom-4 left-4 right-4 text-2xl font-black italic uppercase text-white leading-tight sm:hidden drop-shadow-lg">{reg.event?.name}</h4>

@@ -9,7 +9,8 @@ interface OrganizerQuickActionsProps {
 
 export function OrganizerQuickActions({ items }: OrganizerQuickActionsProps) {
     return (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-2 md:gap-3 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
+
             <BaseQuickAction
                 href="/dashboard/events/create"
                 icon={Plus}

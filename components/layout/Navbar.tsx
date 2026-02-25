@@ -100,14 +100,14 @@ export function Navbar() {
                             <div className="flex items-center gap-4 pl-4 border-l border-white/10">
                                 {user?.role === "admin" && (
                                     <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin mr-4">
-                                        <span className="text-xs font-black uppercase italic tracking-widest text-primary group-hover/admin:text-primary/80 transition-colors">
+                                        <span className="text-xs font-semibold uppercase tracking-widest text-cta group-hover/admin:text-cta/80 transition-colors">
                                             Admin Panel
                                         </span>
                                     </Link>
                                 )}
                                 {(user?.role === "organizer" || user?.role === "admin") && (
                                     <Link href="/dashboard/events" className="hidden lg:flex items-center gap-2 group/manage mr-4">
-                                        <span className="text-xs font-black uppercase italic tracking-widest text-text-muted group-hover/manage:text-cta transition-colors">
+                                        <span className="text-xs font-semibold uppercase tracking-widest text-text-muted group-hover/manage:text-cta transition-colors">
                                             Manage Events
                                         </span>
                                     </Link>
@@ -162,7 +162,10 @@ export function Navbar() {
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className="text-lg font-medium text-text hover:text-primary transition-colors"
+                                    className={cn(
+                                        "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
+                                        pathname === link.href ? "text-primary border-l-2 border-primary pl-4 -ml-4" : "text-text hover:text-primary"
+                                    )}
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {link.label}
@@ -178,7 +181,10 @@ export function Navbar() {
                                     <>
                                         <Link
                                             href="/dashboard"
-                                            className="flex items-center gap-3 text-lg font-medium text-text hover:text-primary transition-colors"
+                                            className={cn(
+                                                "flex items-center gap-3 text-lg font-semibold py-4 transition-colors",
+                                                pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && pathname !== "/dashboard/events" ? "text-primary" : "text-text hover:text-primary"
+                                            )}
                                             onClick={() => setIsOpen(false)}
                                         >
                                             <LayoutDashboard size={20} className="text-primary" />
@@ -187,7 +193,7 @@ export function Navbar() {
                                         {user?.role === "admin" && (
                                             <Link
                                                 href="/dashboard/admin"
-                                                className="flex items-center gap-3 text-lg font-medium text-primary hover:opacity-80 transition-colors"
+                                                className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 <Shield size={20} />
@@ -197,7 +203,7 @@ export function Navbar() {
                                         {(user?.role === "organizer" || user?.role === "admin") && (
                                             <Link
                                                 href="/dashboard/events"
-                                                className="flex items-center gap-3 text-lg font-medium text-cta hover:opacity-80 transition-colors"
+                                                className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
                                                 onClick={() => setIsOpen(false)}
                                             >
                                                 <LayoutDashboard size={20} />
@@ -209,7 +215,7 @@ export function Navbar() {
                                                 setIsOpen(false);
                                                 setShowSignOutModal(true);
                                             }}
-                                            className="flex items-center gap-3 text-lg font-medium text-red-500 hover:text-red-400 transition-colors w-full cursor-pointer"
+                                            className="flex items-center gap-3 text-lg font-semibold py-4 text-red-500 hover:text-red-400 transition-colors w-full cursor-pointer text-left"
                                         >
                                             <LogOut size={20} />
                                             Sign Out

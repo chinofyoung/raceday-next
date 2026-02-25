@@ -10,7 +10,8 @@ interface RunnerQuickActionsProps {
 
 export function RunnerQuickActions({ hasApplication, userRole }: RunnerQuickActionsProps) {
     return (
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3">
+
             <BaseQuickAction
                 href="/events"
                 icon={Trophy}

@@ -27,6 +27,7 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
                     src={event.featuredImage}
                     alt={event.name}
                     fill
+                    sizes="100vw"
                     className="object-cover scale-105"
                     priority
                 />
@@ -36,13 +37,13 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
 
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between gap-4 mb-4">
-                    <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-black uppercase tracking-widest italic transition-colors">
+                    <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
                         <ArrowLeft size={16} /> Back to Search
                     </Link>
                     {isOrganizer && (
                         <Link
                             href={`/dashboard/events/${event.id}/edit`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-black uppercase tracking-widest italic transition-all shadow-xl group"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-xl group"
                         >
                             <Edit2 size={14} className="group-hover:text-primary transition-colors" />
                             Edit <span className="hidden sm:inline">Event</span>
@@ -74,7 +75,7 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
                         {event.name}
                     </h1>
                 </div>
-                <div className="flex flex-wrap gap-6 text-white/90 font-bold italic">
+                <div className="flex flex-wrap gap-6 text-white/90 font-semibold uppercase tracking-wide text-xs">
                     <div className="flex items-center gap-2"><Calendar size={20} className="text-primary" /> {isValidDate ? format(eventDate, "MMMM d, yyyy") : "TBD"}</div>
                     <div className="flex items-center gap-2"><MapPin size={20} className="text-cta" /> {event.location?.name || "Multiple Locations"}</div>
                 </div>

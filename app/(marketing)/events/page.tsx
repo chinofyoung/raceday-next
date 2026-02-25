@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
@@ -8,7 +9,7 @@ import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Search, Calendar, MapPin, Filter, Loader2, SlidersHorizontal } from "lucide-react";
+import { Search, Calendar, MapPin, Filter, Loader2, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -40,7 +41,7 @@ export default function EventsDirectoryPage() {
         }
     }, [user]);
 
-    const fetchEvents = async () => {
+    const fetchEvents = React.useCallback(async () => {
         setLoading(true);
         try {
             // Fetch published events ordered by date
@@ -60,7 +61,7 @@ export default function EventsDirectoryPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const getRegistrationStatus = (eventId: string) => {
         const reg = userRegistrations.find(r => r.eventId === eventId);
@@ -100,21 +101,31 @@ export default function EventsDirectoryPage() {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-4">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
+                    <div className="relative flex-1 group">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-text-muted group-focus-within:text-primary transition-colors">
+                            <Search size={20} />
+                        </div>
                         <input
                             type="text"
                             placeholder="Search events by name or location..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 bg-surface/50 border border-white/5 rounded-2xl text-text focus:outline-none focus:border-primary transition-all shadow-xl"
+                            className="w-full pl-12 pr-12 py-4 bg-surface/50 border border-white/5 rounded-2xl text-text focus:outline-none focus:border-primary transition-all shadow-xl"
                         />
+                        {searchTerm.length > 0 && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-white transition-colors cursor-pointer p-1"
+                                aria-label="Clear search"
+                            >
+                                <X size={16} />
+                            </button>
+                        )}
                     </div>
                 </div>
 
-                {/* Filters */}
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2 mr-2 text-text-muted">
+                <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [mask-image:linear-gradient(to_right,black_85%,transparent_100%)] sm:[mask-image:none]">
+                    <div className="flex items-center gap-2 mr-2 text-text-muted shrink-0">
                         <SlidersHorizontal size={16} />
                         <span className="text-[10px] font-black uppercase tracking-widest italic">Distance:</span>
                     </div>
@@ -123,7 +134,7 @@ export default function EventsDirectoryPage() {
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={cn(
-                                "px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all italic border",
+                                "px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all italic border shrink-0",
                                 activeFilter === filter
                                     ? "bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105"
                                     : "bg-surface/50 border-white/5 text-text-muted hover:border-white/20"

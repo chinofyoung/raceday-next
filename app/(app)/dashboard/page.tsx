@@ -14,7 +14,7 @@ import { checkExistingApplication } from "@/lib/services/applicationService";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { OrganizerView } from "@/components/dashboard/OrganizerView";
 import { RunnerView } from "@/components/dashboard/RunnerView";
-
+import { Skeleton, EventCardSkeleton, StatCardSkeleton } from "@/components/shared/Skeleton";
 
 export default function DashboardPage() {
     const { user, firebaseUser, role, loading: authLoading } = useAuth();
@@ -172,13 +172,37 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <div className="flex flex-col items-center gap-4">
-                    <div className="relative">
-                        <div className="w-16 h-16 border-4 border-primary/20 rounded-full" />
-                        <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-primary rounded-full animate-spin" />
+            <PageWrapper className="pt-8 pb-12 space-y-8">
+                {/* Header Skeleton */}
+                <div className="flex justify-between items-center bg-surface/50 p-6 rounded-[2rem] border border-white/5 mb-8">
+                    <div className="space-y-3">
+                        <Skeleton className="h-10 w-48" />
+                        <Skeleton className="h-4 w-64" />
                     </div>
-                    <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic animate-pulse">Loading Dashboard...</p>
+                    <Skeleton className="h-10 w-32 rounded-full" />
+                </div>
+
+                {/* Stats Row Skeleton */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <StatCardSkeleton />
+                    <StatCardSkeleton />
+                    <StatCardSkeleton />
+                    <StatCardSkeleton />
+                </div>
+
+                {/* Main Content Skeleton */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+                    <div className="lg:col-span-2 space-y-6">
+                        <Skeleton className="h-8 w-48 mt-2" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <EventCardSkeleton />
+                            <EventCardSkeleton />
+                        </div>
+                    </div>
+                    <div className="space-y-6">
+                        <Skeleton className="h-8 w-40 mt-2" />
+                        <Skeleton className="h-80 w-full rounded-2xl" />
+                    </div>
                 </div>
             </PageWrapper>
         );

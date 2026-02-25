@@ -70,6 +70,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                         src={images[0]}
                         alt={`${eventName} - Gallery Image 1`}
                         fill
+                        sizes="(max-width: 1024px) 100vw, 1024px"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -108,6 +109,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                                 src={img}
                                 alt={`${eventName} - Gallery Image ${index + 1}`}
                                 fill
+                                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                             />
 
@@ -171,6 +173,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                         src={images[currentIndex]}
                         alt={`${eventName} - Gallery Image ${currentIndex + 1}`}
                         fill
+                        sizes="100vw"
                         className="object-contain"
                         quality={100}
                         priority

@@ -7,17 +7,17 @@ import Link from "next/link";
 export default function ForOrganizersPage() {
     const features = [
         {
-            icon: <Zap className="text-primary" size={24} />,
+            icon: <Zap className="text-primary drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" size={32} />,
             title: "Easy Event Creation",
             description: "Build your event in minutes with our multi-step intuitive form. Add categories, timelines, and GPX routes effortlessly."
         },
         {
-            icon: <BarChart3 className="text-cta" size={24} />,
+            icon: <BarChart3 className="text-cta drop-shadow-[0_0_8px_rgba(34,197,94,0.5)]" size={32} />,
             title: "Real-time Analytics",
             description: "Track registrations and revenue as they happen. Export data to CSV for your own reporting and logistics."
         },
         {
-            icon: <QrCode className="text-blue-500" size={24} />,
+            icon: <QrCode className="text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]" size={32} />,
             title: "Race Kit Tools",
             description: "Built-in QR scanner for organizers to quickly verify runners and mark race kits as claimed on race day."
         }
@@ -44,8 +44,8 @@ export default function ForOrganizersPage() {
             {/* Benefit Grid */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {features.map((feature, i) => (
-                    <Card key={i} className="p-8 space-y-4 bg-surface/50 border border-white/5 hover:border-primary/20 transition-all cursor-default translate-y-0 hover:translate-y-0">
-                        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
+                    <Card key={i} className="p-8 space-y-5 bg-surface/50 border border-white/5 hover:border-white/10 hover:bg-surface/80 transition-all cursor-default translate-y-0 group">
+                        <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
                             {feature.icon}
                         </div>
                         <h3 className="text-2xl font-bold italic uppercase tracking-tight">{feature.title}</h3>
@@ -82,14 +82,55 @@ export default function ForOrganizersPage() {
                 </div>
                 <div className="relative aspect-square md:aspect-video lg:aspect-square bg-surface border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-cta/10 animate-pulse" />
-                    <div className="absolute inset-12 bg-background border border-white/10 rounded-2xl shadow-inner flex flex-col p-6 items-center justify-center space-y-4">
-                        {/* Mock UI elements */}
-                        <div className="w-full flex justify-between gap-4">
-                            <div className="h-20 flex-1 bg-white/5 rounded-xl animate-pulse" />
-                            <div className="h-20 flex-1 bg-white/5 rounded-xl animate-pulse delay-75" />
-                            <div className="h-20 flex-1 bg-white/5 rounded-xl animate-pulse delay-150" />
+                    <div className="absolute inset-4 bg-background border border-white/10 rounded-2xl shadow-inner flex flex-col overflow-hidden">
+                        {/* Mock Dashboard Topbar */}
+                        <div className="h-12 border-b border-white/5 bg-surface/50 flex items-center px-4 justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded bg-primary" />
+                                <div className="h-3 w-20 bg-white/20 rounded-sm" />
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="w-6 h-6 rounded-full bg-white/10" />
+                                <div className="w-6 h-6 rounded-full bg-white/10" />
+                            </div>
                         </div>
-                        <div className="w-full h-full bg-white/5 rounded-xl animate-pulse delay-300" />
+                        {/* Mock Dashboard Content */}
+                        <div className="p-4 flex-1 flex flex-col gap-4">
+                            <div className="flex justify-between items-center">
+                                <div className="space-y-1.5">
+                                    <div className="h-4 w-32 bg-white/20 rounded-sm" />
+                                    <div className="h-2 w-24 bg-white/10 rounded-sm" />
+                                </div>
+                                <div className="h-6 w-16 bg-cta/80 rounded-sm flex items-center justify-center">
+                                    <div className="h-1.5 w-8 bg-white/50 rounded-sm" />
+                                </div>
+                            </div>
+                            {/* Mock Stat Cards */}
+                            <div className="grid grid-cols-3 gap-3">
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="h-16 bg-surface border border-white/5 rounded-lg flex flex-col justify-center px-3 space-y-2">
+                                        <div className="h-2 w-12 bg-white/10 rounded-sm" />
+                                        <div className="h-4 w-8 bg-white/40 rounded-sm" />
+                                    </div>
+                                ))}
+                            </div>
+                            {/* Mock Table/List */}
+                            <div className="flex-1 bg-surface border border-white/5 rounded-lg p-3 flex flex-col gap-3">
+                                <div className="h-3 w-24 bg-white/10 rounded-sm mb-2" />
+                                {[1, 2, 3].map((i) => (
+                                    <div key={i} className="flex items-center justify-between border-b border-white/5 pb-2 last:border-0 last:pb-0">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-md bg-white/10" />
+                                            <div className="space-y-1.5">
+                                                <div className="h-2 w-16 bg-white/20 rounded-sm" />
+                                                <div className="h-1.5 w-10 bg-white/10 rounded-sm" />
+                                            </div>
+                                        </div>
+                                        <div className="h-2 w-8 bg-cta/40 rounded-sm" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                     <div className="absolute bottom-8 right-8 bg-cta p-4 rounded-xl shadow-xl transform rotate-3 hover:rotate-0 transition-transform cursor-default">
                         <QrCode size={40} className="text-white" />

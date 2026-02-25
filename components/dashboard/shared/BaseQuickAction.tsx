@@ -37,15 +37,15 @@ export function BaseQuickAction({ href, onClick, icon: Icon, label, variant = "s
 
     const content = (
         <>
-            <Icon size={16} className={styles.icon} />
-            <span className="text-[10px] font-black uppercase tracking-widest italic text-white transition-all group-hover:scale-105 origin-left">
+            <Icon size={16} className={cn("shrink-0", styles.icon)} />
+            <span className="text-[10px] font-black uppercase tracking-widest italic text-white transition-all group-hover:scale-105 origin-left truncate">
                 {label}
             </span>
         </>
     );
 
     const className = cn(
-        "flex items-center gap-2 px-4 py-2 border rounded-xl transition-all group shadow-sm active:scale-95",
+        "flex items-center gap-2 px-4 py-2 md:px-3 md:py-1.5 md:gap-1.5 border rounded-xl transition-all group shadow-sm active:scale-95",
         styles.container,
         extraClassName
     );

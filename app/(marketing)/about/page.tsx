@@ -34,13 +34,17 @@ export default function AboutPage() {
                     <h2 className="text-4xl font-black italic uppercase tracking-tight">The Core Team</h2>
                     <div className="grid grid-cols-2 gap-4">
                         {[
-                            { name: "Alex Rivera", role: "Product Lead" },
-                            { name: "Sane Chen", role: "Engineering" },
-                            { name: "Jordan Lim", role: "Designer" },
-                            { name: "Maya Cruz", role: "Community" }
+                            { name: "Alex Rivera", role: "Product Lead", color: "from-blue-500 to-cyan-400" },
+                            { name: "Sane Chen", role: "Engineering", color: "from-primary to-amber-500" },
+                            { name: "Jordan Lim", role: "Designer", color: "from-purple-500 to-pink-500" },
+                            { name: "Maya Cruz", role: "Community", color: "from-cta to-emerald-400" }
                         ].map((member, i) => (
-                            <Card key={i} className="p-6 bg-surface/50 border border-white/5 space-y-2 cursor-default hover:translate-y-0">
-                                <div className="w-12 h-12 bg-white/10 rounded-full mb-4" />
+                            <Card key={i} className="p-6 bg-surface/50 border border-white/5 space-y-2 cursor-default hover:translate-y-0 group">
+                                <div className={`w-14 h-14 rounded-full mb-4 flex items-center justify-center bg-gradient-to-br ${member.color} shadow-lg group-hover:scale-110 transition-transform`}>
+                                    <span className="text-white font-black italic tracking-widest text-lg">
+                                        {member.name.split(' ').map(n => n[0]).join('')}
+                                    </span>
+                                </div>
                                 <h4 className="font-bold text-lg">{member.name}</h4>
                                 <p className="text-xs text-primary font-bold uppercase tracking-wider">{member.role}</p>
                             </Card>
@@ -74,8 +78,8 @@ export default function AboutPage() {
                         </Card>
                     </a>
                     <div className="group">
-                        <Card className="p-8 text-center space-y-4 cursor-default">
-                            <MapPin className="mx-auto text-blue-500" size={24} />
+                        <Card className="p-8 text-center space-y-4 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-default">
+                            <MapPin className="mx-auto text-blue-500 group-hover:scale-110 transition-transform" size={24} />
                             <h4 className="font-bold uppercase italic font-heading">Location</h4>
                             <p className="text-xs text-text-muted">BGC, Taguig, PH</p>
                         </Card>

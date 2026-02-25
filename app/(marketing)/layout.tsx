@@ -9,7 +9,7 @@ export default function MarketingLayout({
     return (
         <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white">
             <Navbar />
-            <main className="flex-grow pt-24">
+            <main className="flex-grow pt-24 pb-20">
                 {children}
             </main>
             <Footer />

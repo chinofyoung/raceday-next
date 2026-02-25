@@ -1,10 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { ArrowRight, Calendar, Clock, MapPin, Scan, Users, Package } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+
 import { format, formatDistanceToNow, isAfter } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +17,12 @@ interface OrganizerActiveEventsProps {
 }
 
 export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveEventsProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     if (eventKitStats.length === 0) {
         return (
             <div className="space-y-4">
@@ -49,16 +58,23 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                     const isUpcoming = isValidDate && isAfter(parsedDate, new Date());
 
                     return (
-                        <Card key={event.id} className="bg-white/5 border-white/10 hover:border-cta/30 transition-all group overflow-hidden flex flex-col h-full relative">
+                        <Card key={event.id} className="bg-white/5 border-white/10 hover:border-cta/30 transition-all group overflow-hidden flex flex-col h-full relative cursor-pointer">
                             {/* Background Glow */}
                             <div className="absolute inset-0 bg-gradient-to-br from-cta/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                            <div className="p-4 flex-1 flex flex-col gap-4 relative z-10">
+                            <div className="p-3 flex-1 flex flex-col gap-3 relative z-10">
                                 {/* Header: Image & Title */}
                                 <div className="flex items-start gap-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-cta transition-colors overflow-hidden shrink-0 border border-white/10 shadow-lg">
+                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-cta transition-colors overflow-hidden shrink-0 border border-white/10 shadow-lg relative">
+
                                         {event.featuredImage ? (
-                                            <img src={event.featuredImage} alt={event.name} className="w-full h-full object-cover" />
+                                            <Image
+                                                src={event.featuredImage}
+                                                alt={event.name}
+                                                fill
+                                                sizes="(max-width: 768px) 64px, 64px"
+                                                className="object-cover"
+                                            />
                                         ) : (
                                             <Calendar size={28} />
                                         )}
@@ -69,28 +85,28 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                                             {isValidDate && (
                                                 <span className="flex items-center gap-1.5">
                                                     <Clock size={12} className="text-primary" />
-                                                    {isUpcoming ? formatDistanceToNow(parsedDate, { addSuffix: true }) : format(parsedDate, "MMM d, yyyy")}
+                                                    {mounted ? (isUpcoming ? formatDistanceToNow(parsedDate, { addSuffix: true }) : format(parsedDate, "MMM d, yyyy")) : format(parsedDate, "MMM d, yyyy")}
                                                 </span>
                                             )}
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Stats Grid */}
-                                <div className="grid grid-cols-2 gap-2 mt-2">
-                                    <div className="bg-black/20 rounded-xl p-3 border border-white/5">
-                                        <div className="flex items-center gap-1.5 mb-1 opacity-70">
+                                {/* Stats Row */}
+                                <div className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5 mt-2">
+                                    <div className="flex flex-col">
+                                        <div className="flex items-center gap-1.5 opacity-70">
                                             <Users size={12} className="text-cta" />
                                             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Runners</span>
                                         </div>
-                                        <p className="text-2xl font-black italic text-white">{event.regCount}</p>
+                                        <p className="text-xl font-black italic text-white leading-none mt-1">{event.regCount}</p>
                                     </div>
-                                    <div className="bg-black/20 rounded-xl p-3 border border-white/5">
-                                        <div className="flex items-center gap-1.5 mb-1 opacity-70">
-                                            <MapPin size={12} className="text-primary" />
+                                    <div className="flex flex-col text-right items-end">
+                                        <div className="flex items-center gap-1.5 opacity-70">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Location</span>
+                                            <MapPin size={12} className="text-primary" />
                                         </div>
-                                        <p className="text-sm font-bold italic text-white truncate">{event.location?.name || "TBA"}</p>
+                                        <p className="text-sm font-bold italic text-white truncate max-w-[120px] leading-none mt-1">{event.location?.name || "TBA"}</p>
                                     </div>
                                 </div>
 

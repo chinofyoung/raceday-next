@@ -58,7 +58,7 @@ export function OrganizerView({
                         key={tab.id}
                         onClick={() => setActiveTab(tab.id)}
                         className={cn(
-                            "flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black italic uppercase transition-all whitespace-nowrap",
+                            "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap",
                             activeTab === tab.id
                                 ? "bg-white/10 text-white shadow-lg border border-white/5"
                                 : "text-text-muted hover:text-white hover:bg-white/5"

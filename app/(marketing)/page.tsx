@@ -47,7 +47,7 @@ export default async function HomePage() {
                     <div className="flex justify-center lg:justify-start">
                         <div className="inline-flex items-center gap-2.5 px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm">
                             <span className="flex h-2 w-2 rounded-full bg-cta" />
-                            <span className="text-[11px] font-black uppercase tracking-[0.15em] text-text-muted italic">
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-text-muted">
                                 The Running Community Platform
                             </span>
                         </div>
@@ -62,11 +62,11 @@ export default async function HomePage() {
                             Define the{" "}
                             <span className="relative inline-block">
                                 <span className="text-cta">Line</span>
-                                <span className="absolute -bottom-1 left-0 w-full h-1.5 bg-cta/30 rounded-full" />
+                                <span className="absolute -bottom-2.5 left-0 w-full h-1.5 bg-cta/30 rounded-full" />
                             </span>.
                         </h1>
 
-                        <p className="text-lg md:text-xl text-text-muted max-w-2xl leading-relaxed font-medium italic lg:pr-8">
+                        <p className="text-lg md:text-xl text-text-muted max-w-2xl leading-relaxed font-medium lg:pr-8">
                             From fun runs to ultra marathons — discover events, register in seconds,
                             and join thousands of runners pushing their limits every weekend.
                         </p>
@@ -87,32 +87,32 @@ export default async function HomePage() {
                     {/* Stats Strip — Social proof for credibility */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x divide-white/10 bg-surface/30 backdrop-blur-sm rounded-2xl border border-white/5 p-6 md:p-0">
                         <div className="flex flex-col items-center md:py-8 gap-2">
-                            <div className="flex items-center gap-2 text-primary">
-                                <Calendar size={18} />
-                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">50+</span>
+                            <div className="flex items-center gap-3 text-primary">
+                                <Calendar size={24} />
+                                <span className="text-4xl md:text-5xl font-black italic tracking-tight text-white">50+</span>
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Events Listed</span>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-muted mt-1">Events Listed</span>
                         </div>
                         <div className="flex flex-col items-center md:py-8 gap-2">
-                            <div className="flex items-center gap-2 text-cta">
-                                <Users size={18} />
-                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">10K+</span>
+                            <div className="flex items-center gap-3 text-cta">
+                                <Users size={24} />
+                                <span className="text-4xl md:text-5xl font-black italic tracking-tight text-white">10K+</span>
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Runners Joined</span>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-muted mt-1">Runners Joined</span>
                         </div>
                         <div className="flex flex-col items-center md:py-8 gap-2">
-                            <div className="flex items-center gap-2 text-blue-400">
-                                <Trophy size={18} />
-                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">200+</span>
+                            <div className="flex items-center gap-3 text-blue-400">
+                                <Trophy size={24} />
+                                <span className="text-4xl md:text-5xl font-black italic tracking-tight text-white">200+</span>
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Race Categories</span>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-muted mt-1">Race Categories</span>
                         </div>
                         <div className="flex flex-col items-center md:py-8 gap-2">
-                            <div className="flex items-center gap-2 text-amber-400">
-                                <Timer size={18} />
-                                <span className="text-3xl md:text-4xl font-black italic tracking-tight text-white">30s</span>
+                            <div className="flex items-center gap-3 text-amber-400">
+                                <Timer size={24} />
+                                <span className="text-4xl md:text-5xl font-black italic tracking-tight text-white">30s</span>
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted italic">Avg. Registration</span>
+                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-text-muted mt-1">Avg. Registration</span>
                         </div>
                     </div>
                 </div>
@@ -139,7 +139,13 @@ export default async function HomePage() {
                                 <Card className="group overflow-hidden border border-white/5 hover:border-primary/50 p-0 transition-all hover:-translate-y-2 bg-surface/30">
                                     <div className="aspect-[16/9] bg-white/5 relative overflow-hidden">
                                         {event.featuredImage && (
-                                            <Image src={event.featuredImage} alt={event.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                                            <Image
+                                                src={event.featuredImage}
+                                                alt={event.name}
+                                                fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                            />
                                         )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10" />
                                         <div className="absolute top-4 right-4 z-20">

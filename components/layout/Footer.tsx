@@ -4,8 +4,8 @@ import Image from "next/image";
 export function Footer() {
     return (
         <footer className="bg-surface/50 border-t border-white/5 py-12 px-4 mt-20">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div className="space-y-4">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+                <div className="space-y-4 sm:col-span-2 lg:col-span-1">
                     <Link href="/" className="flex items-center opacity-80 hover:opacity-100 transition-opacity">
                         <Image
                             src="/logo.png"
