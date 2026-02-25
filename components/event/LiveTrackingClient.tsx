@@ -34,6 +34,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
     const [liveTrackers, setLiveTrackers] = useState<LiveTracker[]>([]);
     const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isSimulatedFullscreen, setIsSimulatedFullscreen] = useState(false);
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const lastLocationRef = useRef<{ lat: number, lng: number, time: number, bearing: number } | null>(null);
     const router = useRouter();
@@ -95,19 +96,39 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
             setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement));
         };
 
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('msfullscreenchange', handleFullscreenChange);
+        // If native fullscreen is exited, also ensure simulated is off (though they shouldn't usually be on together)
+        const handleNativeFullscreenExit = () => {
+            const doc = document as any;
+            if (!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement)) {
+                setIsFullscreen(false);
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleNativeFullscreenExit);
+        document.addEventListener('webkitfullscreenchange', handleNativeFullscreenExit);
+        document.addEventListener('mozfullscreenchange', handleNativeFullscreenExit);
+        document.addEventListener('msfullscreenchange', handleNativeFullscreenExit);
 
         return () => {
             unsubscribe();
-            document.removeEventListener('fullscreenchange', handleFullscreenChange);
-            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-            document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
-            document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('fullscreenchange', handleNativeFullscreenExit);
+            document.removeEventListener('webkitfullscreenchange', handleNativeFullscreenExit);
+            document.removeEventListener('mozfullscreenchange', handleNativeFullscreenExit);
+            document.removeEventListener('msfullscreenchange', handleNativeFullscreenExit);
         };
     }, [event.id]);
+
+    // Handle scroll locking for simulated fullscreen
+    useEffect(() => {
+        if (isSimulatedFullscreen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isSimulatedFullscreen]);
 
     const toggleFullscreen = () => {
         if (!mapContainerRef.current) return;
@@ -115,14 +136,25 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         const elem = mapContainerRef.current as any;
         const doc = document as any;
 
-        if (!doc.fullscreenElement && !doc.webkitFullscreenElement) {
+        // 1. If we are currently in simulated fullscreen, just exit it
+        if (isSimulatedFullscreen) {
+            setIsSimulatedFullscreen(false);
+            return;
+        }
+
+        // 2. Try native fullscreen first
+        const isNativeActive = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
+
+        if (!isNativeActive) {
             const requestMethod = elem.requestFullscreen || elem.webkitRequestFullscreen || elem.mozRequestFullScreen || elem.msRequestFullscreen;
             if (requestMethod) {
                 requestMethod.call(elem).catch((err: any) => {
-                    toast.error(`Error attempting to enable fullscreen: ${err.message}`);
+                    console.warn("Native fullscreen failed, falling back to simulated:", err);
+                    setIsSimulatedFullscreen(true);
                 });
             } else {
-                toast.error("Fullscreen is not supported on this device/browser.");
+                // Native API not supported (e.g. iOS Safari), use simulated
+                setIsSimulatedFullscreen(true);
             }
         } else {
             const exitMethod = doc.exitFullscreen || doc.webkitExitFullscreen || doc.mozCancelFullScreen || doc.msExitFullscreen;
@@ -390,23 +422,31 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
             <div
                 ref={mapContainerRef}
                 className={cn(
-                    "w-full relative overflow-hidden bg-surface/20 isolate",
-                    isFullscreen ? "h-screen rounded-none" : "h-[60vh] min-h-[500px] rounded-[2.5rem] border-4 border-white/5 shadow-2xl"
+                    "w-full relative overflow-hidden bg-surface/20 isolate transition-all duration-300",
+                    isSimulatedFullscreen ? "fixed inset-0 z-[9999] h-screen w-screen rounded-none border-none" :
+                        isFullscreen ? "h-screen rounded-none" : "h-[60vh] min-h-[500px] rounded-[2.5rem] border-4 border-white/5 shadow-2xl"
                 )}
             >
 
 
                 {gpxUrl ? (
-                    <RouteMapViewer
-                        key={gpxUrl}
-                        gpxUrl={gpxUrl}
-                        zoom={14}
-                        theme="dark"
-                        liveTrackers={isTracking ? liveTrackers : []}
-                        currentUserId={userId}
-                        stations={category?.stations}
-                        className="rounded-none border-none h-full w-full"
-                    />
+                    (() => {
+                        const allStations = event.categories.flatMap(cat => cat.stations || []);
+                        const uniqueStations = Array.from(new Map(allStations.map(s => [s.id, s])).values());
+
+                        return (
+                            <RouteMapViewer
+                                key={gpxUrl}
+                                gpxUrl={gpxUrl}
+                                zoom={14}
+                                theme="dark"
+                                liveTrackers={isTracking ? liveTrackers : []}
+                                currentUserId={userId}
+                                stations={uniqueStations}
+                                className="rounded-none border-none h-full w-full"
+                            />
+                        );
+                    })()
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-text-muted">
                         <Navigation className="opacity-20 mb-4" size={48} />
@@ -419,9 +459,9 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     <button
                         onClick={toggleFullscreen}
                         className="absolute bottom-4 right-4 z-[1100] p-3 bg-black/80 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-gray-800 hover:text-white transition-all shadow-lg"
-                        title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                        title={isFullscreen || isSimulatedFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                     >
-                        {isFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
+                        {isFullscreen || isSimulatedFullscreen ? <Minimize2 size={20} /> : <Maximize2 size={20} />}
                     </button>
                 )}
 

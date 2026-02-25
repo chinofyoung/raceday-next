@@ -41,14 +41,21 @@ export function EventRoute({ event, activeRouteCategoryIndex, setActiveRouteCate
             {event.categories?.[activeRouteCategoryIndex]?.routeMap?.gpxFileUrl ? (
                 <div key={activeRouteCategoryIndex} className="space-y-6 animate-in fade-in duration-500">
                     <div className="aspect-square md:aspect-[16/9] w-full rounded-[2.5rem] overflow-hidden border-4 border-white/5 shadow-2xl relative isolate">
-                        <RouteMapViewer
-                            // Key is important to force re-render when switching GPX files
-                            key={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
-                            gpxUrl={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
-                            zoom={14}
-                            theme="dark"
-                            stations={event.categories[activeRouteCategoryIndex].stations}
-                        />
+                        {(() => {
+                            const allStations = event.categories.flatMap(cat => cat.stations || []);
+                            const uniqueStations = Array.from(new Map(allStations.map(s => [s.id, s])).values());
+
+                            return (
+                                <RouteMapViewer
+                                    // Key is important to force re-render when switching GPX files
+                                    key={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
+                                    gpxUrl={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
+                                    zoom={14}
+                                    theme="dark"
+                                    stations={uniqueStations}
+                                />
+                            );
+                        })()}
                         <div className="absolute top-4 left-4 z-[1000] bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 shadow-lg">
                             <p className="text-xs font-black uppercase italic tracking-wider text-white">
                                 Showing: <span className="text-primary">{event.categories[activeRouteCategoryIndex].name}</span>
