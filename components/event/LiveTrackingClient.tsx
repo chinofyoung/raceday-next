@@ -404,6 +404,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         theme="dark"
                         liveTrackers={isTracking ? liveTrackers : []}
                         currentUserId={userId}
+                        stations={category?.stations}
                         className="rounded-none border-none h-full w-full"
                     />
                 ) : (

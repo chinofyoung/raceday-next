@@ -134,6 +134,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                 event={event}
                 userRegistration={userRegistration}
                 loadingAuth={isCheckingRegistration}
+                isOrganizer={user?.uid === event.organizerId}
             />
 
             <EventNavigation

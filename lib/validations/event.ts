@@ -8,6 +8,16 @@ export const timelineItemSchema = z.object({
     order: z.number(),
 });
 
+export const raceStationSchema = z.object({
+    id: z.string(),
+    type: z.enum(["water", "aid", "first_aid"]),
+    label: z.string().min(1, "Label is required"),
+    coordinates: z.object({
+        lat: z.number(),
+        lng: z.number(),
+    }),
+});
+
 export const eventCategorySchema = z.object({
     id: z.string(),
     name: z.string().min(3, "Category name is too short"),
@@ -22,6 +32,7 @@ export const eventCategorySchema = z.object({
     routeMap: z.object({
         gpxFileUrl: z.string(),
     }).optional(),
+    stations: z.array(raceStationSchema).optional().default([]),
     inclusions: z.array(z.string()).min(1, "Add at least one inclusion"),
     raceNumberFormat: z.string().min(1, "Format is required"),
     maxParticipants: z.number().min(0).optional(),

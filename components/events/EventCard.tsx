@@ -14,12 +14,12 @@ import {
     ArrowRight,
     CheckCircle2
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatDistance } from "@/lib/utils";
+import { formatDistance, cn } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { isEarlyBirdActive, isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface EventCardProps {
     event: RaceEvent;
@@ -29,6 +29,7 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
+    const { user } = useAuth();
     const [paidCount, setPaidCount] = React.useState<number>(0);
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
     const isValidDate = eventDate && !isNaN(eventDate.getTime());
@@ -230,11 +231,17 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                             ) : (
                                 <div /> // Spacer or nothing
                             )}
-                            <Button variant="primary" size="sm" className="text-[10px] uppercase font-black italic h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>
-                                <Link href={`/events/${event.id}`} className="flex items-center gap-1.5">
-                                    View Details <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
-                                </Link>
-                            </Button>
+                            <div className="flex items-center gap-2">
+                                {user?.uid === event.organizerId && (
+                                    <Button variant="ghost" size="sm" className="bg-slate-700 h-8 w-8 p-0 rounded-full hover:bg-white/10 text-text-muted hover:text-primary transition-colors" asChild title="Edit Event">
+                                        <Link href={`/dashboard/events/${event.id}/edit`}><Edit2 size={14} /></Link>
+                                    </Button>
+                                )}
+                                <Button variant="primary" size="sm" className="text-[10px] uppercase font-black italic h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>
+                                    <Link href={`/events/${event.id}`} className="flex items-center gap-1.5">
+                                        View Details <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
+                                    </Link>
+                                </Button></div>
                         </>
                     )}
                 </div>

@@ -2,7 +2,7 @@
 
 import { RaceEvent } from "@/types/event";
 import { Badge } from "@/components/ui/Badge";
-import { ArrowLeft, Calendar, MapPin } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Edit2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -13,9 +13,10 @@ interface EventHeroProps {
     event: RaceEvent;
     userRegistration: any;
     loadingAuth?: boolean;
+    isOrganizer?: boolean;
 }
 
-export function EventHero({ event, userRegistration, loadingAuth }: EventHeroProps) {
+export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }: EventHeroProps) {
     const eventDate = new Date(event.date as unknown as string);
     const isValidDate = !isNaN(eventDate.getTime());
 
@@ -34,9 +35,20 @@ export function EventHero({ event, userRegistration, loadingAuth }: EventHeroPro
             <div className="absolute inset-0 bg-black/20" />
 
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 max-w-7xl mx-auto space-y-4">
-                <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-4 text-xs font-black uppercase tracking-widest italic transition-colors">
-                    <ArrowLeft size={16} /> Back to Search
-                </Link>
+                <div className="flex items-center justify-between gap-4 mb-4">
+                    <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-black uppercase tracking-widest italic transition-colors">
+                        <ArrowLeft size={16} /> Back to Search
+                    </Link>
+                    {isOrganizer && (
+                        <Link
+                            href={`/dashboard/events/${event.id}/edit`}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-black uppercase tracking-widest italic transition-all shadow-xl group"
+                        >
+                            <Edit2 size={14} className="group-hover:text-primary transition-colors" />
+                            Edit <span className="hidden sm:inline">Event</span>
+                        </Link>
+                    )}
+                </div>
                 <div className="space-y-2">
                     <div className="flex flex-wrap gap-2">
                         {isEventOver(event) ? (

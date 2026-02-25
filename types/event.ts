@@ -10,6 +10,18 @@ export interface TimelineItem {
     order: number;
 }
 
+export type StationType = "water" | "aid" | "first_aid";
+
+export interface RaceStation {
+    id: string;
+    type: StationType;
+    label: string; // e.g. "KM 5 Water", "First Aid Tent"
+    coordinates: {
+        lat: number;
+        lng: number;
+    };
+}
+
 export interface EventCategory {
     id: string;
     name: string;            // e.g. "42K Full Marathon"
@@ -24,6 +36,7 @@ export interface EventCategory {
     routeMap?: {
         gpxFileUrl: string;    // Uploaded .gpx file
     };
+    stations?: RaceStation[];
     inclusions: string[];    // e.g. ["Race bib", "Finisher medal", "T-shirt"]
     raceNumberFormat: string; // e.g. "42K-{number}" or "42{number}"
     maxParticipants?: number;

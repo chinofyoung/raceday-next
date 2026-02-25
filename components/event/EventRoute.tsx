@@ -47,6 +47,7 @@ export function EventRoute({ event, activeRouteCategoryIndex, setActiveRouteCate
                             gpxUrl={event.categories[activeRouteCategoryIndex].routeMap.gpxFileUrl}
                             zoom={14}
                             theme="dark"
+                            stations={event.categories[activeRouteCategoryIndex].stations}
                         />
                         <div className="absolute top-4 left-4 z-[1000] bg-black/80 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 shadow-lg">
                             <p className="text-xs font-black uppercase italic tracking-wider text-white">
@@ -57,7 +58,7 @@ export function EventRoute({ event, activeRouteCategoryIndex, setActiveRouteCate
                     <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 flex gap-4">
                         <Info className="text-primary shrink-0" size={24} />
                         <p className="text-xs text-text-muted leading-relaxed font-medium italic">
-                            Interactive map shows the official course for {event.categories[activeRouteCategoryIndex].name}. Use the zoom controls to explore terrain and elevation. Locations for hydration stations and first aid will be marked on race day.
+                            Interactive map shows the official course for {event.categories[activeRouteCategoryIndex].name}. Use the zoom controls to explore terrain and elevation. Station locations are marked on the map above.
                         </p>
                     </div>
                 </div>

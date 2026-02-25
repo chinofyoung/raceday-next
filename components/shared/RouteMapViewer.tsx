@@ -7,6 +7,7 @@ import L from "leaflet";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LiveTracker } from "@/lib/services/liveTrackingService";
+import { RaceStation } from "@/types/event";
 
 // Fix for default marker icons in Leaflet with Next.js
 const DefaultIcon = L.icon({
@@ -26,6 +27,7 @@ interface RouteMapViewerProps {
     theme?: "light" | "dark";
     liveTrackers?: LiveTracker[];
     currentUserId?: string;
+    stations?: RaceStation[];
 }
 
 const TILE_THEMES = {
@@ -39,6 +41,12 @@ const TILE_THEMES = {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         routeColor: "#F97316",
     },
+};
+
+const STATION_COLORS = {
+    water: "#3b82f6",     // Blue
+    aid: "#f59e0b",       // Orange
+    first_aid: "#ef4444", // Red
 };
 
 function MapUpdater({ center, zoom }: { center: [number, number], zoom: number }) {
@@ -57,7 +65,8 @@ export function RouteMapViewer({
     className,
     theme = "dark",
     liveTrackers = [],
-    currentUserId
+    currentUserId,
+    stations = []
 }: RouteMapViewerProps) {
     const [routePoints, setRoutePoints] = useState<[number, number][]>(points);
     const [currentTheme, setCurrentTheme] = useState<"light" | "dark">(theme);
@@ -153,6 +162,33 @@ export function RouteMapViewer({
                             <Popup>
                                 <div className="text-xs font-black italic uppercase tracking-tight">
                                     {tracker.displayName} {isMe && "(You)"}
+                                </div>
+                            </Popup>
+                        </Marker>
+                    );
+                })}
+
+                {stations.map((station) => {
+                    const color = STATION_COLORS[station.type];
+                    const html = `
+                        <div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2.5px solid white; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.4); font-size: 10px;">
+                            ${station.type === 'water' ? '💧' : station.type === 'aid' ? '🏥' : '➕'}
+                        </div>
+                    `;
+
+                    const icon = L.divIcon({
+                        html,
+                        className: 'custom-station-marker',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10],
+                        popupAnchor: [0, -10]
+                    });
+
+                    return (
+                        <Marker key={station.id} position={[station.coordinates.lat, station.coordinates.lng]} icon={icon}>
+                            <Popup>
+                                <div className="text-xs font-black italic uppercase tracking-tight">
+                                    {station.label}
                                 </div>
                             </Popup>
                         </Marker>

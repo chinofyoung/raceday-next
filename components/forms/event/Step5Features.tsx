@@ -4,12 +4,18 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/Input";
 import { EventFormValues } from "@/lib/validations/event";
 import { Card } from "@/components/ui/Card";
-import { Sparkles, DollarSign, MapPin } from "lucide-react";
+import { Sparkles, DollarSign, MapPin, Droplets } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { StationManager } from "./StationManager";
+import { useState } from "react";
 
 export function Step5Features() {
     const { register, watch, setValue, formState: { errors } } = useFormContext<EventFormValues>();
     const isVanityEnabled = watch("vanityRaceNumber.enabled");
+    const categories = watch("categories");
+    const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
+
+    const hasGPX = categories?.some(cat => cat.routeMap?.gpxFileUrl);
 
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -112,6 +118,62 @@ export function Step5Features() {
                             </p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            {/* Race Support Stations Section */}
+            <div className="pt-8 border-t border-white/5 space-y-8 pb-12">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary italic">
+                    <Droplets size={16} /> Race Support Stations
+                </div>
+
+                <div className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-xl font-bold uppercase italic tracking-tight text-white flex items-center gap-2">
+                            Map Stations
+                        </label>
+                        <p className="text-sm text-text-muted font-medium leading-relaxed max-w-xl">
+                            Mark water stations, aid tents, and first aid points along the race route. These will be visible to runners on the event map and during live tracking.
+                        </p>
+                    </div>
+
+                    {!hasGPX ? (
+                        <div className="p-8 bg-surface/30 border border-dashed border-white/10 rounded-3xl text-center space-y-4">
+                            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto text-text-muted">
+                                <MapPin size={32} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white uppercase italic tracking-tight">GPX Route Required</h3>
+                                <p className="text-text-muted text-xs max-w-xs mx-auto mt-1">
+                                    You need to upload a GPX route in Step 3 (Categories) before you can place stations on the map.
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {categories.length > 1 && (
+                                <div className="flex flex-wrap gap-2 bg-surface/30 p-1.5 rounded-2xl border border-white/5 w-fit">
+                                    {categories.map((cat, idx) => (
+                                        <button
+                                            key={cat.id}
+                                            type="button"
+                                            onClick={() => setActiveCategoryIndex(idx)}
+                                            className={cn(
+                                                "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all",
+                                                activeCategoryIndex === idx
+                                                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                                                    : "text-text-muted hover:text-white hover:bg-white/5"
+                                            )}
+                                        >
+                                            {cat.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+
+                            <StationManager categoryIndex={activeCategoryIndex} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
