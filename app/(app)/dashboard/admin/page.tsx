@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
 import { getEvents } from "@/lib/services/eventService";
 import { getOrganizerApplications } from "@/lib/services/applicationService";
+import { PlatformBalanceKPI } from "@/components/admin/PlatformBalanceKPI";
 import dynamic from "next/dynamic";
 
 const AdminOverviewChart = dynamic(
@@ -118,27 +119,16 @@ export default function AdminDashboardPage() {
                         </div>
                     </div>
                 </Card>
-                <Card className="p-6 bg-surface border-white/5 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 bg-green-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-green-500/10 transition-colors" />
-                    <div className="flex items-center gap-4 relative z-10">
-                        <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500">
-                            <DollarSign size={24} />
-                        </div>
-                        <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Revenue</p>
-                            <p className="text-2xl font-black italic">₱{stats?.totalRevenue.toLocaleString() || 0}</p>
-                        </div>
-                    </div>
-                </Card>
+                <PlatformBalanceKPI />
                 <Card className="p-6 bg-surface border-white/5 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-8 bg-blue-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-blue-500/10 transition-colors" />
                     <div className="flex items-center gap-4 relative z-10">
                         <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500">
-                            <Clock size={24} />
+                            <TrendingUp size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Pending Apps</p>
-                            <p className="text-2xl font-black italic">{stats?.pendingApplications.toLocaleString() || 0}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Organizer Revenue</p>
+                            <p className="text-2xl font-black italic">₱{stats?.organizerRevenue.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>

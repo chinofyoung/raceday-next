@@ -13,7 +13,10 @@ export interface PlatformStats {
     totalUsers: number;
     totalEvents: number;
     totalRegistrations: number;
-    totalRevenue: number;
+    totalRevenue: number; // Gross volume
+    platformRevenue: number; // Net platform cut
+    organizerRevenue: number; // Net organizer share
+
     pendingApplications: number;
     usersByRole: {
         runner: number;
@@ -52,12 +55,23 @@ export async function getPlatformStats(): Promise<PlatformStats> {
         // Or using a separate aggregation document as planned in 1.2
         const regsSnap = await getDocs(query(collection(db, "registrations"), where("status", "==", "paid")));
         const totalRevenue = regsSnap.docs.reduce((sum, doc) => sum + (doc.data().totalPrice || 0), 0);
+        const revenueSplit = regsSnap.docs.reduce((sum, doc) => {
+            const data = doc.data();
+            const gross = data.totalPrice || 0;
+            const organizerNet = data.organizerAmount || 0;
+            return {
+                platform: sum.platform + (gross - organizerNet),
+                organizer: sum.organizer + organizerNet
+            };
+        }, { platform: 0, organizer: 0 });
 
         return {
             totalUsers: usersCount.data().count,
             totalEvents: eventsCount.data().count,
             totalRegistrations: regsCount.data().count,
             totalRevenue,
+            platformRevenue: revenueSplit.platform,
+            organizerRevenue: revenueSplit.organizer,
             pendingApplications: appsCount.data().count,
             usersByRole: {
                 runner: runnersCount.data().count,

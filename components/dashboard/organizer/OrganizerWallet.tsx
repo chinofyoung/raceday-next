@@ -26,16 +26,33 @@ export function OrganizerWallet() {
     const [loading, setLoading] = useState(true);
     const [requestingPayout, setRequestingPayout] = useState(false);
     const [payoutAmount, setPayoutAmount] = useState("");
+    const [minPayout, setMinPayout] = useState(500);
 
     useEffect(() => {
-        // In a real implementation, you'd fetch payoutRequests and organizerTransactions from Firestore here
-        // For now, we'll keep it simple
-        setLoading(false);
+        const fetchUserDataAndSettings = async () => {
+            setLoading(true);
+            try {
+                const { getPlatformSettings } = await import("@/lib/services/settingsService");
+                const settings = await getPlatformSettings();
+                setMinPayout(settings.minimumPayoutAmount);
+            } catch (error) {
+                console.error("Error fetching settings:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserDataAndSettings();
     }, [user]);
 
     const handlePayoutRequest = async () => {
-        if (!user || !payoutAmount) return;
-        setRequestingPayout(true);
+        const amount = parseFloat(payoutAmount);
+        if (!user || !payoutAmount || amount < minPayout) {
+            if (amount < minPayout) {
+                alert(`Minimum withdrawal amount is ₱${minPayout.toLocaleString()}`);
+            }
+            return;
+        }
         try {
             const response = await fetch("/api/xendit/request-payout", {
                 method: "POST",
@@ -98,12 +115,32 @@ export function OrganizerWallet() {
                                 />
                             </div>
 
+                            <div className="space-y-3 px-1">
+                                <div className="flex justify-between items-center">
+                                    <p className="text-[10px] font-bold uppercase italic text-text-muted">
+                                        Min. withdrawal: <span className="text-white">₱{minPayout.toLocaleString()}</span>
+                                    </p>
+                                    <p className="text-[10px] font-bold uppercase italic text-text-muted">
+                                        Fee: <span className="text-white">₱10.00</span>
+                                    </p>
+                                </div>
+                                {parseFloat(payoutAmount) >= minPayout && (
+                                    <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 animate-in fade-in slide-in-from-top-1 duration-300">
+                                        <div className="flex justify-between items-center text-[10px] font-black uppercase italic tracking-widest text-primary">
+                                            <span>Net Amount</span>
+                                            <span>₱{(parseFloat(payoutAmount) - 10).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                                        </div>
+                                        <p className="text-[8px] text-text-muted italic mt-1 font-medium">Estimated arrival: 1-2 business days</p>
+                                    </div>
+                                )}
+                            </div>
+
                             <Button
                                 variant="primary"
                                 className="w-full h-12 uppercase italic font-black shadow-lg shadow-primary/20"
                                 onClick={handlePayoutRequest}
                                 isLoading={requestingPayout}
-                                disabled={!user?.organizer?.kycVerified || !payoutAmount || parseFloat(payoutAmount) <= 0}
+                                disabled={!user?.organizer?.kycVerified || !payoutAmount || parseFloat(payoutAmount) < minPayout}
                             >
                                 Withdraw Funds <ArrowRight size={18} className="ml-2" />
                             </Button>

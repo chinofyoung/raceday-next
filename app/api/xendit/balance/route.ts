@@ -29,8 +29,7 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "No Xendit account linked" }, { status: 400 });
         }
 
-        // Fetch balance for the sub-account
-        // Reference: https://developers.xendit.co/api-reference/#get-balance
+        // Fetch balance for the real sub-account
         const balance = await xenditFetch("/balance?account_type=CASH", {
             headers: {
                 "for-user-id": xenditAccountId,

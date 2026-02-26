@@ -17,6 +17,7 @@ import dynamic from "next/dynamic";
 import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
 import { getRegistrations } from "@/lib/services/registrationService";
 import { getEvents } from "@/lib/services/eventService";
+import { PlatformBalanceCard } from "@/components/admin/PlatformBalanceCard";
 import { toDate } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
 
@@ -85,6 +86,11 @@ export default function AnalyticsPage() {
                 return {
                     name: format(month, "MMM"),
                     revenue: monthRegs.reduce((sum, r) => sum + (r.totalPrice || 0), 0),
+                    platformRevenue: monthRegs.reduce((sum, r) => {
+                        const gross = r.totalPrice || 0;
+                        const organizerNet = (r as any).organizerAmount || 0;
+                        return sum + (gross - organizerNet);
+                    }, 0),
                     registrations: monthRegs.length
                 };
             });
@@ -157,16 +163,19 @@ export default function AnalyticsPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Platform Balance */}
+                <PlatformBalanceCard />
+
                 {/* Revenue Chart */}
                 <Card className="p-8 bg-surface border-white/5">
                     <div className="mb-8">
                         <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
-                            <DollarSign className="text-green-500" size={20} /> Revenue Growth
+                            <DollarSign className="text-green-500" size={20} /> Platform Revenue
                         </h3>
-                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Monthly Gross Revenue (PHP)</p>
+                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Monthly Net Platform Cut (PHP)</p>
                     </div>
                     <div className="h-[300px]">
-                        <RevenueBarChart data={revenueData} />
+                        <RevenueBarChart data={revenueData.map(d => ({ ...d, revenue: d.platformRevenue }))} />
                     </div>
                 </Card>
 

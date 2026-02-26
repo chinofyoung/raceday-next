@@ -32,47 +32,77 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Payout setup incomplete" }, { status: 400 });
         }
 
-        // 1. Check balance first
-        const balanceData = await xenditFetch("/balance?account_type=CASH", {
-            headers: { "for-user-id": xenditAccountId },
-        });
+        console.log(`[Payout] Processing request for user ${userId}: account=${xenditAccountId}, amount=${amount}`);
 
-        if (balanceData.balance < amount) {
-            return NextResponse.json({ error: "Insufficient balance" }, { status: 400 });
+        // 1. Validate against minimum payout
+        try {
+            const { getPlatformSettings } = await import("@/lib/services/settingsService");
+            const settings = await getPlatformSettings();
+            if (amount < settings.minimumPayoutAmount) {
+                return NextResponse.json({
+                    error: `Minimum withdrawal amount is ₱${settings.minimumPayoutAmount.toLocaleString()}`
+                }, { status: 400 });
+            }
+        } catch (settingsError) {
+            console.warn("[Payout] Failed to fetch settings, using defaults.");
         }
 
-        // 2. Create Payout/Disbursement
-        // Reference: https://developers.xendit.co/api-reference/#create-disbursement
-        const payout = await xenditFetch("/disbursements", {
-            method: "POST",
-            headers: { "for-user-id": xenditAccountId },
-            body: JSON.stringify({
-                external_id: `payout_${Date.now()}_${userId}`,
-                amount,
-                bank_code: bankDetails.bankCode,
-                account_holder_name: bankDetails.accountHolderName,
-                account_number: bankDetails.accountNumber,
-                currency: "PHP",
-            }),
-        });
+        // 2. Real Xendit API Call
+        try {
+            // Check balance first
+            const balanceData = await xenditFetch("/balance?account_type=CASH", {
+                headers: { "for-user-id": xenditAccountId },
+            });
 
-        // 3. Record in Firestore
-        await addDoc(collection(db, "payoutRequests"), {
-            userId,
-            organizerId: userId,
-            xenditAccountId,
-            amount,
-            bankDetails,
-            status: "pending",
-            xenditPayoutId: payout.id,
-            externalId: payout.external_id,
-            createdAt: serverTimestamp(),
-        });
+            if (balanceData.balance < amount) {
+                return NextResponse.json({ error: "Insufficient balance" }, { status: 400 });
+            }
 
-        return NextResponse.json(payout);
+            // Create Disbursement
+            const payout = await xenditFetch("/disbursements", {
+                method: "POST",
+                headers: { "for-user-id": xenditAccountId },
+                body: JSON.stringify({
+                    external_id: `payout_${Date.now()}_${userId.substring(0, 8)}`,
+                    amount: Math.floor(amount * 100) / 100,
+                    bank_code: bankDetails.bankCode,
+                    account_holder_name: bankDetails.accountHolderName.substring(0, 40),
+                    account_number: bankDetails.accountNumber,
+                    currency: "PHP",
+                    description: `RaceDay Payout (Net: ₱${(amount - 10).toLocaleString()}, Fee: ₱10.00)`,
+                }),
+            });
+
+            // Record in Firestore
+            await addDoc(collection(db, "payoutRequests"), {
+                userId,
+                organizerId: userId,
+                xenditAccountId,
+                amount: amount,
+                netAmount: amount - 10,
+                fee: 10,
+                bankDetails,
+                status: "pending",
+                xenditPayoutId: payout.id,
+                externalId: payout.external_id,
+                createdAt: serverTimestamp(),
+            });
+
+            return NextResponse.json(payout);
+        } catch (xenditError: any) {
+            console.error("[Payout] Xendit Error Details:", xenditError);
+
+            // Provide more descriptive errors if possible
+            let errorMessage = xenditError.message || "Xendit transfer failed";
+            if (errorMessage.includes("format submitted")) {
+                errorMessage = "Disbursement failed due to invalid bank details or sub-account status.";
+            }
+
+            return NextResponse.json({ error: errorMessage }, { status: 400 });
+        }
 
     } catch (error: any) {
-        console.error("Xendit Payout Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        console.error("[Payout] Unexpected Server Error:", error);
+        return NextResponse.json({ error: "An unexpected server error occurred." }, { status: 500 });
     }
 }
