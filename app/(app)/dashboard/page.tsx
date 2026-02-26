@@ -143,7 +143,8 @@ export default function DashboardPage() {
 
             const existing = eventMap.get(eventId) || { id: eventId, name: eventTitle, count: 0, revenue: 0 };
             existing.count += 1;
-            existing.revenue += r.totalPrice || 0;
+            // Use organizerAmount (net) if available, fallback to gross for legacy
+            existing.revenue += r.organizerAmount ?? r.totalPrice ?? 0;
             eventMap.set(eventId, existing);
         });
         return Array.from(eventMap.values()).sort((a, b) => b.revenue - a.revenue);
@@ -163,7 +164,8 @@ export default function DashboardPage() {
             const key = `${eventId}_${catId}`;
             const existing = catMap.get(key) || { name: categoryName, eventInfo: eventTitle, count: 0, revenue: 0 };
             existing.count += 1;
-            existing.revenue += r.totalPrice || 0;
+            // Use organizerAmount (net) if available, fallback to gross for legacy
+            existing.revenue += r.organizerAmount ?? r.totalPrice ?? 0;
             catMap.set(key, existing);
         });
         return Array.from(catMap.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 5);

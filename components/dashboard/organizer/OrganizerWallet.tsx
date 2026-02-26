@@ -75,6 +75,16 @@ export function OrganizerWallet() {
                             <p className="text-xs text-text-muted font-medium italic">Withdraw your available funds to your linked bank account.</p>
                         </div>
 
+                        {!user?.organizer?.kycVerified && (
+                            <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex gap-3 text-xs italic text-amber-500">
+                                <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                                <div className="space-y-1">
+                                    <p className="font-bold uppercase tracking-tight">KYC Verification Pending</p>
+                                    <p className="opacity-80">Withdrawals are disabled until Xendit verifies your business documents. This usually takes 1-3 business days.</p>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="space-y-4">
                             <div className="relative group">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl font-black italic text-white/30 group-focus-within:text-primary transition-colors">₱</span>
@@ -83,7 +93,8 @@ export function OrganizerWallet() {
                                     value={payoutAmount}
                                     onChange={(e) => setPayoutAmount(e.target.value)}
                                     placeholder="0.00"
-                                    className="w-full h-14 bg-black/40 border-2 border-white/5 rounded-2xl pl-10 pr-6 text-xl font-black italic text-white focus:outline-none focus:border-primary/50 transition-all"
+                                    disabled={!user?.organizer?.kycVerified}
+                                    className="w-full h-14 bg-black/40 border-2 border-white/5 rounded-2xl pl-10 pr-6 text-xl font-black italic text-white focus:outline-none focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 />
                             </div>
 
@@ -92,7 +103,7 @@ export function OrganizerWallet() {
                                 className="w-full h-12 uppercase italic font-black shadow-lg shadow-primary/20"
                                 onClick={handlePayoutRequest}
                                 isLoading={requestingPayout}
-                                disabled={!payoutAmount || parseFloat(payoutAmount) <= 0}
+                                disabled={!user?.organizer?.kycVerified || !payoutAmount || parseFloat(payoutAmount) <= 0}
                             >
                                 Withdraw Funds <ArrowRight size={18} className="ml-2" />
                             </Button>
@@ -106,6 +117,15 @@ export function OrganizerWallet() {
                             <div className="flex items-center justify-between text-[10px] font-black uppercase italic tracking-widest">
                                 <span className="text-text-muted">Account No.</span>
                                 <span className="text-white">****{user?.organizer?.bankDetails?.accountNumber?.slice(-4) || "0000"}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] font-black uppercase italic tracking-widest">
+                                <span className="text-text-muted">KYC Status</span>
+                                <span className={cn(
+                                    "px-2 py-0.5 rounded-full border",
+                                    user?.organizer?.kycVerified ? "text-success border-success/20 bg-success/5" : "text-amber-500 border-amber-500/20 bg-amber-500/5"
+                                )}>
+                                    {user?.organizer?.kycVerified ? "Verified" : "Pending"}
+                                </span>
                             </div>
                         </div>
                     </Card>

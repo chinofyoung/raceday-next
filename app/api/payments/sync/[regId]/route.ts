@@ -88,6 +88,14 @@ export async function GET(
                 syncedManual: true
             });
 
+            // Trigger Organizer Transfer
+            try {
+                const { handleOrganizerTransfer } = await import("@/lib/xendit");
+                await handleOrganizerTransfer(registrationId, regData);
+            } catch (transferError) {
+                console.error("Manual sync transfer failed:", transferError);
+            }
+
             return NextResponse.json({ status: "paid", raceNumber });
         }
 

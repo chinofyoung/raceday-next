@@ -24,6 +24,7 @@ export const registrationSchema = z.object({
     }),
     basePrice: z.number(),
     vanityPremium: z.number(),
+    processingFee: z.number().default(0),
     totalPrice: z.number(),
     termsAccepted: z.boolean().refine(val => val === true, "You must accept the terms and waiver"),
 });

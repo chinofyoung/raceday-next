@@ -33,6 +33,10 @@ export interface Registration {
     basePrice: number;
     vanityPremium: number;
     totalPrice: number;
+    organizerId?: string;
+    organizerAmount?: number;
+    processingFee?: number;
+    platformFeePercent?: number;
 
     // Status
     status: RegistrationStatus;

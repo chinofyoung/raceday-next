@@ -19,22 +19,37 @@ export default function RegisterPage() {
     const initialCategoryId = searchParams.get("category");
 
     const [event, setEvent] = useState<RaceEvent | null>(null);
+    const [existingRegistration, setExistingRegistration] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (id) fetchEvent();
-    }, [id]);
+        const registrationId = searchParams.get("id");
+        if (id) {
+            fetchData(id as string, registrationId);
+        }
+    }, [id, searchParams]);
 
-    const fetchEvent = async () => {
+    const fetchData = async (eventId: string, registrationId: string | null) => {
         setLoading(true);
         try {
-            const docRef = doc(db, "events", id as string);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                setEvent({ id: snap.id, ...snap.data() } as RaceEvent);
+            // Fetch Event
+            const eventRef = doc(db, "events", eventId);
+            const eventSnap = await getDoc(eventRef);
+
+            if (eventSnap.exists()) {
+                setEvent({ id: eventSnap.id, ...eventSnap.data() } as RaceEvent);
+            }
+
+            // Fetch Existing Registration if ID provided
+            if (registrationId) {
+                const regRef = doc(db, "registrations", registrationId);
+                const regSnap = await getDoc(regRef);
+                if (regSnap.exists()) {
+                    setExistingRegistration({ id: regSnap.id, ...regSnap.data() });
+                }
             }
         } catch (error) {
-            console.error("Error fetching event:", error);
+            console.error("Error fetching registration data:", error);
         } finally {
             setLoading(false);
         }
@@ -79,7 +94,7 @@ export default function RegisterPage() {
 
     return (
         <PageWrapper className="pt-8 pb-24 space-y-12">
-            <div className="max-w-4xl mx-auto space-y-8">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-8">
                 <div className="flex flex-col gap-4">
                     <Link href={`/events/${id}`} className="text-text-muted text-xs font-black uppercase tracking-widest flex items-center gap-1 hover:text-primary transition-colors italic">
                         <ArrowLeft size={14} /> Back to Event Details
@@ -93,7 +108,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-12">
-                    <RegistrationForm event={event} initialCategoryId={initialCategoryId} />
+                    <RegistrationForm
+                        event={event}
+                        initialCategoryId={initialCategoryId}
+                        existingRegistration={existingRegistration}
+                    />
 
                     {/* Why Register Box Below */}
                     <Card className="p-8 bg-surface/30 border-white/5 space-y-8 backdrop-blur-sm">

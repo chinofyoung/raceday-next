@@ -20,21 +20,24 @@ import { LoginPromptModal } from "@/components/shared/LoginPromptModal";
 import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { calculateCompletion } from "@/lib/validations/profile";
+import { getPlatformSettings } from "@/lib/services/settingsService";
 
 const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
 
 interface RegistrationFormProps {
     event: RaceEvent;
     initialCategoryId?: string | null;
+    existingRegistration?: any;
 }
 
-export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
+export function RegistrationForm({ event, initialCategoryId, existingRegistration }: RegistrationFormProps) {
     const { user, refreshUser } = useAuth();
     const router = useRouter();
-    const [currentStep, setCurrentStep] = useState(0);
+    const [currentStep, setCurrentStep] = useState(existingRegistration ? 4 : 0);
     const [loading, setLoading] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [pendingSubmitData, setPendingSubmitData] = useState<RegistrationFormValues | null>(null);
+    const [platformFeePercent, setPlatformFeePercent] = useState(5);
 
     // If a category is pre-selected via URL, look up its price
     const initialCategory = initialCategoryId
@@ -42,13 +45,21 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         : null;
     const initialBasePrice = initialCategory ? getEffectivePrice(event, initialCategory) : 0;
 
+    useEffect(() => {
+        const fetchSettings = async () => {
+            const settings = await getPlatformSettings();
+            setPlatformFeePercent(settings.processingFeePercent);
+        };
+        fetchSettings();
+    }, []);
+
     const methods = useForm<RegistrationFormValues>({
         resolver: zodResolver(registrationSchema) as any,
         defaultValues: {
             eventId: event.id,
-            registrationType: "self",
-            categoryId: initialCategoryId || "",
-            participantInfo: {
+            registrationType: existingRegistration?.registrationType || "self",
+            categoryId: existingRegistration?.categoryId || initialCategoryId || "",
+            participantInfo: existingRegistration?.participantInfo || {
                 name: user?.displayName || "",
                 email: user?.email || "",
                 phone: user?.phone || "",
@@ -63,20 +74,38 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 },
                 medicalConditions: user?.medicalConditions || "",
             },
-            vanityNumber: "",
-            basePrice: initialBasePrice,
-            vanityPremium: 0,
-            totalPrice: initialBasePrice,
+            vanityNumber: existingRegistration?.vanityNumber || "",
+            basePrice: existingRegistration?.basePrice || initialBasePrice,
+            vanityPremium: existingRegistration?.vanityPremium || 0,
+            processingFee: existingRegistration?.processingFee || 0,
+            totalPrice: existingRegistration?.totalPrice || initialBasePrice,
             termsAccepted: false,
         },
         mode: "onChange"
     });
 
     const registrationType = methods.watch("registrationType");
+    const categoryId = methods.watch("categoryId");
+    const vanityPremium = methods.watch("vanityPremium");
+    const basePrice = methods.watch("basePrice");
+
+    // Watch for price changes to update total including processing fee
+    useEffect(() => {
+        const subtotal = (Number(basePrice) || 0) + (Number(vanityPremium) || 0);
+
+        if (subtotal > 0) {
+            const fee = Math.round(subtotal * (platformFeePercent / 100));
+            methods.setValue("processingFee", fee, { shouldDirty: true });
+            methods.setValue("totalPrice", subtotal + fee, { shouldDirty: true });
+        } else {
+            methods.setValue("processingFee", 0);
+            methods.setValue("totalPrice", 0);
+        }
+    }, [categoryId, vanityPremium, basePrice, platformFeePercent, methods]);
 
     // Update form when user data loads or registration type changes
     useEffect(() => {
-        if (!user) return;
+        if (!user || existingRegistration) return;
 
         const currentValues = methods.getValues();
 
@@ -212,6 +241,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                         registeredByUserId: userId,
                         registeredByName: displayName || "Unknown",
                         isProxy: data.registrationType === "proxy",
+                        registrationId: existingRegistration?.id || null,
                     },
                     eventName: event.name,
                     categoryName: selectedCategory.name
@@ -273,10 +303,10 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
     return (
         <FormProvider {...methods}>
-            <div className="space-y-10">
-                {/* Progress Tracks */}
-                <div className="flex items-center justify-between relative">
-                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+            <div className="w-full space-y-10">
+                {/* Progress Tracks - Changed to full width */}
+                <div className="flex items-center justify-between relative w-full px-2">
+                    <div className="absolute top-1/2 left-4 right-4 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
                     {STEPS.map((step, i) => (
                         <div key={step} className="relative z-10 flex flex-col items-center gap-3">
                             <div className={cn(

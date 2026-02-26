@@ -64,7 +64,7 @@ export function Step4Review({ event }: Step4ReviewProps) {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Apparel Sizes</span>
-                                    <span className="text-sm font-bold text-white uppercase italic">T: {data.participantInfo.tShirtSize} | S: {data.participantInfo.singletSize}</span>
+                                    <span className="text-sm font-bold text-white uppercase italic">T-Shirt: {data.participantInfo.tShirtSize} | Singlet: {data.participantInfo.singletSize}</span>
                                 </div>
                                 {data.vanityNumber && (
                                     <div className="flex items-center justify-between">
@@ -88,9 +88,18 @@ export function Step4Review({ event }: Step4ReviewProps) {
                                         <span>+₱{data.vanityPremium}</span>
                                     </div>
                                 )}
-                                <div className="flex items-center justify-between text-2xl text-white pt-2">
-                                    <span className="tracking-tighter">Total Price</span>
-                                    <span className="tracking-tighter">₱{data.totalPrice}</span>
+                                {data.processingFee > 0 && (
+                                    <div className="flex items-center justify-between text-xs text-text-muted">
+                                        <span>Processing Fee</span>
+                                        <span>+₱{data.processingFee.toLocaleString()}</span>
+                                    </div>
+                                )}
+                                <div className="mt-4 p-4 bg-primary/10 rounded-2xl border border-primary/20 flex items-center justify-between text-white animate-pulse-subtle">
+                                    <div className="space-y-0.5">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">Actual Amount to Pay</span>
+                                        <h4 className="text-3xl font-black italic uppercase tracking-tighter">Total Price</h4>
+                                    </div>
+                                    <span className="text-3xl font-black italic tracking-tighter">₱{data.totalPrice.toLocaleString()}</span>
                                 </div>
                             </div>
                         </div>

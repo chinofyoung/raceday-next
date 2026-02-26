@@ -161,9 +161,11 @@ export async function getOrganizerStats(organizerId: string) {
         );
 
         // Fetch Total Revenue & Total Registrations in one aggregate query
+        // We use organizerAmount for revenue as it excludes platform fees
         const aggregateSnapshot = await getAggregateFromServer(baseQuery, {
             totalRegistrations: count(),
-            totalRevenue: sum('totalPrice')
+            totalRevenue: sum('organizerAmount'),
+            totalGrossRevenue: sum('totalPrice') // Fallback/Reference
         });
 
         const totalRevenue = aggregateSnapshot.data().totalRevenue || 0;

@@ -29,7 +29,6 @@ export function Step3Vanity({ event }: Step3VanityProps) {
         if (!vanityNumber) {
             setIsAvailable(null);
             setValue("vanityPremium", 0);
-            setValue("totalPrice", watch("basePrice"));
             return;
         }
     }, [vanityNumber]);
@@ -59,10 +58,8 @@ export function Step3Vanity({ event }: Step3VanityProps) {
 
             if (available) {
                 setValue("vanityPremium", premiumPrice);
-                setValue("totalPrice", watch("basePrice") + premiumPrice);
             } else {
                 setValue("vanityPremium", 0);
-                setValue("totalPrice", watch("basePrice"));
             }
         } catch (error) {
             console.error("Error checking vanity number:", error);

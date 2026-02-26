@@ -4,6 +4,7 @@ import { collection, addDoc, serverTimestamp, updateDoc, doc, getDoc, increment,
 import { generateBibAndQR, isBibTaken, getRaceNumberFormat, formatBibNumber } from "@/lib/bibUtils";
 import { RaceEvent } from "@/types/event";
 import { isRegistrationClosed, getEffectivePrice, isCategoryFull } from "@/lib/earlyBirdUtils";
+import { getPlatformSettings } from "@/lib/services/settingsService";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
@@ -34,7 +35,11 @@ export async function POST(req: Request) {
                 where("status", "in", ["paid", "pending"])
             );
             const existingSnap = await getDocs(q);
-            if (!existingSnap.empty) {
+
+            // Check if there's any OTHER registration (not the one we're currently updating)
+            const otherRegs = existingSnap.docs.filter(d => d.id !== registrationData.registrationId);
+
+            if (otherRegs.length > 0) {
                 return NextResponse.json({
                     error: "You are already registered for this category in this event."
                 }, { status: 400 });
@@ -91,20 +96,31 @@ export async function POST(req: Request) {
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
-            // 1. Create the registration document first (no QR yet)
-            const regRef = await addDoc(collection(db, "registrations"), {
+            // 1. Create or Update the registration document first (no QR yet)
+            let regId = registrationData.registrationId;
+            const regPayload = {
                 ...registrationData,
                 organizerId: eventData.organizerId,
                 status: "paid",
                 paymentStatus: "free",
                 paidAt: serverTimestamp(),
-                createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
-            });
+            };
+            delete regPayload.registrationId;
+
+            if (regId) {
+                await updateDoc(doc(db, "registrations", regId), regPayload);
+            } else {
+                const regRef = await addDoc(collection(db, "registrations"), {
+                    ...regPayload,
+                    createdAt: serverTimestamp(),
+                });
+                regId = regRef.id;
+            }
 
             // 2. Generate bib + QR with the REAL document ID (one time only)
             const { raceNumber, qrCodeUrl } = await generateBibAndQR(
-                regRef.id,                          // ← real ID now
+                regId,                          // ← real ID now
                 registrationData.eventId,
                 registrationData.categoryId,
                 registrationData.participantInfo.name,
@@ -112,7 +128,7 @@ export async function POST(req: Request) {
             );
 
             // 3. Update with bib + QR in a single write
-            await updateDoc(doc(db, "registrations", regRef.id), {
+            await updateDoc(doc(db, "registrations", regId), {
                 raceNumber,
                 qrCodeUrl,
             });
@@ -133,18 +149,21 @@ export async function POST(req: Request) {
 
             return NextResponse.json({
                 checkoutUrl: null,
-                registrationId: regRef.id,
+                registrationId: regId,
                 free: true,
             });
         }
 
         // 4. Calculate Platform Fee
-        const platformFeePercent = 5; // Default 5%
+        const settings = await getPlatformSettings();
+        const platformFeePercent = settings.processingFeePercent;
         const processingFee = Math.round(totalAmount * (platformFeePercent / 100));
         const chargeAmount = totalAmount + processingFee;
 
-        // 1. Create registration doc in Firestore (pending status)
-        const regRef = await addDoc(collection(db, "registrations"), {
+        // 1. Create or Update registration doc in Firestore (pending status)
+        let regId = registrationData.registrationId;
+
+        const regPayload = {
             ...registrationData,
             organizerId: eventData.organizerId,
             status: "pending",
@@ -153,23 +172,37 @@ export async function POST(req: Request) {
             processingFee,
             organizerAmount: totalAmount,
             totalPaid: chargeAmount,
-            createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
-        });
+        };
+
+        // Remove registrationId from payload to avoid double-storing
+        delete regPayload.registrationId;
+
+        if (regId) {
+            await updateDoc(doc(db, "registrations", regId), regPayload);
+        } else {
+            const regRef = await addDoc(collection(db, "registrations"), {
+                ...regPayload,
+                createdAt: serverTimestamp(),
+            });
+            regId = regRef.id;
+        }
+
+        const externalId = regId;
 
         // 2. Prepare Xendit Invoice Request
         const auth = Buffer.from(`${XENDIT_SECRET_KEY}:`).toString("base64");
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || req.headers.get("origin") || "http://localhost:3000";
 
         const invoiceData: any = {
-            external_id: regRef.id,
+            external_id: externalId,
             amount: chargeAmount,
             description: `Registration for ${eventName} - ${categoryName}`,
             invoice_duration: 86400, // 24 hours
             currency: "PHP",
             reminder_time: 1,
-            success_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/success?id=${regRef.id}`,
-            failure_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/failed?id=${regRef.id}`,
+            success_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/success?id=${externalId}`,
+            failure_redirect_url: `${baseUrl}/events/${registrationData.eventId}/register/failed?id=${externalId}`,
             customer: {
                 given_names: registrationData.participantInfo.name,
                 email: registrationData.participantInfo.email,
@@ -225,7 +258,7 @@ export async function POST(req: Request) {
         }
 
         // 3. Update registration with invoice details
-        await updateDoc(regRef, {
+        await updateDoc(doc(db, "registrations", externalId), {
             xenditInvoiceId: result.id,
             xenditInvoiceUrl: result.invoice_url,
             updatedAt: serverTimestamp(),
@@ -233,7 +266,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({
             checkoutUrl: result.invoice_url,
-            registrationId: regRef.id,
+            registrationId: externalId,
         });
 
     } catch (error: any) {

@@ -22,7 +22,6 @@ export function Step1Category({ event }: Step1CategoryProps) {
         const numericPrice = Number(price) || 0;
         setValue("categoryId", categoryId);
         setValue("basePrice", numericPrice);
-        setValue("totalPrice", numericPrice + (Number(watch("vanityPremium")) || 0));
     };
 
     return (

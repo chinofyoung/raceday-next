@@ -111,7 +111,7 @@ export default function RegistrationSuccessPage() {
                                     </h2>
                                 </div>
 
-                                <div className="flex flex-col md:items-end gap-1">
+                                <div className="flex flex-col items-start shrink-0 md:items-center gap-1">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Payment Status</p>
                                     <Badge
                                         className={cn(
@@ -120,7 +120,7 @@ export default function RegistrationSuccessPage() {
                                         )}
                                     >
                                         <span className="skew-x-[12deg]">
-                                            {registration?.status === "paid" ? "PAID / VERIFIED" : "PENDING"}
+                                            {registration?.status === "paid" ? "PAID" : "PENDING"}
                                         </span>
                                     </Badge>
                                 </div>

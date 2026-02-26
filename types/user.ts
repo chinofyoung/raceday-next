@@ -52,6 +52,8 @@ export interface User {
             accountNumber: string;
         };
         xenditAccountId?: string;
+        xenditStatus?: string;
+        kycVerified?: boolean;
     };
 
     // Metadata

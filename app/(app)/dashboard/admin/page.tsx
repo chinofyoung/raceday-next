@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
     Users, Calendar, DollarSign, ArrowRight, TrendingUp,
-    FileText, UserCheck, Loader2, BarChart3, Clock, Shield
+    FileText, UserCheck, Loader2, BarChart3, Clock, Shield, Settings
 } from "lucide-react";
 import Link from "next/link";
 import { db } from "@/lib/firebase/config";
@@ -238,6 +238,15 @@ export default function AdminDashboardPage() {
                                         <span className="font-bold uppercase italic text-sm">Audit Logs</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-blue-500" />
+                                </div>
+                            </Link>
+                            <Link href="/dashboard/admin/settings" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-primary/50 transition-all group">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Settings size={18} className="text-primary" />
+                                        <span className="font-bold uppercase italic text-sm">Platform Settings</span>
+                                    </div>
+                                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-primary" />
                                 </div>
                             </Link>
                         </div>
