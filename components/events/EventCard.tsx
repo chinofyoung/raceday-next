@@ -22,6 +22,9 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { isEarlyBirdActive, isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface EventCardProps {
     event: RaceEvent;
@@ -32,29 +35,10 @@ interface EventCardProps {
 
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const { user } = useAuth();
-    const [paidCount, setPaidCount] = React.useState<number>(0);
+    const paidCountCountRaw = useQuery(api.registrations.getCount, event.id ? { eventId: event.id as Id<"events"> } : "skip");
+    const paidCount = paidCountCountRaw ?? 0;
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
     const isValidDate = eventDate && !isNaN(eventDate.getTime());
-
-    React.useEffect(() => {
-        const fetchPaidCount = async () => {
-            if (!event.id) return;
-            try {
-                const { collection, query, where, getDocs } = await import("firebase/firestore");
-                const { db } = await import("@/lib/firebase/config");
-                const q = query(
-                    collection(db, "registrations"),
-                    where("eventId", "==", event.id),
-                    where("status", "==", "paid")
-                );
-                const snap = await getDocs(q);
-                setPaidCount(snap.size);
-            } catch (err) {
-                console.error("Error fetching participant count:", err);
-            }
-        };
-        fetchPaidCount();
-    }, [event.id]);
 
     // Calculate price ranges
     const originalPrices = event.categories?.map(c => c.price) || [];

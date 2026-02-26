@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase/admin";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 
 export const dynamic = "force-dynamic";
 
@@ -13,31 +15,28 @@ export async function GET(request: NextRequest) {
             return new NextResponse("Missing parameters", { status: 400 });
         }
 
-        const volunteerDoc = await adminDb
-            .collection("events")
-            .doc(eventId)
-            .collection("volunteers")
-            .doc(volunteerId)
-            .get();
+        const volunteer = await fetchQuery(api.volunteers.getById, {
+            id: volunteerId as Id<"volunteers">
+        });
 
-        if (!volunteerDoc.exists) {
+        if (!volunteer) {
             return new NextResponse("Invitation not found", { status: 404 });
         }
 
-        const volunteerData = volunteerDoc.data();
-        if (volunteerData?.status !== "pending") {
-            return NextResponse.json({ status: volunteerData?.status });
+        if (volunteer.status !== "pending") {
+            return NextResponse.json({ status: volunteer.status });
         }
 
-        const eventDoc = await adminDb.collection("events").doc(eventId).get();
-        const eventData = eventDoc.data();
+        const event = await fetchQuery(api.events.getById, {
+            id: eventId as Id<"events">
+        });
 
         return NextResponse.json({
-            email: volunteerData.email,
-            permissions: volunteerData.permissions,
-            eventName: eventData?.name,
-            organizerName: eventData?.organizerName,
-            featuredImage: eventData?.featuredImage,
+            email: volunteer.email,
+            permissions: volunteer.permissions,
+            eventName: event?.name,
+            organizerName: event?.organizerName, // Note: backend should probably fetch organizer name if not in event doc
+            featuredImage: event?.featuredImage,
         });
     } catch (error) {
         console.error("Error fetching invite details:", error);

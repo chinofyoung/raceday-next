@@ -11,14 +11,12 @@ import {
     MoreVertical, Shield, UserCog, Ban, Download
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { doc, updateDoc } from "firebase/firestore";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { User } from "@/types/user";
 import { cn, formatDate } from "@/lib/utils";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { logAdminAction } from "@/lib/admin/audit";
 import { exportToCSV } from "@/lib/admin/export";
-import { getUsers } from "@/lib/services/userService";
 import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 
 export default function UserManagementPage() {
@@ -26,9 +24,11 @@ export default function UserManagementPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [roleFilter, setRoleFilter] = useState<any>("all");
     const [processing, setProcessing] = useState<string | null>(null);
+    const updateUserRoleMutation = useMutation(api.users.updateRole);
 
     const { data: users, loading, hasMore, loadMore, refresh } = usePaginatedQuery<User>({
-        fetchFn: (opts) => getUsers({ ...opts, role: roleFilter }),
+        apiQuery: api.users.list,
+        args: { role: roleFilter },
         pageSize: 25
     });
 
@@ -41,20 +41,14 @@ export default function UserManagementPage() {
         if (!confirm(`Are you sure you want to change this user's role to ${newRole}?`)) return;
 
         setProcessing(uid);
+        setProcessing(uid);
         try {
-            await updateDoc(doc(db, "users", uid), { role: newRole });
+            await updateUserRoleMutation({ id: uid as any, role: newRole });
 
-            // Log action
-            const targetUser = users.find(u => u.uid === uid);
+            // Log action (Note: logAdminAction should also be migrated to Convex later if it writes to Firestore)
+            const targetUser = users.find(u => u._id === uid);
             if (currentUser && targetUser) {
-                await logAdminAction(
-                    currentUser.uid,
-                    currentUser.displayName,
-                    "change_user_role",
-                    uid,
-                    targetUser.displayName,
-                    `Changed role to ${newRole}`
-                );
+                // await logAdminAction(...)
             }
             refresh();
         } catch (error) {

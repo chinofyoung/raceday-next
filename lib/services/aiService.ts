@@ -1,5 +1,3 @@
-import { auth } from "@/lib/firebase/config";
-
 export interface AISuggestion {
     title: string;
     description: string;
@@ -10,19 +8,17 @@ export interface AISuggestion {
     }[];
 }
 
-async function getAuthHeaders(): Promise<Record<string, string>> {
-    const user = auth.currentUser;
-    if (!user) return {};
-    const token = await user.getIdToken();
+async function getAuthHeaders(token?: string): Promise<Record<string, string>> {
+    if (!token) return {};
     return { Authorization: `Bearer ${token}` };
 }
 
-export async function getAISuggestions(prompt: string): Promise<AISuggestion> {
+export async function getAISuggestions(prompt: string, token?: string): Promise<AISuggestion> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            ...(await getAuthHeaders()),
+            ...(await getAuthHeaders(token)),
         },
         body: JSON.stringify({ prompt, type: "complete" }),
     });
@@ -37,12 +33,12 @@ export async function getAISuggestions(prompt: string): Promise<AISuggestion> {
 /**
  * Fetches a suggested timeline for an event from Claude AI.
  */
-export async function getAITimeline(eventInfo: string): Promise<{ timeline: { time: string; activity: string; description: string }[] }> {
+export async function getAITimeline(eventInfo: string, token?: string): Promise<{ timeline: { time: string; activity: string; description: string }[] }> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            ...(await getAuthHeaders()),
+            ...(await getAuthHeaders(token)),
         },
         body: JSON.stringify({ prompt: eventInfo, type: "timeline" }),
     });
@@ -55,12 +51,12 @@ export async function getAITimeline(eventInfo: string): Promise<{ timeline: { ti
     return data;
 }
 
-export async function improveText(text: string): Promise<{ improvedText: string }> {
+export async function improveText(text: string, token?: string): Promise<{ improvedText: string }> {
     const response = await fetch("/api/ai/event-suggest", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            ...(await getAuthHeaders()),
+            ...(await getAuthHeaders(token)),
         },
         body: JSON.stringify({ prompt: text, type: "improve" }),
     });

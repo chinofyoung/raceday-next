@@ -1,22 +1,6 @@
-import { db } from "@/lib/firebase/config";
-import {
-    collection,
-    query,
-    where,
-    getDocs,
-    doc,
-    getDoc,
-    orderBy,
-    limit,
-    startAfter,
-    DocumentSnapshot,
-    updateDoc,
-    documentId,
-    getCountFromServer,
-    getAggregateFromServer,
-    count,
-    sum
-} from "firebase/firestore";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 import { Registration } from "@/types/registration";
 
 export interface GetRegistrationsOptions {
@@ -25,30 +9,31 @@ export interface GetRegistrationsOptions {
     organizerId?: string;
     status?: string | "all";
     limitCount?: number;
-    lastDoc?: DocumentSnapshot;
+    cursor?: string | null;
 }
 
 export async function getRegistrations(options: GetRegistrationsOptions = {}) {
-    const { userId, eventId, organizerId, status = "all", limitCount = 20, lastDoc } = options;
+    const { userId, eventId, organizerId, status = "all", limitCount = 20, cursor = null } = options;
 
     try {
-        let q = query(collection(db, "registrations"));
-
-        if (userId) q = query(q, where("userId", "==", userId));
-        if (eventId) q = query(q, where("eventId", "==", eventId));
-        if (organizerId) q = query(q, where("organizerId", "==", organizerId));
-        if (status !== "all") q = query(q, where("status", "==", status));
-
-        q = query(q, orderBy("createdAt", "desc"));
-        if (lastDoc) q = query(q, startAfter(lastDoc));
-        q = query(q, limit(limitCount));
-
-        const snap = await getDocs(q);
-        const registrations = snap.docs.map(d => ({ id: d.id, ...d.data() })) as Registration[];
+        const result = await fetchQuery(api.registrations.list, {
+            userId: userId as Id<"users"> | undefined,
+            eventId: eventId as Id<"events"> | undefined,
+            organizerId: organizerId as Id<"users"> | undefined,
+            status,
+            paginationOpts: {
+                numItems: limitCount,
+                cursor,
+            },
+        });
 
         return {
-            items: registrations,
-            lastDoc: snap.docs[snap.docs.length - 1]
+            items: result.page.map((d: any) => ({
+                ...d,
+                id: d._id,
+                ...((d as any).registrationData || {})
+            })) as unknown as Registration[],
+            lastDoc: result.continueCursor || null
         };
     } catch (error) {
         console.error("Error fetching registrations:", error);
@@ -56,96 +41,47 @@ export async function getRegistrations(options: GetRegistrationsOptions = {}) {
     }
 }
 
-/**
- * Optimized many-to-one join to avoid N+1 queries.
- * Fetches unique events for a list of registrations in a single batch.
- */
 export async function getRegistrationsWithEvents(options: GetRegistrationsOptions = {}) {
     const { items: registrations, lastDoc } = await getRegistrations(options);
 
     if (registrations.length === 0) return { items: [], lastDoc };
 
-    // Collect unique event IDs
-    const eventIds = [...new Set(registrations.map(r => r.eventId))];
+    // In Convex, we can't easily do a batch "in" query like Firestore for multiple tables 
+    // without a custom query. For now, let's fetch events one by one or improve later.
+    // Actually, we should probably add a getByIds query to convex/events.ts
 
-    // Fetch all required events in one batch (Firestore supports up to 30 IDs in 'in' query)
-    // If more than 30, we'd need to batch the batches.
-    const eventsMap = new Map();
-
-    // Firestore "in" limit is 30.
-    const batches = [];
-    for (let i = 0; i < eventIds.length; i += 30) {
-        batches.push(eventIds.slice(i, i + 30));
-    }
-
-    await Promise.all(batches.map(async (batch) => {
-        const eventsSnap = await getDocs(query(
-            collection(db, "events"),
-            where(documentId(), "in", batch)
-        ));
-        eventsSnap.docs.forEach(d => eventsMap.set(d.id, { id: d.id, ...d.data() }));
-    }));
-
-    // Attach event data to registrations
-    const enrichedRegistrations = registrations.map(reg => ({
-        ...reg,
-        event: eventsMap.get(reg.eventId) || null
+    const enrichedRegistrations = await Promise.all(registrations.map(async (reg) => {
+        const event = await fetchQuery(api.events.getById, { id: reg.eventId as Id<"events"> });
+        return {
+            ...reg,
+            event: event ? { ...event, id: event._id } : null
+        };
     }));
 
     return { items: enrichedRegistrations, lastDoc };
 }
 
-export async function getProxyRegistrations(userId: string) {
-    try {
-        const q = query(
-            collection(db, "registrations"),
-            where("registeredByUserId", "==", userId),
-            where("isProxy", "==", true),
-            orderBy("createdAt", "desc")
-        );
-        const snap = await getDocs(q);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })) as Registration[];
-    } catch (error) {
-        console.error("Error fetching proxy registrations:", error);
-        // Fallback or return empty
-        return [];
-    }
-}
-
 export async function getUserRegistrations(userId: string) {
     try {
-        const q = query(
-            collection(db, "registrations"),
-            where("userId", "==", userId),
-            where("status", "in", ["paid", "pending"]),
-            // We include pending so we can show "Pending" status too
-        );
-        const snap = await getDocs(q);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() })) as Registration[];
+        const registrations = await fetchQuery(api.registrations.getByUserId, {
+            userId: userId as Id<"users">
+        });
+        return registrations.map(d => ({
+            ...d,
+            id: d._id,
+            ...((d as any).registrationData || {})
+        })) as unknown as Registration[];
     } catch (error) {
         console.error("Error fetching user registrations:", error);
         return [];
     }
 }
+
 export async function getCategoryCounts(eventId: string) {
     try {
-        const q = query(
-            collection(db, "registrations"),
-            where("eventId", "==", eventId),
-            where("status", "in", ["paid", "pending"])
-        );
-        const snap = await getDocs(q);
-        const counts: Record<string, number> = {};
-
-        snap.docs.forEach(doc => {
-            const data = doc.data();
-            const catId = data.categoryId;
-            if (catId) {
-                counts[catId] = (counts[catId] || 0) + 1;
-            }
+        return await fetchQuery(api.registrations.getCategoryCounts, {
+            eventId: eventId as Id<"events">
         });
-
-        return counts;
     } catch (error) {
         console.error("Error fetching category counts:", error);
         return {};
@@ -154,36 +90,9 @@ export async function getCategoryCounts(eventId: string) {
 
 export async function getOrganizerStats(organizerId: string) {
     try {
-        const baseQuery = query(
-            collection(db, "registrations"),
-            where("organizerId", "==", organizerId),
-            where("status", "==", "paid")
-        );
-
-        // Fetch Total Revenue & Total Registrations in one aggregate query
-        const aggregateSnapshot = await getAggregateFromServer(baseQuery, {
-            totalRegistrations: count(),
-            totalRevenue: sum('totalPrice')
+        return await fetchQuery(api.registrations.getStats, {
+            organizerId: organizerId as Id<"users">
         });
-
-        const totalRevenue = aggregateSnapshot.data().totalRevenue || 0;
-        const totalRegistrations = aggregateSnapshot.data().totalRegistrations || 0;
-
-        // Fetch Claimed Kits Count
-        const claimedKitsQuery = query(
-            collection(db, "registrations"),
-            where("organizerId", "==", organizerId),
-            where("status", "==", "paid"),
-            where("raceKitClaimed", "==", true)
-        );
-        const claimedKitsSnapshot = await getCountFromServer(claimedKitsQuery);
-        const claimedKits = claimedKitsSnapshot.data().count || 0;
-
-        return {
-            totalRevenue,
-            totalRegistrations,
-            claimedKits
-        };
     } catch (error) {
         console.error("Error fetching organizer stats:", error);
         return { totalRevenue: 0, totalRegistrations: 0, claimedKits: 0 };

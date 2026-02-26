@@ -17,7 +17,7 @@ import { Step4Review } from "./Step4Review";
 import { Step0Who } from "./Step0Who";
 import { cn } from "@/lib/utils";
 import { LoginPromptModal } from "@/components/shared/LoginPromptModal";
-import { doc, updateDoc, serverTimestamp, getDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { calculateCompletion } from "@/lib/validations/profile";
 
@@ -185,11 +185,11 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
             const completion = calculateCompletion(fullProfileForCalc as any);
 
-            await updateDoc(userDocRef, {
+            await setDoc(userDocRef, {
                 ...profileData,
                 profileCompletion: completion,
                 updatedAt: serverTimestamp(),
-            });
+            }, { merge: true });
         } catch (error) {
             console.error("Error syncing profile from registration:", error);
             // Non-fatal — don't block registration

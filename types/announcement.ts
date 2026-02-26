@@ -1,4 +1,5 @@
-import { Timestamp } from "firebase/firestore";
+// Convex uses number (ms) for dates, legacy Firebase uses Timestamp
+type UniversalDate = number | Date | any;
 
 export interface Announcement {
     id: string;
@@ -10,7 +11,7 @@ export interface Announcement {
     imageUrl?: string;
     sendEmail: boolean;
     sentCount?: number;      // Number of emails sent if sendEmail was true
-    createdAt: Timestamp | Date;
+    createdAt: UniversalDate | Date;
     createdBy: string;       // User ID of the organizer who created it
 }
 

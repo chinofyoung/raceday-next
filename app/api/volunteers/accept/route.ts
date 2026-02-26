@@ -1,22 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/lib/firebase/admin";
-import { acceptInvitation } from "@/lib/services/volunteerService";
+import { getAuth } from "@clerk/nextjs/server";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
+import { acceptInvitation, getEventVolunteers } from "@/lib/services/volunteerService";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
     try {
-        const sessionCookie = request.cookies.get("session")?.value;
-        if (!sessionCookie) {
+        const { userId: clerkId } = getAuth(request);
+        if (!clerkId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
-        const uid = decodedToken.uid;
-        const userEmail = decodedToken.email?.toLowerCase();
-
-        if (!userEmail) {
-            return new NextResponse("User email not found", { status: 400 });
+        // Get Convex user ID from Clerk ID
+        const user = await fetchQuery(api.users.getByUid, { uid: clerkId });
+        if (!user) {
+            return new NextResponse("User not found in Convex", { status: 404 });
         }
 
         const body = await request.json();
@@ -26,32 +27,27 @@ export async function POST(request: NextRequest) {
             return new NextResponse("Missing eventId or volunteerId", { status: 400 });
         }
 
-        // Verify invitation exists and matches the user's email
-        const volunteerRef = adminDb.collection("events").doc(eventId).collection("volunteers").doc(volunteerId);
-        const volunteerDoc = await volunteerRef.get();
+        // Verify invitation via service (which now uses Convex)
+        const volunteer = await fetchQuery(api.volunteers.getById, {
+            id: volunteerId as Id<"volunteers">
+        });
 
-        if (!volunteerDoc.exists) {
+        if (!volunteer) {
             return new NextResponse("Invitation not found", { status: 404 });
         }
 
-        const volunteerData = volunteerDoc.data();
-        if (volunteerData?.email !== userEmail) {
-            return new NextResponse("Email mismatch. You can only accept invitations sent to your Gmail address.", { status: 403 });
+        if (volunteer.email.toLowerCase() !== user.email.toLowerCase()) {
+            return new NextResponse("Email mismatch. You can only accept invitations sent to your email address.", { status: 403 });
         }
 
-        if (volunteerData?.status !== 'pending') {
-            return new NextResponse(`Invitation already ${volunteerData?.status}`, { status: 400 });
+        if (volunteer.status !== 'pending') {
+            return new NextResponse(`Invitation already ${volunteer.status}`, { status: 400 });
         }
-
-        // Get user details for the volunteer record
-        const user = await adminAuth.getUser(uid);
 
         await acceptInvitation(
             eventId,
             volunteerId,
-            uid,
-            user.displayName,
-            user.photoURL
+            user._id
         );
 
         return NextResponse.json({ success: true });

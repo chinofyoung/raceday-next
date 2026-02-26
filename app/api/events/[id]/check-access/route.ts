@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth, adminDb } from "@/lib/firebase/admin";
+import { getAuth } from "@clerk/nextjs/server";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 import { getVolunteerPermissions } from "@/lib/volunteerAccess";
 
 export const dynamic = "force-dynamic";
@@ -9,26 +12,29 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const sessionCookie = request.cookies.get("session")?.value;
-        if (!sessionCookie) {
+        const { userId: clerkId } = getAuth(request);
+        if (!clerkId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const decodedToken = await adminAuth.verifySessionCookie(sessionCookie, true);
-        const uid = decodedToken.uid;
         const { id: eventId } = await context.params;
 
-        const eventDoc = await adminDb.collection("events").doc(eventId).get();
-        if (!eventDoc.exists) {
+        // Get user from Convex
+        const user = await fetchQuery(api.users.getByUid, { uid: clerkId });
+        if (!user) {
+            return new NextResponse("User not found", { status: 404 });
+        }
+
+        // Get event from Convex
+        const event = await fetchQuery(api.events.getById, { id: eventId as Id<"events"> });
+        if (!event) {
             return new NextResponse("Event not found", { status: 404 });
         }
 
-        const eventData = eventDoc.data();
-        const isOrganizer = eventData?.organizerId === uid;
-        const userDoc = await adminDb.collection("users").doc(uid).get();
-        const isAdmin = userDoc.data()?.role === "admin";
+        const isOrganizer = event.organizerId === user._id;
+        const isAdmin = user.role === "admin";
 
-        const volunteerPermissions = await getVolunteerPermissions(uid, eventId);
+        const volunteerPermissions = await getVolunteerPermissions(user._id, eventId);
 
         return NextResponse.json({
             isOrganizer,

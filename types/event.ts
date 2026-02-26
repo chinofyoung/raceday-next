@@ -1,4 +1,6 @@
-import { Timestamp } from "firebase/firestore";
+// Convex uses number (ms) for dates, legacy Firebase uses UniversalDate
+type UniversalDate = number | Date | any;
+
 
 export type EventStatus = "draft" | "published" | "cancelled" | "completed";
 
@@ -59,7 +61,7 @@ export interface RaceEvent {
     // Basic info
     name: string;
     description: string;     // Rich text / markdown
-    date: Timestamp | Date;
+    date: UniversalDate | Date;
     location: {
         name: string;           // e.g. "BGC, Taguig"
         address: string;
@@ -83,12 +85,12 @@ export interface RaceEvent {
     // Early Bird
     earlyBird?: {
         enabled: boolean;
-        startDate: Timestamp | Date;
-        endDate: Timestamp | Date;
+        startDate: UniversalDate | Date;
+        endDate: UniversalDate | Date;
     };
 
     // Registration Deadline
-    registrationEndDate: Timestamp | Date;
+    registrationEndDate: UniversalDate | Date;
 
     // Timeline
     timeline: TimelineItem[];
@@ -100,6 +102,6 @@ export interface RaceEvent {
     status: EventStatus;
     featured: boolean;
     isLiveTrackingEnabled?: boolean;
-    createdAt: Timestamp | Date;
-    updatedAt: Timestamp | Date;
+    createdAt: UniversalDate | Date;
+    updatedAt: UniversalDate | Date;
 }

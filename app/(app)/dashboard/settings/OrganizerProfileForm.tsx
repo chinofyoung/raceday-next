@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Input } from "@/components/ui/Input";
@@ -76,6 +76,16 @@ export function OrganizerProfileForm() {
         setSaveStatus("saving");
         try {
             const userDocRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (!userSnap.exists()) {
+                await setDoc(userDocRef, {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName,
+                    createdAt: serverTimestamp(),
+                });
+            }
 
             await updateDoc(userDocRef, {
                 "organizer.name": data.name,

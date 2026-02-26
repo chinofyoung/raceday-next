@@ -1,5 +1,5 @@
-import { db } from "@/lib/firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { api } from "@/convex/_generated/api";
+import { fetchMutation } from "convex/nextjs";
 
 export type AdminActionType =
     | "approve_organizer"
@@ -21,14 +21,13 @@ export async function logAdminAction(
     details?: string
 ) {
     try {
-        await addDoc(collection(db, "auditLogs"), {
+        await fetchMutation(api.audit.log, {
             adminId: adminId || "unknown",
             adminName: adminName || "Unknown Admin",
             action: action || "unknown_action",
             targetId: targetId || "unknown",
             targetName: targetName || "Unknown Target",
             details: details || "",
-            timestamp: serverTimestamp()
         });
     } catch (error) {
         console.error("Error logging admin action:", error);

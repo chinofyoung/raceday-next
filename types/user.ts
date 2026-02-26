@@ -1,4 +1,5 @@
-import { Timestamp } from "firebase/firestore";
+// Convex uses number for timestamps
+type UniversalTimestamp = number;
 
 export type UserRole = "runner" | "organizer" | "admin";
 
@@ -11,6 +12,8 @@ export type OrganizerType =
     | "nonprofit";        // NGO, foundation, charity
 
 export interface User {
+    _id?: string; // Convex ID
+    _creationTime?: number; // Convex creation time
     uid: string;
     email: string;
     displayName: string;
@@ -44,15 +47,15 @@ export interface User {
         phone: string;
         organizerType: OrganizerType;
         approved: boolean;
-        appliedAt: Timestamp;
-        approvedAt?: Timestamp;
+        appliedAt: UniversalTimestamp;
+        approvedAt?: UniversalTimestamp;
     };
 
     // Metadata
     profileCompletion: number; // 0–100
     volunteerEvents?: string[]; // Array of eventIds where user is a volunteer
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
+    createdAt: UniversalTimestamp;
+    updatedAt: UniversalTimestamp;
 }
 
 export interface OrganizerApplication {
@@ -97,9 +100,9 @@ export interface OrganizerApplication {
 
     // === Meta ===
     status: "pending" | "approved" | "rejected" | "needs_info";
-    createdAt: Timestamp;
-    updatedAt?: Timestamp;
-    reviewedAt?: Timestamp;
+    createdAt: UniversalTimestamp;
+    updatedAt?: UniversalTimestamp;
+    reviewedAt?: UniversalTimestamp;
     reviewedBy?: string;
     rejectionReason?: string;
     adminNotes?: string;            // Internal admin notes

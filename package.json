@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
+    "@clerk/nextjs": "^6.38.2",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.2.4",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
+    "convex": "^1.32.0",
     "date-fns": "^4.1.0",
     "firebase": "^12.9.0",
     "firebase-admin": "^13.6.1",

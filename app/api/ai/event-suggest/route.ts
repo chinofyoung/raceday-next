@@ -1,6 +1,6 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase/admin";
+import { getAuth } from "@clerk/nextjs/server";
 
 // Module-level rate limiter (persists per serverless instance)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -26,19 +26,12 @@ const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-export async function POST(req: Request) {
+export async function POST(req: any) {
     // 1. Authenticate
-    const authHeader = req.headers.get("authorization");
-    const idToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    const { userId } = getAuth(req);
 
-    if (!idToken) {
+    if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    try {
-        await adminAuth.verifyIdToken(idToken);
-    } catch {
-        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const ip = req.headers.get("x-forwarded-for") ?? "unknown";
@@ -90,7 +83,7 @@ export async function POST(req: Request) {
         }
 
         const response = await anthropic.messages.create({
-            model: "claude-sonnet-4-20250514",
+            model: "claude-3-5-sonnet-20240620",
             max_tokens: 1500,
             temperature: 0.7,
             system: systemPrompt,
@@ -103,7 +96,7 @@ export async function POST(req: Request) {
         });
 
         // Content is an array of content blocks
-        const textBlock = response.content.find(block => block.type === 'text');
+        const textBlock = response.content.find((block: any) => block.type === 'text');
         if (!textBlock || textBlock.type !== 'text') {
             throw new Error("No text response from Claude");
         }

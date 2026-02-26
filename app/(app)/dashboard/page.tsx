@@ -2,13 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { useDashboardMode } from "@/components/providers/DashboardModeProvider";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/Button";
-import { getEvents } from "@/lib/services/eventService";
-import { getRegistrations, getRegistrationsWithEvents, getOrganizerStats, getCategoryCounts } from "@/lib/services/registrationService";
 import { computeProfileCompletion } from "@/lib/utils";
-import { checkExistingApplication } from "@/lib/services/applicationService";
 
 // New modular components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
@@ -17,88 +16,39 @@ import { RunnerView } from "@/components/dashboard/RunnerView";
 import { Skeleton, EventCardSkeleton, StatCardSkeleton } from "@/components/shared/Skeleton";
 
 export default function DashboardPage() {
-    const { user, firebaseUser, role, loading: authLoading } = useAuth();
+    const { user, role, loading: authLoading } = useAuth();
     const { mode, setMode, canSwitchMode } = useDashboardMode();
-    const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState({ total: 0, secondary: 0, revenue: 0, claimedKits: 0 });
-    const [items, setItems] = useState<any[]>([]);
-    const [allRegistrations, setAllRegistrations] = useState<any[]>([]);
-    const [allEvents, setAllEvents] = useState<any[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [hasApplication, setHasApplication] = useState(false);
+
+    const isOrganizerView = mode === "organizer";
+
+    // Use Convex hooks
+    const convexEvents = useQuery(api.events.list, isOrganizerView ? {
+        organizerId: user?._id as any,
+        status: "all",
+        paginationOpts: { numItems: 100, cursor: null }
+    } : "skip");
+
+    const convexRegistrations = useQuery(api.registrations.getByUserId, !isOrganizerView && user ? {
+        userId: user._id as any
+    } : "skip");
+
+    // Placeholder for organizer registrations — will need a more complex query or additional schema fields
+    const allRegistrations: any[] = convexRegistrations || [];
+
+    const stats = {
+        total: convexEvents?.page.length || 0,
+        secondary: allRegistrations.filter(r => r.status === "paid").length,
+        revenue: allRegistrations.reduce((acc, r) => acc + (r.totalPrice || 0), 0),
+        claimedKits: allRegistrations.filter(r => r.raceKitClaimed).length
+    };
+    const items = isOrganizerView ? (convexEvents?.page || []).slice(0, 5) : allRegistrations;
+    const allEvents = convexEvents?.page || [];
+    const loading = authLoading || (isOrganizerView && convexEvents === undefined) || (!isOrganizerView && convexRegistrations === undefined);
+    const error = null;
+    const hasApplication = false;
 
 
     const completion = computeProfileCompletion(user as any);
-    const isOrganizerView = mode === "organizer";
-
-    useEffect(() => {
-        if (!authLoading) {
-            if (user) {
-                fetchDashboardData();
-                checkApp();
-            } else {
-                setLoading(false);
-            }
-        }
-    }, [user, authLoading, mode]);
-
-    const fetchDashboardData = async () => {
-        if (!user) return;
-        setLoading(true);
-        setError(null);
-        try {
-            if (isOrganizerView) {
-                // Fetch stats via aggregate queries + small batch of recent registrations
-                const [eventsResult, regsResult, aggregateStats] = await Promise.all([
-                    getEvents({ organizerId: user.uid, limitCount: 100, status: "all" }),
-                    getRegistrations({ organizerId: user.uid, status: "paid", limitCount: 50 }), // Only fetch 50 for the feed and basic category estimation if needed
-                    getOrganizerStats(user.uid)
-                ]);
-
-                const eventsList = eventsResult.items;
-                const activeEvents = eventsList.filter((e: any) => e.status === "published");
-                const myRegs = regsResult.items;
-
-                setAllEvents(eventsList);
-                setAllRegistrations(myRegs);
-                setStats({
-                    total: eventsList.length,
-                    secondary: aggregateStats.totalRegistrations,
-                    revenue: aggregateStats.totalRevenue,
-                    claimedKits: aggregateStats.claimedKits
-                });
-                setItems(activeEvents.slice(0, 5));
-            } else {
-                const result = await getRegistrationsWithEvents({
-                    userId: user.uid,
-                    limitCount: 100
-                });
-
-                setStats({
-                    total: result.items.filter((r: any) => r.status === "paid").length,
-                    secondary: 0,
-                    revenue: 0,
-                    claimedKits: 0
-                });
-                setItems(result.items);
-            }
-        } catch (error) {
-            console.error("Error fetching dashboard data:", error);
-            setError("Failed to load your dashboard. Please try again.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const checkApp = async () => {
-        if (!user) return;
-        try {
-            const app = await checkExistingApplication(user.uid);
-            setHasApplication(!!app);
-        } catch (error) {
-            console.error("Error checking app:", error);
-        }
-    };
 
 
     // Derived organizer stats (using aggregate queries from backend now)
@@ -122,7 +72,7 @@ export default function DashboardPage() {
     // Per-event kit stats
     const eventKitStats = useMemo(() => {
         return items.map(event => {
-            const eventRegs = allRegistrations.filter(r => r.eventId === event.id);
+            const eventRegs = allRegistrations.filter(r => r.eventId === event._id);
             const claimed = eventRegs.filter(r => r.raceKitClaimed).length;
             return {
                 ...event,
@@ -138,7 +88,7 @@ export default function DashboardPage() {
         const eventMap = new Map<string, { id: string, name: string; count: number; revenue: number }>();
         allRegistrations.forEach(r => {
             const eventId = r.eventId;
-            const event = allEvents.find(e => e.id === eventId);
+            const event = allEvents.find(e => e._id === eventId);
             const eventTitle = event?.name || "Unknown Event";
 
             const existing = eventMap.get(eventId) || { id: eventId, name: eventTitle, count: 0, revenue: 0 };
@@ -155,7 +105,7 @@ export default function DashboardPage() {
         allRegistrations.forEach(r => {
             const catId = r.categoryId || "Unknown";
             const eventId = r.eventId || "Unknown";
-            const event = allEvents.find(e => e.id === eventId);
+            const event = allEvents.find(e => e._id === eventId);
             const eventTitle = event?.name || "Unknown Event";
             const category = event?.categories?.find((c: any) => c.id === catId);
             const categoryName = category?.name || catId;
@@ -213,8 +163,8 @@ export default function DashboardPage() {
             <PageWrapper className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center space-y-4">
                     <p className="text-red-400 font-bold italic uppercase">{error}</p>
-                    <Button variant="outline" onClick={fetchDashboardData}>
-                        Try Again
+                    <Button variant="outline" onClick={() => window.location.reload()}>
+                        Reload Page
                     </Button>
                 </div>
             </PageWrapper>

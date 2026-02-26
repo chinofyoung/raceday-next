@@ -1,4 +1,6 @@
-import { Timestamp } from "firebase/firestore";
+// Convex uses number (ms) for dates, legacy Firebase uses UniversalDate
+type UniversalDate = number | Date | any;
+
 
 export type RegistrationStatus = "pending" | "paid" | "cancelled" | "failed";
 export type PaymentStatus = "unpaid" | "paid" | "failed" | "expired";
@@ -43,13 +45,13 @@ export interface Registration {
     raceNumber?: string;
     qrCodeUrl?: string;
     raceKitClaimed: boolean;
-    raceKitClaimedAt?: Timestamp | Date;
+    raceKitClaimedAt?: UniversalDate | Date;
 
     // Payments
     xenditPaymentId?: string;
-    paidAt?: Timestamp | Date;
+    paidAt?: UniversalDate | Date;
 
     // Metadata
-    createdAt: Timestamp | Date;
-    updatedAt: Timestamp | Date;
+    createdAt: UniversalDate | Date;
+    updatedAt: UniversalDate | Date;
 }

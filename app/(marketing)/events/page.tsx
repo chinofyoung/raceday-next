@@ -3,8 +3,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/Button";
@@ -16,59 +14,43 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { EventCardSkeleton } from "@/components/shared/Skeleton";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getUserRegistrations } from "@/lib/services/registrationService";
 import { isEventOver } from "@/lib/earlyBirdUtils";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 const DISTANCE_FILTERS = ["All", "5K", "10K", "21K", "42K"];
 
 export default function EventsDirectoryPage() {
-    const [events, setEvents] = useState<RaceEvent[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [activeFilter, setActiveFilter] = useState("All");
-    const [userRegistrations, setUserRegistrations] = useState<any[]>([]);
     const { user } = useAuth();
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+    // Convex queries
+    const convexEvents = useQuery(api.events.list, {
+        status: "published",
+        paginationOpts: { numItems: 100, cursor: null }
+    });
 
-    useEffect(() => {
-        if (user?.uid) {
-            getUserRegistrations(user.uid).then(setUserRegistrations);
-        } else {
-            setUserRegistrations([]);
-        }
-    }, [user]);
+    const convexRegistrations = useQuery(api.registrations.getByUserId, user?._id ? {
+        userId: user._id as Id<"users">
+    } : "skip");
 
-    const fetchEvents = React.useCallback(async () => {
-        setLoading(true);
-        try {
-            // Fetch published events ordered by date
-            const q = query(
-                collection(db, "events"),
-                where("status", "==", "published"),
-                orderBy("date", "asc")
-            );
-            const snap = await getDocs(q);
-            const eventsData = snap.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as RaceEvent[];
-            setEvents(eventsData);
-        } catch (error) {
-            console.error("Error fetching events:", error);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    const events = (convexEvents?.page || []).map(e => ({
+        ...e,
+        id: e._id // Map _id to id for compatibility with EventCard and types
+    })) as RaceEvent[];
+
+    const loading = convexEvents === undefined;
+    const userRegistrations = convexRegistrations || [];
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [activeFilter, setActiveFilter] = useState("All");
 
     const getRegistrationStatus = (eventId: string) => {
         const reg = userRegistrations.find(r => r.eventId === eventId);
         if (!reg) return undefined;
         return {
             isRegistered: true,
-            isProxy: reg.isProxy || false,
+            isProxy: (reg as any).isProxy || false,
             status: reg.status
         };
     };

@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LogIn, X, ShieldCheck } from "lucide-react";
-import { signInWithGoogle } from "@/lib/firebase/auth";
-import { auth } from "@/lib/firebase/config";
-import Image from "next/image";
+import { useClerk } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 interface LoginPromptModalProps {
     isOpen: boolean;
@@ -15,33 +13,20 @@ interface LoginPromptModalProps {
 }
 
 export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromptModalProps) {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { openSignIn } = useClerk();
+    const pathname = usePathname();
 
     if (!isOpen) return null;
 
-    const handleLogin = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const { user } = await signInWithGoogle();
-            const idToken = await auth.currentUser?.getIdToken();
-
-            if (idToken) {
-                await fetch("/api/auth/session", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ idToken }),
-                });
-            }
-
-            onLoginSuccess(user.uid);
-        } catch (err: any) {
-            console.error("Login failed:", err);
-            setError(err.message || "Login failed. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+    const handleLogin = () => {
+        // Since we are migrating to Clerk, we'll use their managed sign-in modal
+        // or redirect. openSignIn() is the easiest way to show the modal.
+        // After success, it will redirect back to the current page.
+        openSignIn({
+            afterSignInUrl: pathname,
+            afterSignUpUrl: pathname,
+        });
+        onClose();
     };
 
     return (
@@ -82,17 +67,10 @@ export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromp
                         size="lg"
                         className="w-full h-14 text-lg font-bold uppercase italic tracking-wider gap-3 bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20"
                         onClick={handleLogin}
-                        isLoading={loading}
                     >
-                        {!loading && <LogIn size={20} />}
-                        Continue with Google
+                        <LogIn size={20} />
+                        Continue to Sign In
                     </Button>
-
-                    {error && (
-                        <p className="text-sm text-red-500 font-bold italic text-center animate-in fade-in">
-                            {error}
-                        </p>
-                    )}
                 </div>
 
                 <p className="text-center text-[10px] text-text-muted font-bold italic uppercase tracking-widest">

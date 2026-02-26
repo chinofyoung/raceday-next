@@ -3,13 +3,12 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, LogOut, LayoutDashboard, Shield, AlertTriangle } from "lucide-react";
-import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { Menu, X, LayoutDashboard, Shield } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { signOutUser } from "@/lib/firebase/auth";
-import { useRouter, usePathname } from "next/navigation";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
     { label: "Events", href: "/events" },
@@ -18,23 +17,9 @@ const NAV_LINKS = [
 ];
 
 export function Navbar() {
-    const { firebaseUser, user, loading } = useAuth();
-    const router = useRouter();
+    const { user, loading } = useAuth();
     const [isOpen, setIsOpen] = React.useState(false);
     const [isScrolled, setIsScrolled] = React.useState(false);
-    const [showSignOutModal, setShowSignOutModal] = React.useState(false);
-    const [signingOut, setSigningOut] = React.useState(false);
-
-    const handleSignOut = async () => {
-        setSigningOut(true);
-        try {
-            await signOutUser();
-            router.push("/");
-        } finally {
-            setSigningOut(false);
-            setShowSignOutModal(false);
-        }
-    };
 
     const pathname = usePathname();
 
@@ -60,125 +45,120 @@ export function Navbar() {
     }, []);
 
     return (
-        <>
-            <nav
-                className={cn(
-                    "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-8",
-                    isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-6" : "bg-transparent"
-                )}
-            >
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <Link href="/" className="flex items-center transition-transform hover:scale-105 active:scale-95">
-                        <Image
-                            src="/logo.png"
-                            alt="RaceDay"
-                            width={180}
-                            height={48}
-                            className="h-9 w-auto object-contain"
-                            priority
-                        />
-                    </Link>
+        <nav
+            className={cn(
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-8",
+                isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-6" : "bg-transparent"
+            )}
+        >
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                <Link href="/" className="flex items-center transition-transform hover:scale-105 active:scale-95">
+                    <Image
+                        src="/logo.png"
+                        alt="RaceDay"
+                        width={180}
+                        height={48}
+                        className="h-9 w-auto object-contain"
+                        priority
+                    />
+                </Link>
 
-                    {/* Desktop Nav */}
-                    <div className="hidden md:flex items-center gap-8">
+                {/* Desktop Nav */}
+                <div className="hidden md:flex items-center gap-8">
+                    {NAV_LINKS.map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            className="text-text-muted hover:text-primary font-medium transition-colors"
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
+
+                    {loading ? (
+                        <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                            <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
+                            <div className="w-20 h-4 bg-white/5 rounded animate-pulse hidden md:block" />
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                            <SignedOut>
+                                <Button variant="primary" size="sm" asChild>
+                                    <Link href="/auth/login">Sign In</Link>
+                                </Button>
+                            </SignedOut>
+                            <SignedIn>
+                                <div className="flex items-center gap-6">
+                                    {user?.role === "admin" && (
+                                        <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin">
+                                            <span className="text-xs font-semibold uppercase tracking-widest text-cta group-hover/admin:text-cta/80 transition-colors">
+                                                Admin Panel
+                                            </span>
+                                        </Link>
+                                    )}
+                                    {(user?.role === "organizer" || user?.role === "admin") && (
+                                        <Link href="/dashboard/events" className="hidden lg:flex items-center gap-2 group/manage">
+                                            <span className="text-xs font-semibold uppercase tracking-widest text-text-muted group-hover/manage:text-cta transition-colors">
+                                                Manage Events
+                                            </span>
+                                        </Link>
+                                    )}
+                                    <Link href="/dashboard" className="flex items-center gap-2 group/db">
+                                        <span className="text-sm font-bold uppercase italic tracking-wider text-text group-hover/db:text-primary transition-colors">
+                                            Dashboard
+                                        </span>
+                                    </Link>
+                                    <UserButton
+                                        appearance={{
+                                            elements: {
+                                                userButtonAvatarBox: "w-8 h-8 border border-primary/20 hover:border-primary transition-all",
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </SignedIn>
+                        </div>
+                    )}
+                </div>
+
+                {/* Mobile Toggle */}
+                <button
+                    className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
+                    onClick={() => setIsOpen(!isOpen)}
+                    aria-expanded={isOpen}
+                    aria-controls="mobile-nav-menu"
+                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                >
+                    {isOpen ? <X /> : <Menu />}
+                </button>
+            </div>
+
+            {/* Mobile Nav */}
+            {isOpen && (
+                <div id="mobile-nav-menu" className="md:hidden absolute top-full left-4 right-4 mt-2 bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-top-4">
+                    <div className="flex flex-col gap-4">
                         {NAV_LINKS.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
-                                className="text-text-muted hover:text-primary font-medium transition-colors"
+                                className={cn(
+                                    "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
+                                    pathname === link.href ? "text-primary border-l-2 border-primary pl-4 -ml-4" : "text-text hover:text-primary"
+                                )}
+                                onClick={() => setIsOpen(false)}
                             >
                                 {link.label}
                             </Link>
                         ))}
-
-                        {loading ? (
-                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
-                                <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
-                                <div className="w-20 h-4 bg-white/5 rounded animate-pulse hidden md:block" />
-                            </div>
-                        ) : firebaseUser ? (
-                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
-                                {user?.role === "admin" && (
-                                    <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin mr-4">
-                                        <span className="text-xs font-semibold uppercase tracking-widest text-cta group-hover/admin:text-cta/80 transition-colors">
-                                            Admin Panel
-                                        </span>
-                                    </Link>
-                                )}
-                                {(user?.role === "organizer" || user?.role === "admin") && (
-                                    <Link href="/dashboard/events" className="hidden lg:flex items-center gap-2 group/manage mr-4">
-                                        <span className="text-xs font-semibold uppercase tracking-widest text-text-muted group-hover/manage:text-cta transition-colors">
-                                            Manage Events
-                                        </span>
-                                    </Link>
-                                )}
-                                <Link href="/dashboard" className="flex items-center gap-2 group/db">
-                                    <div className="w-8 h-8 rounded-full border border-primary/20 bg-surface overflow-hidden group-hover/db:border-primary transition-all">
-                                        {user?.photoURL ? (
-                                            <img src={user.photoURL} alt={`${user.displayName || 'User'}'s profile photo`} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10 italic font-bold text-xs">
-                                                {user?.displayName?.[0] || "U"}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <span className="text-sm font-bold uppercase italic tracking-wider text-text group-hover/db:text-primary transition-colors">
-                                        Dashboard
-                                    </span>
-                                </Link>
-                                <button
-                                    onClick={() => setShowSignOutModal(true)}
-                                    className="p-2 text-text-muted hover:text-red-500 transition-colors cursor-pointer"
-                                    title="Sign Out"
-                                    aria-label="Sign Out"
-                                >
-                                    <LogOut size={18} />
-                                </button>
-                            </div>
-                        ) : (
-                            <Button variant="primary" size="sm" asChild>
-                                <Link href="/auth/login">Sign In</Link>
-                            </Button>
-                        )}
-                    </div>
-
-                    {/* Mobile Toggle */}
-                    <button
-                        className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
-                        onClick={() => setIsOpen(!isOpen)}
-                        aria-expanded={isOpen}
-                        aria-controls="mobile-nav-menu"
-                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                    >
-                        {isOpen ? <X /> : <Menu />}
-                    </button>
-                </div>
-
-                {/* Mobile Nav */}
-                {isOpen && (
-                    <div id="mobile-nav-menu" className="md:hidden absolute top-full left-4 right-4 mt-2 bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-top-4">
-                        <div className="flex flex-col gap-4">
-                            {NAV_LINKS.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
-                                        pathname === link.href ? "text-primary border-l-2 border-primary pl-4 -ml-4" : "text-text hover:text-primary"
-                                    )}
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                            <div className="pt-4 border-t border-white/5 space-y-4">
-                                {loading ? (
-                                    <div className="flex items-center gap-3 px-1">
-                                        <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
-                                        <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
-                                    </div>
-                                ) : firebaseUser ? (
-                                    <>
+                        <div className="pt-4 border-t border-white/5 space-y-4">
+                            {loading ? (
+                                <div className="flex items-center gap-3 px-1">
+                                    <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
+                                    <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
+                                </div>
+                            ) : (
+                                <>
+                                    <SignedIn>
                                         <Link
                                             href="/dashboard"
                                             className={cn(
@@ -210,42 +190,24 @@ export function Navbar() {
                                                 Manage Events
                                             </Link>
                                         )}
-                                        <button
-                                            onClick={() => {
-                                                setIsOpen(false);
-                                                setShowSignOutModal(true);
-                                            }}
-                                            className="flex items-center gap-3 text-lg font-semibold py-4 text-red-500 hover:text-red-400 transition-colors w-full cursor-pointer text-left"
-                                        >
-                                            <LogOut size={20} />
-                                            Sign Out
-                                        </button>
-                                    </>
-                                ) : (
-                                    <Button className="w-full" asChild>
-                                        <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                                            Sign In
-                                        </Link>
-                                    </Button>
-                                )}
-                            </div>
+                                        <div className="py-4 flex justify-between items-center border-t border-white/5">
+                                            <span className="text-lg font-semibold text-text-muted">Account</span>
+                                            <UserButton />
+                                        </div>
+                                    </SignedIn>
+                                    <SignedOut>
+                                        <Button className="w-full" asChild>
+                                            <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                                                Sign In
+                                            </Link>
+                                        </Button>
+                                    </SignedOut>
+                                </>
+                            )}
                         </div>
                     </div>
-                )}
-            </nav>
-
-            <ConfirmModal
-                open={showSignOutModal}
-                onConfirm={handleSignOut}
-                onCancel={() => setShowSignOutModal(false)}
-                title="Sign Out"
-                description="Are you sure you want to sign out of your account?"
-                confirmLabel="Sign Out"
-                cancelLabel="Cancel"
-                confirmVariant="danger"
-                isLoading={signingOut}
-                icon={<LogOut size={24} className="text-red-500" />}
-            />
-        </>
+                </div>
+            )}
+        </nav>
     );
 }

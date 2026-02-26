@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { AuthProvider } from "@/components/providers/AuthProvider";
+import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import { Toaster } from "sonner";
 
 export default function RootLayout({
@@ -46,10 +46,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className="antialiased selection:bg-primary/30 selection:text-white overflow-x-hidden">
-        <AuthProvider>
+        <ConvexClientProvider>
           {children}
           <Toaster richColors closeButton position="top-right" />
-        </AuthProvider>
+        </ConvexClientProvider>
       </body>
     </html>
   );

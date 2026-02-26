@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { profileSchema, ProfileFormValues, calculateCompletion } from "@/lib/validations/profile";
@@ -59,11 +59,11 @@ export function ProfileForm() {
             const userDocRef = doc(db, "users", user.uid);
             const completion = calculateCompletion(data);
 
-            await updateDoc(userDocRef, {
+            await setDoc(userDocRef, {
                 ...data,
                 profileCompletion: completion,
                 updatedAt: serverTimestamp(),
-            });
+            }, { merge: true });
 
             await refreshUser();
             reset(data);
@@ -89,7 +89,7 @@ export function ProfileForm() {
                                 value={user?.photoURL || ""}
                                 onChange={async (url) => {
                                     if (user) {
-                                        await updateDoc(doc(db, "users", user.uid), { photoURL: url });
+                                        await setDoc(doc(db, "users", user.uid), { photoURL: url }, { merge: true });
                                         await refreshUser();
                                     }
                                 }}

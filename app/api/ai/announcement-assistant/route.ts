@@ -1,6 +1,6 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firebase/admin";
+import { getAuth } from "@clerk/nextjs/server";
 
 // Module-level rate limiter (persists per serverless instance)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -28,17 +28,9 @@ const anthropic = new Anthropic({
 
 export async function POST(req: Request) {
     // 1. Authenticate
-    const authHeader = req.headers.get("authorization");
-    const idToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
-
-    if (!idToken) {
+    const { userId } = getAuth(req as any);
+    if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    try {
-        await adminAuth.verifyIdToken(idToken);
-    } catch {
-        return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const ip = req.headers.get("x-forwarded-for") ?? "unknown";

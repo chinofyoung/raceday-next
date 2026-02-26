@@ -4,11 +4,13 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/Input";
 import { EventFormValues } from "@/lib/validations/event";
 import { Loader2, Wand2 } from "lucide-react";
+import { useAuth } from "@clerk/nextjs";
 import { useState } from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export function Step1Basic() {
+    const { getToken } = useAuth();
     const { register, formState: { errors }, watch, setValue } = useFormContext<EventFormValues>();
     const [isGenerating, setIsGenerating] = useState(false);
 
@@ -71,7 +73,8 @@ export function Step1Basic() {
                                     setIsGenerating(true);
                                     const tid = toast.loading("Claude is polishing your copy...");
                                     try {
-                                        const res = await (await import("@/lib/services/aiService")).improveText(text);
+                                        const token = await getToken();
+                                        const res = await (await import("@/lib/services/aiService")).improveText(text, token || undefined);
                                         setValue("description", res.improvedText);
                                         toast.success("Copy polished!", { id: tid });
                                     } catch (e) {

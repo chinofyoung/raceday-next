@@ -9,13 +9,12 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+
 
 export default function VolunteerAcceptPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { user, firebaseUser, loading: authLoading } = useAuth();
+    const { user, clerkUser, loading: authLoading } = useAuth();
 
     const eventId = searchParams.get("eventId");
     const volunteerId = searchParams.get("volunteerId");
@@ -69,7 +68,7 @@ export default function VolunteerAcceptPage() {
     }, [eventId, volunteerId]);
 
     const handleAccept = async () => {
-        if (!firebaseUser || !eventId || !volunteerId) return;
+        if (!clerkUser || !eventId || !volunteerId) return;
 
         setIsAccepting(true);
         try {
@@ -117,7 +116,7 @@ export default function VolunteerAcceptPage() {
     }
 
     // Check email mismatch
-    const emailMismatch = firebaseUser && firebaseUser.email?.toLowerCase() !== invitation?.email?.toLowerCase() && invitation?.email;
+    const emailMismatch = clerkUser && clerkUser.emailAddresses[0].emailAddress.toLowerCase() !== invitation?.email?.toLowerCase() && invitation?.email;
 
     return (
         <PageWrapper className="max-w-2xl mx-auto py-20">
@@ -189,7 +188,7 @@ export default function VolunteerAcceptPage() {
                                 <AlertCircle className="text-red-500 shrink-0" size={20} />
                                 <div className="text-xs text-red-500 leading-relaxed font-bold italic">
                                     This invitation was sent to <span className="underline">{invitation.email}</span>,
-                                    but you are logged in as <span className="underline">{firebaseUser.email}</span>.
+                                    but you are logged in as <span className="underline">{clerkUser.emailAddresses[0].emailAddress}</span>.
                                     Please switch accounts to accept.
                                 </div>
                             </div>
@@ -198,7 +197,7 @@ export default function VolunteerAcceptPage() {
                         <div className="pt-4 flex flex-col gap-3">
                             <Button
                                 onClick={handleAccept}
-                                disabled={isAccepting || emailMismatch || !firebaseUser}
+                                disabled={isAccepting || emailMismatch || !clerkUser}
                                 variant="primary"
                                 className="w-full h-14 text-lg font-black italic uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
                             >
