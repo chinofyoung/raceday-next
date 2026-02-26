@@ -82,6 +82,7 @@ export default function KioskModePage() {
     const [isUpdating, setIsUpdating] = useState(false);
     const [permissionStatus, setPermissionStatus] = useState<"granted" | "denied" | "prompt">("prompt");
     const [successFlash, setSuccessFlash] = useState(false);
+    const [showScanner, setShowScanner] = useState(true);
     const scannerRef = useRef<any>(null);
     const lastScannedRef = useRef<string | null>(null);
     const lastScanTimeRef = useRef<number>(0);
@@ -230,7 +231,10 @@ export default function KioskModePage() {
                 setScanResult(data);
                 setSearchMode(false);
                 fetchParticipant(data.registrationId);
-                if (scannerRef.current) scannerRef.current.pause();
+                // STOP scanner after a successful scan
+                if (scannerRef.current) {
+                    scannerRef.current.stop().catch((e: any) => console.error("Kiosk: Error stopping scanner:", e));
+                }
             } else {
                 playErrorSound();
                 toast.error("Invalid QR code", {
@@ -250,12 +254,16 @@ export default function KioskModePage() {
     // ── Reset scanner ──────────────────────────────────────────
     const resetScanner = useCallback(() => {
         if (autoResetTimerRef.current) clearTimeout(autoResetTimerRef.current);
+
         setScanResult(null);
         setRegistration(null);
         setSuccessFlash(false);
         lastScannedRef.current = null;
         lastScanTimeRef.current = 0;
-        if (scannerRef.current) scannerRef.current.resume();
+
+        // Reset the scanner component to re-initialize camera
+        setShowScanner(false);
+        setTimeout(() => setShowScanner(true), 50);
     }, []);
 
     const handlePermissionStatus = useCallback((status: "granted" | "denied" | "prompt") => {
@@ -295,7 +303,9 @@ export default function KioskModePage() {
         setSearchResults([]);
         setSearchQuery("");
         setSearchMode(false);
-        if (scannerRef.current) scannerRef.current.pause();
+        if (scannerRef.current) {
+            scannerRef.current.stop().catch((e: any) => console.error("Kiosk: Error stopping scanner:", e));
+        }
     };
 
     // Cleanup timer on unmount
@@ -371,14 +381,16 @@ export default function KioskModePage() {
                             {/* Scanner Area */}
                             <div className="flex-1 relative p-4 flex flex-col">
                                 <div className="flex-1 relative bg-black rounded-2xl overflow-hidden border border-white/10">
-                                    <QRScanner
-                                        onScanSuccess={onScanSuccess}
-                                        onScanFailure={onScanFailure}
-                                        scannerRef={scannerRef}
-                                        onPermissionStatus={handlePermissionStatus}
-                                    />
+                                    {showScanner && (
+                                        <QRScanner
+                                            onScanSuccess={onScanSuccess}
+                                            onScanFailure={onScanFailure}
+                                            scannerRef={scannerRef}
+                                            onPermissionStatus={handlePermissionStatus}
+                                        />
+                                    )}
                                     {/* Viewfinder overlay */}
-                                    {!scanResult && permissionStatus === "granted" && (
+                                    {!scanResult && showScanner && permissionStatus === "granted" && (
                                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                                             <div className="w-52 h-52 border-2 border-primary/40 rounded-[2rem] animate-pulse flex items-center justify-center">
                                                 <Scan className="text-primary/20" size={80} />

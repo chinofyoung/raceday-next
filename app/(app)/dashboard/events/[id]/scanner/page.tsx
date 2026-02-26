@@ -96,8 +96,10 @@ export default function EventScannerPage() {
             if (data.registrationId && scannedEventId === currentEventId) {
                 setScanResult(data);
                 fetchParticipant(data.registrationId);
-                // Pause scanner or stop it
-                if (scannerRef.current) scannerRef.current.pause();
+                // STOP scanner after a successful scan
+                if (scannerRef.current) {
+                    scannerRef.current.stop().catch((e: any) => console.error("Error stopping scanner:", e));
+                }
             } else {
                 console.warn("Event ID mismatch:", { scanned: scannedEventId, current: currentEventId });
                 toast.error("Invalid QR code", {
@@ -155,7 +157,10 @@ export default function EventScannerPage() {
         setRegistration(null);
         lastScannedRef.current = null;
         lastScanTimeRef.current = 0;
-        if (scannerRef.current) scannerRef.current.resume();
+        // The camera was stopped on success, so we just need to flip showScanner 
+        // to re-trigger the useEffect in QRScannerWrapper to start the camera again
+        setShowScanner(false);
+        setTimeout(() => setShowScanner(true), 50);
     }, []);
 
     const handlePermissionStatus = useCallback((status: "granted" | "denied" | "prompt") => {
