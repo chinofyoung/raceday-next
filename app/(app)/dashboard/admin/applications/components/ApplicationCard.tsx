@@ -13,6 +13,8 @@ import {
 import { cn, formatDate } from "@/lib/utils";
 import { PH_REGIONS } from "@/lib/constants/ph-regions";
 import { PH_GOVERNMENT_ID_TYPES } from "@/lib/constants/ph-id-types";
+import { PH_BANKS } from "@/lib/constants/ph-banks";
+import { Wallet, Camera } from "lucide-react";
 
 interface ApplicationCardProps {
     app: OrganizerApplication;
@@ -27,6 +29,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
     const regionName = app.address?.region ? (PH_REGIONS.find(r => r.code === app.address.region)?.name || app.address.region) : "N/A";
     const idTypeName = app.governmentId?.type ? (PH_GOVERNMENT_ID_TYPES.find(t => t.value === app.governmentId.type)?.label || app.governmentId.type) : "N/A";
+    const bankName = app.bankDetails?.bankCode ? (PH_BANKS.find(b => b.value === app.bankDetails.bankCode)?.label || app.bankDetails.bankCode) : "N/A";
 
     const DetailItem = ({ label, value, icon, fullWidth }: { label: string, value: string | number | undefined, icon?: React.ReactNode, fullWidth?: boolean }) => (
         <div className={cn("space-y-1", fullWidth ? "col-span-full" : "")}>
@@ -45,6 +48,8 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
         { label: "Permit Uploaded", checked: !!app.businessPermitUrl, optional: true },
         { label: "Address Complete", checked: !!(app.address?.street && app.address?.city && app.address?.region) },
         { label: "Past Events", checked: !!app.pastEventsDescription, optional: true },
+        { label: "Bank Account", checked: !!(app.bankDetails?.bankCode && app.bankDetails?.accountNumber) },
+        { label: "KYC Selfie", checked: !!app.selfieWithIdUrl },
     ];
 
     return (
@@ -188,6 +193,18 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     <DetailItem label="ID Number" value={app.governmentId?.idNumber} />
                                 </div>
                             </div>
+
+                            {/* Payout Details */}
+                            <div className="space-y-4">
+                                <h4 className="text-[11px] font-black uppercase italic tracking-widest text-white flex items-center gap-2">
+                                    <Wallet size={14} className="text-cta" /> Payout Details
+                                </h4>
+                                <div className="space-y-4 px-2">
+                                    <DetailItem label="Bank / E-Wallet" value={bankName} />
+                                    <DetailItem label="Account Number" value={app.bankDetails?.accountNumber} />
+                                    <DetailItem label="Account Holder" value={app.bankDetails?.accountHolderName} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -224,6 +241,17 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                         <img src={app.businessPermitUrl} alt="Permit" className="w-full h-full object-cover group-hover/img:scale-105 transition-transform" />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
                                             <ExternalLink size={20} className="text-white" />
+                                        </div>
+                                    </a>
+                                </div>
+                            )}
+                            {app.selfieWithIdUrl && (
+                                <div className="space-y-2">
+                                    <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">KYC Selfie</span>
+                                    <a href={app.selfieWithIdUrl} target="_blank" rel="noreferrer" className="block group/img aspect-square rounded-2xl overflow-hidden border-2 border-primary/20 relative shadow-lg">
+                                        <img src={app.selfieWithIdUrl} alt="KYC Selfie" className="w-full h-full object-cover group-hover/img:scale-105 transition-transform" />
+                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
+                                            <Camera size={20} className="text-white" />
                                         </div>
                                     </a>
                                 </div>

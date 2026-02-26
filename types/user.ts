@@ -46,6 +46,12 @@ export interface User {
         approved: boolean;
         appliedAt: Timestamp;
         approvedAt?: Timestamp;
+        bankDetails?: {
+            bankCode: string;
+            accountHolderName: string;
+            accountNumber: string;
+        };
+        xenditAccountId?: string;
     };
 
     // Metadata
@@ -95,8 +101,18 @@ export interface OrganizerApplication {
     pastEventsDescription?: string; // Free text describing past events organized
     estimatedEventsPerYear?: number;
 
+    // === Step 5: Payout Setup ===
+    bankDetails: {
+        bankCode: string;          // e.g. "BDO", "BPI", "GCASH"
+        accountHolderName: string; // Must match legal name
+        accountNumber: string;
+    };
+    selfieWithIdUrl: string;       // Cloudinary URL of selfie holding ID
+
     // === Meta ===
     status: "pending" | "approved" | "rejected" | "needs_info";
+    xenditAccountId?: string;      // Xendit sub-account ID
+    xenditKycStatus?: "pending" | "verified" | "failed";
     createdAt: Timestamp;
     updatedAt?: Timestamp;
     reviewedAt?: Timestamp;

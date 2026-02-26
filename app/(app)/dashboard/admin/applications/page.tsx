@@ -58,6 +58,23 @@ export default function ApplicationsPage() {
                 );
             }
 
+            // Create Xendit Sub-account
+            try {
+                const subAccountResponse = await fetch("/api/xendit/create-sub-account", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ applicationId: app.id }),
+                });
+
+                if (!subAccountResponse.ok) {
+                    const error = await subAccountResponse.json();
+                    console.error("Failed to create Xendit sub-account:", error);
+                    // We don't block the whole approval if Xendit fails, but we should log it
+                }
+            } catch (xenditError) {
+                console.error("Xendit integration error:", xenditError);
+            }
+
             refresh();
         } catch (error) {
             console.error("Error approving application:", error);

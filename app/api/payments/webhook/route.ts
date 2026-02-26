@@ -98,6 +98,51 @@ export async function POST(req: Request) {
                             categories: updatedCategories
                         });
                     }
+
+                    // 6. Transfer to Organizer Sub-account if configured
+                    if (regData.organizerId && regData.organizerAmount > 0) {
+                        try {
+                            const organizerRef = doc(db, "users", regData.organizerId);
+                            const organizerSnap = await getDoc(organizerRef);
+                            const organizerData = organizerSnap.data();
+                            const xenditAccountId = organizerData?.organizer?.xenditAccountId;
+
+                            if (xenditAccountId) {
+                                const { xenditFetch } = await import("@/lib/xendit");
+                                const transfer = await xenditFetch("/transfers", {
+                                    method: "POST",
+                                    body: JSON.stringify({
+                                        reference: `reg_${registrationId}`,
+                                        amount: regData.organizerAmount,
+                                        destination_user_id: xenditAccountId,
+                                        source_user_id: process.env.XENDIT_PLATFORM_ACCOUNT_ID // Optional: if specific platform ID needed
+                                    }),
+                                });
+
+                                // Record transaction
+                                const { addDoc, collection } = await import("firebase/firestore");
+                                await addDoc(collection(db, "organizerTransactions"), {
+                                    organizerId: regData.organizerId,
+                                    eventId: regData.eventId,
+                                    registrationId: registrationId,
+                                    type: "registration_income",
+                                    amount: regData.organizerAmount,
+                                    status: "completed",
+                                    xenditTransferId: transfer.id,
+                                    createdAt: serverTimestamp(),
+                                    metadata: {
+                                        runnerName: regData.participantInfo.name,
+                                        categoryName: regData.categoryName,
+                                    }
+                                });
+
+                                console.log(`Transferred ${regData.organizerAmount} to organizer ${regData.organizerId}`);
+                            }
+                        } catch (transferError) {
+                            console.error("Transfer to organizer failed:", transferError);
+                            // We don't fail the webhook, but this should be logged for manual retry
+                        }
+                    }
                 }
 
                 console.log(`Payment confirmed for registration: ${registrationId}`);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LayoutDashboard, CalendarDays, Users } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Users, Wallet } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { OrganizerQuickActions } from "./organizer/OrganizerQuickActions";
@@ -11,6 +11,8 @@ import { OrganizerDraftsNotice } from "./organizer/OrganizerDraftsNotice";
 import { OrganizerRegistrationsFeed } from "./organizer/OrganizerRegistrationsFeed";
 import { OrganizerRevenueStats } from "./organizer/OrganizerRevenueStats";
 import { OrganizerKitFulfillment } from "./organizer/OrganizerKitFulfillment";
+import { OrganizerWallet } from "./organizer/OrganizerWallet";
+import { OrganizerBalanceCard } from "./organizer/OrganizerBalanceCard";
 
 interface OrganizerViewProps {
     items: any[];
@@ -39,12 +41,13 @@ export function OrganizerView({
     categoryRevenue,
     eventRevenue
 }: OrganizerViewProps) {
-    const [activeTab, setActiveTab] = useState<"overview" | "events" | "participants">("overview");
+    const [activeTab, setActiveTab] = useState<"overview" | "events" | "participants" | "wallet">("overview");
 
     const TABS = [
         { id: "overview", label: "Overview", icon: LayoutDashboard },
         { id: "events", label: "Events", icon: CalendarDays },
         { id: "participants", label: "Participants", icon: Users },
+        { id: "wallet", label: "Wallet", icon: Wallet },
     ] as const;
 
     return (
@@ -128,6 +131,10 @@ export function OrganizerView({
                 </div>
             )}
 
+            {/* Wallet Tab */}
+            {activeTab === "wallet" && (
+                <OrganizerWallet />
+            )}
         </div>
     );
 }

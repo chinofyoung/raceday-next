@@ -4,7 +4,8 @@ import { useFormContext } from "react-hook-form";
 import { OrganizerFormValues } from "@/lib/validations/organizer";
 import { PH_REGIONS, PH_PROVINCES } from "@/lib/constants/ph-regions";
 import { PH_GOVERNMENT_ID_TYPES } from "@/lib/constants/ph-id-types";
-import { Mail, Phone, Globe, MapPin, Building2, ShieldCheck, User, Calendar } from "lucide-react";
+import { PH_BANKS } from "@/lib/constants/ph-banks";
+import { Mail, Phone, Globe, MapPin, Building2, ShieldCheck, User, Calendar, Wallet, Camera } from "lucide-react";
 
 export function OrganizerFormSummary() {
     const { getValues } = useFormContext<OrganizerFormValues>();
@@ -12,6 +13,7 @@ export function OrganizerFormSummary() {
 
     const regionName = PH_REGIONS.find(r => r.code === data.address.region)?.name || data.address.region;
     const idTypeName = PH_GOVERNMENT_ID_TYPES.find(t => t.value === data.governmentId.type)?.label || data.governmentId.type;
+    const bankName = PH_BANKS.find(b => b.value === data.bankDetails?.bankCode)?.label || data.bankDetails?.bankCode;
 
     const SummarySection = ({ title, icon, children }: { title: string, icon: React.ReactNode, children: React.ReactNode }) => (
         <div className="space-y-4 p-6 bg-white/5 rounded-3xl border border-white/5">
@@ -97,6 +99,18 @@ export function OrganizerFormSummary() {
                 <SummarySection title="Additional Info" icon={<Calendar size={18} />}>
                     <DetailItem label="Past Events" value={data.pastEventsDescription} fullWidth />
                     <DetailItem label="Est. Events/Year" value={data.estimatedEventsPerYear} />
+                </SummarySection>
+
+                <SummarySection title="Payout Details" icon={<Wallet size={18} />}>
+                    <DetailItem label="Bank / E-Wallet" value={bankName} />
+                    <DetailItem label="Account Number" value={data.bankDetails?.accountNumber} />
+                    <DetailItem label="Account Holder" value={data.bankDetails?.accountHolderName} />
+                    <div className="md:col-span-2 space-y-2 mt-2">
+                        <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">KYC Selfie</span>
+                        <div className="w-32 aspect-square rounded-2xl overflow-hidden border-2 border-primary/20 shadow-xl">
+                            <img src={data.selfieWithIdUrl} alt="KYC Selfie" className="w-full h-full object-cover" />
+                        </div>
+                    </div>
                 </SummarySection>
             </div>
         </div>

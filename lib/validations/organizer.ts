@@ -47,9 +47,21 @@ export const organizerStep4Schema = z.object({
     estimatedEventsPerYear: z.coerce.number().min(1).max(100).optional(),
 });
 
+export const organizerStep5Schema = z.object({
+    bankDetails: z.object({
+        bankCode: z.string().min(1, "Please select a bank"),
+        accountHolderName: z.string().min(3, "Account holder name is required"),
+        accountNumber: z.string().min(6, "Account number is required"),
+    }),
+    selfieWithIdUrl: z.string().url("Please upload a selfie holding your ID"),
+});
+
+import { PH_BANKS } from "@/lib/constants/ph-banks";
+
 export const fullOrganizerSchema = organizerStep1Schema
     .merge(organizerStep2Schema)
     .merge(organizerStep3Schema)
-    .merge(organizerStep4Schema);
+    .merge(organizerStep4Schema)
+    .merge(organizerStep5Schema);
 
 export type OrganizerFormValues = z.infer<typeof fullOrganizerSchema>;

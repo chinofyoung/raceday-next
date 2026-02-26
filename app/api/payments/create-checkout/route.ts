@@ -138,12 +138,21 @@ export async function POST(req: Request) {
             });
         }
 
+        // 4. Calculate Platform Fee
+        const platformFeePercent = 5; // Default 5%
+        const processingFee = Math.round(totalAmount * (platformFeePercent / 100));
+        const chargeAmount = totalAmount + processingFee;
+
         // 1. Create registration doc in Firestore (pending status)
         const regRef = await addDoc(collection(db, "registrations"), {
             ...registrationData,
             organizerId: eventData.organizerId,
             status: "pending",
             paymentStatus: "unpaid",
+            platformFeePercent,
+            processingFee,
+            organizerAmount: totalAmount,
+            totalPaid: chargeAmount,
             createdAt: serverTimestamp(),
             updatedAt: serverTimestamp(),
         });
@@ -154,7 +163,7 @@ export async function POST(req: Request) {
 
         const invoiceData: any = {
             external_id: regRef.id,
-            amount: totalAmount,
+            amount: chargeAmount,
             description: `Registration for ${eventName} - ${categoryName}`,
             invoice_duration: 86400, // 24 hours
             currency: "PHP",
@@ -177,7 +186,13 @@ export async function POST(req: Request) {
                     quantity: 1,
                     price: Math.round(registrationData.vanityPremium),
                     category: "Vanity Fee",
-                }] : [])
+                }] : []),
+                {
+                    name: `Processing Fee (${platformFeePercent}%)`,
+                    quantity: 1,
+                    price: processingFee,
+                    category: "Platform Fee",
+                }
             ]
         };
 

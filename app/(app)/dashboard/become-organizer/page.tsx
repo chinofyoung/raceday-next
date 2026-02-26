@@ -17,7 +17,8 @@ import {
     organizerStep1Schema,
     organizerStep2Schema,
     organizerStep3Schema,
-    organizerStep4Schema
+    organizerStep4Schema,
+    organizerStep5Schema
 } from "@/lib/validations/organizer";
 import { submitOrganizerApplication, checkExistingApplication, updateOrganizerApplication } from "@/lib/services/applicationService";
 
@@ -26,6 +27,7 @@ import { Step1OrgInfo } from "./components/Step1OrgInfo";
 import { Step2Contact } from "./components/Step2Contact";
 import { Step3Address } from "./components/Step3Address";
 import { Step4Verification } from "./components/Step4Verification";
+import { Step5PayoutSetup } from "./components/Step5PayoutSetup";
 import { OrganizerFormSummary } from "./components/OrganizerFormSummary";
 import { OrganizerApplication } from "@/types/user";
 
@@ -34,7 +36,8 @@ const STEPS = [
     { id: 2, title: "Contact", description: "Direct Details", schema: organizerStep2Schema },
     { id: 3, title: "Location", description: "Mailing Address", schema: organizerStep3Schema },
     { id: 4, title: "Verification", description: "Identity Docs", schema: organizerStep4Schema },
-    { id: 5, title: "Review", description: "Final Summary", schema: null },
+    { id: 5, title: "Payout Setup", description: "Bank Details", schema: organizerStep5Schema },
+    { id: 6, title: "Review", description: "Final Summary", schema: null },
 ];
 
 export default function BecomeOrganizerPage() {
@@ -71,7 +74,13 @@ export default function BecomeOrganizerPage() {
                 type: "",
                 idNumber: "",
                 frontImageUrl: "",
-            }
+            },
+            bankDetails: {
+                bankCode: "",
+                accountHolderName: "",
+                accountNumber: "",
+            },
+            selfieWithIdUrl: "",
         },
     });
 
@@ -122,6 +131,10 @@ export default function BecomeOrganizerPage() {
             }
             if (currentStep === 4) {
                 fields.push("governmentId" as any);
+            }
+            if (currentStep === 5) {
+                fields.push("bankDetails" as any);
+                fields.push("selfieWithIdUrl" as any);
             }
 
             const isValid = await trigger(fields);
@@ -267,7 +280,8 @@ export default function BecomeOrganizerPage() {
                         {currentStep === 2 && <Step2Contact />}
                         {currentStep === 3 && <Step3Address />}
                         {currentStep === 4 && <Step4Verification />}
-                        {currentStep === 5 && <OrganizerFormSummary />}
+                        {currentStep === 5 && <Step5PayoutSetup />}
+                        {currentStep === 6 && <OrganizerFormSummary />}
 
                         <div className="flex items-center justify-between pt-6 border-t border-white/5">
                             <Button
