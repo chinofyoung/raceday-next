@@ -36,8 +36,7 @@ interface EventCardProps {
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const { user } = useAuth();
 
-    // Safety check for Convex ID - Firebase IDs are 20 chars, Convex IDs are typically different.
-    // Also, Convex IDs for the 'events' table will pass this check while legacy IDs won't match Convex's internal format.
+    // Convex IDs have a specific format distinct from legacy IDs
     const isConvexId = event.id && event.id.length !== 20;
 
     const paidCountCountRaw = useQuery(

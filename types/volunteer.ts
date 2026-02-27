@@ -2,7 +2,6 @@ export type VolunteerStatus = 'pending' | 'accepted' | 'revoked';
 
 export type VolunteerPermission = 'kiosk' | 'participants' | 'announcements';
 
-// Convex uses number (ms) for dates, legacy Firebase uses Timestamp
 type UniversalDate = number | any;
 
 export interface EventVolunteer {
@@ -11,7 +10,7 @@ export interface EventVolunteer {
     email: string;                       // Gmail address (normalized lowercase)
     displayName?: string;                // Populated after acceptance
     photoURL?: string;                   // Populated after acceptance
-    uid?: string;                        // Firebase UID (set on acceptance)
+    uid?: string;                        // Clerk user ID (set on acceptance)
     permissions: VolunteerPermission[];  // Granular access control
     status: VolunteerStatus;             // Invitation lifecycle
     invitedBy: string;                   // Organizer UID who invited

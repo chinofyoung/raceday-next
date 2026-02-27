@@ -1,4 +1,3 @@
-// Convex uses number (ms) for dates, legacy Firebase uses Timestamp
 type UniversalDate = number | Date | any;
 
 export interface Announcement {

@@ -9,8 +9,6 @@ import {
     Calendar, ArrowLeft, Loader2, Download
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { collection, query, getDocs, orderBy, where } from "firebase/firestore";
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, isWithinInterval, startOfDay } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import dynamic from "next/dynamic";
