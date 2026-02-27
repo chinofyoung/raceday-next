@@ -96,6 +96,96 @@ export const updateRole = mutation({
     },
 });
 
+export const updateProfile = mutation({
+    args: {
+        displayName: v.string(),
+        phone: v.optional(v.string()),
+        gender: v.optional(v.union(v.literal("male"), v.literal("female"), v.literal("other"), v.literal(""))),
+        birthDate: v.optional(v.string()),
+        medicalConditions: v.optional(v.string()),
+        tShirtSize: v.optional(v.union(v.literal("XS"), v.literal("S"), v.literal("M"), v.literal("L"), v.literal("XL"), v.literal("2XL"), v.literal("3XL"), v.literal(""))),
+        singletSize: v.optional(v.union(v.literal("XS"), v.literal("S"), v.literal("M"), v.literal("L"), v.literal("XL"), v.literal("2XL"), v.literal("3XL"), v.literal(""))),
+        address: v.optional(v.object({
+            street: v.string(),
+            city: v.string(),
+            province: v.string(),
+            zipCode: v.string(),
+            country: v.string(),
+        })),
+        emergencyContact: v.optional(v.object({
+            name: v.string(),
+            phone: v.string(),
+            relationship: v.string(),
+        })),
+        profileCompletion: v.number(),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+
+        if (!user) throw new Error("User not found");
+
+        await ctx.db.patch(user._id, {
+            ...args,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const updateOrganizerProfile = mutation({
+    args: {
+        name: v.string(),
+        contactEmail: v.string(),
+        phone: v.string(),
+        organizerType: v.union(v.literal("individual"), v.literal("sports_club"), v.literal("business"), v.literal("lgu"), v.literal("school"), v.literal("nonprofit")),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+
+        if (!user) throw new Error("User not found");
+        if (!user.organizer) throw new Error("Not an organizer");
+
+        await ctx.db.patch(user._id, {
+            organizer: {
+                ...user.organizer,
+                ...args,
+            },
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const updatePhotoURL = mutation({
+    args: { photoURL: v.string() },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+
+        if (!user) throw new Error("User not found");
+
+        await ctx.db.patch(user._id, {
+            photoURL: args.photoURL,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
 export const current = query({
     args: {},
     handler: async (ctx) => {

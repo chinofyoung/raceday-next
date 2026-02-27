@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useSearchParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -19,49 +20,26 @@ export default function RegistrationSuccessPage() {
     const searchParams = useSearchParams();
     const registrationId = searchParams.get("id");
 
-    const [registration, setRegistration] = useState<any>(null);
-    const [event, setEvent] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const registration = useQuery(api.registrations.getById, {
+        id: registrationId as Id<"registrations">
+    });
+
+    const event = useQuery(api.events.getById, {
+        id: (registration?.eventId || eventId) as Id<"events">
+    });
+
+    const loading = registration === undefined || event === undefined;
 
     useEffect(() => {
-        if (registrationId) fetchRegistration();
-    }, [registrationId]);
-
-    const fetchRegistration = async () => {
-        setLoading(true);
-        try {
-            const docRef = doc(db, "registrations", registrationId!);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                const data = snap.data();
-                setRegistration(data);
-
-                // Fetch event details
-                if (data.eventId) {
-                    const eventSnap = await getDoc(doc(db, "events", data.eventId));
-                    if (eventSnap.exists()) {
-                        setEvent(eventSnap.data());
-                    }
-                }
-
-                // If pending, sync immediately
-                if (data.status === "pending") {
-                    const syncRes = await fetch(`/api/payments/sync/${registrationId}`);
-                    const syncData = await syncRes.json();
-                    if (syncData.status === "paid") {
-                        const updatedSnap = await getDoc(docRef);
-                        setRegistration(updatedSnap.data());
-                    }
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching registration:", error);
-        } finally {
-            setLoading(false);
+        if (registration && registration.status === "pending") {
+            const sync = async () => {
+                await fetch(`/api/payments/sync/${registrationId}`);
+            };
+            sync();
         }
-    };
+    }, [registration, registrationId]);
 
-    const categoryName = event?.categories?.find((c: any) => c.id === registration?.categoryId)?.name || registration?.categoryId;
+    const categoryName = (event?.categories as any[])?.find((c: any) => c.id === registration?.categoryId)?.name || registration?.categoryId;
 
     if (loading) {
         return (
@@ -132,7 +110,7 @@ export default function RegistrationSuccessPage() {
                                         <Calendar size={10} className="text-cta" /> Date
                                     </p>
                                     <p className="text-sm font-bold text-white uppercase italic truncate">
-                                        {event?.date ? format(event.date.toDate(), "MMM dd, yyyy") : "TBD"}
+                                        {event?.date ? format(event.date, "MMM dd, yyyy") : "TBD"}
                                     </p>
                                 </div>
                                 <div className="space-y-1">
@@ -150,9 +128,9 @@ export default function RegistrationSuccessPage() {
                                     <p className="text-sm font-bold text-white uppercase italic truncate">{categoryName}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">Time</p>
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">Gun Time</p>
                                     <p className="text-sm font-bold text-white uppercase italic truncate">
-                                        {event?.startTime || "05:00 AM"}
+                                        {(event?.categories as any[])?.find(c => c.id === registration?.categoryId)?.gunStartTime || "TBD"}
                                     </p>
                                 </div>
                             </div>
@@ -209,8 +187,8 @@ export default function RegistrationSuccessPage() {
                                 <div className="space-y-4 pt-6 border-t border-white/5">
                                     <div>
                                         <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic mb-1">Athlete</p>
-                                        <h4 className="text-2xl font-black italic text-white uppercase tracking-tight">{registration?.participantInfo.name}</h4>
-                                        <p className="text-xs text-text-muted font-bold italic opacity-70">{registration?.participantInfo.email}</p>
+                                        <h4 className="text-2xl font-black italic text-white uppercase tracking-tight">{registration?.registrationData?.participantInfo?.name}</h4>
+                                        <p className="text-xs text-text-muted font-bold italic opacity-70">{registration?.registrationData?.participantInfo?.email}</p>
                                     </div>
                                 </div>
                             </div>

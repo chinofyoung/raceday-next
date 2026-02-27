@@ -19,6 +19,11 @@ export async function GET(
 
         const { id: eventId } = await context.params;
 
+        // Safety check for valid Convex ID
+        if (!eventId || eventId === "undefined" || eventId.length < 10) {
+            return new NextResponse("Invalid Event ID", { status: 400 });
+        }
+
         // Get user from Convex
         const user = await fetchQuery(api.users.getByUid, { uid: clerkId });
         if (!user) {

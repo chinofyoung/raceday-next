@@ -85,8 +85,8 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
     useEffect(() => {
         if (!authLoading) {
-            if (user?.uid && event.id) {
-                getUserRegistrations(user.uid).then(regs => {
+            if (user?._id && event.id) {
+                getUserRegistrations(user._id).then(regs => {
                     const reg = regs.find(r => r.eventId === event.id && (r.status === 'paid' || r.status === 'pending'));
                     setUserRegistration(reg);
                     setIsCheckingRegistration(false);
@@ -141,14 +141,14 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                 event={event}
                 userRegistration={userRegistration}
                 loadingAuth={isCheckingRegistration}
-                isOrganizer={user?.uid === event.organizerId}
+                isOrganizer={user?._id === event.organizerId}
             />
 
             <EventNavigation
                 event={event}
                 activeSection={activeSection}
                 scrollToSection={scrollToSection}
-                isRegistered={!!userRegistration || user?.uid === event.organizerId}
+                isRegistered={!!userRegistration || user?._id === event.organizerId}
             />
 
             <PageWrapper className="pt-0 pb-36 lg:pb-24 max-w-7xl mx-auto flex flex-col gap-16">
@@ -179,7 +179,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
 
             <MobileStickyCTA
                 event={event}
-                isRegistered={!!userRegistration || user?.uid === event.organizerId}
+                isRegistered={!!userRegistration || user?._id === event.organizerId}
                 loadingAuth={isCheckingRegistration}
             />
         </div>

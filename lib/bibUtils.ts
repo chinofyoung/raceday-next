@@ -56,3 +56,7 @@ export async function getRaceNumberFormat(
     );
     return category?.raceNumberFormat || "{number}";
 }
+
+export function formatBibNumber(format: string, number: string): string {
+    return format.replace("{number}", number);
+}

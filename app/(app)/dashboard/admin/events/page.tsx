@@ -17,7 +17,7 @@ import { cn, formatDate } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { logAdminAction } from "@/lib/admin/audit";
 import { exportToCSV } from "@/lib/admin/export";
-import { getEvents, updateEventStatus, deleteEvent } from "@/lib/services/eventService";
+import { getEvents, updateEventStatus, deleteEvent, updateEvent } from "@/lib/services/eventService";
 import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 
 export default function AdminEventManagementPage() {
@@ -40,19 +40,12 @@ export default function AdminEventManagementPage() {
     const handleFeature = async (event: RaceEvent) => {
         setProcessing(event.id);
         try {
-            // Need a new service function for feature toggle or use a generic update
-            // For now, let's keep it simple. If we don't have a mutation for featured, 
-            // we might need to add one to convex/events.ts
-            // Actually, I'll just use status for now or assume featured is part of a generic update.
-            // Since I don't see a featured mutation, I'll skip it for just a second to check convex/events.ts again.
-            // wait, I already checked it and it only has updateStatus.
-            // I'll stick to what's available.
-            console.warn("Feature toggle not yet implemented in Convex");
+            await updateEvent(event.id, { featured: !event.featured });
 
             // Log action
             if (currentUser) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     event.featured ? "unfeature_event" : "feature_event",
                     event.id,
@@ -79,7 +72,7 @@ export default function AdminEventManagementPage() {
             const targetEvent = events.find(e => e.id === id);
             if (currentUser && targetEvent) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     "cancel_event",
                     id,
@@ -106,7 +99,7 @@ export default function AdminEventManagementPage() {
             // Log action
             if (currentUser && targetEvent) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     "delete_event",
                     id,

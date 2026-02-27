@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase/config";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { generateQRCode } from "@/lib/qr";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery, fetchMutation } from "convex/nextjs";
 import { generateBibAndQR } from "@/lib/bibUtils";
 
 export async function POST(req: Request) {
@@ -11,36 +11,25 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Xendit might send different event types, for Invoice paid:
-        // { id, external_id, status, amount, ... }
         const body = await req.json();
-
-        if (process.env.NODE_ENV === "development") {
-            console.log("Webhook received:", JSON.stringify(body, null, 2));
-        }
 
         if (body.status === "PAID" || body.status === "SETTLED") {
             const registrationId = body.external_id;
 
             if (!registrationId || typeof registrationId !== "string") {
-                console.error("Invalid registration ID:", registrationId);
                 return NextResponse.json({ error: "Invalid registration ID" }, { status: 400 });
             }
 
-            // 1. Fetch the registration doc
-            const regRef = doc(db, "registrations", registrationId);
-            const regSnap = await getDoc(regRef);
+            // 1. Fetch the registration doc from Convex
+            const regData = await fetchQuery(api.registrations.getById, { id: registrationId as Id<"registrations"> });
 
-            if (regSnap.exists()) {
-                const regData = regSnap.data();
-
-                // Idempotency: already processed — return success without re-processing
+            if (regData) {
+                // Idempotency: already processed
                 if (regData.status === "paid") {
-                    console.log(`Webhook already processed for registration: ${registrationId}`);
                     return NextResponse.json({ success: true });
                 }
 
-                // 2. Generate Race Number & QR Code (Robust)
+                // 2. Generate Race Number & QR Code
                 let raceNumber: string;
                 let qrCodeUrl: string;
 
@@ -49,56 +38,32 @@ export async function POST(req: Request) {
                         registrationId,
                         regData.eventId,
                         regData.categoryId,
-                        regData.participantInfo.name,
-                        regData.vanityNumber
+                        regData.registrationData?.participantInfo?.name || "Participant",
+                        regData.registrationData?.vanityNumber
                     );
                     raceNumber = result.raceNumber;
                     qrCodeUrl = result.qrCodeUrl;
                 } catch (bibError: any) {
-                    // Vanity number was claimed between checkout and payment — fallback to sequential
-                    console.warn(
-                        `Vanity bib conflict for reg ${registrationId}: ${bibError.message}. Falling back to sequential.`
-                    );
+                    // Fallback to sequential if vanity conflict
                     const result = await generateBibAndQR(
                         registrationId,
                         regData.eventId,
                         regData.categoryId,
-                        regData.participantInfo.name,
-                        null // force sequential
+                        regData.registrationData?.participantInfo?.name || "Participant",
+                        null
                     );
                     raceNumber = result.raceNumber;
                     qrCodeUrl = result.qrCodeUrl;
                 }
 
-                // 4. Update Firestore
-                await updateDoc(regRef, {
-                    status: "paid",
+                // 4. Update Convex using the mutation we just enhanced
+                // It now handles status update and event count increment
+                await fetchMutation(api.registrations.markAsPaid, {
+                    id: registrationId as Id<"registrations">,
                     paymentStatus: "paid",
                     raceNumber,
                     qrCodeUrl,
-                    paidAt: serverTimestamp(),
-                    updatedAt: serverTimestamp(),
-                    xenditPaymentId: body.id,
                 });
-
-                // 5. Increment registeredCount for the event category
-                const eventRef = doc(db, "events", regData.eventId);
-                const eventSnap = await getDoc(eventRef);
-                if (eventSnap.exists()) {
-                    const eventData = eventSnap.data();
-                    const categories = eventData.categories || [];
-                    const categoryIndex = categories.findIndex((c: any) => c.id === regData.categoryId);
-                    if (categoryIndex !== -1) {
-                        const updatedCategories = [...categories];
-                        updatedCategories[categoryIndex] = {
-                            ...updatedCategories[categoryIndex],
-                            registeredCount: (updatedCategories[categoryIndex].registeredCount || 0) + 1
-                        };
-                        await updateDoc(eventRef, {
-                            categories: updatedCategories
-                        });
-                    }
-                }
 
                 console.log(`Payment confirmed for registration: ${registrationId}`);
             }

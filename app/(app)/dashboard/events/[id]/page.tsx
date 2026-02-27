@@ -2,10 +2,9 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useAuth } from "@/lib/hooks/useAuth";
-import { useParams, useRouter } from "next/navigation";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -22,66 +21,73 @@ import { DemographicsTab } from "@/components/dashboard/organizer/DemographicsTa
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { VolunteerManagement } from "@/components/dashboard/organizer/VolunteerManagement";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useParams, useRouter } from "next/navigation";
 
 export default function EventDetailPage() {
-    const { id } = useParams();
+    const params = useParams();
+    const id = params?.id as string;
     const router = useRouter();
-    const { user, role } = useAuth();
-    const [event, setEvent] = useState<RaceEvent | null>(null);
-    const [registrations, setRegistrations] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { user, role, loading: authLoading } = useAuth();
+
+    // Safety check: is this possibly a Convex ID?
+    const isConvexId = id && id.length > 20;
+
+    // Use Convex Queries
+    const eventData = useQuery(api.events.getById, (id && isConvexId) ? { id: id as Id<"events"> } : "skip");
+    const registrationsData = useQuery(api.registrations.list, (id && isConvexId) ? {
+        eventId: id as Id<"events">,
+        paginationOpts: { numItems: 1000, cursor: null }
+    } : "skip");
+
+    const autoAssignMutation = useMutation(api.bibs.autoAssign);
+    const cloneMutation = useMutation(api.events.clone);
+
     const [activeTab, setActiveTab] = useState<string>("participants");
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending">("paid");
     const [permissions, setPermissions] = useState<string[]>([]);
+    const [accessLoading, setAccessLoading] = useState(true);
 
     useEffect(() => {
         if (id && user) {
-            fetchEventData();
+            checkAccess();
         }
     }, [id, user]);
 
-    const fetchEventData = async () => {
-        setLoading(true);
+    const checkAccess = async () => {
+        setAccessLoading(true);
         try {
-            // Check Access & Fetch Permissions
             const accessRes = await fetch(`/api/events/${id}/check-access`);
-            if (!accessRes.ok) throw new Error("Access denied");
-            const accessData = await accessRes.json();
-
-            const canAccess = accessData.isOrganizer || accessData.isAdmin || accessData.permissions.length > 0;
-            setPermissions(accessData.permissions || []);
-
-            if (!canAccess) {
-                setEvent(null);
-                setLoading(false);
-                return;
-            }
-
-            // Fetch Event
-            const docRef = doc(db, "events", id as string);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                const eventData = { ...snap.data(), id: snap.id } as RaceEvent;
-                setEvent(eventData);
-
-                // Fetch Registrations
-                const q = query(
-                    collection(db, "registrations"),
-                    where("eventId", "==", id)
-                );
-                const regSnap = await getDocs(q);
-                setRegistrations(regSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+            if (accessRes.ok) {
+                const accessData = await accessRes.json();
+                setPermissions(accessData.permissions || []);
             }
         } catch (error) {
-            console.error("Error fetching event data:", error);
-            setEvent(null);
+            console.error("Error checking access:", error);
         } finally {
-            setLoading(false);
+            setAccessLoading(false);
         }
     };
 
-    const isOrganizer = event?.organizerId === user?.uid || role === "admin";
+    const event = useMemo(() => {
+        if (!eventData) return null;
+        return {
+            ...eventData,
+            id: eventData._id,
+        } as unknown as RaceEvent;
+    }, [eventData]);
+
+    const registrations = useMemo(() => {
+        if (!registrationsData) return [];
+        return registrationsData.page.map((r: any) => ({
+            ...r,
+            id: r._id,
+            ...(r.registrationData || {})
+        }));
+    }, [registrationsData]);
+
+    const isOrganizer = event?.organizerId === user?._id || role === "admin";
 
     const availableTabs = (["participants", "stats", "revenue", "bibs", "announcements", "volunteers"] as const).filter(tab => {
         if (isOrganizer) return true;
@@ -95,6 +101,8 @@ export default function EventDetailPage() {
             setActiveTab(availableTabs[0]);
         }
     }, [availableTabs, activeTab]);
+
+    const loading = authLoading || accessLoading || (id && isConvexId && (eventData === undefined || registrationsData === undefined));
 
     if (loading) {
         return (
@@ -115,10 +123,10 @@ export default function EventDetailPage() {
         );
     }
 
-    const paidRegistrations = registrations.filter(r => r.status === "paid");
-    const totalRevenue = paidRegistrations.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
+    const paidRegistrations = registrations.filter((r: any) => r.status === "paid");
+    const totalRevenue = paidRegistrations.reduce((sum: number, r: any) => sum + (r.totalPrice || 0), 0);
 
-    const filteredParticipants = registrations.filter(r => {
+    const filteredParticipants = registrations.filter((r: any) => {
         const name = r.participantInfo?.name?.toLowerCase() || "";
         const bib = (r.raceNumber?.toLowerCase() || "");
         const email = r.participantInfo?.email?.toLowerCase() || "";
@@ -180,14 +188,10 @@ export default function EventDetailPage() {
                             <BaseQuickAction
                                 onClick={async () => {
                                     if (confirm("Create a copy of this event?")) {
-                                        const promise = fetch(`/api/events/${id}/clone`, { method: "POST" })
-                                            .then(async res => {
-                                                const data = await res.json();
-                                                if (data.success) {
-                                                    router.push(`/dashboard/events/${data.newId}/edit`);
-                                                    return data;
-                                                }
-                                                throw new Error("Clone failed");
+                                        const promise = cloneMutation({ id: id as Id<"events"> })
+                                            .then(async newId => {
+                                                router.push(`/dashboard/events/${newId}/edit`);
+                                                return newId;
                                             });
 
                                         toast.promise(promise, {
@@ -235,7 +239,7 @@ export default function EventDetailPage() {
                         <Card className="p-6 bg-surface border-white/5 space-y-1">
                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Claimed Kits</p>
                             <div className="flex items-center justify-between">
-                                <p className="text-3xl font-black italic text-white">{paidRegistrations.filter(r => r.raceKitClaimed).length}</p>
+                                <p className="text-3xl font-black italic text-white">{paidRegistrations.filter((r: any) => r.raceKitClaimed).length}</p>
                                 <CheckCircle2 size={24} className="text-cta opacity-20" />
                             </div>
                         </Card>
@@ -321,7 +325,7 @@ export default function EventDetailPage() {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
-                                            {filteredParticipants.length > 0 ? filteredParticipants.map((reg) => (
+                                            {filteredParticipants.length > 0 ? filteredParticipants.map((reg: any) => (
                                                 <tr key={reg.id} className="hover:bg-white/[0.02] transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
@@ -384,8 +388,8 @@ export default function EventDetailPage() {
                                 <h3 className="text-xl font-bold uppercase italic tracking-tight text-white">Revenue by Category</h3>
                                 <div className="space-y-4">
                                     {event.categories.map((cat, i) => {
-                                        const catRegs = paidRegistrations.filter(r => r.categoryId === (cat.id || cat.name));
-                                        const catRev = catRegs.reduce((sum, r) => sum + r.basePrice, 0);
+                                        const catRegs = paidRegistrations.filter((r: any) => r.categoryId === (cat.id || cat.name));
+                                        const catRev = catRegs.reduce((sum: number, r: any) => sum + (r.totalPrice || 0), 0);
                                         return (
                                             <div key={i} className="flex items-center justify-between border-b border-white/5 pb-4 last:border-0 last:pb-0">
                                                 <div className="space-y-1">
@@ -424,8 +428,13 @@ export default function EventDetailPage() {
                                     className="font-black italic uppercase"
                                     onClick={async () => {
                                         if (confirm("Auto-assign bib numbers?")) {
-                                            const res = await fetch(`/api/events/${id}/bibs/auto-assign`, { method: "POST" });
-                                            if (res.ok) fetchEventData();
+                                            try {
+                                                const result = await autoAssignMutation({ eventId: id as Id<"events"> });
+                                                toast.success(`Assigned ${result.assignedCount} bib numbers!`);
+                                            } catch (err) {
+                                                console.error(err);
+                                                toast.error("Failed to assign bibs.");
+                                            }
                                         }
                                     }}
                                 >

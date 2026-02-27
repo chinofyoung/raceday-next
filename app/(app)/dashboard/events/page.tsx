@@ -3,55 +3,39 @@
 import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/Button";
 import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { format } from "date-fns";
 import { OrganizerQuickActions } from "@/components/dashboard/organizer/OrganizerQuickActions";
 
 export default function EventsManagementPage() {
-    const { user, role } = useAuth();
-    const [events, setEvents] = useState<RaceEvent[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { user, loading: authLoading } = useAuth();
     const [filter, setFilter] = useState<string>("all");
+    const removeEvent = useMutation(api.events.remove);
 
-    useEffect(() => {
-        if (user) {
-            fetchEvents();
-        }
-    }, [user]);
+    const convexEvents = useQuery(api.events.list, user?._id ? {
+        organizerId: user._id as Id<"users">,
+        paginationOpts: { numItems: 100, cursor: null }
+    } : "skip");
 
-    const fetchEvents = async () => {
-        setLoading(true);
-        try {
-            const q = query(
-                collection(db, "events"),
-                where("organizerId", "==", user?.uid),
-                orderBy("createdAt", "desc")
-            );
-            const snapshot = await getDocs(q);
-            const eventData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            })) as RaceEvent[];
-            setEvents(eventData);
-        } catch (error) {
-            console.error("Error fetching events:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const events = (convexEvents?.page || []).map(e => ({
+        ...e,
+        id: e._id
+    })) as RaceEvent[];
+
+    const loading = authLoading || (!!user && convexEvents === undefined);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this event? This action cannot be undone.")) return;
         try {
-            await deleteDoc(doc(db, "events", id));
-            setEvents(prev => prev.filter(e => e.id !== id));
+            await removeEvent({ id: id as Id<"events"> });
         } catch (error) {
             console.error("Error deleting event:", error);
         }

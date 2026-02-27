@@ -101,6 +101,50 @@ export const revoke = mutation({
     },
 });
 
+export const restore = mutation({
+    args: { id: v.id("volunteers") },
+    handler: async (ctx: MutationCtx, args) => {
+        const volunteer = await ctx.db.get(args.id);
+        if (!volunteer) return;
+
+        await ctx.db.patch(args.id, {
+            status: volunteer.userId ? "accepted" : "pending",
+            revokedAt: undefined,
+        });
+
+        if (volunteer.userId) {
+            const user = await ctx.db.get(volunteer.userId);
+            if (user) {
+                const volunteerEvents = user.volunteerEvents || [];
+                if (!volunteerEvents.includes(volunteer.eventId)) {
+                    await ctx.db.patch(volunteer.userId, {
+                        volunteerEvents: [...volunteerEvents, volunteer.eventId],
+                    });
+                }
+            }
+        }
+    },
+});
+
+export const remove = mutation({
+    args: { id: v.id("volunteers") },
+    handler: async (ctx: MutationCtx, args) => {
+        const volunteer = await ctx.db.get(args.id);
+        if (!volunteer) return;
+
+        if (volunteer.userId) {
+            const user = await ctx.db.get(volunteer.userId);
+            if (user && user.volunteerEvents) {
+                await ctx.db.patch(volunteer.userId, {
+                    volunteerEvents: user.volunteerEvents.filter(id => id !== volunteer.eventId),
+                });
+            }
+        }
+
+        await ctx.db.delete(args.id);
+    },
+});
+
 export const getPendingByEmail = query({
     args: { email: v.string() },
     handler: async (ctx: QueryCtx, args) => {
@@ -134,5 +178,3 @@ export const getByUserIdAndEvent = query({
             .unique();
     },
 });
-
-

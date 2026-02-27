@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { RaceEvent } from "@/types/event";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ArrowLeft, Play, Square, Loader2, Navigation, Activity, Maximize2, Minimize2 } from "lucide-react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { useRef } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { startUserTracking, updateUserLocation, stopUserTracking, subscribeToEventLocations, LiveTracker } from "@/lib/services/liveTrackingService";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { getUserRegistrations } from "@/lib/services/registrationService";
 import { useRouter } from "next/navigation";
 import { PageWrapper } from "@/components/layout/PageWrapper";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 const RouteMapViewer = dynamic(
     () => import("@/components/shared/RouteMapViewer").then(mod => mod.RouteMapViewer),
@@ -27,17 +27,27 @@ interface LiveTrackingClientProps {
 
 export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
     const { user } = useAuth();
+    const router = useRouter();
+
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
     const [isTracking, setIsTracking] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [watchId, setWatchId] = useState<number | null>(null);
-    const [liveTrackers, setLiveTrackers] = useState<LiveTracker[]>([]);
-    const [hasAccess, setHasAccess] = useState<boolean | null>(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isSimulatedFullscreen, setIsSimulatedFullscreen] = useState(false);
+
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const lastLocationRef = useRef<{ lat: number, lng: number, time: number, bearing: number } | null>(null);
-    const router = useRouter();
+
+    // Convex Hooks
+    const liveTrackers = useQuery(api.tracking.listByEvent, { eventId: event.id as Id<"events"> }) || [];
+    const startTrackingMutation = useMutation(api.tracking.start);
+    const updateLocationMutation = useMutation(api.tracking.update);
+    const stopTrackingMutation = useMutation(api.tracking.stop);
+
+    // Get user registration for access check
+    const registrations = useQuery(api.registrations.getByUserId, { userId: user?._id as Id<"users"> }) || [];
+    const hasAccess = user ? (user._id === event.organizerId || registrations.some(r => r.eventId === event.id && r.status === 'paid')) : false;
 
     const calculateBearing = (lat1: number, lon1: number, lat2: number, lon2: number) => {
         const φ1 = lat1 * Math.PI / 180;
@@ -54,49 +64,10 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
 
     const category = event.categories?.[activeRouteCategoryIndex];
     const gpxUrl = category?.routeMap?.gpxFileUrl;
-    const userId = user?.uid;
+    const userId = user?._id;
     const displayName = user?.displayName || user?.email?.split('@')[0] || "Fellow Runner";
 
     useEffect(() => {
-        const verifyAccess = async () => {
-            if (!user) {
-                setHasAccess(false);
-                return;
-            }
-
-            // Organizers always have access
-            if (user.uid === event.organizerId) {
-                setHasAccess(true);
-                return;
-            }
-
-            try {
-                const regs = await getUserRegistrations(user.uid);
-                const isRegistered = regs.some(r => r.eventId === event.id && r.status === 'paid');
-                setHasAccess(isRegistered);
-            } catch (error) {
-                console.error("Error verifying access:", error);
-                setHasAccess(false);
-            }
-        };
-
-        verifyAccess();
-    }, [user, event.id]);
-
-    useEffect(() => {
-        if (!event.id) return;
-
-        // Subscribe to all live trackers for this event
-        const unsubscribe = subscribeToEventLocations(event.id, (trackers) => {
-            setLiveTrackers(trackers);
-        });
-
-        const handleFullscreenChange = () => {
-            const doc = document as any;
-            setIsFullscreen(!!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement));
-        };
-
-        // If native fullscreen is exited, also ensure simulated is off (though they shouldn't usually be on together)
         const handleNativeFullscreenExit = () => {
             const doc = document as any;
             if (!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement)) {
@@ -110,13 +81,12 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         document.addEventListener('msfullscreenchange', handleNativeFullscreenExit);
 
         return () => {
-            unsubscribe();
             document.removeEventListener('fullscreenchange', handleNativeFullscreenExit);
             document.removeEventListener('webkitfullscreenchange', handleNativeFullscreenExit);
             document.removeEventListener('mozfullscreenchange', handleNativeFullscreenExit);
             document.removeEventListener('msfullscreenchange', handleNativeFullscreenExit);
         };
-    }, [event.id]);
+    }, []);
 
     // Handle scroll locking for simulated fullscreen
     useEffect(() => {
@@ -136,13 +106,11 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         const elem = mapContainerRef.current as any;
         const doc = document as any;
 
-        // 1. If we are currently in simulated fullscreen, just exit it
         if (isSimulatedFullscreen) {
             setIsSimulatedFullscreen(false);
             return;
         }
 
-        // 2. Try native fullscreen first
         const isNativeActive = !!(doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement);
 
         if (!isNativeActive) {
@@ -153,7 +121,6 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     setIsSimulatedFullscreen(true);
                 });
             } else {
-                // Native API not supported (e.g. iOS Safari), use simulated
                 setIsSimulatedFullscreen(true);
             }
         } else {
@@ -165,17 +132,18 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
     };
 
     useEffect(() => {
-        // Cleanup tracking on unmount
         return () => {
             if (watchId !== null) {
                 navigator.geolocation.clearWatch(watchId);
-                if (event.id && userId) stopUserTracking(event.id, userId);
+                if (event.id && user?._id) {
+                    stopTrackingMutation({ eventId: event.id as Id<"events">, userId: user._id as Id<"users"> });
+                }
             }
         };
-    }, [watchId, event.id, userId]);
+    }, [watchId, event.id, user?._id, stopTrackingMutation]);
 
     const startTrackingCore = useCallback(async () => {
-        if (!event.id || !userId) return;
+        if (!event.id || !user?._id) return;
         if (!("geolocation" in navigator)) {
             toast.error("Geolocation is not supported by your browser");
             return;
@@ -187,7 +155,15 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 const { latitude, longitude, heading } = position.coords;
                 try {
                     const initialBearing = heading || 0;
-                    await startUserTracking(event.id, category?.id, userId, displayName, latitude, longitude, initialBearing);
+                    await startTrackingMutation({
+                        eventId: event.id as Id<"events">,
+                        categoryId: category?.id,
+                        userId: user._id as Id<"users">,
+                        displayName,
+                        lat: latitude,
+                        lng: longitude,
+                        bearing: initialBearing,
+                    });
                     lastLocationRef.current = { lat: latitude, lng: longitude, time: Date.now(), bearing: initialBearing };
 
                     const id = navigator.geolocation.watchPosition(
@@ -200,8 +176,8 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                                 const last = lastLocationRef.current;
                                 const timeElapsed = now - last.time;
 
-                                // Calculate distance in meters using Haversine formula
-                                const R = 6371e3; // Earth radius in meters
+                                // Haversine distance
+                                const R = 6371e3;
                                 const φ1 = last.lat * Math.PI / 180;
                                 const φ2 = newLat * Math.PI / 180;
                                 const Δφ = (newLat - last.lat) * Math.PI / 180;
@@ -213,18 +189,29 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                                 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                                 const distance = R * c;
 
-                                // Only update if 15 seconds have passed AND moved at least 15 meters
                                 if (timeElapsed > 15000 && distance > 15) {
                                     const calculatedBearing = pos.coords.heading !== null && pos.coords.heading !== undefined
                                         ? pos.coords.heading
                                         : calculateBearing(last.lat, last.lng, newLat, newLng);
 
-                                    await updateUserLocation(event.id!, userId, newLat, newLng, calculatedBearing);
+                                    await updateLocationMutation({
+                                        eventId: event.id as Id<"events">,
+                                        userId: user._id as Id<"users">,
+                                        lat: newLat,
+                                        lng: newLng,
+                                        bearing: calculatedBearing
+                                    });
                                     lastLocationRef.current = { lat: newLat, lng: newLng, time: now, bearing: calculatedBearing };
                                 }
                             } else {
                                 const initialHeading = pos.coords.heading || 0;
-                                await updateUserLocation(event.id!, userId, newLat, newLng, initialHeading);
+                                await updateLocationMutation({
+                                    eventId: event.id as Id<"events">,
+                                    userId: user._id as Id<"users">,
+                                    lat: newLat,
+                                    lng: newLng,
+                                    bearing: initialHeading
+                                });
                                 lastLocationRef.current = { lat: newLat, lng: newLng, time: now, bearing: initialHeading };
                             }
                         },
@@ -235,9 +222,7 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     setWatchId(id);
                     setIsTracking(true);
 
-                    // Save state
-                    localStorage.setItem(`liveTrack_${event.id}_${userId}`, JSON.stringify({ startedAt: Date.now() }));
-
+                    localStorage.setItem(`liveTrack_${event.id}_${user._id}`, JSON.stringify({ startedAt: Date.now() }));
                     toast.success("Live tracking started!");
                 } catch (err) {
                     console.error("Failed to start tracking", err);
@@ -251,25 +236,24 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 if (err.code === 1) toast.error("Please allow location permissions to use Live Track");
                 else toast.error("Could not get your location");
                 setIsLoading(false);
-                // remove from storage if error
-                localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
+                localStorage.removeItem(`liveTrack_${event.id}_${user?._id}`);
             },
             { enableHighAccuracy: true }
         );
-    }, [event.id, category?.id, userId, displayName]);
+    }, [event.id, category?.id, user?._id, user?.uid, displayName, startTrackingMutation, updateLocationMutation]);
 
     const stopTrackingCore = useCallback(async () => {
-        if (!event.id || !userId) return;
+        if (!event.id || !user?._id) return;
         setIsLoading(true);
         if (watchId !== null) {
             navigator.geolocation.clearWatch(watchId);
             setWatchId(null);
         }
         try {
-            await stopUserTracking(event.id, userId);
+            await stopTrackingMutation({ eventId: event.id as Id<"events">, userId: user._id as Id<"users"> });
             setIsTracking(false);
             lastLocationRef.current = null;
-            localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
+            localStorage.removeItem(`liveTrack_${event.id}_${user?._id}`);
             toast.success("Live tracking stopped");
         } catch (err) {
             console.error("Failed to stop tracking", err);
@@ -277,67 +261,36 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
         } finally {
             setIsLoading(false);
         }
-    }, [event.id, userId, watchId]);
+    }, [event.id, user?._id, user?.uid, watchId, stopTrackingMutation]);
 
     const handleToggleTracking = () => {
         if (isTracking) stopTrackingCore();
         else startTrackingCore();
     };
 
-    // Auto-resume tracking if within 8 hours
+    // Auto-resume tracking logic
     useEffect(() => {
-        if (hasAccess && event.id && userId) {
-            const stored = localStorage.getItem(`liveTrack_${event.id}_${userId}`);
+        if (hasAccess && event.id && user?._id && !isTracking) {
+            const stored = localStorage.getItem(`liveTrack_${event.id}_${user._id}`);
             if (stored) {
                 try {
                     const { startedAt } = JSON.parse(stored);
                     const elapsed = Date.now() - startedAt;
                     const EIGHT_HOURS = 8 * 60 * 60 * 1000;
-                    if (elapsed < EIGHT_HOURS && !isTracking) {
+                    if (elapsed < EIGHT_HOURS) {
                         startTrackingCore();
-                    } else if (elapsed >= EIGHT_HOURS) {
-                        localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
+                    } else {
+                        localStorage.removeItem(`liveTrack_${event.id}_${user.uid}`);
                     }
                 } catch (e) {
-                    localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
+                    localStorage.removeItem(`liveTrack_${event.id}_${user.uid}`);
                 }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hasAccess]); // Only run once when hasAccess is resolved
+    }, [hasAccess]);
 
-    // Auto-stop tracking after 8 hours
-    useEffect(() => {
-        if (isTracking && event.id && userId) {
-            const checkInterval = setInterval(() => {
-                const stored = localStorage.getItem(`liveTrack_${event.id}_${userId}`);
-                if (stored) {
-                    try {
-                        const { startedAt } = JSON.parse(stored);
-                        const elapsed = Date.now() - startedAt;
-                        const EIGHT_HOURS = 8 * 60 * 60 * 1000;
-                        if (elapsed >= EIGHT_HOURS) {
-                            stopTrackingCore();
-                            toast.info("Live tracking automatically stopped after 8 hours.");
-                        }
-                    } catch (e) {
-                        localStorage.removeItem(`liveTrack_${event.id}_${userId}`);
-                    }
-                }
-            }, 60000); // Check every minute
-            return () => clearInterval(checkInterval);
-        }
-    }, [isTracking, event.id, userId, stopTrackingCore]);
-
-    if (hasAccess === null) {
-        return (
-            <div className="h-screen w-full flex items-center justify-center bg-background">
-                <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
-        );
-    }
-
-    if (!hasAccess) {
+    if (!user || hasAccess === false) {
         return (
             <div className="h-screen w-full flex items-center justify-center bg-background p-6">
                 <div className="bg-surface/40 p-10 rounded-3xl border border-white/10 text-center max-w-md w-full shadow-2xl space-y-6">
@@ -381,7 +334,6 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                    {/* Category Selector */}
                     {event.categories && event.categories.length > 1 && (
                         <div className="flex flex-wrap gap-2">
                             {event.categories.map((cat, i) => (
@@ -401,7 +353,6 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         </div>
                     )}
 
-                    {/* Broadcast Toggle */}
                     <Button
                         onClick={handleToggleTracking}
                         disabled={isLoading}
@@ -427,8 +378,6 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                         isFullscreen ? "h-screen rounded-none" : "h-[60vh] min-h-[500px] rounded-[2.5rem] border-4 border-white/5 shadow-2xl"
                 )}
             >
-
-
                 {gpxUrl ? (
                     (() => {
                         const allStations = event.categories.flatMap(cat => cat.stations || []);
@@ -440,8 +389,8 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                                 gpxUrl={gpxUrl}
                                 zoom={14}
                                 theme="dark"
-                                liveTrackers={isTracking ? liveTrackers : []}
-                                currentUserId={userId}
+                                liveTrackers={liveTrackers}
+                                currentUserId={user?._id}
                                 stations={uniqueStations}
                                 className="rounded-none border-none h-full w-full"
                             />
@@ -454,7 +403,6 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     </div>
                 )}
 
-                {/* Fullscreen Toggle Button - Move after map to ensure it's on top */}
                 {gpxUrl && (
                     <button
                         onClick={toggleFullscreen}
@@ -465,26 +413,21 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     </button>
                 )}
 
-                {/* Tracking stats overlay */}
                 <div className="absolute bottom-6 left-6 z-[1100] bg-black/80 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-4">
                     <div className="flex -space-x-3">
-                        {(isTracking ? liveTrackers : []).slice(0, 3).map((t, i) => (
+                        {liveTrackers.slice(0, 3).map((t, i) => (
                             <div key={t.userId} className="w-8 h-8 rounded-full border-2 border-black bg-primary/20 flex items-center justify-center relative shadow-sm" style={{ zIndex: 10 - i }}>
                                 <span className="text-[10px] font-black text-white">{t.displayName.charAt(0).toUpperCase()}</span>
-                                <div className={cn("absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black", t.userId === userId ? "bg-green-500" : "bg-blue-500")} />
+                                <div className={cn("absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-black", t.userId === user?._id ? "bg-green-500" : "bg-blue-500")} />
                             </div>
                         ))}
                     </div>
-                    {isTracking ? (
-                        liveTrackers.length === 0 ? (
-                            <p className="text-xs font-bold text-text-muted italic">No active runners</p>
-                        ) : (
-                            <p className="text-xs font-black text-white uppercase tracking-wider italic">
-                                <span className="text-primary">{liveTrackers.length}</span> Active Runner{liveTrackers.length > 1 ? 's' : ''}
-                            </p>
-                        )
+                    {liveTrackers.length === 0 ? (
+                        <p className="text-xs font-bold text-text-muted italic">No active runners</p>
                     ) : (
-                        <p className="text-xs font-bold text-text-muted italic">Tracking off</p>
+                        <p className="text-xs font-black text-white uppercase tracking-wider italic">
+                            <span className="text-primary">{liveTrackers.length}</span> Active Runner{liveTrackers.length > 1 ? 's' : ''}
+                        </p>
                     )}
                 </div>
             </div>

@@ -56,6 +56,13 @@ export async function updateEventStatus(id: string, status: EventStatus) {
     });
 }
 
+export async function updateEvent(id: string, updates: Partial<RaceEvent>) {
+    return fetchMutation(api.events.update, {
+        id: id as Id<"events">,
+        ...updates as any,
+    });
+}
+
 export async function deleteEvent(id: string) {
     return fetchMutation(api.events.remove, { id: id as Id<"events"> });
 }

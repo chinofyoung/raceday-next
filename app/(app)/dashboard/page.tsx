@@ -33,16 +33,35 @@ export default function DashboardPage() {
     } : "skip");
 
     // Placeholder for organizer registrations — will need a more complex query or additional schema fields
-    const allRegistrations: any[] = convexRegistrations || [];
+    const allRegistrations = useMemo(() => {
+        return (convexRegistrations || []).map(r => ({
+            ...r,
+            id: r._id,
+        }));
+    }, [convexRegistrations]);
 
     const stats = {
-        total: convexEvents?.page.length || 0,
+        total: (convexEvents?.page || []).length,
         secondary: allRegistrations.filter(r => r.status === "paid").length,
         revenue: allRegistrations.reduce((acc, r) => acc + (r.totalPrice || 0), 0),
         claimedKits: allRegistrations.filter(r => r.raceKitClaimed).length
     };
-    const items = isOrganizerView ? (convexEvents?.page || []).slice(0, 5) : allRegistrations;
-    const allEvents = convexEvents?.page || [];
+
+    const items = useMemo(() => {
+        const rawItems = isOrganizerView ? (convexEvents?.page || []).slice(0, 5) : allRegistrations;
+        return rawItems.map(item => ({
+            ...item,
+            id: (item as any)._id || (item as any).id
+        }));
+    }, [isOrganizerView, convexEvents, allRegistrations]);
+
+    const allEvents = useMemo(() => {
+        return (convexEvents?.page || []).map(e => ({
+            ...e,
+            id: e._id
+        }));
+    }, [convexEvents]);
+
     const loading = authLoading || (isOrganizerView && convexEvents === undefined) || (!isOrganizerView && convexRegistrations === undefined);
     const error = null;
     const hasApplication = false;
@@ -61,18 +80,14 @@ export default function DashboardPage() {
     // Recent registrations (sorted by createdAt desc)
     const recentRegistrations = useMemo(() => {
         return [...allRegistrations]
-            .sort((a, b) => {
-                const aTime = a.createdAt?.seconds || 0;
-                const bTime = b.createdAt?.seconds || 0;
-                return bTime - aTime;
-            })
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
             .slice(0, 6);
     }, [allRegistrations]);
 
     // Per-event kit stats
     const eventKitStats = useMemo(() => {
         return items.map(event => {
-            const eventRegs = allRegistrations.filter(r => r.eventId === event._id);
+            const eventRegs = allRegistrations.filter(r => r.eventId === event.id);
             const claimed = eventRegs.filter(r => r.raceKitClaimed).length;
             return {
                 ...event,

@@ -9,6 +9,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { volunteerInviteSchema, VolunteerInviteFormValues } from "@/lib/validations/volunteer";
 import { toast } from "sonner";
 import { Mail, CheckCircle2, ShieldAlert } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface InviteVolunteerDialogProps {
     open: boolean;
@@ -23,7 +27,9 @@ export function InviteVolunteerDialog({
     eventId,
     onSuccess,
 }: InviteVolunteerDialogProps) {
+    const { user } = useAuth();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const inviteMutation = useMutation(api.volunteers.invite);
 
     const {
         register,
@@ -39,18 +45,15 @@ export function InviteVolunteerDialog({
     });
 
     const onSubmit = async (data: VolunteerInviteFormValues) => {
+        if (!user) return;
         setIsSubmitting(true);
         try {
-            const response = await fetch(`/api/events/${eventId}/volunteers`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+            await inviteMutation({
+                eventId: eventId as Id<"events">,
+                email: data.email,
+                permissions: data.permissions as string[],
+                invitedBy: user.uid,
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to send invitation");
-            }
 
             toast.success("Invitation sent successfully!");
             reset();

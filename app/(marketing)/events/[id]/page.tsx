@@ -1,9 +1,11 @@
 import { Metadata } from "next";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
-import { RaceEvent } from "@/types/event";
+import { PageWrapper } from "@/components/layout/PageWrapper";
 import { EventDetailClient } from "@/components/event/EventDetailClient";
 import { notFound } from "next/navigation";
+import { fetchQuery } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { RaceEvent } from "@/types/event";
 
 interface EventPageProps {
     params: Promise<{ id: string }>;
@@ -11,26 +13,22 @@ interface EventPageProps {
 
 export async function generateMetadata(props: EventPageProps): Promise<Metadata> {
     const params = await props.params;
-    const docRef = doc(db, "events", params.id);
-    const snap = await getDoc(docRef);
+    try {
+        const event = await fetchQuery(api.events.getById, { id: params.id as Id<"events"> });
+        if (!event) return { title: "Event Not Found" };
 
-    if (!snap.exists()) {
         return {
-            title: "Event Not Found",
-        };
-    }
-
-    const event = snap.data() as RaceEvent;
-
-    return {
-        title: event.name,
-        description: event.description.substring(0, 160),
-        openGraph: {
             title: event.name,
-            description: event.description,
-            images: [event.featuredImage].filter(Boolean) as string[],
-        },
-    };
+            description: event.description.substring(0, 160),
+            openGraph: {
+                title: event.name,
+                description: event.description,
+                images: [event.featuredImage].filter(Boolean) as string[],
+            },
+        };
+    } catch (e) {
+        return { title: "Event Not Found" };
+    }
 }
 
 const toISOString = (date: any): string | null => {
@@ -51,26 +49,20 @@ const toISOString = (date: any): string | null => {
 
 export default async function EventDetailPage(props: EventPageProps) {
     const params = await props.params;
-    const docRef = doc(db, "events", params.id);
-    const snap = await getDoc(docRef);
-
-    if (!snap.exists()) {
+    let eventData;
+    try {
+        eventData = await fetchQuery(api.events.getById, { id: params.id as Id<"events"> });
+    } catch (e) {
         notFound();
     }
 
-    const data = snap.data();
+    if (!eventData) {
+        notFound();
+    }
+
     const event = {
-        ...data,
-        id: snap.id,
-        date: toISOString(data?.date) || data?.date,
-        registrationEndDate: toISOString(data?.registrationEndDate),
-        earlyBird: data?.earlyBird ? {
-            ...data.earlyBird,
-            startDate: toISOString(data.earlyBird.startDate),
-            endDate: toISOString(data.earlyBird.endDate),
-        } : undefined,
-        createdAt: toISOString(data?.createdAt),
-        updatedAt: toISOString(data?.updatedAt),
+        ...eventData,
+        id: eventData._id,
     } as unknown as RaceEvent;
 
     // Structured Data (JSON-LD)

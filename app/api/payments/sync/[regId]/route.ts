@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebase/config";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery, fetchMutation } from "convex/nextjs";
 import { generateBibAndQR } from "@/lib/bibUtils";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
@@ -11,30 +12,19 @@ export async function GET(
 ) {
     try {
         const { regId: registrationId } = await params;
-        const regRef = doc(db, "registrations", registrationId);
-        const regSnap = await getDoc(regRef);
+        const regData = await fetchQuery(api.registrations.getById, { id: registrationId as Id<"registrations"> });
 
-        if (!regSnap.exists()) {
+        if (!regData) {
             return NextResponse.json({ error: "Registration not found" }, { status: 404 });
         }
 
-        const regData = regSnap.data();
-
-        // If already paid, just return success
         if (regData.status === "paid") {
             return NextResponse.json({ status: "paid", raceNumber: regData.raceNumber });
         }
 
-        // Otherwise, check Xendit directly
-        // We need the Xendit Invoice ID or we can search by external_id
-        // The most reliable is to fetch by external_id if we have the secret key
         const auth = Buffer.from(`${XENDIT_SECRET_KEY}:`).toString("base64");
-
-        // Fetch invoices from Xendit filtered by external_id
         const response = await fetch(`https://api.xendit.co/v2/invoices?external_id=${registrationId}`, {
-            headers: {
-                "Authorization": `Basic ${auth}`,
-            },
+            headers: { "Authorization": `Basic ${auth}` },
         });
 
         const invoices = await response.json();
@@ -43,11 +33,9 @@ export async function GET(
             return NextResponse.json({ status: "pending", message: "No invoice found yet" });
         }
 
-        // Use the latest invoice
         const invoice = invoices[0];
 
         if (invoice.status === "PAID" || invoice.status === "SETTLED") {
-            // Manual Sync: Update the registration if Xendit says it's paid
             let raceNumber: string;
             let qrCodeUrl: string;
 
@@ -56,43 +44,34 @@ export async function GET(
                     registrationId,
                     regData.eventId,
                     regData.categoryId,
-                    regData.participantInfo.name,
-                    regData.vanityNumber
+                    regData.registrationData?.participantInfo?.name || "Participant",
+                    regData.registrationData?.vanityNumber
                 );
                 raceNumber = result.raceNumber;
                 qrCodeUrl = result.qrCodeUrl;
             } catch (bibError: any) {
-                // Vanity number was claimed between checkout and sync — fallback to sequential
-                console.warn(
-                    `Vanity bib conflict for reg ${registrationId}: ${bibError.message}. Falling back to sequential.`
-                );
                 const result = await generateBibAndQR(
                     registrationId,
                     regData.eventId,
                     regData.categoryId,
-                    regData.participantInfo.name,
-                    null // force sequential
+                    regData.registrationData?.participantInfo?.name || "Participant",
+                    null
                 );
                 raceNumber = result.raceNumber;
                 qrCodeUrl = result.qrCodeUrl;
             }
 
-            await updateDoc(regRef, {
-                status: "paid",
+            await fetchMutation(api.registrations.markAsPaid, {
+                id: registrationId as Id<"registrations">,
                 paymentStatus: "paid",
                 raceNumber,
                 qrCodeUrl,
-                paidAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-                xenditPaymentId: invoice.id,
-                syncedManual: true
             });
 
             return NextResponse.json({ status: "paid", raceNumber });
         }
 
         return NextResponse.json({ status: invoice.status.toLowerCase() });
-
     } catch (error: any) {
         console.error("Sync Error:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });

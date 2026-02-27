@@ -37,7 +37,7 @@ export default function EditEventPage() {
             }
 
             // Check if user is the organizer
-            if (data.organizerId !== user?.uid && role !== "admin") {
+            if (data.organizerId !== user?._id && role !== "admin") {
                 setEventData(null);
                 return;
             }

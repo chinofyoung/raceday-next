@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,11 +16,11 @@ import { Step4Timeline } from "./Step4Timeline";
 import { Step5Features } from "./Step5Features";
 import { Step6Review } from "./Step6Review";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { useCallback } from "react";
-import { addDoc, collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
 import { useRouter } from "next/navigation";
-import { toInputDate, sanitizeForFirestore } from "@/lib/utils";
+import { toInputDate } from "@/lib/utils";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 const STEPS = [
     "Basic Info",
@@ -43,6 +43,9 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
     const [maxStepReached, setMaxStepReached] = useState(isEditing ? STEPS.length - 1 : 0);
     const [loading, setLoading] = useState(false);
     const [draftId, setDraftId] = useState<string | null>(initialData?.id || null);
+
+    const createEvent = useMutation(api.events.create);
+    const updateEvent = useMutation(api.events.update);
 
     const methods = useForm<EventFormInput>({
         resolver: zodResolver(eventSchema) as any,
@@ -110,21 +113,33 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
 
         const values = methods.getValues();
         try {
-            if (draftId && typeof draftId === "string" && draftId.length > 0) {
-                await updateDoc(doc(db, "events", draftId), sanitizeForFirestore({
-                    ...values,
-                    updatedAt: serverTimestamp(),
-                }));
+            // Clean system and metadata fields that Convex doesn't allow in args
+            const { _id, _creationTime, id: _, createdAt, updatedAt, organizerId, organizerName, ...rest } = values as any;
+
+            const payload = {
+                ...rest,
+                date: new Date(values.date).getTime(),
+                registrationEndDate: new Date(values.registrationEndDate).getTime(),
+                earlyBird: values.earlyBird?.enabled ? {
+                    enabled: true,
+                    startDate: values.earlyBird.startDate ? new Date(values.earlyBird.startDate).getTime() : 0,
+                    endDate: values.earlyBird.endDate ? new Date(values.earlyBird.endDate).getTime() : 0,
+                } : undefined,
+                status: "draft" as const,
+                featured: values.featured ?? false,
+                isLiveTrackingEnabled: values.isLiveTrackingEnabled ?? true,
+            };
+
+            if (draftId && draftId.length > 20) { // Convex IDs are typically > 20 chars
+                await updateEvent({
+                    id: draftId as any,
+                    ...payload as any,
+                });
             } else {
-                const res = await addDoc(collection(db, "events"), sanitizeForFirestore({
-                    ...values,
-                    organizerId: user.uid,
-                    organizerName: user.displayName || "Unknown Organizer",
-                    status: "draft",
-                    createdAt: serverTimestamp(),
-                    updatedAt: serverTimestamp(),
-                }));
-                setDraftId(res.id);
+                const res = await createEvent({
+                    ...payload,
+                });
+                setDraftId(res);
             }
             toast.success("Draft saved successfully!", { id: loadingToast });
         } catch (e) {
@@ -134,39 +149,39 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                 description: "Please check your connection and try again."
             });
         }
-    }, [user, draftId, methods]);
+    }, [user, draftId, methods, createEvent, updateEvent]);
 
     const onSubmit = async (data: EventFormInput) => {
         if (!user) return;
         setLoading(true);
 
-        const dataTransform: EventFormValues = {
-            ...data,
-            date: data.date ? new Date(data.date) : new Date(),
-            registrationEndDate: data.registrationEndDate ? new Date(data.registrationEndDate) : new Date(),
-            earlyBird: data.earlyBird ? {
-                enabled: data.earlyBird.enabled,
-                startDate: data.earlyBird.startDate ? new Date(data.earlyBird.startDate) : undefined,
-                endDate: data.earlyBird.endDate ? new Date(data.earlyBird.endDate) : undefined,
-            } : undefined
+        // Clean system and metadata fields
+        const { _id, _creationTime, id: _, createdAt, updatedAt, organizerId, organizerName, ...rest } = data as any;
+
+        const payload = {
+            ...rest,
+            date: new Date(data.date).getTime(),
+            registrationEndDate: new Date(data.registrationEndDate).getTime(),
+            earlyBird: data.earlyBird?.enabled ? {
+                enabled: true,
+                startDate: data.earlyBird.startDate ? new Date(data.earlyBird.startDate).getTime() : 0,
+                endDate: data.earlyBird.endDate ? new Date(data.earlyBird.endDate).getTime() : 0,
+            } : undefined,
+            status: "published" as const,
+            featured: data.featured ?? false,
+            isLiveTrackingEnabled: data.isLiveTrackingEnabled ?? true,
         };
 
         try {
-            const payload = {
-                ...dataTransform,
-                organizerId: user.uid,
-                organizerName: user.displayName || "Unknown Organizer",
-                status: "published" as const,
-                updatedAt: serverTimestamp(),
-            };
-
-            if (draftId && typeof draftId === "string" && draftId.length > 0) {
-                await updateDoc(doc(db, "events", draftId), sanitizeForFirestore(payload));
+            if (draftId && draftId.length > 20) {
+                await updateEvent({
+                    id: draftId as any,
+                    ...payload as any,
+                });
             } else {
-                await addDoc(collection(db, "events"), sanitizeForFirestore({
+                await createEvent({
                     ...payload,
-                    createdAt: serverTimestamp(),
-                }));
+                });
             }
             router.push("/dashboard/events");
         } catch (e: any) {

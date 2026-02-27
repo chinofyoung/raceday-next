@@ -3,8 +3,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { profileSchema, ProfileFormValues, calculateCompletion } from "@/lib/validations/profile";
 import { Input } from "@/components/ui/Input";
@@ -17,8 +18,10 @@ import { ImageUpload } from "@/components/ui/ImageUpload";
 const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
 
 export function ProfileForm() {
-    const { user, refreshUser } = useAuth();
+    const { user } = useAuth();
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+    const updateProfile = useMutation(api.users.updateProfile);
+    const updatePhotoURL = useMutation(api.users.updatePhotoURL);
 
     const {
         register,
@@ -53,28 +56,34 @@ export function ProfileForm() {
     });
 
     const onSubmit = useCallback(async (data: ProfileFormValues) => {
-        if (!user) return;
+        if (!user) {
+            toast.error("User record not found. Please refresh or try again later.");
+            return;
+        }
+
+        const loadingToast = toast.loading("Saving changes...");
         setSaveStatus("saving");
         try {
-            const userDocRef = doc(db, "users", user.uid);
             const completion = calculateCompletion(data);
 
-            await setDoc(userDocRef, {
+            await updateProfile({
                 ...data,
                 profileCompletion: completion,
-                updatedAt: serverTimestamp(),
-            }, { merge: true });
+            });
 
-            await refreshUser();
             reset(data);
-
             setSaveStatus("saved");
+            toast.success("Profile updated successfully!", { id: loadingToast });
             setTimeout(() => setSaveStatus("idle"), 3000);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Save error:", error);
             setSaveStatus("idle");
+            toast.error("Failed to update profile.", {
+                id: loadingToast,
+                description: error?.message || "Please check your connection."
+            });
         }
-    }, [user, reset, refreshUser]);
+    }, [user, reset, updateProfile]);
 
     const watchedFields = watch();
 
@@ -89,8 +98,7 @@ export function ProfileForm() {
                                 value={user?.photoURL || ""}
                                 onChange={async (url) => {
                                     if (user) {
-                                        await setDoc(doc(db, "users", user.uid), { photoURL: url }, { merge: true });
-                                        await refreshUser();
+                                        await updatePhotoURL({ photoURL: url });
                                     }
                                 }}
                                 aspectRatio="square"

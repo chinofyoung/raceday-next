@@ -35,7 +35,15 @@ interface EventCardProps {
 
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const { user } = useAuth();
-    const paidCountCountRaw = useQuery(api.registrations.getCount, event.id ? { eventId: event.id as Id<"events"> } : "skip");
+
+    // Safety check for Convex ID - Firebase IDs are 20 chars, Convex IDs are typically different.
+    // Also, Convex IDs for the 'events' table will pass this check while legacy IDs won't match Convex's internal format.
+    const isConvexId = event.id && event.id.length !== 20;
+
+    const paidCountCountRaw = useQuery(
+        api.registrations.getCount,
+        (event.id && isConvexId) ? { eventId: event.id as Id<"events"> } : "skip"
+    );
     const paidCount = paidCountCountRaw ?? 0;
     const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
     const isValidDate = eventDate && !isNaN(eventDate.getTime());
@@ -71,7 +79,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
             {/* Image Section */}
             <div className="aspect-[16/9] relative overflow-hidden">
                 <Image
-                    src={event.featuredImage || "/placeholder.jpg"}
+                    src={event.featuredImage || "/placeholder.png"}
                     alt={event.name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -220,7 +228,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                                 <div /> // Spacer or nothing
                             )}
                             <div className="flex items-center gap-2">
-                                {user?.uid === event.organizerId && (
+                                {user?._id === event.organizerId && (
                                     <Button variant="ghost" size="sm" className="bg-slate-700 h-8 w-8 p-0 rounded-full hover:bg-white/10 text-text-muted hover:text-primary transition-colors" asChild title="Edit Event">
                                         <Link href={`/dashboard/events/${event.id}/edit`}><Edit2 size={14} /></Link>
                                     </Button>

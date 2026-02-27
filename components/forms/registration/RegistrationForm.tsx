@@ -17,8 +17,9 @@ import { Step4Review } from "./Step4Review";
 import { Step0Who } from "./Step0Who";
 import { cn } from "@/lib/utils";
 import { LoginPromptModal } from "@/components/shared/LoginPromptModal";
-import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { api } from "@/convex/_generated/api";
+import { useMutation } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
 import { calculateCompletion } from "@/lib/validations/profile";
 
 const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
@@ -31,6 +32,7 @@ interface RegistrationFormProps {
 export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
     const { user, refreshUser } = useAuth();
     const router = useRouter();
+    const updateProfileMutation = useMutation(api.users.updateProfile);
     const [currentStep, setCurrentStep] = useState(0);
     const [loading, setLoading] = useState(false);
     const [showLoginModal, setShowLoginModal] = useState(false);
@@ -99,26 +101,6 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                     medicalConditions: user.medicalConditions || "",
                 }
             });
-        } else {
-            // Proxy - clear fields
-            methods.reset({
-                ...currentValues,
-                participantInfo: {
-                    name: "",
-                    email: "",
-                    phone: "",
-                    gender: "" as any,
-                    birthDate: "",
-                    tShirtSize: "",
-                    singletSize: "",
-                    emergencyContact: {
-                        name: "",
-                        phone: "",
-                        relationship: "",
-                    },
-                    medicalConditions: "",
-                }
-            });
         }
     }, [user, registrationType, methods]);
 
@@ -153,48 +135,37 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
     };
 
     // Sync user profile from registration data (for "self" registrations)
-    const syncProfileFromRegistration = useCallback(async (userId: string, formData: RegistrationFormValues) => {
-        if (formData.registrationType !== "self") return;
+    const syncProfileFromRegistration = useCallback(async (formData: RegistrationFormValues) => {
+        if (formData.registrationType !== "self" || !user) return;
 
         try {
             const profileData = {
                 displayName: formData.participantInfo.name,
                 phone: formData.participantInfo.phone,
-                gender: formData.participantInfo.gender,
+                gender: formData.participantInfo.gender as any,
                 birthDate: formData.participantInfo.birthDate,
-                tShirtSize: formData.participantInfo.tShirtSize,
-                singletSize: formData.participantInfo.singletSize,
+                tShirtSize: formData.participantInfo.tShirtSize as any,
+                singletSize: formData.participantInfo.singletSize as any,
                 emergencyContact: formData.participantInfo.emergencyContact,
                 medicalConditions: formData.participantInfo.medicalConditions || "",
             };
 
-            // We need to get the full profile data to calculate completion correctly
-            const userDocRef = doc(db, "users", userId);
-            const userSnap = await getDoc(userDocRef);
-            const existingData = userSnap.exists() ? userSnap.data() : {};
-
             const fullProfileForCalc = {
-                displayName: profileData.displayName || existingData.displayName || "",
-                phone: profileData.phone || existingData.phone || "",
-                tShirtSize: profileData.tShirtSize || existingData.tShirtSize || "",
-                singletSize: profileData.singletSize || existingData.singletSize || "",
-                address: existingData.address || { street: "", city: "", province: "", zipCode: "", country: "" },
-                emergencyContact: profileData.emergencyContact,
-                medicalConditions: profileData.medicalConditions,
+                ...user,
+                ...profileData,
             };
 
             const completion = calculateCompletion(fullProfileForCalc as any);
 
-            await setDoc(userDocRef, {
+            await updateProfileMutation({
                 ...profileData,
                 profileCompletion: completion,
-                updatedAt: serverTimestamp(),
-            }, { merge: true });
+            });
         } catch (error) {
             console.error("Error syncing profile from registration:", error);
             // Non-fatal — don't block registration
         }
-    }, []);
+    }, [user, updateProfileMutation]);
 
     // Submit registration to payment API
     const submitRegistration = useCallback(async (data: RegistrationFormValues, userId: string, displayName: string) => {
@@ -246,8 +217,8 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         }
 
         // Logged in — sync profile and proceed
-        await syncProfileFromRegistration(user.uid, data);
-        await submitRegistration(data, user.uid, user.displayName);
+        await syncProfileFromRegistration(data);
+        await submitRegistration(data, user._id, user.displayName || "Unknown");
     };
 
     const handleLoginSuccess = async (userId: string) => {
@@ -256,20 +227,22 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         // Refresh user data in context
         await refreshUser();
 
-        if (pendingSubmitData) {
-            // Sync profile from registration data
-            await syncProfileFromRegistration(userId, pendingSubmitData);
-
-            // Now get the display name (may have been just created)
-            const userDocRef = doc(db, "users", userId);
-            const userSnap = await getDoc(userDocRef);
-            const displayName = userSnap.exists() ? userSnap.data().displayName : "Unknown";
-
-            // Submit the pending registration
-            await submitRegistration(pendingSubmitData, userId, displayName);
-            setPendingSubmitData(null);
-        }
+        // Note: The userId passed here is likely the Clerk UID or Convex ID depending on LoginPromptModal implementation.
+        // But since we refreshUser(), we can just use the updated 'user' object if it becomes available.
+        // To be safe, let's wait a bit or use the refreshed user.
     };
+
+    // Use effect to handle pending submit after login
+    useEffect(() => {
+        if (user && pendingSubmitData) {
+            const processPending = async () => {
+                await syncProfileFromRegistration(pendingSubmitData);
+                await submitRegistration(pendingSubmitData, user._id, user.displayName || "Unknown");
+                setPendingSubmitData(null);
+            };
+            processPending();
+        }
+    }, [user, pendingSubmitData, syncProfileFromRegistration, submitRegistration]);
 
     return (
         <FormProvider {...methods}>

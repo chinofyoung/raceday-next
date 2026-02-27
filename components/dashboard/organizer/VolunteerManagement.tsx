@@ -27,64 +27,48 @@ import {
 import { toast } from "sonner";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 interface VolunteerManagementProps {
     eventId: string;
 }
 
 export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
-    const [volunteers, setVolunteers] = React.useState<EventVolunteer[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const { user } = useAuth();
     const [isInviteOpen, setIsInviteOpen] = React.useState(false);
     const [activeTab, setActiveTab] = React.useState<"active" | "revoked">("active");
-    const [revokeModal, setRevokeModal] = React.useState<{ open: boolean; volunteerId: string | null }>({
+    const [revokeModal, setRevokeModal] = React.useState<{ open: boolean; volunteerId: Id<"volunteers"> | null }>({
         open: false,
         volunteerId: null,
     });
     const [isRevoking, setIsRevoking] = React.useState(false);
 
-    const [restoreModal, setRestoreModal] = React.useState<{ open: boolean; volunteerId: string | null }>({
+    const [restoreModal, setRestoreModal] = React.useState<{ open: boolean; volunteerId: Id<"volunteers"> | null }>({
         open: false,
         volunteerId: null,
     });
     const [isRestoring, setIsRestoring] = React.useState(false);
 
-    const [deleteModal, setDeleteModal] = React.useState<{ open: boolean; volunteerId: string | null }>({
+    const [deleteModal, setDeleteModal] = React.useState<{ open: boolean; volunteerId: Id<"volunteers"> | null }>({
         open: false,
         volunteerId: null,
     });
     const [isDeleting, setIsDeleting] = React.useState(false);
 
-    const fetchVolunteers = React.useCallback(async () => {
-        try {
-            const response = await fetch(`/api/events/${eventId}/volunteers`);
-            if (!response.ok) throw new Error("Failed to fetch volunteers");
-            const data = await response.json();
-            setVolunteers(data);
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to load volunteers");
-        } finally {
-            setIsLoading(false);
-        }
-    }, [eventId]);
-
-    React.useEffect(() => {
-        fetchVolunteers();
-    }, [fetchVolunteers]);
+    const volunteers = useQuery(api.volunteers.listByEvent, { eventId: eventId as Id<"events"> });
+    const revokeMutation = useMutation(api.volunteers.revoke);
+    const restoreMutation = useMutation(api.volunteers.restore);
+    const deleteMutation = useMutation(api.volunteers.remove);
 
     const handleRevoke = async () => {
         if (!revokeModal.volunteerId) return;
         setIsRevoking(true);
         try {
-            const response = await fetch(`/api/events/${eventId}/volunteers/${revokeModal.volunteerId}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) throw new Error("Failed to revoke access");
-
+            await revokeMutation({ id: revokeModal.volunteerId });
             toast.success("Volunteer access revoked");
-            fetchVolunteers();
             setRevokeModal({ open: false, volunteerId: null });
         } catch (error: any) {
             toast.error(error.message || "Failed to revoke access");
@@ -97,14 +81,8 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
         if (!restoreModal.volunteerId) return;
         setIsRestoring(true);
         try {
-            const response = await fetch(`/api/events/${eventId}/volunteers/${restoreModal.volunteerId}/restore`, {
-                method: "POST",
-            });
-
-            if (!response.ok) throw new Error("Failed to restore access");
-
+            await restoreMutation({ id: restoreModal.volunteerId });
             toast.success("Volunteer access restored");
-            fetchVolunteers();
             setRestoreModal({ open: false, volunteerId: null });
         } catch (error: any) {
             toast.error(error.message || "Failed to restore access");
@@ -117,14 +95,8 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
         if (!deleteModal.volunteerId) return;
         setIsDeleting(true);
         try {
-            const response = await fetch(`/api/events/${eventId}/volunteers/${deleteModal.volunteerId}/delete`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) throw new Error("Failed to delete volunteer");
-
+            await deleteMutation({ id: deleteModal.volunteerId });
             toast.success("Volunteer deleted");
-            fetchVolunteers();
             setDeleteModal({ open: false, volunteerId: null });
         } catch (error: any) {
             toast.error(error.message || "Failed to delete volunteer");
@@ -146,7 +118,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
         }
     };
 
-    const getPermissionLabel = (permission: VolunteerPermission) => {
+    const getPermissionLabel = (permission: string) => {
         switch (permission) {
             case "kiosk": return "Kiosk";
             case "participants": return "Participants";
@@ -155,7 +127,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
         }
     };
 
-    if (isLoading) {
+    if (volunteers === undefined) {
         return (
             <div className="space-y-4 animate-pulse">
                 {[1, 2, 3].map((i) => (
@@ -213,7 +185,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
             </div>
 
             {volunteers.length === 0 ? (
-                <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2">
+                <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed border-2 text-surface">
                     <div className="w-16 h-16 rounded-2xl bg-white/[0.02] flex items-center justify-center mb-4">
                         <Users className="w-8 h-8 text-text-muted" />
                     </div>
@@ -238,7 +210,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                             .filter(v => activeTab === "active" ? v.status !== "revoked" : v.status === "revoked")
                             .map((volunteer) => (
                                 <div
-                                    key={volunteer.id}
+                                    key={volunteer._id}
                                     className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-200"
                                 >
                                     <div className="flex items-center gap-4">
@@ -273,7 +245,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
 
                                     <div className="mt-4 sm:mt-0 flex items-center justify-between sm:justify-end gap-6">
                                         <div className="flex flex-wrap gap-1.5">
-                                            {volunteer.permissions.map((p) => (
+                                            {volunteer.permissions.map((p: string) => (
                                                 <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase">
                                                     {getPermissionLabel(p)}
                                                 </Badge>
@@ -283,7 +255,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                         <div className="flex items-center gap-2 transition-opacity">
                                             {volunteer.status !== 'revoked' ? (
                                                 <button
-                                                    onClick={() => setRevokeModal({ open: true, volunteerId: volunteer.id })}
+                                                    onClick={() => setRevokeModal({ open: true, volunteerId: volunteer._id })}
                                                     className="p-2 rounded-lg bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
                                                     title="Revoke access"
                                                 >
@@ -291,7 +263,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                                 </button>
                                             ) : (
                                                 <button
-                                                    onClick={() => setRestoreModal({ open: true, volunteerId: volunteer.id })}
+                                                    onClick={() => setRestoreModal({ open: true, volunteerId: volunteer._id })}
                                                     className="p-2 rounded-lg bg-emerald-500/0 hover:bg-emerald-500/10 text-text-muted hover:text-emerald-500 transition-colors"
                                                     title="Restore access"
                                                 >
@@ -299,7 +271,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                                 </button>
                                             )}
                                             <button
-                                                onClick={() => setDeleteModal({ open: true, volunteerId: volunteer.id })}
+                                                onClick={() => setDeleteModal({ open: true, volunteerId: volunteer._id })}
                                                 className="p-2 rounded-lg bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
                                                 title="Delete volunteer"
                                             >
@@ -317,7 +289,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 open={isInviteOpen}
                 onClose={() => setIsInviteOpen(false)}
                 eventId={eventId}
-                onSuccess={fetchVolunteers}
+                onSuccess={() => { }}
             />
 
             <ConfirmModal

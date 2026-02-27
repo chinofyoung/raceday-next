@@ -1,5 +1,17 @@
-import { mutation } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+
+export const getLogs = query({
+    args: {
+        limit: v.optional(v.number()),
+    },
+    handler: async (ctx, args) => {
+        return await ctx.db
+            .query("auditLogs")
+            .order("desc")
+            .take(args.limit ?? 50);
+    },
+});
 
 export const log = mutation({
     args: {

@@ -47,9 +47,9 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                                 ) : (
                                     <Badge variant="outline" className="border-white/10 text-text-muted text-[9px] font-black italic uppercase px-2 py-0.5 bg-black/40">Pending Kit</Badge>
                                 )}
-                                {reg.createdAt?.seconds && (
+                                {reg.createdAt && (
                                     <span className="text-[9px] text-text-muted/70 font-medium italic">
-                                        {formatDistanceToNow(new Date(reg.createdAt.seconds * 1000), { addSuffix: true })}
+                                        {formatDistanceToNow(new Date(reg.createdAt), { addSuffix: true })}
                                     </span>
                                 )}
                             </div>

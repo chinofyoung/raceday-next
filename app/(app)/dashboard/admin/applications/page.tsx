@@ -7,9 +7,8 @@ import {
     UserCheck, ArrowLeft, Loader2, Download, Filter
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import { OrganizerApplication } from "@/types/user";
+import { api } from "@/convex/_generated/api";
 import { cn, formatDate } from "@/lib/utils";
 import { logAdminAction } from "@/lib/admin/audit";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -24,7 +23,8 @@ export default function ApplicationsPage() {
     const [processing, setProcessing] = useState<string | null>(null);
 
     const { data: applications, loading, hasMore, loadMore, refresh } = usePaginatedQuery<OrganizerApplication>({
-        fetchFn: (opts) => getOrganizerApplications({ ...opts, status: filter }),
+        apiQuery: api.applications.list,
+        args: { status: filter },
         pageSize: 20
     });
 
@@ -39,18 +39,10 @@ export default function ApplicationsPage() {
         try {
             await reviewApplication(app.id, "approved");
 
-            // Update User role
-            const userRef = doc(db, "users", app.userId);
-            await updateDoc(userRef, {
-                role: "organizer",
-                "organizer.approved": true,
-                "organizer.approvedAt": Timestamp.now()
-            });
-
             // Log action
             if (currentUser) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     "approve_organizer",
                     app.userId,
@@ -78,7 +70,7 @@ export default function ApplicationsPage() {
             // Log action
             if (currentUser) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     "reject_organizer",
                     app.userId,
@@ -107,7 +99,7 @@ export default function ApplicationsPage() {
             // Log action
             if (currentUser) {
                 await logAdminAction(
-                    currentUser.uid,
+                    currentUser._id as string,
                     currentUser.displayName,
                     "request_info_organizer",
                     app.userId,

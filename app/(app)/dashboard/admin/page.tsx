@@ -10,9 +10,7 @@ import {
     FileText, UserCheck, Loader2, BarChart3, Clock, Shield
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { collection, query, where, getDocs, limit, orderBy } from "firebase/firestore";
-import { format, subDays, startOfDay } from "date-fns";
+import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
 import { getEvents } from "@/lib/services/eventService";
@@ -282,7 +280,7 @@ export default function AdminDashboardPage() {
                         <h3 className="font-bold uppercase italic text-[10px] text-primary mb-6 tracking-widest text-center relative z-10">SYSTEM STATUS</h3>
                         <div className="space-y-4 relative z-10">
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-text-muted uppercase italic">Firebase DB</span>
+                                <span className="text-[10px] font-bold text-text-muted uppercase italic">Convex Backend</span>
                                 <Badge variant="success" className="text-[8px] px-2 py-0 border-none">Online</Badge>
                             </div>
                             <div className="flex items-center justify-between">

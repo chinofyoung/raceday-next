@@ -152,8 +152,8 @@ export default function UserManagementPage() {
                         <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No users found matching your search.</p>
                     </Card>
                 ) : (
-                    filteredUsers.map((user) => (
-                        <Card key={user.uid} className="p-4 lg:p-6 bg-surface/40 border-white/5 hover:bg-surface/60 transition-all group">
+                    filteredUsers.map((user: any) => (
+                        <Card key={user._id} className="p-4 lg:p-6 bg-surface/40 border-white/5 hover:bg-surface/60 transition-all group">
                             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
                                 {/* Details */}
                                 <div className="col-span-4 flex items-center gap-4">
@@ -162,7 +162,7 @@ export default function UserManagementPage() {
                                             <img src={user.photoURL} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10 italic font-bold">
-                                                {user.displayName[0]}
+                                                {user.displayName ? user.displayName[0] : "?"}
                                             </div>
                                         )}
                                     </div>
@@ -211,8 +211,8 @@ export default function UserManagementPage() {
                                             variant="ghost"
                                             className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary"
                                             title="Promote/Demote"
-                                            onClick={() => handleRoleChange(user.uid, user.role === "runner" ? "organizer" : "runner")}
-                                            disabled={processing === user.uid}
+                                            onClick={() => handleRoleChange(user._id, user.role === "runner" ? "organizer" : "runner")}
+                                            disabled={processing === user._id}
                                         >
                                             <UserCog size={14} />
                                         </Button>

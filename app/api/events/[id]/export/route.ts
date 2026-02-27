@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminDb } from "@/lib/firebase/admin";
 import { format } from "date-fns";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 
 export const dynamic = 'force-dynamic';
 
@@ -24,12 +26,11 @@ export async function GET(
 
         const { id: eventId } = await context.params;
 
-        // Fetch Event details to map category names
-        const eventDoc = await adminDb.collection("events").doc(eventId).get();
-        if (!eventDoc.exists) {
+        // Fetch Event details to map category names from Convex
+        const eventData: any = await fetchQuery(api.events.getById, { id: eventId as Id<"events"> });
+        if (!eventData) {
             return new NextResponse("Event not found", { status: 404 });
         }
-        const eventData = eventDoc.data() as any;
         const categoriesMap = new Map<string, string>();
         if (eventData.categories) {
             eventData.categories.forEach((cat: any) => {
@@ -37,16 +38,18 @@ export async function GET(
             });
         }
 
-        // Fetch Registrations
-        let registrationsQuery = adminDb.collection("registrations")
-            .where("eventId", "==", eventId);
+        // Fetch Registrations from Convex
+        const registrationsData = await fetchQuery(api.registrations.list, {
+            eventId: eventId as Id<"events">,
+            status: statusFilter,
+            paginationOpts: { numItems: 2000, cursor: null }
+        });
 
-        if (statusFilter !== "all") {
-            registrationsQuery = registrationsQuery.where("status", "==", statusFilter);
-        }
-
-        const registrationsSnap = await registrationsQuery.get();
-        let registrations = registrationsSnap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() } as any));
+        let registrations = registrationsData.page.map((doc: any) => ({
+            id: doc._id,
+            ...doc,
+            ...(doc.registrationData || {})
+        } as any));
 
         // Client-side like search filtering
         if (q) {
@@ -75,14 +78,13 @@ export async function GET(
             "Payment Status",
             "Kit Claimed",
             "Amount Paid",
-            "Registered By",
             "Is Proxy"
         ];
 
         let csvContent = headers.map(escapeCsvValue).join(",") + "\n";
 
         registrations.forEach((reg: any) => {
-            const addedOn = reg.createdAt ? format(reg.createdAt.toDate(), "yyyy-MM-dd HH:mm:ss") : "N/A";
+            const addedOn = reg.createdAt ? format(new Date(reg.createdAt), "yyyy-MM-dd HH:mm:ss") : "N/A";
             const catName = categoriesMap.get(reg.categoryId) || reg.categoryId;
             const row = [
                 reg.id,
@@ -100,7 +102,6 @@ export async function GET(
                 reg.status || "",
                 reg.raceKitClaimed ? "Yes" : "No",
                 reg.totalPrice || 0,
-                reg.registeredByName || "",
                 reg.isProxy ? "Yes" : "No"
             ];
             csvContent += row.map(escapeCsvValue).join(",") + "\n";

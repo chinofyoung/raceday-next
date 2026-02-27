@@ -1,29 +1,34 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Megaphone, Mail, Loader2, Plus, Clock, Users, Wand2, Sparkles, AlertCircle, Edit2, Trash2, X } from "lucide-react";
+import { Megaphone, Mail, Loader2, Plus, Clock, Wand2, Sparkles, AlertCircle, Edit2, Trash2, X } from "lucide-react";
 import { format } from "date-fns";
-import { Announcement } from "@/types/announcement";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { auth } from "@/lib/firebase/config";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import Image from "next/image";
+import { useQuery, useMutation, useAction } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
 interface AnnouncementsTabProps {
     eventId: string;
 }
 
 export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
+    const announcementsData = useQuery(api.announcements.listByEvent, { eventId: eventId as Id<"events"> });
+    const createMutation = useMutation(api.announcements.create);
+    const updateMutation = useMutation(api.announcements.update);
+    const removeMutation = useMutation(api.announcements.remove);
+    const sendEmailAction = useAction(api.emails.sendAnnouncementEmail);
+
     const [isCreating, setIsCreating] = useState(false);
     const [submitting, setSubmitting] = useState(false);
-    const { user } = useAuth();
 
     // Form state
     const [title, setTitle] = useState("");
@@ -37,27 +42,8 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
     const [showAiMenu, setShowAiMenu] = useState(false);
 
     // Edit/Delete State
-    const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
-    const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
-
-    useEffect(() => {
-        fetchAnnouncements();
-    }, [eventId]);
-
-    const fetchAnnouncements = async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`/api/events/${eventId}/announcements`);
-            if (res.ok) {
-                const data = await res.json();
-                setAnnouncements(data);
-            }
-        } catch (error) {
-            console.error("Failed to fetch announcements:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [editingAnnouncement, setEditingAnnouncement] = useState<any | null>(null);
+    const [isDeletingId, setIsDeletingId] = useState<Id<"announcements"> | null>(null);
 
     const handleAiAction = async (action: "draft" | "improve" | "make-formal" | "make-exciting") => {
         if (action === "draft" && !title.trim()) {
@@ -75,12 +61,10 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
         setShowAiMenu(false);
 
         try {
-            const token = await auth.currentUser?.getIdToken();
             const res = await fetch("/api/ai/announcement-assistant", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({ title, message, action }),
             });
@@ -95,7 +79,6 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             if (data.message) {
                 setMessage(data.message);
             } else if (data.text) {
-                // Fallback catch if the JSON parsing in the api failed
                 setMessage(data.text);
             }
         } catch (error: any) {
@@ -113,27 +96,19 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             if (!editingAnnouncement.title.trim() || !editingAnnouncement.message.trim()) return;
             setSubmitting(true);
             try {
-                const res = await fetch(`/api/events/${eventId}/announcements/${editingAnnouncement.id}`, {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
+                await updateMutation({
+                    id: editingAnnouncement._id,
+                    data: {
                         title: editingAnnouncement.title,
                         message: editingAnnouncement.message,
                         imageUrl: editingAnnouncement.imageUrl
-                    }),
+                    }
                 });
-
-                if (res.ok) {
-                    setAnnouncements(announcements.map(a =>
-                        a.id === editingAnnouncement.id ? { ...a, title: editingAnnouncement.title, message: editingAnnouncement.message, imageUrl: editingAnnouncement.imageUrl } : a
-                    ));
-                    setEditingAnnouncement(null);
-                } else {
-                    alert("Failed to update announcement.");
-                }
+                toast.success("Announcement updated!");
+                setEditingAnnouncement(null);
             } catch (error) {
                 console.error(error);
-                alert("Error updating announcement.");
+                toast.error("Error updating announcement.");
             } finally {
                 setSubmitting(false);
             }
@@ -144,54 +119,62 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
         setSubmitting(true);
         try {
-            const res = await fetch(`/api/events/${eventId}/announcements`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, message, sendEmail, imageUrl }),
+            if (!user) throw new Error("User not authenticated");
+
+            // 1. Create the announcement
+            await createMutation({
+                eventId: eventId as Id<"events">,
+                organizerId: user._id as Id<"users">,
+                title,
+                message,
+                sendEmail,
+                imageUrl,
+                createdBy: user.uid,
             });
 
-            if (res.ok) {
-                const newAnnouncement = await res.json();
-                setAnnouncements([newAnnouncement, ...announcements]);
-                setTitle("");
-                setMessage("");
-                setImageUrl("");
-                setSendEmail(false);
-                setIsCreating(false);
-            } else {
-                alert("Failed to create announcement.");
+            // 2. If sendEmail is checked, trigger the email blast action
+            if (sendEmail) {
+                toast.info("Sending email blast in background...");
+                sendEmailAction({
+                    eventId: eventId as Id<"events">,
+                    title,
+                    message,
+                }).catch(err => {
+                    console.error("Email blast failed:", err);
+                    toast.error("Failed to send email blast.");
+                });
             }
+
+            toast.success("Announcement published!");
+            setTitle("");
+            setMessage("");
+            setImageUrl("");
+            setSendEmail(false);
+            setIsCreating(false);
         } catch (error) {
             console.error(error);
-            alert("Error creating announcement.");
+            toast.error("Error creating announcement.");
         } finally {
             setSubmitting(false);
         }
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id: Id<"announcements">) => {
         if (!confirm("Are you sure you want to delete this announcement? This action cannot be undone.")) return;
 
         setIsDeletingId(id);
         try {
-            const res = await fetch(`/api/events/${eventId}/announcements/${id}`, {
-                method: "DELETE",
-            });
-
-            if (res.ok) {
-                setAnnouncements(announcements.filter(a => a.id !== id));
-            } else {
-                alert("Failed to delete announcement.");
-            }
+            await removeMutation({ id });
+            toast.success("Announcement deleted.");
         } catch (error) {
             console.error(error);
-            alert("Error deleting announcement.");
+            toast.error("Error deleting announcement.");
         } finally {
             setIsDeletingId(null);
         }
     };
 
-    if (loading) {
+    if (announcementsData === undefined) {
         return (
             <div className="flex justify-center py-12">
                 <Loader2 className="animate-spin text-primary" size={32} />
@@ -292,7 +275,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
                         <div className="flex items-center gap-3 p-5 bg-surface/50 rounded-2xl border border-white/5 cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all group" onClick={() => setSendEmail(!sendEmail)}>
                             <div className={cn("w-5 h-5 rounded flex items-center justify-center transition-colors border", sendEmail ? 'bg-primary border-primary' : 'border-white/20 bg-black/20 group-hover:border-primary/50')}>
-                                {sendEmail && <div className="w-2h-3 h-2 bg-white rounded-[2px]" />}
+                                {sendEmail && <div className="w-2.5 h-2.5 bg-white rounded-[2px]" />}
                             </div>
                             <div className="space-y-0.5">
                                 <span className={cn("text-sm font-bold italic transition-colors", sendEmail ? "text-primary" : "text-white")}>Email Blast</span>
@@ -402,7 +385,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             )}
 
             <div className="space-y-4">
-                {announcements.length === 0 ? (
+                {(announcementsData || []).length === 0 ? (
                     <Card className="p-12 border border-white/5 border-dashed bg-transparent text-center space-y-3">
                         <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mx-auto text-text-muted">
                             <Megaphone size={24} />
@@ -415,13 +398,13 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                         </div>
                     </Card>
                 ) : (
-                    announcements.map((announcement) => (
-                        <Card key={announcement.id} className="p-6 bg-surface border-white/5 space-y-4">
+                    announcementsData?.map((announcement) => (
+                        <Card key={announcement._id} className="p-6 bg-surface border-white/5 space-y-4">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h4 className="text-lg font-bold text-white uppercase italic">{announcement.title}</h4>
                                     <div className="flex items-center gap-3 text-xs text-text-muted font-medium mt-1">
-                                        <span className="flex items-center gap-1.5"><Clock size={12} /> {format(new Date(announcement.createdAt as any), "MMM d, yyyy h:mm a")}</span>
+                                        <span className="flex items-center gap-1.5"><Clock size={12} /> {format(new Date(announcement.createdAt), "MMM d, yyyy h:mm a")}</span>
                                         {announcement.sendEmail && (
                                             <span className="flex items-center gap-1.5 text-primary">
                                                 <Mail size={12} /> Sent as Email Blast {announcement.sentCount ? `(${announcement.sentCount})` : ''}
@@ -438,12 +421,12 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                         <Edit2 size={16} />
                                     </button>
                                     <button
-                                        onClick={() => handleDelete(announcement.id)}
-                                        disabled={isDeletingId === announcement.id}
+                                        onClick={() => handleDelete(announcement._id)}
+                                        disabled={isDeletingId === announcement._id}
                                         className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg text-text-muted transition-all disabled:opacity-50"
                                         title="Delete Announcement"
                                     >
-                                        {isDeletingId === announcement.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                                        {isDeletingId === announcement._id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                                     </button>
                                     <div className="p-2 bg-white/5 rounded-full text-text-muted">
                                         <Megaphone size={16} />

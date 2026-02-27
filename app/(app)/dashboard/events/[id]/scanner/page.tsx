@@ -3,8 +3,9 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams } from "next/navigation";
-import { doc, getDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -32,76 +33,45 @@ import { cn } from "@/lib/utils";
 export default function EventScannerPage() {
     const { id: eventId } = useParams();
     const [scanResult, setScanResult] = useState<any>(null);
-    const [registration, setRegistration] = useState<any>(null);
-    const [loading, setLoading] = useState(false);
+    const [registrationId, setRegistrationId] = useState<Id<"registrations"> | null>(null);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [stats, setStats] = useState({ total: 0, claimed: 0 });
     const [permissionStatus, setPermissionStatus] = useState<"granted" | "denied" | "prompt">("prompt");
     const [showScanner, setShowScanner] = useState(false);
     const scannerRef = useRef<any>(null);
     const lastScannedRef = useRef<string | null>(null);
     const lastScanTimeRef = useRef<number>(0);
-    const registrationRef = useRef<HTMLDivElement>(null);
+    const registrationUiRef = useRef<HTMLDivElement>(null);
 
-    const fetchStats = async () => {
-        if (!eventId) return;
-        try {
-            const q = query(
-                collection(db, "registrations"),
-                where("eventId", "==", eventId),
-                where("status", "==", "paid")
-            );
-            const snap = await getDocs(q);
-            const total = snap.size;
-            const claimed = snap.docs.filter(doc => doc.data().raceKitClaimed).length;
-            setStats({ total, claimed });
-        } catch (e) {
-            console.error("Error fetching stats:", e);
-        }
-    };
+    const stats = useQuery(api.registrations.getEventFulfillmentStats, { eventId: eventId as Id<"events"> }) || { total: 0, claimed: 0 };
+    const registration = useQuery(api.registrations.getById, registrationId ? { id: registrationId } : "skip" as any) as any;
+    const markClaimedMutation = useMutation(api.registrations.markAsClaimed);
 
     useEffect(() => {
-        fetchStats();
-    }, [eventId]);
-
-    useEffect(() => {
-        if (registration && registrationRef.current) {
-            registrationRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (registration && registrationUiRef.current) {
+            registrationUiRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         }
     }, [registration]);
 
     const onScanSuccess = useCallback(async (decodedText: string) => {
         const now = Date.now();
-        // Prevent processing the same code multiple times within 2 seconds
-        if (decodedText === lastScannedRef.current && (now - lastScanTimeRef.current < 2000)) {
-            return;
-        }
-
-        // If we already have a success result, ignore subsequent scans until reset
-        if (scanResult && decodedText === lastScannedRef.current) {
-            return;
-        }
+        if (decodedText === lastScannedRef.current && (now - lastScanTimeRef.current < 2000)) return;
+        if (scanResult && decodedText === lastScannedRef.current) return;
 
         lastScannedRef.current = decodedText;
         lastScanTimeRef.current = now;
 
         try {
-            console.log("Decoded QR:", decodedText);
             const data = JSON.parse(decodedText);
-
-            // Normalize IDs for comparison
             const scannedEventId = String(data.eventId || "").trim();
             const currentEventId = String(eventId || "").trim();
 
             if (data.registrationId && scannedEventId === currentEventId) {
                 setScanResult(data);
-                fetchParticipant(data.registrationId);
-                // STOP scanner after a successful scan
+                setRegistrationId(data.registrationId as Id<"registrations">);
                 if (scannerRef.current) {
                     scannerRef.current.stop().catch((e: any) => console.error("Error stopping scanner:", e));
                 }
             } else {
-                console.warn("Event ID mismatch:", { scanned: scannedEventId, current: currentEventId });
                 toast.error("Invalid QR code", {
                     description: scannedEventId !== currentEventId
                         ? "This QR code belongs to a different event."
@@ -109,44 +79,21 @@ export default function EventScannerPage() {
                 });
             }
         } catch (e) {
-            console.error("QR Parse Error:", e);
             toast.error("Unrecognized QR Code");
         }
     }, [eventId, scanResult]);
 
-    const onScanFailure = useCallback((error: any) => {
-        // Just consume
-    }, []);
-
-    const fetchParticipant = async (regId: string) => {
-        setLoading(true);
-        try {
-            const docRef = doc(db, "registrations", regId);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                setRegistration({ id: snap.id, ...snap.data() });
-            }
-        } catch (e) {
-            console.error("Error fetching participant:", e);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const onScanFailure = useCallback(() => { }, []);
 
     const markAsClaimed = async () => {
-        if (!registration) return;
+        if (!registrationId) return;
         setIsUpdating(true);
         try {
-            const docRef = doc(db, "registrations", registration.id);
-            await updateDoc(docRef, {
-                raceKitClaimed: true,
-                raceKitClaimedAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-            });
-            setRegistration({ ...registration, raceKitClaimed: true });
-            fetchStats(); // Refresh stats after claiming
+            await markClaimedMutation({ id: registrationId });
+            toast.success("Marked as claimed!");
         } catch (e) {
             console.error("Error updating claim status:", e);
+            toast.error("Failed to update status");
         } finally {
             setIsUpdating(false);
         }
@@ -154,11 +101,9 @@ export default function EventScannerPage() {
 
     const resetScanner = useCallback(() => {
         setScanResult(null);
-        setRegistration(null);
+        setRegistrationId(null);
         lastScannedRef.current = null;
         lastScanTimeRef.current = 0;
-        // The camera was stopped on success, so we just need to flip showScanner 
-        // to re-trigger the useEffect in QRScannerWrapper to start the camera again
         setShowScanner(false);
         setTimeout(() => setShowScanner(true), 50);
     }, []);
@@ -259,12 +204,12 @@ export default function EventScannerPage() {
 
                 {/* Result View */}
                 <div className="lg:col-span-3">
-                    {loading ? (
+                    {registration === undefined && registrationId !== null ? (
                         <div className="h-full flex items-center justify-center py-20">
                             <Scan className="animate-spin text-primary" size={48} />
                         </div>
                     ) : registration ? (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500" ref={registrationRef}>
+                        <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500" ref={registrationUiRef}>
                             <Card className={cn(
                                 "p-8 border-2 relative overflow-hidden",
                                 registration.raceKitClaimed ? "bg-cta/5 border-cta/20" : "bg-primary/5 border-primary/20"
@@ -275,7 +220,9 @@ export default function EventScannerPage() {
                                     <div className="space-y-4">
                                         <div className="space-y-1">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Participant</p>
-                                            <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">{registration.participantInfo.name}</h2>
+                                            <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">
+                                                {registration.registrationData?.participantInfo?.name || "Participant"}
+                                            </h2>
                                         </div>
                                         <div className="flex flex-wrap gap-4">
                                             <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase italic px-3 py-1 bg-surface rounded-lg">
@@ -304,13 +251,17 @@ export default function EventScannerPage() {
                                         <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary italic">
                                             <Shirt size={14} /> T-Shirt Size
                                         </div>
-                                        <p className="text-2xl font-black italic text-white">{registration.participantInfo.tShirtSize || "N/A"}</p>
+                                        <p className="text-2xl font-black italic text-white">
+                                            {registration.registrationData?.participantInfo?.tShirtSize || "N/A"}
+                                        </p>
                                     </div>
                                     <div className="space-y-3 p-4 bg-surface/40 rounded-2xl border border-white/5">
                                         <div className="flex items-center gap-2 text-[10px] font-black uppercase text-cta italic">
                                             <Shirt size={14} /> Singlet Size
                                         </div>
-                                        <p className="text-2xl font-black italic text-white">{registration.participantInfo.singletSize || "N/A"}</p>
+                                        <p className="text-2xl font-black italic text-white">
+                                            {registration.registrationData?.participantInfo?.singletSize || "N/A"}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -326,7 +277,9 @@ export default function EventScannerPage() {
                                     ) : (
                                         <div className="p-4 bg-cta/10 border border-cta/20 rounded-2xl text-center">
                                             <p className="text-sm font-black italic text-cta uppercase">Success — Already Collected</p>
-                                            <p className="text-[10px] text-cta/70 italic font-bold">Claimed on: {new Date(registration.raceKitClaimedAt?.seconds * 1000).toLocaleString()}</p>
+                                            <p className="text-[10px] text-cta/70 italic font-bold">
+                                                Claimed on: {registration.raceKitClaimedAt ? new Date(registration.raceKitClaimedAt).toLocaleString() : "Recently"}
+                                            </p>
                                         </div>
                                     )}
                                     <Button variant="ghost" className="w-full text-text-muted font-black italic uppercase" onClick={resetScanner}>

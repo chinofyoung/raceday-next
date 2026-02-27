@@ -4,8 +4,9 @@ import { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { doc, setDoc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useMutation } from "convex/react";
+import { toast } from "sonner";
+import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -37,8 +38,9 @@ const organizerProfileSchema = z.object({
 type OrganizerProfileFormValues = z.infer<typeof organizerProfileSchema>;
 
 export function OrganizerProfileForm() {
-    const { user, refreshUser } = useAuth();
+    const { user } = useAuth();
     const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+    const updateOrganizerProfile = useMutation(api.users.updateOrganizerProfile);
 
     const organizer = user?.organizer;
 
@@ -72,38 +74,29 @@ export function OrganizerProfileForm() {
     }, [organizer, reset]);
 
     const onSubmit = useCallback(async (data: OrganizerProfileFormValues) => {
-        if (!user) return;
+        if (!user) {
+            toast.error("User record not found.");
+            return;
+        }
+
+        const loadingToast = toast.loading("Saving changes...");
         setSaveStatus("saving");
         try {
-            const userDocRef = doc(db, "users", user.uid);
-            const userSnap = await getDoc(userDocRef);
+            await updateOrganizerProfile(data);
 
-            if (!userSnap.exists()) {
-                await setDoc(userDocRef, {
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: user.displayName,
-                    createdAt: serverTimestamp(),
-                });
-            }
-
-            await updateDoc(userDocRef, {
-                "organizer.name": data.name,
-                "organizer.contactEmail": data.contactEmail,
-                "organizer.phone": data.phone,
-                "organizer.organizerType": data.organizerType,
-                updatedAt: serverTimestamp(),
-            });
-
-            await refreshUser();
             reset(data);
             setSaveStatus("saved");
+            toast.success("Organization profile updated!", { id: loadingToast });
             setTimeout(() => setSaveStatus("idle"), 3000);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Organizer profile save error:", error);
             setSaveStatus("idle");
+            toast.error("Failed to update organization profile.", {
+                id: loadingToast,
+                description: error?.message || "Please check your connection."
+            });
         }
-    }, [user, reset, refreshUser]);
+    }, [user, reset, updateOrganizerProfile]);
 
     const watchedFields = watch();
 

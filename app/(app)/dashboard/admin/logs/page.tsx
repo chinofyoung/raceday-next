@@ -1,39 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
     Clock, ArrowLeft, Loader2, Shield,
-    User, Target, FileText, Info
+    User, Target, Info
 } from "lucide-react";
 import Link from "next/link";
-import { db } from "@/lib/firebase/config";
-import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 export default function AuditLogsPage() {
-    const [loading, setLoading] = useState(true);
-    const [logs, setLogs] = useState<any[]>([]);
-
-    useEffect(() => {
-        fetchLogs();
-    }, []);
-
-    const fetchLogs = async () => {
-        setLoading(true);
-        try {
-            const q = query(collection(db, "auditLogs"), orderBy("timestamp", "desc"), limit(50));
-            const snap = await getDocs(q);
-            setLogs(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-        } catch (error) {
-            console.error("Error fetching logs:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const logs = useQuery(api.audit.getLogs, { limit: 50 });
+    const loading = logs === undefined;
 
     const getActionBadge = (action: string) => {
         switch (action) {
@@ -74,14 +56,14 @@ export default function AuditLogsPage() {
 
             {/* Log List */}
             <div className="space-y-4">
-                {logs.length === 0 ? (
+                {!logs || logs.length === 0 ? (
                     <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5">
                         <Shield className="mx-auto text-text-muted opacity-20 mb-4" size={48} />
                         <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No admin actions recorded yet.</p>
                     </Card>
                 ) : (
                     logs.map((log) => (
-                        <Card key={log.id} className="p-6 bg-surface/40 border-white/5 hover:bg-surface/50 transition-all group">
+                        <Card key={log._id} className="p-6 bg-surface/40 border-white/5 hover:bg-surface/50 transition-all group">
                             <div className="flex flex-col lg:flex-row gap-6 lg:items-center justify-between">
                                 <div className="flex flex-col md:flex-row gap-6 md:items-center">
                                     <div className="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white/5 shrink-0">
@@ -111,7 +93,7 @@ export default function AuditLogsPage() {
                                     </div>
                                 </div>
                                 <div className="text-[10px] text-text-muted/30 font-mono tracking-tighter self-end lg:self-center">
-                                    ID: {log.id}
+                                    ID: {log._id}
                                 </div>
                             </div>
                         </Card>

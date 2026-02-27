@@ -146,7 +146,14 @@ export default defineSchema({
         status: v.union(v.literal("pending"), v.literal("paid"), v.literal("cancelled")),
         totalPrice: v.number(),
         raceKitClaimed: v.boolean(),
-        bibNumber: v.optional(v.string()),
+        raceNumber: v.optional(v.string()),
+        bibNumber: v.optional(v.string()), // Legacy/Compatibility
+        qrCodeUrl: v.optional(v.string()),
+        paymentStatus: v.optional(v.string()),
+        xenditInvoiceId: v.optional(v.string()),
+        xenditInvoiceUrl: v.optional(v.string()),
+        paidAt: v.optional(v.number()),
+        raceKitClaimedAt: v.optional(v.number()),
         createdAt: v.number(),
         updatedAt: v.number(),
         isProxy: v.optional(v.boolean()),
@@ -202,4 +209,16 @@ export default defineSchema({
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_event", ["eventId"]),
+    tracking: defineTable({
+        userId: v.id("users"),
+        eventId: v.id("events"),
+        categoryId: v.optional(v.string()),
+        displayName: v.string(),
+        lat: v.number(),
+        lng: v.number(),
+        bearing: v.optional(v.number()),
+        lastUpdatedAt: v.number(),
+        isActive: v.boolean(),
+    }).index("by_event", ["eventId"])
+        .index("by_user_event", ["userId", "eventId"]),
 });

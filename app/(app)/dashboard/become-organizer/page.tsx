@@ -79,9 +79,9 @@ export default function BecomeOrganizerPage() {
 
     useEffect(() => {
         const checkApp = async () => {
-            if (!user) return;
+            if (!user?._id) return;
             try {
-                const app = await checkExistingApplication(user.uid);
+                const app = await checkExistingApplication(user._id);
                 if (app) {
                     setExistingApp(app);
                 }
@@ -154,13 +154,13 @@ export default function BecomeOrganizerPage() {
     };
 
     const onSubmit = async (data: OrganizerFormValues) => {
-        if (!user) return;
+        if (!user?._id) return;
         setLoading(true);
         try {
             if (existingApp) {
-                await updateOrganizerApplication(existingApp.id, user.uid, data);
+                await updateOrganizerApplication(existingApp.id, user._id, data);
             } else {
-                await submitOrganizerApplication(user.uid, data);
+                await submitOrganizerApplication(user._id, data);
             }
             setSubmitted(true);
         } catch (error) {

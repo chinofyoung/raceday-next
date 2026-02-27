@@ -6,8 +6,20 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { LiveTracker } from "@/lib/services/liveTrackingService";
 import { RaceStation } from "@/types/event";
+
+export interface LiveTracker {
+    userId: string;
+    eventId: string;
+    categoryId?: string;
+    displayName: string;
+    getDisplayName?: string;
+    lat: number;
+    lng: number;
+    bearing?: number;
+    lastUpdatedAt: number | Date;
+    isActive: boolean;
+}
 
 // Fix for default marker icons in Leaflet with Next.js
 const DefaultIcon = L.icon({

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -22,69 +23,16 @@ export default function RunnerQRPage() {
     const { user } = useAuth();
     const router = useRouter();
 
-    const [registration, setRegistration] = useState<any>(null);
-    const [event, setEvent] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+    const registration = useQuery(api.registrations.getById, regId ? { id: regId as Id<"registrations"> } : "skip" as any);
+    const event = useQuery(api.events.getById, { id: eventId as Id<"events"> });
+
+    const loading = (regId && registration === undefined) || event === undefined || !user;
 
     useEffect(() => {
-        if (user && eventId) {
-            fetchData();
+        if (!loading && !registration && regId) {
+            router.push("/dashboard");
         }
-    }, [user, eventId]);
-
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            let registrationData: any = null;
-
-            if (regId) {
-                // If regId is provided, fetch specifically that registration
-                const regRef = doc(db, "registrations", regId);
-                const regSnap = await getDoc(regRef);
-                if (regSnap.exists()) {
-                    const data = regSnap.data();
-                    // Basic security check: ensure it belongs to the user and is for the correct event
-                    if (data.userId === user?.uid && data.eventId === eventId && data.status === "paid") {
-                        registrationData = { id: regSnap.id, ...data };
-                    }
-                }
-            }
-
-            if (!registrationData) {
-                // Fallback to existing logic: Fetch first paid registration for this user/event
-                const q = query(
-                    collection(db, "registrations"),
-                    where("eventId", "==", eventId),
-                    where("userId", "==", user?.uid),
-                    where("status", "==", "paid")
-                );
-                const regSnap = await getDocs(q);
-
-                if (!regSnap.empty) {
-                    const reg = regSnap.docs[0].data();
-                    registrationData = { id: regSnap.docs[0].id, ...reg };
-                }
-            }
-
-            if (registrationData) {
-                setRegistration(registrationData);
-
-                // 2. Fetch Event Details
-                const eventRef = doc(db, "events", eventId as string);
-                const eventSnap = await getDoc(eventRef);
-                if (eventSnap.exists()) {
-                    setEvent(eventSnap.data());
-                }
-            } else {
-                // No paid registration found
-                router.push("/dashboard");
-            }
-        } catch (e) {
-            console.error("Error fetching QR data:", e);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [loading, registration, regId, router]);
 
     if (loading) {
         return (
@@ -94,9 +42,10 @@ export default function RunnerQRPage() {
         );
     }
 
-    const parsedDate = event?.date ? (typeof event.date.toDate === 'function' ? event.date.toDate() : new Date(event.date as string | number | Date)) : null;
+    const parsedDate = event?.date ? new Date(event.date) : null;
     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
     const categoryName = event?.categories?.find((c: any) => (c.id || "0") === registration?.categoryId)?.name || registration?.categoryId;
+    const participantInfo = registration?.registrationData?.participantInfo;
 
     return (
         <PageWrapper className="pt-8 pb-24 max-w-2xl mx-auto space-y-12">
@@ -166,7 +115,7 @@ export default function RunnerQRPage() {
                             <div className="space-y-1">
                                 <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">Time</p>
                                 <p className="text-sm font-bold text-white uppercase italic truncate">
-                                    {event?.startTime || "05:00 AM"}
+                                    {(event?.categories?.find((c: any) => (c.id || "0") === registration?.categoryId) as any)?.gunStartTime || "05:00 AM"}
                                 </p>
                             </div>
                         </div>
@@ -212,8 +161,8 @@ export default function RunnerQRPage() {
                             <div className="space-y-4">
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic mb-1">Athlete</p>
-                                    <h4 className="text-3xl font-black italic text-white uppercase tracking-tight">{registration?.participantInfo?.name}</h4>
-                                    <p className="text-xs text-text-muted font-bold italic opacity-70">{registration?.participantInfo?.email}</p>
+                                    <h4 className="text-3xl font-black italic text-white uppercase tracking-tight">{participantInfo?.name || "Participant"}</h4>
+                                    <p className="text-xs text-text-muted font-bold italic opacity-70">{participantInfo?.email || user?.email}</p>
                                 </div>
                                 {registration?.isProxy && (
                                     <Badge variant="outline" className="bg-indigo-500/10 border-indigo-500/20 text-indigo-400 font-black italic uppercase text-[10px] px-3">

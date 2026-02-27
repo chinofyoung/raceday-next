@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase/config";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
 import { RegistrationForm } from "@/components/forms/registration/RegistrationForm";
 import { Loader2, ArrowLeft, Info } from "lucide-react";
@@ -18,27 +18,9 @@ export default function RegisterPage() {
     const searchParams = useSearchParams();
     const initialCategoryId = searchParams.get("category");
 
-    const [event, setEvent] = useState<RaceEvent | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        if (id) fetchEvent();
-    }, [id]);
-
-    const fetchEvent = async () => {
-        setLoading(true);
-        try {
-            const docRef = doc(db, "events", id as string);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-                setEvent({ id: snap.id, ...snap.data() } as RaceEvent);
-            }
-        } catch (error) {
-            console.error("Error fetching event:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const eventData = useQuery(api.events.getById, { id: id as Id<"events"> });
+    const loading = eventData === undefined;
+    const event = eventData ? { id: eventData._id, ...eventData } as any as RaceEvent : null;
 
     if (loading) {
         return (
