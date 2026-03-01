@@ -147,7 +147,7 @@ export default defineSchema({
         totalPrice: v.number(),
         raceKitClaimed: v.boolean(),
         raceNumber: v.optional(v.string()),
-        bibNumber: v.optional(v.string()), // Legacy/Compatibility
+
         qrCodeUrl: v.optional(v.string()),
         paymentStatus: v.optional(v.string()),
         xenditInvoiceId: v.optional(v.string()),
@@ -175,7 +175,7 @@ export default defineSchema({
         data: v.any(),
     }).index("by_status", ["status"]).index("by_user", ["userId"]),
     auditLogs: defineTable({
-        adminId: v.string(), // Clerk UID or Convex ID
+        adminId: v.string(), // Convex ID
         adminName: v.string(),
         action: v.string(),
         targetId: v.string(),
@@ -186,7 +186,7 @@ export default defineSchema({
     volunteers: defineTable({
         eventId: v.id("events"),
         userId: v.optional(v.id("users")),
-        uid: v.optional(v.string()), // Legacy UID
+
         email: v.string(),
         displayName: v.optional(v.string()),
         photoURL: v.optional(v.string()),
@@ -196,7 +196,7 @@ export default defineSchema({
         invitedAt: v.number(),
         acceptedAt: v.optional(v.number()),
         revokedAt: v.optional(v.number()),
-    }).index("by_event", ["eventId"]).index("by_email", ["email"]).index("by_user", ["userId"]).index("by_uid", ["uid"]),
+    }).index("by_event", ["eventId"]).index("by_email", ["email"]).index("by_user", ["userId"]),
     announcements: defineTable({
         eventId: v.id("events"),
         organizerId: v.id("users"),

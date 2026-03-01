@@ -135,7 +135,7 @@ export default async function HomePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {upcomingEvents.length > 0 ? upcomingEvents.map((event) => {
-                        const eventDate = typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date);
+                        const eventDate = new Date(event.date as string | number | Date);
                         const isValidDate = eventDate && !isNaN(eventDate.getTime());
                         return (
                             <Link key={event.id} href={`/events/${event.id}`}>

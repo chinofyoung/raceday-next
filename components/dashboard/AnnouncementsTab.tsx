@@ -129,7 +129,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                 message,
                 sendEmail,
                 imageUrl,
-                createdBy: user.uid,
+                createdBy: user._id as string,
             });
 
             // 2. If sendEmail is checked, trigger the email blast action

@@ -280,10 +280,10 @@ export function LiveTrackingClient({ event }: LiveTrackingClientProps) {
                     if (elapsed < EIGHT_HOURS) {
                         startTrackingCore();
                     } else {
-                        localStorage.removeItem(`liveTrack_${event.id}_${user.uid}`);
+                        localStorage.removeItem(`liveTrack_${event.id}_${user._id}`);
                     }
                 } catch (e) {
-                    localStorage.removeItem(`liveTrack_${event.id}_${user.uid}`);
+                    localStorage.removeItem(`liveTrack_${event.id}_${user._id}`);
                 }
             }
         }

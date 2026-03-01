@@ -89,16 +89,16 @@ export default function RegistrationSuccessPage() {
                                     </h2>
                                 </div>
 
-                                <div className="flex flex-col md:items-end gap-1">
+                                <div className="flex flex-col md:items-start gap-2 shrink-0">
                                     <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Payment Status</p>
                                     <Badge
                                         className={cn(
-                                            "uppercase font-black text-xs px-4 py-1.5 skew-x-[-12deg] border-none shadow-lg shadow-emerald-500/20",
+                                            "uppercase font-black text-xs px-4 py-1.5 border-none shadow-lg shadow-emerald-500/20",
                                             registration?.status === "paid" ? "bg-emerald-500 text-black" : "bg-amber-500 text-black"
                                         )}
                                     >
-                                        <span className="skew-x-[12deg]">
-                                            {registration?.status === "paid" ? "PAID / VERIFIED" : "PENDING"}
+                                        <span className="">
+                                            {registration?.status === "paid" ? "PAID" : "PENDING"}
                                         </span>
                                     </Badge>
                                 </div>

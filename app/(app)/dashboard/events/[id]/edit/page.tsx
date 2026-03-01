@@ -42,7 +42,7 @@ export default function EditEventPage() {
                 return;
             }
 
-            // Convert Firestore timestamps to YYYY-MM-DD strings for native inputs
+            // Convert timestamps to YYYY-MM-DD strings for native inputs
             const formattedData: any = {
                 ...data,
                 date: data.date ? toInputDate(data.date) : toInputDate(new Date()),

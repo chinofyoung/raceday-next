@@ -45,7 +45,7 @@ export async function generateBibAndQR(
     return { raceNumber, qrCodeUrl };
 }
 
-// Legacy helper if still needed by some components
+
 export async function getRaceNumberFormat(
     eventId: string,
     categoryId: string

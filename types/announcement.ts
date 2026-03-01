@@ -1,4 +1,3 @@
-type UniversalDate = number | Date | any;
 
 export interface Announcement {
     id: string;
@@ -10,7 +9,7 @@ export interface Announcement {
     imageUrl?: string;
     sendEmail: boolean;
     sentCount?: number;      // Number of emails sent if sendEmail was true
-    createdAt: UniversalDate | Date;
+    createdAt: number;
     createdBy: string;       // User ID of the organizer who created it
 }
 

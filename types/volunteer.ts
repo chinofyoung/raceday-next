@@ -2,7 +2,6 @@ export type VolunteerStatus = 'pending' | 'accepted' | 'revoked';
 
 export type VolunteerPermission = 'kiosk' | 'participants' | 'announcements';
 
-type UniversalDate = number | any;
 
 export interface EventVolunteer {
     id: string;                          // Auto-generated doc ID
@@ -14,9 +13,9 @@ export interface EventVolunteer {
     permissions: VolunteerPermission[];  // Granular access control
     status: VolunteerStatus;             // Invitation lifecycle
     invitedBy: string;                   // Organizer UID who invited
-    invitedAt: UniversalDate;            // When invitation was created
-    acceptedAt?: UniversalDate;          // When volunteer accepted
-    revokedAt?: UniversalDate;           // When access was revoked
+    invitedAt: number;            // When invitation was created
+    acceptedAt?: number;          // When volunteer accepted
+    revokedAt?: number;           // When access was revoked
 }
 
 export interface VolunteerInviteFormData {

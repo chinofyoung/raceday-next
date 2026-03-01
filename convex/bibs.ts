@@ -7,7 +7,7 @@ export const isTaken = query({
         const registration = await ctx.db
             .query("registrations")
             .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.eq(q.field("bibNumber"), args.bibNumber))
+            .filter((q) => q.eq(q.field("raceNumber"), args.bibNumber))
             .first();
         return !!registration;
     },
@@ -36,7 +36,7 @@ export const generate = mutation({
             const existing = await ctx.db
                 .query("registrations")
                 .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-                .filter((q) => q.eq(q.field("bibNumber"), formatted))
+                .filter((q) => q.eq(q.field("raceNumber"), formatted))
                 .first();
 
             if (existing) throw new Error(`Bib ${formatted} is already taken`);
@@ -72,7 +72,7 @@ export const generate = mutation({
             const existing = await ctx.db
                 .query("registrations")
                 .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-                .filter((q) => q.eq(q.field("bibNumber"), formatted))
+                .filter((q) => q.eq(q.field("raceNumber"), formatted))
                 .first();
 
             if (!existing) {

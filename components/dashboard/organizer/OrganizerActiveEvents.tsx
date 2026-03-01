@@ -53,7 +53,7 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {eventKitStats.map((event) => {
-                    const parsedDate = event.date ? (typeof event.date?.toDate === 'function' ? event.date.toDate() : new Date(event.date)) : null;
+                    const parsedDate = event.date ? new Date(event.date) : null;
                     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
                     const isUpcoming = isValidDate && isAfter(parsedDate, new Date());
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
@@ -12,7 +12,7 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { userId: clerkId } = getAuth(request);
+        const { userId: clerkId } = await auth();
         if (!clerkId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }

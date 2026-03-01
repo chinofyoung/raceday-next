@@ -138,7 +138,7 @@ export default function EventDetailPage() {
         return matchesSearch && matchesStatus;
     });
 
-    const parsedDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as any)) : null;
+    const parsedDate = event.date ? new Date(event.date as any) : null;
     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
 
     return (

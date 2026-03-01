@@ -1,4 +1,3 @@
-type UniversalDate = number | Date | any;
 
 
 export type RegistrationStatus = "pending" | "paid" | "cancelled" | "failed";
@@ -44,13 +43,13 @@ export interface Registration {
     raceNumber?: string;
     qrCodeUrl?: string;
     raceKitClaimed: boolean;
-    raceKitClaimedAt?: UniversalDate | Date;
+    raceKitClaimedAt?: number;
 
     // Payments
     xenditPaymentId?: string;
-    paidAt?: UniversalDate | Date;
+    paidAt?: number;
 
     // Metadata
-    createdAt: UniversalDate | Date;
-    updatedAt: UniversalDate | Date;
+    createdAt: number;
+    updatedAt: number;
 }

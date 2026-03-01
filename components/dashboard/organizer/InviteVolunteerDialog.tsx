@@ -52,7 +52,7 @@ export function InviteVolunteerDialog({
                 eventId: eventId as Id<"events">,
                 email: data.email,
                 permissions: data.permissions as string[],
-                invitedBy: user.uid,
+                invitedBy: user._id as string,
             });
 
             toast.success("Invitation sent successfully!");

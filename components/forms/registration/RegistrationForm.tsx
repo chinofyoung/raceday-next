@@ -218,7 +218,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
         // Logged in — sync profile and proceed
         await syncProfileFromRegistration(data);
-        await submitRegistration(data, user._id, user.displayName || "Unknown");
+        await submitRegistration(data, user._id as string, user.displayName || "Unknown");
     };
 
     const handleLoginSuccess = async (userId: string) => {
@@ -237,7 +237,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
         if (user && pendingSubmitData) {
             const processPending = async () => {
                 await syncProfileFromRegistration(pendingSubmitData);
-                await submitRegistration(pendingSubmitData, user._id, user.displayName || "Unknown");
+                await submitRegistration(pendingSubmitData, user._id as string, user.displayName || "Unknown");
                 setPendingSubmitData(null);
             };
             processPending();

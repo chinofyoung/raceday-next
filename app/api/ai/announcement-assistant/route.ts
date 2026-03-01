@@ -1,6 +1,6 @@
 import { Anthropic } from "@anthropic-ai/sdk";
-import { NextResponse } from "next/server";
-import { getAuth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 
 // Module-level rate limiter (persists per serverless instance)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -26,9 +26,9 @@ const anthropic = new Anthropic({
     apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     // 1. Authenticate
-    const { userId } = getAuth(req as any);
+    const { userId } = await auth();
     if (!userId) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

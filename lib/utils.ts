@@ -32,9 +32,7 @@ export function cn(...inputs: ClassValue[]) {
 export function toDate(value: any): Date {
   if (!value) return new Date();
   if (value instanceof Date) return value;
-  if (typeof value.toDate === 'function') return value.toDate();
-  const seconds = value?.seconds ?? value?._seconds;
-  if (seconds !== undefined) return new Date(seconds * 1000);
+  if (typeof value === 'number') return new Date(value);
   const parsed = new Date(value);
   return isNaN(parsed.getTime()) ? new Date() : parsed;
 }
@@ -80,34 +78,7 @@ export function formatCurrency(amount: number) {
   }).format(amount);
 }
 
-export function sanitizeForFirestore(data: any): any {
-  if (data === null || data === undefined) {
-    return data === undefined ? null : data;
-  }
 
-  // Don't recurse into Dates or Firestore FieldValues (sentinels)
-  if (data instanceof Date) {
-    return isNaN(data.getTime()) ? null : data;
-  }
-
-  if (typeof data === 'object' && data.constructor.name === 'FieldValue') {
-    return data;
-  }
-
-  if (Array.isArray(data)) {
-    return data.map(sanitizeForFirestore);
-  }
-
-  if (typeof data !== 'object') {
-    return data;
-  }
-
-  const entries = Object.entries(data)
-    .filter(([_, value]) => value !== undefined)
-    .map(([key, value]) => [key, sanitizeForFirestore(value)]);
-
-  return Object.fromEntries(entries);
-}
 
 /**
  * Formats a distance value for display.

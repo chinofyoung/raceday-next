@@ -46,7 +46,7 @@ export async function getRegistrationsWithEvents(options: GetRegistrationsOption
 
     if (registrations.length === 0) return { items: [], lastDoc };
 
-    // In Convex, we can't easily do a batch "in" query like Firestore for multiple tables 
+    // In Convex, we can't easily do a batch "in" query for multiple tables
     // without a custom query. For now, let's fetch events one by one or improve later.
     // Actually, we should probably add a getByIds query to convex/events.ts
 

@@ -45,7 +45,7 @@ export default function UserManagementPage() {
         try {
             await updateUserRoleMutation({ id: uid as any, role: newRole });
 
-            // Log action (Note: logAdminAction should also be migrated to Convex later if it writes to Firestore)
+            // Log action to Convex
             const targetUser = users.find(u => u._id === uid);
             if (currentUser && targetUser) {
                 // await logAdminAction(...)

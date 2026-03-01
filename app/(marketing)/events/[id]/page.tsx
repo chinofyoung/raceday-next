@@ -34,18 +34,16 @@ export async function generateMetadata(props: EventPageProps): Promise<Metadata>
 const toISOString = (date: any): string | null => {
     if (!date) return null;
     if (typeof date === 'string') return date;
-    if (typeof date.toDate === 'function') { // Firestore Timestamp
-        try {
-            return date.toDate().toISOString();
-        } catch (e) {
-            return null;
-        }
+
+    try {
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return null;
+        return d.toISOString();
+    } catch {
+        return null;
     }
-    if (date instanceof Date) {
-        return date.toISOString();
-    }
-    return null;
 };
+
 
 export default async function EventDetailPage(props: EventPageProps) {
     const params = await props.params;

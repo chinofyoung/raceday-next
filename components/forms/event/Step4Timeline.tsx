@@ -10,7 +10,10 @@ import { cn, generateId } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useAuth } from "@clerk/nextjs";
+
 export function Step4Timeline() {
+    const { getToken } = useAuth();
     const { control, register, formState: { errors }, watch } = useFormContext<EventFormValues>();
     const { fields, append, remove, replace } = useFieldArray({
         control,
@@ -20,6 +23,23 @@ export function Step4Timeline() {
 
     const eventName = watch("name");
     const eventDescription = watch("description");
+
+    // Converts "03:00 AM" / "3:00 AM" style strings to "03:00" (HH:MM 24-hour)
+    // required by <input type="time">. Returns the original string untouched if
+    // it is already in HH:MM format or cannot be parsed.
+    const to24Hour = (timeStr: string): string => {
+        const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+        if (!match) return timeStr;
+        let hours = parseInt(match[1], 10);
+        const minutes = match[2];
+        const period = match[3].toUpperCase();
+        if (period === "AM") {
+            if (hours === 12) hours = 0;
+        } else {
+            if (hours !== 12) hours += 12;
+        }
+        return `${String(hours).padStart(2, "0")}:${minutes}`;
+    };
 
     const handleAIAssist = async () => {
         if (!eventName) {
@@ -34,12 +54,13 @@ export function Step4Timeline() {
 
         try {
             const { getAITimeline } = await import("@/lib/services/aiService");
-            const result = await getAITimeline(`${eventName}. ${eventDescription}`);
+            const token = await getToken();
+            const result = await getAITimeline(`${eventName}. ${eventDescription}`, token || undefined);
             const newTimeline = result.timeline.map((item, idx) => ({
                 id: generateId(),
                 activity: item.activity,
                 description: item.description,
-                time: item.time,
+                time: to24Hour(item.time),   // convert "03:00 AM" → "03:00"
                 order: idx
             }));
             replace(newTimeline);

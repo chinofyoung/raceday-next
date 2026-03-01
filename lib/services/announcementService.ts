@@ -22,7 +22,7 @@ export async function getAnnouncementsByEventId(eventId: string): Promise<Announ
         sendEmail: d.sendEmail,
         sentCount: d.sentCount,
         createdBy: d.createdBy,
-        createdAt: new Date(d.createdAt).toISOString(),
+        createdAt: typeof d.createdAt === 'number' ? d.createdAt : new Date(d.createdAt).getTime(),
     })) as Announcement[];
 }
 
@@ -40,7 +40,7 @@ export async function createAnnouncement(data: CreateAnnouncementInput & { sentC
     return {
         id,
         ...data,
-        createdAt: new Date().toISOString(),
+        createdAt: Date.now(),
     } as unknown as Announcement;
 }
 

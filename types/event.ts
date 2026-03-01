@@ -1,4 +1,3 @@
-type UniversalDate = number | Date | any;
 
 
 export type EventStatus = "draft" | "published" | "cancelled" | "completed";
@@ -60,7 +59,7 @@ export interface RaceEvent {
     // Basic info
     name: string;
     description: string;     // Rich text / markdown
-    date: UniversalDate | Date;
+    date: number;
     location: {
         name: string;           // e.g. "BGC, Taguig"
         address: string;
@@ -84,12 +83,12 @@ export interface RaceEvent {
     // Early Bird
     earlyBird?: {
         enabled: boolean;
-        startDate: UniversalDate | Date;
-        endDate: UniversalDate | Date;
+        startDate: number;
+        endDate: number;
     };
 
     // Registration Deadline
-    registrationEndDate: UniversalDate | Date;
+    registrationEndDate: number;
 
     // Timeline
     timeline: TimelineItem[];
@@ -101,6 +100,6 @@ export interface RaceEvent {
     status: EventStatus;
     featured: boolean;
     isLiveTrackingEnabled?: boolean;
-    createdAt: UniversalDate | Date;
-    updatedAt: UniversalDate | Date;
+    createdAt: number;
+    updatedAt: number;
 }

@@ -44,7 +44,8 @@ export async function getAITimeline(eventInfo: string, token?: string): Promise<
     });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch AI timeline");
+        const text = await response.text();
+        throw new Error(`Failed to fetch AI timeline: ${response.status} ${text}`);
     }
 
     const data = await response.json();

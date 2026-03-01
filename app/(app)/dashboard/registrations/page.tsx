@@ -181,9 +181,7 @@ export default function OrganizerRegistrationsPage() {
                                         </div>
                                         <div className="col-span-2 text-xs text-text-muted">
                                             {reg.createdAt
-                                                ? ('seconds' in reg.createdAt
-                                                    ? format(reg.createdAt.toDate(), "MMM d, yyyy h:mm a")
-                                                    : format(reg.createdAt as Date, "MMM d, yyyy h:mm a"))
+                                                ? format(new Date(reg.createdAt), "MMM d, yyyy h:mm a")
                                                 : 'Unknown'}
                                         </div>
                                         <div className="col-span-2 flex flex-col items-end gap-1 shrink-0">

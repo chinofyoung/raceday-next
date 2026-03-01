@@ -36,7 +36,7 @@ interface EventCardProps {
 export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
     const { user } = useAuth();
 
-    // Convex IDs have a specific format distinct from legacy IDs
+
     const isConvexId = event.id && event.id.length !== 20;
 
     const paidCountCountRaw = useQuery(
@@ -44,7 +44,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
         (event.id && isConvexId) ? { eventId: event.id as Id<"events"> } : "skip"
     );
     const paidCount = paidCountCountRaw ?? 0;
-    const eventDate = event.date ? (typeof (event.date as any).toDate === 'function' ? (event.date as any).toDate() : new Date(event.date as string | number | Date)) : null;
+    const eventDate = event.date ? new Date(event.date as string | number | Date) : null;
     const isValidDate = eventDate && !isNaN(eventDate.getTime());
 
     // Calculate price ranges
