@@ -178,3 +178,68 @@ export const getByUserIdAndEvent = query({
             .unique();
     },
 });
+
+export const getMyVolunteerEvents = query({
+    args: { email: v.string(), userId: v.optional(v.id("users")) },
+    handler: async (ctx: QueryCtx, args) => {
+        // 1. Get pending invitations by email
+        const pending = await ctx.db
+            .query("volunteers")
+            .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase().trim()))
+            .filter((q) => q.eq(q.field("status"), "pending"))
+            .collect();
+
+        // 2. Get accepted assignments by userId
+        let accepted: any[] = [];
+        if (args.userId) {
+            accepted = await ctx.db
+                .query("volunteers")
+                .withIndex("by_user", (q) => q.eq("userId", args.userId!))
+                .filter((q) => q.eq(q.field("status"), "accepted"))
+                .collect();
+        }
+
+        const allVolunteering = [...pending, ...accepted];
+
+        // 3. Resolve event details for each
+        const results = await Promise.all(
+            allVolunteering.map(async (v) => {
+                const event = await ctx.db.get(v.eventId);
+                if (!event) return null;
+                const e = event as any;
+                return {
+                    id: e._id,
+                    name: e.name,
+                    date: e.date,
+                    featuredImage: e.featuredImage,
+                    location: e.location,
+                    permissions: v.permissions,
+                    volunteerId: v._id,
+                    status: v.status as "accepted" | "pending",
+                };
+            })
+        );
+
+        return results.filter((r) => r !== null);
+    },
+});
+
+export const getInviteDetails = query({
+    args: { id: v.id("volunteers"), eventId: v.id("events") },
+    handler: async (ctx: QueryCtx, args) => {
+        const volunteer = await ctx.db.get(args.id);
+        if (!volunteer || volunteer.eventId !== args.eventId) {
+            return null;
+        }
+
+        const event = await ctx.db.get(args.eventId);
+        if (!event) return null;
+
+        return {
+            ...volunteer,
+            eventName: event.name,
+            organizerName: event.organizerName,
+            featuredImage: event.featuredImage,
+        };
+    },
+});

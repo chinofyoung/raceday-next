@@ -8,11 +8,11 @@ export default defineSchema({
         displayName: v.string(),
         photoURL: v.optional(v.string()),
         role: v.union(v.literal("runner"), v.literal("organizer"), v.literal("admin")),
+        birthDate: v.optional(v.string()),
 
         // Profile fields
         phone: v.optional(v.string()),
         gender: v.optional(v.union(v.literal("male"), v.literal("female"), v.literal("other"), v.literal(""))),
-        birthDate: v.optional(v.string()),
         address: v.optional(v.object({
             street: v.string(),
             city: v.string(),

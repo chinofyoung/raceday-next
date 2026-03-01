@@ -11,78 +11,41 @@ import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Loader2, ArrowRight } fro
 import { toast } from "sonner";
 
 
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+
 export default function VolunteerAcceptPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const { user, clerkUser, loading: authLoading } = useAuth();
 
-    const eventId = searchParams.get("eventId");
-    const volunteerId = searchParams.get("volunteerId");
+    const eventId = searchParams.get("eventId") as Id<"events">;
+    const volunteerId = searchParams.get("volunteerId") as Id<"volunteers">;
 
-    const [invitation, setInvitation] = React.useState<any>(null);
-    const [event, setEvent] = React.useState<any>(null);
-    const [loading, setLoading] = React.useState(true);
+    const invitation = useQuery(api.volunteers.getInviteDetails,
+        (eventId && volunteerId) ? { id: volunteerId, eventId } : "skip"
+    );
+    const acceptMutation = useMutation(api.volunteers.accept);
+
     const [isAccepting, setIsAccepting] = React.useState(false);
-    const [error, setError] = React.useState<string | null>(null);
 
     React.useEffect(() => {
-        if (!eventId || !volunteerId) {
-            setError("Invalid invitation link.");
-            setLoading(false);
+        if (invitation?.status === "accepted") {
+            toast.success("You have already accepted this invitation.");
+            router.push("/dashboard");
+        }
+    }, [invitation, router]);
+
+    const handleAccept = async () => {
+        if (!user || !eventId || !volunteerId) {
+            toast.error("You must be logged in to accept an invitation.");
             return;
         }
 
-        const fetchDetails = async () => {
-            try {
-                const response = await fetch(`/api/volunteers/invite-details?eventId=${eventId}&volunteerId=${volunteerId}`);
-                if (!response.ok) {
-                    throw new Error("Invitation not found or expired.");
-                }
-                const data = await response.json();
-
-                if (data.status === "accepted") {
-                    toast.success("You have already accepted this invitation.");
-                    router.push("/dashboard");
-                    return;
-                }
-
-                if (data.status === "revoked") {
-                    throw new Error("This invitation has been revoked.");
-                }
-
-                setInvitation(data);
-                setEvent({
-                    name: data.eventName,
-                    organizerName: data.organizerName,
-                    featuredImage: data.featuredImage,
-                });
-
-                setLoading(false);
-            } catch (err: any) {
-                setError(err.message || "Failed to load invitation details.");
-                setLoading(false);
-            }
-        };
-
-        fetchDetails();
-    }, [eventId, volunteerId]);
-
-    const handleAccept = async () => {
-        if (!clerkUser || !eventId || !volunteerId) return;
-
         setIsAccepting(true);
         try {
-            const response = await fetch("/api/volunteers/accept", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ eventId, volunteerId }),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.message || "Failed to accept invitation");
-            }
-
+            await acceptMutation({ id: volunteerId, userId: user._id as Id<"users"> });
             toast.success("Invitation accepted!");
             router.push("/dashboard");
         } catch (err: any) {
@@ -91,6 +54,9 @@ export default function VolunteerAcceptPage() {
             setIsAccepting(false);
         }
     };
+
+    const loading = invitation === undefined;
+    const error = (eventId && volunteerId && !invitation && !loading) ? "Invitation not found or expired." : null;
 
     if (authLoading || loading) {
         return (
@@ -116,7 +82,9 @@ export default function VolunteerAcceptPage() {
     }
 
     // Check email mismatch
-    const emailMismatch = clerkUser && clerkUser.emailAddresses[0].emailAddress.toLowerCase() !== invitation?.email?.toLowerCase() && invitation?.email;
+    const currentUserEmail = clerkUser?.emailAddresses[0]?.emailAddress?.toLowerCase();
+    const invitedEmail = invitation?.email?.toLowerCase();
+    const emailMismatch = !!(currentUserEmail && invitedEmail && currentUserEmail !== invitedEmail);
 
     return (
         <PageWrapper className="max-w-2xl mx-auto py-20">
@@ -139,15 +107,15 @@ export default function VolunteerAcceptPage() {
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
                         <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/[0.1] shrink-0 shadow-2xl">
                             <img
-                                src={event?.featuredImage || "/placeholder-event.jpg"}
-                                alt={event?.name}
+                                src={invitation?.featuredImage || "/placeholder-event.jpg"}
+                                alt={invitation?.eventName}
                                 className="w-full h-full object-cover"
                             />
                         </div>
                         <div className="text-center md:text-left">
-                            <h2 className="text-2xl font-black italic uppercase text-white tracking-tight">{event?.name}</h2>
+                            <h2 className="text-2xl font-black italic uppercase text-white tracking-tight">{invitation?.eventName}</h2>
                             <p className="text-sm text-text-muted font-medium italic mt-1 uppercase tracking-widest">
-                                By {event?.organizerName || "Event Organizer"}
+                                By {invitation?.organizerName || "Event Organizer"}
                             </p>
                         </div>
                     </div>
@@ -187,8 +155,8 @@ export default function VolunteerAcceptPage() {
                             <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex gap-3">
                                 <AlertCircle className="text-red-500 shrink-0" size={20} />
                                 <div className="text-xs text-red-500 leading-relaxed font-bold italic">
-                                    This invitation was sent to <span className="underline">{invitation.email}</span>,
-                                    but you are logged in as <span className="underline">{clerkUser.emailAddresses[0].emailAddress}</span>.
+                                    This invitation was sent to <span className="underline">{invitation?.email}</span>,
+                                    but you are logged in as <span className="underline">{currentUserEmail}</span>.
                                     Please switch accounts to accept.
                                 </div>
                             </div>

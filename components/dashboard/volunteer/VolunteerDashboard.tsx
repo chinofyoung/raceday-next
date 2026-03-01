@@ -9,48 +9,30 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { toDate } from "@/lib/utils";
 
-interface VolunteerEvent {
-    id: string;
-    name: string;
-    date: any;
-    featuredImage: string;
-    location: { name: string };
-    permissions: string[];
-    volunteerId: string;
-    status: "accepted" | "pending";
-}
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@/lib/hooks/useAuth";
+
+import { Id } from "@/convex/_generated/dataModel";
 
 export function VolunteerDashboard() {
-    const [events, setEvents] = React.useState<VolunteerEvent[]>([]);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const { user, clerkUser } = useAuth();
 
-    React.useEffect(() => {
-        const fetchEvents = async () => {
-            try {
-                const response = await fetch("/api/volunteers/my-events");
-                if (!response.ok) throw new Error("Failed to fetch events");
-                const data = await response.json();
-                setEvents(data);
-            } catch (error: any) {
-                console.error(error);
-                // Silence error if it's just a 401 (unauthenticated)
-                if (!error.message?.includes("401")) {
-                    // We don't want to spam toast if they aren't a volunteer anyway
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const events = useQuery(api.volunteers.getMyVolunteerEvents,
+        (user || clerkUser) ? {
+            email: user?.email || clerkUser?.primaryEmailAddress?.emailAddress || "",
+            userId: user?._id as Id<"users">
+        } : "skip"
+    );
 
-        fetchEvents();
-    }, []);
+    const isLoading = events === undefined;
 
-    if (isLoading || events.length === 0) {
-        return null; // Remove large skeleton loaders, just show nothing until ready
+    if (isLoading || !events || events.length === 0) {
+        return null;
     }
 
-    const pendingEvents = events.filter(e => e.status === "pending");
-    const activeEvents = events.filter(e => e.status === "accepted");
+    const pendingEvents = events.filter(e => e?.status === "pending");
+    const activeEvents = events.filter(e => e?.status === "accepted");
 
     return (
         <div className="space-y-12">
@@ -90,9 +72,8 @@ export function VolunteerDashboard() {
                                         </div>
                                     </div>
 
-                                    {/* Permissions */}
                                     <div className="flex flex-wrap gap-1.5">
-                                        {event.permissions.map((p) => (
+                                        {event.permissions.map((p: string) => (
                                             <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase text-text-muted">
                                                 {p}
                                             </Badge>
@@ -162,9 +143,8 @@ export function VolunteerDashboard() {
                                         </div>
                                     </div>
 
-                                    {/* Permissions */}
                                     <div className="flex flex-wrap gap-1.5">
-                                        {event.permissions.map((p) => (
+                                        {event.permissions.map((p: string) => (
                                             <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase text-white">
                                                 {p}
                                             </Badge>
