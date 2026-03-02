@@ -7,7 +7,7 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { RaceEvent } from "@/types/event";
 import { format } from "date-fns";
 import Image from "next/image";
-import { formatDistance } from "@/lib/utils";
+import { formatDistance, cn } from "@/lib/utils";
 import { isEventOver } from "@/lib/earlyBirdUtils";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
@@ -133,8 +133,8 @@ export default async function HomePage() {
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {upcomingEvents.length > 0 ? upcomingEvents.map((event) => {
+                <div className={cn("grid gap-8 grid-cols-1 md:grid-cols-2", upcomingEvents.length >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2 max-w-4xl mx-auto")}>
+                    {upcomingEvents.length > 0 ? upcomingEvents.map((event, idx) => {
                         const eventDate = new Date(event.date as string | number | Date);
                         const isValidDate = eventDate && !isNaN(eventDate.getTime());
                         return (
@@ -146,6 +146,7 @@ export default async function HomePage() {
                                                 src={event.featuredImage}
                                                 alt={event.name}
                                                 fill
+                                                priority={idx < 3}
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                 className="object-cover group-hover:scale-110 transition-transform duration-700"
                                             />

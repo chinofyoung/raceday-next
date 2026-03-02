@@ -31,9 +31,10 @@ interface EventCardProps {
     onDelete?: (id: string) => void;
     mode?: "management" | "discovery";
     registrationStatus?: { isRegistered: boolean; isProxy: boolean; status: string };
+    priority?: boolean;
 }
 
-export function EventCard({ event, onDelete, mode = "management", registrationStatus }: EventCardProps) {
+export function EventCard({ event, onDelete, mode = "management", registrationStatus, priority = false }: EventCardProps) {
     const { user } = useAuth();
 
 
@@ -81,16 +82,19 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                     src={event.featuredImage || "/placeholder.png"}
                     alt={event.name}
                     fill
+                    priority={priority}
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-black/10 to-transparent" />
 
+                <div className="absolute top-0 right-0 left-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
+
                 {/* Status Badges */}
                 <div className="absolute top-4 left-4 flex flex-col gap-2">
                     {mode === "management" && (
                         <span className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md",
+                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md border border-white/10",
                             event.status === "published" ? "bg-green-500/80 text-white" :
                                 event.status === "draft" ? "bg-orange-500/80 text-white" : "bg-white/20 text-white"
                         )}>
@@ -99,10 +103,10 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                     )}
                     {mode === "discovery" && event.status === "published" && (
                         <span className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md text-white",
-                            isRegistrationClosed(event) ? "bg-red-500" :
-                                isEarlyBirdActive(event) ? "bg-green-500" :
-                                    "bg-cta"
+                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md text-white border border-white/10",
+                            isRegistrationClosed(event) ? "bg-red-500/90" :
+                                isEarlyBirdActive(event) ? "bg-green-500/90" :
+                                    "bg-cta/90"
                         )}>
                             {isRegistrationClosed(event) ? "Registration Closed" :
                                 isEarlyBirdActive(event) ? "Early Bird Promo" :
@@ -114,8 +118,8 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                 {registrationStatus?.isRegistered && (
                     <div className="absolute top-4 right-4 z-20">
                         <div className={cn(
-                            "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white",
-                            registrationStatus.status === "paid" ? "bg-blue-500/80" : "bg-orange-500/80"
+                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white border border-white/10",
+                            registrationStatus.status === "paid" ? "bg-blue-500/90" : "bg-orange-500/90"
                         )}>
                             <CheckCircle2 size={12} fill="currentColor" className="text-white/20" />
                             {registrationStatus.isProxy ? "Registered for Someone" : "Registered"}

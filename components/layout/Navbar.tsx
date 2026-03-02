@@ -91,20 +91,20 @@ export function Navbar() {
                                 <div className="flex items-center gap-6">
                                     {user?.role === "admin" && (
                                         <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin">
-                                            <span className="text-xs font-semibold uppercase tracking-widest text-cta group-hover/admin:text-cta/80 transition-colors">
+                                            <span className="text-sm font-bold text-cta group-hover/admin:text-cta/80 transition-colors">
                                                 Admin Panel
                                             </span>
                                         </Link>
                                     )}
                                     {(user?.role === "organizer" || user?.role === "admin") && (
                                         <Link href="/dashboard/events" className="hidden lg:flex items-center gap-2 group/manage">
-                                            <span className="text-xs font-semibold uppercase tracking-widest text-text-muted group-hover/manage:text-cta transition-colors">
+                                            <span className="text-sm font-bold text-text-muted group-hover/manage:text-cta transition-colors">
                                                 Manage Events
                                             </span>
                                         </Link>
                                     )}
                                     <Link href="/dashboard" className="flex items-center gap-2 group/db">
-                                        <span className="text-sm font-bold uppercase italic tracking-wider text-text group-hover/db:text-primary transition-colors">
+                                        <span className="text-sm font-bold tracking-wider text-text group-hover/db:text-primary transition-colors">
                                             Dashboard
                                         </span>
                                     </Link>
@@ -135,78 +135,91 @@ export function Navbar() {
 
             {/* Mobile Nav */}
             {isOpen && (
-                <div id="mobile-nav-menu" className="md:hidden absolute top-full left-4 right-4 mt-2 bg-surface border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-top-4">
-                    <div className="flex flex-col gap-4">
-                        {NAV_LINKS.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={cn(
-                                    "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
-                                    pathname === link.href ? "text-primary border-l-2 border-primary pl-4 -ml-4" : "text-text hover:text-primary"
-                                )}
+                <>
+                    <div className="fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsOpen(false)} />
+                    <div id="mobile-nav-menu" className="fixed top-0 right-0 bottom-0 z-[60] w-4/5 max-w-sm bg-surface border-l border-white/10 p-6 shadow-2xl animate-in slide-in-from-right md:hidden overflow-y-auto">
+                        <div className="flex justify-between items-center mb-8">
+                            <span className="text-xl font-black italic uppercase tracking-wider text-white">Menu</span>
+                            <button
+                                className="text-text p-2 hover:bg-white/5 rounded-lg"
                                 onClick={() => setIsOpen(false)}
+                                aria-label="Close navigation menu"
                             >
-                                {link.label}
-                            </Link>
-                        ))}
-                        <div className="pt-4 border-t border-white/5 space-y-4">
-                            {loading ? (
-                                <div className="flex items-center gap-3 px-1">
-                                    <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
-                                    <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
-                                </div>
-                            ) : (
-                                <>
-                                    <SignedIn>
-                                        <Link
-                                            href="/dashboard"
-                                            className={cn(
-                                                "flex items-center gap-3 text-lg font-semibold py-4 transition-colors",
-                                                pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && pathname !== "/dashboard/events" ? "text-primary" : "text-text hover:text-primary"
+                                <X />
+                            </button>
+                        </div>
+                        <div className="flex flex-col gap-4">
+                            {NAV_LINKS.map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={cn(
+                                        "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
+                                        pathname === link.href ? "text-white bg-primary/40 rounded-lg pl-4 -ml-4" : "text-text hover:text-primary"
+                                    )}
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                            <div className="pt-4 space-y-4">
+                                {loading ? (
+                                    <div className="flex items-center gap-3 px-1">
+                                        <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
+                                        <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <SignedIn>
+                                            <Link
+                                                href="/dashboard"
+                                                className={cn(
+                                                    "flex items-center gap-3 text-lg font-semibold py-4 transition-colors",
+                                                    pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && pathname !== "/dashboard/events" ? "text-primary" : "text-text hover:text-primary"
+                                                )}
+                                                onClick={() => setIsOpen(false)}
+                                            >
+                                                <LayoutDashboard size={20} className="text-primary" />
+                                                Dashboard
+                                            </Link>
+                                            {user?.role === "admin" && (
+                                                <Link
+                                                    href="/dashboard/admin"
+                                                    className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <Shield size={20} />
+                                                    Admin Panel
+                                                </Link>
                                             )}
-                                            onClick={() => setIsOpen(false)}
-                                        >
-                                            <LayoutDashboard size={20} className="text-primary" />
-                                            Dashboard
-                                        </Link>
-                                        {user?.role === "admin" && (
-                                            <Link
-                                                href="/dashboard/admin"
-                                                className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                <Shield size={20} />
-                                                Admin Panel
-                                            </Link>
-                                        )}
-                                        {(user?.role === "organizer" || user?.role === "admin") && (
-                                            <Link
-                                                href="/dashboard/events"
-                                                className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
-                                                onClick={() => setIsOpen(false)}
-                                            >
-                                                <LayoutDashboard size={20} />
-                                                Manage Events
-                                            </Link>
-                                        )}
-                                        <div className="py-4 flex justify-between items-center border-t border-white/5">
-                                            <span className="text-lg font-semibold text-text-muted">Account</span>
-                                            <UserButton />
-                                        </div>
-                                    </SignedIn>
-                                    <SignedOut>
-                                        <Button className="w-full" asChild>
-                                            <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                                                Sign In
-                                            </Link>
-                                        </Button>
-                                    </SignedOut>
-                                </>
-                            )}
+                                            {(user?.role === "organizer" || user?.role === "admin") && (
+                                                <Link
+                                                    href="/dashboard/events"
+                                                    className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <LayoutDashboard size={20} />
+                                                    Manage Events
+                                                </Link>
+                                            )}
+                                            <div className="py-4 flex justify-between items-center border-t border-white/5">
+                                                <span className="text-lg font-semibold text-text-muted">Account</span>
+                                                <UserButton />
+                                            </div>
+                                        </SignedIn>
+                                        <SignedOut>
+                                            <Button className="w-full" asChild>
+                                                <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                                                    Sign In
+                                                </Link>
+                                            </Button>
+                                        </SignedOut>
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </>
             )}
         </nav>
     );
