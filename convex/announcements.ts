@@ -4,11 +4,16 @@ import { v } from "convex/values";
 export const listByEvent = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
-        return await ctx.db
+        const announcements = await ctx.db
             .query("announcements")
             .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
             .order("desc")
             .collect();
+
+        return announcements.map(a => ({
+            ...a,
+            id: a._id
+        }));
     },
 });
 

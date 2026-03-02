@@ -20,11 +20,24 @@ export const getCount = query({
 export const getByUserId = query({
     args: { userId: v.id("users") },
     handler: async (ctx: QueryCtx, args) => {
-        return await ctx.db
+        const registrations = await ctx.db
             .query("registrations")
             .withIndex("by_user", (q) => q.eq("userId", args.userId))
             .order("desc")
             .collect();
+
+        const results = [];
+        for (const reg of registrations) {
+            const event = await ctx.db.get(reg.eventId);
+            results.push({
+                ...reg,
+                event: event ? {
+                    ...event,
+                    id: event._id
+                } : null
+            });
+        }
+        return results;
     },
 });
 
