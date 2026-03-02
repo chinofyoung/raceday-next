@@ -32,26 +32,38 @@ export default function DashboardPage() {
         userId: user._id as any
     } : "skip");
 
-    // Placeholder for organizer registrations — will need a more complex query or additional schema fields
-    const allRegistrations = useMemo(() => {
-        return (convexRegistrations || []).map(r => ({
-            ...r,
-            id: r._id,
-        }));
-    }, [convexRegistrations]);
+    const organizerRegistrations = useQuery(api.registrations.list, isOrganizerView && user ? {
+        organizerId: user._id as any,
+        status: "all",
+        paginationOpts: { numItems: 1000, cursor: null }
+    } : "skip");
+
+    const allRegistrations: any[] = useMemo(() => {
+        if (isOrganizerView) {
+            return (organizerRegistrations?.page || []).map((r: any) => ({
+                ...r,
+                id: r._id,
+            }));
+        } else {
+            return (convexRegistrations || []).map((r: any) => ({
+                ...r,
+                id: r._id,
+            }));
+        }
+    }, [isOrganizerView, convexRegistrations, organizerRegistrations]);
 
     const stats = {
         total: (convexEvents?.page || []).length,
-        secondary: allRegistrations.filter(r => r.status === "paid").length,
-        revenue: allRegistrations.reduce((acc, r) => acc + (r.totalPrice || 0), 0),
-        claimedKits: allRegistrations.filter(r => r.raceKitClaimed).length
+        secondary: allRegistrations.filter((r: any) => r.status === "paid").length,
+        revenue: allRegistrations.reduce((acc: any, r: any) => acc + (r.totalPrice || 0), 0),
+        claimedKits: allRegistrations.filter((r: any) => r.raceKitClaimed).length
     };
 
     const items = useMemo(() => {
         const rawItems = isOrganizerView ? (convexEvents?.page || []).slice(0, 5) : allRegistrations;
-        return rawItems.map(item => ({
+        return rawItems.map((item: any) => ({
             ...item,
-            id: (item as any)._id || (item as any).id
+            id: item._id || item.id
         }));
     }, [isOrganizerView, convexEvents, allRegistrations]);
 
@@ -62,7 +74,8 @@ export default function DashboardPage() {
         }));
     }, [convexEvents]);
 
-    const loading = authLoading || (isOrganizerView && convexEvents === undefined) || (!isOrganizerView && convexRegistrations === undefined);
+    const loading = authLoading ||
+        (isOrganizerView ? (convexEvents === undefined || organizerRegistrations === undefined) : (convexRegistrations === undefined));
     const error = null;
     const hasApplication = false;
 
@@ -86,9 +99,9 @@ export default function DashboardPage() {
 
     // Per-event kit stats
     const eventKitStats = useMemo(() => {
-        return items.map(event => {
-            const eventRegs = allRegistrations.filter(r => r.eventId === event.id);
-            const claimed = eventRegs.filter(r => r.raceKitClaimed).length;
+        return items.map((event: any) => {
+            const eventRegs = allRegistrations.filter((r: any) => r.eventId === event.id);
+            const claimed = eventRegs.filter((r: any) => r.raceKitClaimed).length;
             return {
                 ...event,
                 regCount: eventRegs.length,
@@ -101,7 +114,7 @@ export default function DashboardPage() {
     // Per-event revenue
     const eventRevenue = useMemo(() => {
         const eventMap = new Map<string, { id: string, name: string; count: number; revenue: number }>();
-        allRegistrations.forEach(r => {
+        allRegistrations.forEach((r: any) => {
             const eventId = r.eventId;
             const event = allEvents.find(e => e._id === eventId);
             const eventTitle = event?.name || "Unknown Event";
@@ -117,7 +130,7 @@ export default function DashboardPage() {
     // Per-category revenue
     const categoryRevenue = useMemo(() => {
         const catMap = new Map<string, { name: string; eventInfo: string; count: number; revenue: number }>();
-        allRegistrations.forEach(r => {
+        allRegistrations.forEach((r: any) => {
             const catId = r.categoryId || "Unknown";
             const eventId = r.eventId || "Unknown";
             const event = allEvents.find(e => e._id === eventId);

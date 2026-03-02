@@ -133,53 +133,61 @@ export default async function HomePage() {
                     </Button>
                 </div>
 
-                <div className={cn("grid gap-8 grid-cols-1 md:grid-cols-2", upcomingEvents.length >= 3 ? "lg:grid-cols-3" : "lg:grid-cols-2 max-w-4xl mx-auto")}>
+                <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {upcomingEvents.length > 0 ? upcomingEvents.map((event, idx) => {
                         const eventDate = new Date(event.date as string | number | Date);
                         const isValidDate = eventDate && !isNaN(eventDate.getTime());
                         return (
                             <Link key={event.id} href={`/events/${event.id}`}>
-                                <Card className="group overflow-hidden border border-white/5 hover:border-primary/50 p-0 transition-all hover:-translate-y-2 bg-surface/30">
-                                    <div className="aspect-[16/9] bg-white/5 relative overflow-hidden">
-                                        {event.featuredImage && (
+                                <Card className="group overflow-hidden border border-white/5 hover:border-primary/40 bg-surface/40 p-0 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_8px_30px_rgb(0,0,0,0.4)] flex flex-col h-full">
+                                    <div className="aspect-[16/9] bg-white/5 relative overflow-hidden shrink-0">
+                                        {event.featuredImage ? (
                                             <Image
                                                 src={event.featuredImage}
                                                 alt={event.name}
                                                 fill
                                                 priority={idx < 3}
                                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                             />
+                                        ) : (
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent z-10" />
                                         <div className="absolute top-4 right-4 z-20">
-                                            <Badge variant="success" className="bg-cta text-white border-none shadow-lg">Open</Badge>
-                                        </div>
-                                        <div className="absolute bottom-4 left-4 z-20 space-y-1">
-                                            <div className="flex items-center gap-1.5 text-primary text-[10px] font-black uppercase tracking-widest italic">
-                                                <Calendar size={12} />
-                                                <span>{isValidDate ? format(eventDate, "MMM d, yyyy") : "TBD"}</span>
-                                            </div>
-                                            <h3 className="text-xl font-black uppercase italic text-white group-hover:text-primary transition-colors tracking-tighter leading-tight">{event.name}</h3>
+                                            <Badge variant="success" className="bg-cta hover:bg-cta/90 text-white border border-white/10 shadow-lg backdrop-blur-md">Open</Badge>
                                         </div>
                                     </div>
-                                    <div className="p-6 space-y-4">
-                                        <div className="flex items-center justify-between text-[11px] text-text-muted font-black uppercase italic tracking-widest">
-                                            <div className="flex items-center gap-1.5">
-                                                <MapPin size={14} className="text-cta" />
-                                                <span>{event.location?.name || "Multiple Locations"}</span>
+                                    <div className="p-6 flex flex-col gap-5 grow">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-1.5 text-primary text-[11px] font-black uppercase tracking-widest italic">
+                                                    <Calendar size={14} />
+                                                    <span>{isValidDate ? format(eventDate, "MMM d, yyyy") : "TBD"}</span>
+                                                </div>
+                                                <div className="text-white text-[11px] font-black uppercase tracking-widest italic flex items-center gap-1">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-cta animate-pulse" />
+                                                    {event.categories?.length > 0
+                                                        ? `₱${Math.min(...event.categories.map(c => c.price))}`
+                                                        : "Price TBD"}
+                                                </div>
                                             </div>
-                                            <div className="text-white">
-                                                {event.categories?.length > 0
-                                                    ? `₱${Math.min(...event.categories.map(c => c.price))}`
-                                                    : "Price TBD"}
-                                            </div>
+                                            <h3 className="text-2xl font-black uppercase italic text-white group-hover:text-primary transition-colors tracking-tighter leading-tight line-clamp-2">
+                                                {event.name}
+                                            </h3>
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
+
+                                        <div className="flex items-start gap-2.5 text-sm text-text-muted font-medium">
+                                            <MapPin size={16} className="text-cta shrink-0 mt-0.5" />
+                                            <span className="line-clamp-2 leading-snug">{event.location?.name || "Multiple Locations"}</span>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5 mt-auto">
                                             {event.categories?.slice(0, 3).map((cat, idx) => (
-                                                <Badge key={idx} variant="outline" className="bg-white/5 border-none text-[9px] font-bold">{formatDistance(cat.distance, cat.distanceUnit)}</Badge>
+                                                <Badge key={idx} variant="outline" className="bg-white/5 border-white/10 text-white text-[10px] uppercase font-bold py-0.5 px-2.5 hover:bg-white/10 transition-colors">
+                                                    {formatDistance(cat.distance, cat.distanceUnit)}
+                                                </Badge>
                                             )) || (
-                                                    <Badge variant="outline" className="bg-white/5 border-none text-[9px] font-bold">Standard</Badge>
+                                                    <Badge variant="outline" className="bg-white/5 border-white/10 text-white text-[10px] uppercase font-bold py-0.5 px-2.5">Standard</Badge>
                                                 )}
                                         </div>
                                     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { ClerkProvider, useAuth } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 import { UserSync } from "./UserSync";
@@ -13,7 +14,7 @@ export default function ConvexClientProvider({
     children: React.ReactNode;
 }) {
     return (
-        <ClerkProvider>
+        <ClerkProvider appearance={{ baseTheme: dark }}>
             <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
                 <UserSync />
                 {children}
