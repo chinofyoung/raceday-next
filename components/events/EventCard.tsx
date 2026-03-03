@@ -76,10 +76,14 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
 
     return (
         <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative hover:border-white/20 transition-all duration-300 cursor-pointer">
+            <Link href={`/${mode === "management" ? "dashboard/events" : "events"}/${event.id}`} className="absolute inset-0 z-10">
+                <span className="sr-only">View {event.name} details</span>
+            </Link>
+
             {/* Image Section */}
             <div className="aspect-[16/9] relative overflow-hidden">
                 <Image
-                    src={event.featuredImage || "/placeholder.png"}
+                    src={event.featuredImage || "/placeholder-running.jpg"}
                     alt={event.name}
                     fill
                     priority={priority}
@@ -91,7 +95,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                 <div className="absolute top-0 right-0 left-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none" />
 
                 {/* Status Badges */}
-                <div className="absolute top-4 left-4 flex flex-col gap-2">
+                <div className="absolute top-4 left-4 flex flex-col gap-2 z-20 pointer-events-none">
                     {mode === "management" && (
                         <span className={cn(
                             "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md border border-white/10",
@@ -116,7 +120,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                 </div>
 
                 {registrationStatus?.isRegistered && (
-                    <div className="absolute top-4 right-4 z-20">
+                    <div className="absolute top-4 right-4 z-20 pointer-events-none">
                         <div className={cn(
                             "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white border border-white/10",
                             registrationStatus.status === "paid" ? "bg-blue-500/90" : "bg-orange-500/90"
@@ -128,7 +132,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                 )}
 
                 {/* Categories Count Badge */}
-                <div className="absolute bottom-4 left-4 flex gap-2">
+                <div className="absolute bottom-4 left-4 flex gap-2 z-20 pointer-events-none">
                     {event.categories?.slice(0, 3).map((cat, i) => (
                         <span key={i} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
                             {formatDistance(cat.distance, cat.distanceUnit) || cat.name}
@@ -191,7 +195,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                 </div>
 
                 {/* Footer Actions */}
-                <div className="mt-auto pt-2 flex items-center justify-between gap-2">
+                <div className="mt-auto pt-2 flex items-center justify-between gap-2 relative z-20">
                     {mode === "management" ? (
                         <>
                             <div className="flex gap-1">

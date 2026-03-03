@@ -1,4 +1,4 @@
-import { mutation, query, QueryCtx, MutationCtx } from "./_generated/server";
+import { mutation, query, internalQuery, QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
 import { paginationOptsValidator } from "convex/server";
 
@@ -207,5 +207,32 @@ export const getByUid = query({
             .query("users")
             .withIndex("by_uid", (q) => q.eq("uid", args.uid))
             .unique();
+    },
+});
+
+export const updatePushToken = mutation({
+    args: { expoPushToken: v.string() },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+
+        if (!user) throw new Error("User not found");
+
+        await ctx.db.patch(user._id, {
+            expoPushToken: args.expoPushToken,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const getInternal = internalQuery({
+    args: { id: v.id("users") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
     },
 });

@@ -113,7 +113,7 @@ export function VolunteerDashboard() {
                                 {/* Event Image */}
                                 <div className="relative h-40 overflow-hidden">
                                     <img
-                                        src={event.featuredImage || "/placeholder-event.jpg"}
+                                        src={event.featuredImage || "/placeholder-running.jpg"}
                                         alt={event.name}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     />

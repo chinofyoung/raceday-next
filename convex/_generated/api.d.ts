@@ -14,6 +14,8 @@ import type * as audit from "../audit.js";
 import type * as bibs from "../bibs.js";
 import type * as emails from "../emails.js";
 import type * as events from "../events.js";
+import type * as http from "../http.js";
+import type * as notifications from "../notifications.js";
 import type * as registrations from "../registrations.js";
 import type * as stats from "../stats.js";
 import type * as tracking from "../tracking.js";
@@ -33,6 +35,8 @@ declare const fullApi: ApiFromModules<{
   bibs: typeof bibs;
   emails: typeof emails;
   events: typeof events;
+  http: typeof http;
+  notifications: typeof notifications;
   registrations: typeof registrations;
   stats: typeof stats;
   tracking: typeof tracking;

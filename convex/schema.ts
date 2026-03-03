@@ -43,6 +43,7 @@ export default defineSchema({
         // Metadata
         profileCompletion: v.number(),
         volunteerEvents: v.optional(v.array(v.id("events"))), // array of eventIds
+        expoPushToken: v.optional(v.string()),
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_uid", ["uid"]).index("by_email", ["email"]),
