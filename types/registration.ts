@@ -50,6 +50,7 @@ export interface Registration {
     paidAt?: number;
 
     // Metadata
+    registrationData?: any;
     createdAt: number;
     updatedAt: number;
 }

@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import Image from "next/image";
 
 export default function VolunteerAcceptPage() {
     const searchParams = useSearchParams();
@@ -105,12 +106,16 @@ export default function VolunteerAcceptPage() {
                     <div className="absolute top-0 right-0 p-24 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
-                        <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/[0.1] shrink-0 shadow-2xl">
-                            <img
-                                src={invitation?.featuredImage || "/placeholder-event.jpg"}
-                                alt={invitation?.eventName}
-                                className="w-full h-full object-cover"
-                            />
+                        <div className="w-24 h-24 rounded-2xl overflow-hidden border border-white/[0.1] shrink-0 shadow-2xl relative bg-white/5 flex items-center justify-center">
+                            {invitation?.featuredImage ? (
+                                <img
+                                    src={invitation.featuredImage}
+                                    alt={invitation.eventName || "Event Image"}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="text-white/20 italic font-black text-xs uppercase tracking-widest text-center px-2">No Event Image</div>
+                            )}
                         </div>
                         <div className="text-center md:text-left">
                             <h2 className="text-2xl font-black italic uppercase text-white tracking-tight">{invitation?.eventName}</h2>

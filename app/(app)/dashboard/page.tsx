@@ -38,19 +38,29 @@ export default function DashboardPage() {
         paginationOpts: { numItems: 1000, cursor: null }
     } : "skip");
 
+    const allEvents = useMemo(() => {
+        return (convexEvents?.page || []).map(e => ({
+            ...e,
+            id: e._id
+        }));
+    }, [convexEvents]);
+
     const allRegistrations: any[] = useMemo(() => {
-        if (isOrganizerView) {
-            return (organizerRegistrations?.page || []).map((r: any) => ({
+        const rawRegs = isOrganizerView ? (organizerRegistrations?.page || []) : (convexRegistrations || []);
+
+        return rawRegs.map((r: any) => {
+            const event = allEvents.find(e => e._id === r.eventId);
+            const category = event?.categories?.find((c: any) => (c.id || "0") === r.categoryId);
+
+            return {
                 ...r,
                 id: r._id,
-            }));
-        } else {
-            return (convexRegistrations || []).map((r: any) => ({
-                ...r,
-                id: r._id,
-            }));
-        }
-    }, [isOrganizerView, convexRegistrations, organizerRegistrations]);
+                participantInfo: r.registrationData?.participantInfo || r.participantInfo,
+                eventName: event?.name || "Unknown Event",
+                categoryName: category?.name || r.categoryId
+            };
+        });
+    }, [isOrganizerView, convexRegistrations, organizerRegistrations, allEvents]);
 
     const stats = {
         total: (convexEvents?.page || []).length,
@@ -66,13 +76,6 @@ export default function DashboardPage() {
             id: item._id || item.id
         }));
     }, [isOrganizerView, convexEvents, allRegistrations]);
-
-    const allEvents = useMemo(() => {
-        return (convexEvents?.page || []).map(e => ({
-            ...e,
-            id: e._id
-        }));
-    }, [convexEvents]);
 
     const loading = authLoading ||
         (isOrganizerView ? (convexEvents === undefined || organizerRegistrations === undefined) : (convexRegistrations === undefined));

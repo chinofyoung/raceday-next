@@ -40,7 +40,7 @@ export default function EventDetailPage() {
         paginationOpts: { numItems: 1000, cursor: null }
     } : "skip");
 
-    const autoAssignMutation = useMutation(api.bibs.autoAssign);
+
     const cloneMutation = useMutation(api.events.clone);
 
     const [activeTab, setActiveTab] = useState<string>("participants");
@@ -89,7 +89,7 @@ export default function EventDetailPage() {
 
     const isOrganizer = event?.organizerId === user?._id || role === "admin";
 
-    const availableTabs = (["participants", "stats", "revenue", "bibs", "announcements", "volunteers"] as const).filter(tab => {
+    const availableTabs = (["participants", "stats", "revenue", "announcements", "volunteers"] as const).filter(tab => {
         if (isOrganizer) return true;
         if (tab === "participants") return permissions.includes("participants") || permissions.includes("kiosk");
         if (tab === "announcements") return permissions.includes("announcements");
@@ -418,32 +418,6 @@ export default function EventDetailPage() {
                         </div>
                     )}
 
-                    {activeTab === "bibs" && isOrganizer && (
-                        <Card className="p-8 bg-surface border-white/5 space-y-6">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-xl font-bold uppercase italic tracking-tight text-white">Bib Number Settings</h3>
-                                <Button
-                                    variant="primary"
-                                    size="sm"
-                                    className="font-black italic uppercase"
-                                    onClick={async () => {
-                                        if (confirm("Auto-assign bib numbers?")) {
-                                            try {
-                                                const result = await autoAssignMutation({ eventId: id as Id<"events"> });
-                                                toast.success(`Assigned ${result.assignedCount} bib numbers!`);
-                                            } catch (err) {
-                                                console.error(err);
-                                                toast.error("Failed to assign bibs.");
-                                            }
-                                        }
-                                    }}
-                                >
-                                    Auto-Assign
-                                </Button>
-                            </div>
-                            <p className="text-sm text-text-muted italic font-medium">Auto-assignment settings can be configured per category in the event editor.</p>
-                        </Card>
-                    )}
 
                     {activeTab === "announcements" && (
                         <div className="space-y-6">

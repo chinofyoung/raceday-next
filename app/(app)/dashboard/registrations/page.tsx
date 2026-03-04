@@ -58,6 +58,7 @@ export default function OrganizerRegistrationsPage() {
             const category = event?.categories?.find(c => c.id === reg.categoryId);
             return {
                 ...reg,
+                participantInfo: reg.registrationData?.participantInfo || reg.participantInfo,
                 eventName: event?.name || "Unknown Event",
                 categoryName: category?.name || reg.categoryId
             };
