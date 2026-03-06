@@ -21,7 +21,7 @@ export default function LoginPage() {
             // Clerk's authenticateWithRedirect handles both sign-in and sign-up with the same strategy
             await signIn.authenticateWithRedirect({
                 strategy: "oauth_google",
-                redirectUrl: "/dashboard", // Fallback if redirectUrlComplete fails
+                redirectUrl: "/auth/sso-callback",
                 redirectUrlComplete: redirectTo,
             });
         } catch (err) {
@@ -76,6 +76,9 @@ export default function LoginPage() {
                             <ChevronRight className="text-white/40 w-8 h-8 transition-transform group-hover:translate-x-1" strokeWidth={3} />
                         )}
                     </button>
+
+                    {/* Clerk Bot Protection CAPTCHA container */}
+                    <div id="clerk-captcha" className="mt-4" />
                 </div>
 
                 {/* Privacy Footer */}
