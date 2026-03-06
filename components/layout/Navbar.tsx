@@ -45,99 +45,101 @@ export function Navbar() {
     }, []);
 
     return (
-        <nav
-            className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-4 py-8",
-                isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-6" : "bg-transparent"
-            )}
-        >
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
-                <Link href="/" className="flex items-center transition-transform hover:scale-105 active:scale-95">
-                    <Image
-                        src="/logo.png"
-                        alt="RaceDay"
-                        width={180}
-                        height={48}
-                        className="h-9 w-auto object-contain"
-                        priority
-                    />
-                </Link>
+        <>
+            <nav
+                className={cn(
+                    "fixed top-0 left-0 right-0 z-[100] transition-all duration-300 px-4 py-8",
+                    isScrolled ? "bg-background/80 backdrop-blur-md shadow-lg py-6" : "bg-transparent"
+                )}
+            >
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <Link href="/" className="flex items-center transition-transform hover:scale-105 active:scale-95">
+                        <Image
+                            src="/logo.png"
+                            alt="RaceDay"
+                            width={180}
+                            height={48}
+                            className="h-9 w-auto object-contain"
+                            priority
+                        />
+                    </Link>
 
-                {/* Desktop Nav */}
-                <div className="hidden md:flex items-center gap-8">
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="text-text-muted hover:text-primary font-medium transition-colors"
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    {/* Desktop Nav */}
+                    <div className="hidden md:flex items-center gap-8">
+                        {NAV_LINKS.map((link) => (
+                            <Link
+                                key={link.href}
+                                href={link.href}
+                                className="text-text-muted hover:text-primary font-medium transition-colors"
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
 
-                    {loading ? (
-                        <div className="flex items-center gap-4 pl-4 border-l border-white/10">
-                            <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
-                            <div className="w-20 h-4 bg-white/5 rounded animate-pulse hidden md:block" />
-                        </div>
-                    ) : (
-                        <div className="flex items-center gap-4 pl-4 border-l border-white/10">
-                            <SignedOut>
-                                <Button variant="primary" size="sm" asChild>
-                                    <Link href="/auth/login">Sign In</Link>
-                                </Button>
-                            </SignedOut>
-                            <SignedIn>
-                                <div className="flex items-center gap-6">
-                                    {user?.role === "admin" && (
-                                        <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin">
-                                            <span className="text-sm font-bold text-cta group-hover/admin:text-cta/80 transition-colors">
-                                                Admin Panel
+                        {loading ? (
+                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                                <div className="w-8 h-8 rounded-full bg-white/5 animate-pulse" />
+                                <div className="w-20 h-4 bg-white/5 rounded animate-pulse hidden md:block" />
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+                                <SignedOut>
+                                    <Button variant="primary" size="sm" asChild>
+                                        <Link href="/auth/login">Sign In</Link>
+                                    </Button>
+                                </SignedOut>
+                                <SignedIn>
+                                    <div className="flex items-center gap-6">
+                                        {user?.role === "admin" && (
+                                            <Link href="/dashboard/admin" className="hidden lg:flex items-center gap-2 group/admin">
+                                                <span className="text-sm font-bold text-cta group-hover/admin:text-cta/80 transition-colors">
+                                                    Admin Panel
+                                                </span>
+                                            </Link>
+                                        )}
+                                        {(user?.role === "organizer" || user?.role === "admin") && (
+                                            <Link href="/dashboard/organizer/events" className="hidden lg:flex items-center gap-2 group/manage">
+                                                <span className="text-sm font-bold text-text-muted group-hover/manage:text-cta transition-colors">
+                                                    Manage Events
+                                                </span>
+                                            </Link>
+                                        )}
+                                        <Link href="/dashboard" className="flex items-center gap-2 group/db">
+                                            <span className="text-sm font-bold tracking-wider text-text group-hover/db:text-primary transition-colors">
+                                                Dashboard
                                             </span>
                                         </Link>
-                                    )}
-                                    {(user?.role === "organizer" || user?.role === "admin") && (
-                                        <Link href="/dashboard/organizer/events" className="hidden lg:flex items-center gap-2 group/manage">
-                                            <span className="text-sm font-bold text-text-muted group-hover/manage:text-cta transition-colors">
-                                                Manage Events
-                                            </span>
-                                        </Link>
-                                    )}
-                                    <Link href="/dashboard" className="flex items-center gap-2 group/db">
-                                        <span className="text-sm font-bold tracking-wider text-text group-hover/db:text-primary transition-colors">
-                                            Dashboard
-                                        </span>
-                                    </Link>
-                                    <UserButton
-                                        appearance={{
-                                            elements: {
-                                                userButtonAvatarBox: "w-8 h-8 border border-primary/20 hover:border-primary transition-all",
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            </SignedIn>
-                        </div>
-                    )}
+                                        <UserButton
+                                            appearance={{
+                                                elements: {
+                                                    userButtonAvatarBox: "w-8 h-8 border border-primary/20 hover:border-primary transition-all",
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </SignedIn>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Mobile Toggle */}
+                    <button
+                        className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
+                        onClick={() => setIsOpen(!isOpen)}
+                        aria-expanded={isOpen}
+                        aria-controls="mobile-nav-menu"
+                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                    >
+                        {isOpen ? <X /> : <Menu />}
+                    </button>
                 </div>
+            </nav>
 
-                {/* Mobile Toggle */}
-                <button
-                    className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
-                    onClick={() => setIsOpen(!isOpen)}
-                    aria-expanded={isOpen}
-                    aria-controls="mobile-nav-menu"
-                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                >
-                    {isOpen ? <X /> : <Menu />}
-                </button>
-            </div>
-
-            {/* Mobile Nav */}
+            {/* Mobile Nav Drawer - Outside <nav> to avoid overflow issues */}
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 z-[55] bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsOpen(false)} />
-                    <div id="mobile-nav-menu" className="fixed top-0 right-0 bottom-0 z-[60] w-4/5 max-w-sm bg-surface border-l border-white/10 p-6 shadow-2xl animate-in slide-in-from-right md:hidden overflow-y-auto">
+                    <div className="fixed inset-0 z-[105] bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsOpen(false)} />
+                    <div id="mobile-nav-menu" className="fixed top-0 right-0 bottom-0 z-[110] w-4/5 max-w-sm bg-surface border-l border-white/10 p-6 shadow-2xl animate-in slide-in-from-right md:hidden overflow-y-auto">
                         <div className="flex justify-between items-center mb-8">
                             <span className="text-xl font-black italic uppercase tracking-wider text-white">Menu</span>
                             <button
@@ -221,6 +223,6 @@ export function Navbar() {
                     </div>
                 </>
             )}
-        </nav>
+        </>
     );
 }

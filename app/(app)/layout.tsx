@@ -40,7 +40,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white">
+        <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white overflow-x-hidden">
             <Navbar />
             <main className="flex-grow pt-24 pb-20">
                 {children}
