@@ -76,7 +76,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
 
     return (
         <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative hover:border-white/20 transition-all duration-300 cursor-pointer">
-            <Link href={`/${mode === "management" ? "dashboard/events" : "events"}/${event.id}`} className="absolute inset-0 z-10">
+            <Link href={`/${mode === "management" ? "dashboard/organizer/events" : "events"}/${event.id}`} className="absolute inset-0 z-10">
                 <span className="sr-only">View {event.name} details</span>
             </Link>
 
@@ -200,10 +200,10 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                         <>
                             <div className="flex gap-1">
                                 <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-full hover:bg-white/10" asChild title="Edit Event">
-                                    <Link href={`/dashboard/events/${event.id}/edit`}><Edit2 size={16} /></Link>
+                                    <Link href={`/dashboard/organizer/events/${event.id}/edit`}><Edit2 size={16} /></Link>
                                 </Button>
                                 <Button variant="ghost" size="sm" className="h-9 w-9 p-0 rounded-full hover:bg-white/10" asChild title="View Details">
-                                    <Link href={`/dashboard/events/${event.id}`}><Eye size={16} /></Link>
+                                    <Link href={`/dashboard/organizer/events/${event.id}`}><Eye size={16} /></Link>
                                 </Button>
                                 <Button
                                     variant="ghost"
@@ -217,7 +217,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                             </div>
 
                             <Button variant="outline" size="sm" className="text-[10px] uppercase font-black italic h-8 px-3 border-white/10 hover:bg-primary hover:text-white group/btn" asChild>
-                                <Link href={`/dashboard/events/${event.id}`} className="flex items-center gap-1.5">
+                                <Link href={`/dashboard/organizer/events/${event.id}`} className="flex items-center gap-1.5">
                                     Manage <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
                                 </Link>
                             </Button>
@@ -237,7 +237,7 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
                             <div className="flex items-center gap-2">
                                 {user?._id === event.organizerId && (
                                     <Button variant="ghost" size="sm" className="bg-slate-700 h-8 w-8 p-0 rounded-full hover:bg-white/10 text-text-muted hover:text-primary transition-colors" asChild title="Edit Event">
-                                        <Link href={`/dashboard/events/${event.id}/edit`}><Edit2 size={14} /></Link>
+                                        <Link href={`/dashboard/organizer/events/${event.id}/edit`}><Edit2 size={14} /></Link>
                                     </Button>
                                 )}
                                 <Button variant="primary" size="sm" className="text-[10px] uppercase font-black italic h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>

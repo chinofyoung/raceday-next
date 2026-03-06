@@ -117,7 +117,7 @@ export default function EventDetailPage() {
             <PageWrapper className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center space-y-4">
                     <h1 className="text-2xl font-bold text-white uppercase italic">Event not found</h1>
-                    <Button asChild variant="primary"><Link href="/dashboard">Back to Dashboard</Link></Button>
+                    <Button asChild variant="primary"><Link href="/dashboard/organizer">Back to Dashboard</Link></Button>
                 </div>
             </PageWrapper>
         );
@@ -147,7 +147,7 @@ export default function EventDetailPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
                     <div className="space-y-4">
-                        <Link href="/dashboard" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors group w-fit">
+                        <Link href="/dashboard/organizer" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors group w-fit">
                             <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
                         </Link>
                         <div>
@@ -180,7 +180,7 @@ export default function EventDetailPage() {
                     {isOrganizer && (
                         <>
                             <BaseQuickAction
-                                href={`/dashboard/events/${id}/edit`}
+                                href={`/dashboard/organizer/events/${id}/edit`}
                                 icon={Edit2}
                                 label="Edit Event"
                                 variant="primary"
@@ -190,7 +190,7 @@ export default function EventDetailPage() {
                                     if (confirm("Create a copy of this event?")) {
                                         const promise = cloneMutation({ id: id as Id<"events"> })
                                             .then(async newId => {
-                                                router.push(`/dashboard/events/${newId}/edit`);
+                                                router.push(`/dashboard/organizer/events/${newId}/edit`);
                                                 return newId;
                                             });
 
@@ -209,7 +209,7 @@ export default function EventDetailPage() {
                     )}
                     {(isOrganizer || permissions.includes("kiosk")) && (
                         <BaseQuickAction
-                            href={`/dashboard/events/${id}/kiosk`}
+                            href={`/dashboard/organizer/events/${id}/kiosk`}
                             icon={Monitor}
                             label="Kiosk Mode"
                             variant="cta"

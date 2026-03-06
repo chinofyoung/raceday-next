@@ -21,7 +21,7 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                     </div>
                     <h3 className="text-base font-black uppercase italic tracking-tight text-white">Recent Sign-ups</h3>
                 </div>
-                <Link href="/dashboard/registrations" className="text-[10px] uppercase font-bold italic tracking-widest text-text-muted hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shrink-0">
+                <Link href="/dashboard/organizer/registrations" className="text-[10px] uppercase font-bold italic tracking-widest text-text-muted hover:text-white transition-colors bg-white/5 px-3 py-1.5 rounded-xl border border-white/10 shrink-0">
                     View All &rarr;
                 </Link>
             </div>

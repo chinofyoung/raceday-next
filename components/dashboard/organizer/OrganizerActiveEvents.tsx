@@ -33,7 +33,7 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                     <Calendar className="mx-auto text-text-muted opacity-20" size={48} />
                     <p className="text-text-muted italic font-medium">You haven&apos;t created any events yet.</p>
                     <Button variant="primary" asChild className="bg-cta border-none italic font-black uppercase">
-                        <Link href="/dashboard/events/create">Build First Event <ArrowRight size={16} className="ml-2" /></Link>
+                        <Link href="/dashboard/organizer/events/create">Build First Event <ArrowRight size={16} className="ml-2" /></Link>
                     </Button>
                 </Card>
             </div>
@@ -142,12 +142,12 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                                 {/* Action Buttons */}
                                 <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20">
                                     <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs h-10">
-                                        <Link href={`/dashboard/events/${event.id}`}>
+                                        <Link href={`/dashboard/organizer/events/${event.id}`}>
                                             Manage
                                         </Link>
                                     </Button>
                                     <Button size="sm" variant="outline" asChild className="flex-1 bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-xs h-10">
-                                        <Link href={`/dashboard/events/${event.id}/scanner`}>
+                                        <Link href={`/dashboard/organizer/events/${event.id}/scanner`}>
                                             <Scan size={14} className="mr-2" /> Scan
                                         </Link>
                                     </Button>

@@ -115,7 +115,7 @@ export default function OrganizerRegistrationsPage() {
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <Link href="/dashboard" className="p-2 -ml-2 hover:bg-white/5 rounded-full transition-colors text-text-muted hover:text-white">
+                        <Link href="/dashboard/organizer" className="p-2 -ml-2 hover:bg-white/5 rounded-full transition-colors text-text-muted hover:text-white">
                             <ArrowLeft size={20} />
                         </Link>
                         <h1 className="text-3xl font-black uppercase tracking-tight italic">All Sign-Ups</h1>

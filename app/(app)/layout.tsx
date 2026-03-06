@@ -3,7 +3,6 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { DashboardModeProvider } from "@/components/providers/DashboardModeProvider";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
@@ -41,14 +40,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <DashboardModeProvider>
-            <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white">
-                <Navbar />
-                <main className="flex-grow pt-24 pb-20">
-                    {children}
-                </main>
-                <Footer />
-            </div>
-        </DashboardModeProvider>
+        <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-white">
+            <Navbar />
+            <main className="flex-grow pt-24 pb-20">
+                {children}
+            </main>
+            <Footer />
+        </div>
     );
 }

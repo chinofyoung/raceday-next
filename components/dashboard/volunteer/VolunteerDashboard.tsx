@@ -155,14 +155,14 @@ export function VolunteerDashboard() {
                                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.05]">
                                         {event.permissions.includes("kiosk") && (
                                             <Button asChild variant="primary" size="sm" className="font-black italic uppercase text-[10px]">
-                                                <Link href={`/dashboard/events/${event.id}/kiosk`}>
+                                                <Link href={`/dashboard/organizer/events/${event.id}/kiosk`}>
                                                     <Monitor className="w-3 h-3 mr-1.5" /> Kiosk
                                                 </Link>
                                             </Button>
                                         )}
                                         {event.permissions.includes("participants") && (
                                             <Button asChild variant="secondary" size="sm" className="font-black italic uppercase text-[10px]">
-                                                <Link href={`/dashboard/events/${event.id}`}>
+                                                <Link href={`/dashboard/organizer/events/${event.id}`}>
                                                     <Users className="w-3 h-3 mr-1.5" /> Users
                                                 </Link>
                                             </Button>

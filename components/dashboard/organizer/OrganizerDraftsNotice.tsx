@@ -26,7 +26,7 @@ export function OrganizerDraftsNotice({ draftEventsCount }: OrganizerDraftsNotic
                 </div>
             </div>
             <Button size="sm" variant="outline" asChild className="border-amber-500/20 text-amber-500 hover:bg-amber-500/10 font-bold italic uppercase text-[10px] shrink-0">
-                <Link href="/dashboard/events">View Drafts</Link>
+                <Link href="/dashboard/organizer/events">View Drafts</Link>
             </Button>
         </Card>
     );

@@ -183,7 +183,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
                     ...payload,
                 });
             }
-            router.push("/dashboard/events");
+            router.push("/dashboard/organizer/events");
         } catch (e: any) {
             console.error("Error publishing event:", e);
             toast.error("Failed to publish event.", {

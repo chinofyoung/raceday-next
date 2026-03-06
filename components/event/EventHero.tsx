@@ -42,7 +42,7 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
                     </Link>
                     {isOrganizer && (
                         <Link
-                            href={`/dashboard/events/${event.id}/edit`}
+                            href={`/dashboard/organizer/events/${event.id}/edit`}
                             className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-xl group"
                         >
                             <Edit2 size={14} className="group-hover:text-primary transition-colors" />

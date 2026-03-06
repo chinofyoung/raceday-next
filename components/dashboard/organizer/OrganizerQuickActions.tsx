@@ -12,14 +12,14 @@ export function OrganizerQuickActions({ items }: OrganizerQuickActionsProps) {
         <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-2 md:gap-3 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1">
 
             <BaseQuickAction
-                href="/dashboard/events/create"
+                href="/dashboard/organizer/events/create"
                 icon={Plus}
                 label="Create Event"
                 variant="primary"
             />
 
             <BaseQuickAction
-                href="/dashboard/events"
+                href="/dashboard/organizer/events"
                 icon={BarChart3}
                 label="All Events"
                 variant="secondary"
@@ -34,7 +34,7 @@ export function OrganizerQuickActions({ items }: OrganizerQuickActionsProps) {
 
             {items.length > 0 && (
                 <BaseQuickAction
-                    href={`/dashboard/events/${items[0]?.id}/kiosk`}
+                    href={`/dashboard/organizer/events/${items[0]?.id}/kiosk`}
                     icon={Monitor}
                     label="Kiosk Mode"
                     variant="cta"
@@ -43,7 +43,7 @@ export function OrganizerQuickActions({ items }: OrganizerQuickActionsProps) {
 
             {items.length > 0 && (
                 <BaseQuickAction
-                    href={`/dashboard/events/${items[0]?.id}/scanner`}
+                    href={`/dashboard/organizer/events/${items[0]?.id}/scanner`}
                     icon={Scan}
                     label="Scanner"
                     variant="cta"

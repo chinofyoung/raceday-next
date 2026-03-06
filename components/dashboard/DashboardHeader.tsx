@@ -1,24 +1,22 @@
 "use client";
 
-import { User as UserIcon, Settings, Trophy, BarChart3 } from "lucide-react";
+import { Settings, Trophy, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 interface DashboardHeaderProps {
     userName?: string;
     isOrganizerView: boolean;
-    mode: "runner" | "organizer";
-    setMode: (mode: "runner" | "organizer") => void;
-    canSwitchMode: boolean;
 }
 
 export function DashboardHeader({
     userName,
     isOrganizerView,
-    mode,
-    setMode,
-    canSwitchMode
 }: DashboardHeaderProps) {
+    const { role } = useAuth();
+    const canSwitchMode = role === "organizer" || role === "admin";
     const firstName = userName?.split(' ')[0] || "there";
 
     return (
@@ -35,26 +33,30 @@ export function DashboardHeader({
                 {/* Mode Switcher */}
                 {canSwitchMode && (
                     <div className="flex items-center bg-surface border border-white/10 rounded-xl p-1.5 gap-1">
-                        <button
-                            onClick={() => setMode("runner")}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-black uppercase italic tracking-wider transition-all cursor-pointer ${mode === "runner"
-                                ? "bg-primary text-white shadow-md"
-                                : "text-text-muted hover:text-white"
-                                }`}
+                        <Link
+                            href="/dashboard"
+                            className={cn(
+                                "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-black uppercase italic tracking-wider transition-all",
+                                !isOrganizerView
+                                    ? "bg-primary text-white shadow-md cursor-default"
+                                    : "text-text-muted hover:text-white cursor-pointer"
+                            )}
                         >
                             <Trophy size={16} />
                             Runner
-                        </button>
-                        <button
-                            onClick={() => setMode("organizer")}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-black uppercase italic tracking-wider transition-all cursor-pointer ${mode === "organizer"
-                                ? "bg-cta text-white shadow-md"
-                                : "text-text-muted hover:text-white"
-                                }`}
+                        </Link>
+                        <Link
+                            href="/dashboard/organizer"
+                            className={cn(
+                                "flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-black uppercase italic tracking-wider transition-all",
+                                isOrganizerView
+                                    ? "bg-cta text-white shadow-md cursor-default"
+                                    : "text-text-muted hover:text-white cursor-pointer"
+                            )}
                         >
                             <BarChart3 size={16} />
                             Organizer
-                        </button>
+                        </Link>
                     </div>
                 )}
                 <Button variant="outline" asChild className="font-black italic uppercase border-white/10 text-white px-6">

@@ -97,7 +97,7 @@ export function Navbar() {
                                         </Link>
                                     )}
                                     {(user?.role === "organizer" || user?.role === "admin") && (
-                                        <Link href="/dashboard/events" className="hidden lg:flex items-center gap-2 group/manage">
+                                        <Link href="/dashboard/organizer/events" className="hidden lg:flex items-center gap-2 group/manage">
                                             <span className="text-sm font-bold text-text-muted group-hover/manage:text-cta transition-colors">
                                                 Manage Events
                                             </span>
@@ -175,7 +175,7 @@ export function Navbar() {
                                                 href="/dashboard"
                                                 className={cn(
                                                     "flex items-center gap-3 text-lg font-semibold py-4 transition-colors",
-                                                    pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && pathname !== "/dashboard/events" ? "text-primary" : "text-text hover:text-primary"
+                                                    pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && !pathname.startsWith("/dashboard/organizer") ? "text-primary" : "text-text hover:text-primary"
                                                 )}
                                                 onClick={() => setIsOpen(false)}
                                             >
@@ -194,7 +194,7 @@ export function Navbar() {
                                             )}
                                             {(user?.role === "organizer" || user?.role === "admin") && (
                                                 <Link
-                                                    href="/dashboard/events"
+                                                    href="/dashboard/organizer/events"
                                                     className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
                                                     onClick={() => setIsOpen(false)}
                                                 >
