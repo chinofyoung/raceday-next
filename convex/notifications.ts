@@ -19,10 +19,20 @@ export const sendPush = internalAction({
             data: args.data || {},
         }));
 
-        await fetch("https://exp.host/--/api/v2/push/send", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(messages),
-        });
+        try {
+            const response = await fetch("https://exp.host/--/api/v2/push/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(messages),
+                signal: AbortSignal.timeout(10000),
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text().catch(() => "(unreadable)");
+                console.error(`Push notification request failed: HTTP ${response.status} — ${errorBody}`);
+            }
+        } catch (error) {
+            console.error("Push notification send error:", error);
+        }
     },
 });

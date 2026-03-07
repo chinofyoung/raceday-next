@@ -11,11 +11,10 @@ import { isEarlyBirdActive, isRegistrationClosed, isEventOver, isCategoryFull } 
 
 interface EventCategoriesProps {
     event: RaceEvent;
-    liveCounts: Record<string, number>;
     formatTimeAMPM: (timeStr: string) => string;
 }
 
-export function EventCategories({ event, liveCounts, formatTimeAMPM }: EventCategoriesProps) {
+export function EventCategories({ event, formatTimeAMPM }: EventCategoriesProps) {
     return (
         <div id="categories" className="space-y-8 px-4 md:px-0 relative">
             {/* Decorative background element */}
@@ -78,18 +77,18 @@ export function EventCategories({ event, liveCounts, formatTimeAMPM }: EventCate
                                                 <div className="flex justify-between items-center pr-1">
                                                     <p className={cn(
                                                         "text-[9px] font-black uppercase tracking-widest italic leading-none",
-                                                        (liveCounts[cat.id] || cat.registeredCount || 0) >= cat.maxParticipants ? "text-red-500" : "text-primary"
+                                                        (cat.registeredCount || 0) >= cat.maxParticipants ? "text-red-500" : "text-primary"
                                                     )}>
-                                                        {(liveCounts[cat.id] || cat.registeredCount || 0) >= cat.maxParticipants ? "SOLD OUT" : "Limited Slots"}
+                                                        {(cat.registeredCount || 0) >= cat.maxParticipants ? "SOLD OUT" : "Limited Slots"}
                                                     </p>
                                                     <span className="text-[9px] font-bold text-text-muted italic">
-                                                        {Math.max(0, cat.maxParticipants - (liveCounts[cat.id] || cat.registeredCount || 0))} left
+                                                        {Math.max(0, cat.maxParticipants - (cat.registeredCount || 0))} left
                                                     </span>
                                                 </div>
                                                 <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                                                     <div
                                                         className="h-full bg-primary rounded-full transition-all duration-1000"
-                                                        style={{ width: `${Math.min(100, ((liveCounts[cat.id] || cat.registeredCount || 0) / cat.maxParticipants) * 100)}%` }}
+                                                        style={{ width: `${Math.min(100, ((cat.registeredCount || 0) / cat.maxParticipants) * 100)}%` }}
                                                     />
                                                 </div>
                                             </div>
@@ -101,7 +100,7 @@ export function EventCategories({ event, liveCounts, formatTimeAMPM }: EventCate
                                                     <Users size={12} className="text-primary" />
                                                     <span className="text-[10px] font-black uppercase tracking-widest italic text-text-muted group-hover/joined:text-white transition-colors">Registered Runners</span>
                                                 </div>
-                                                <span className="text-[10px] font-black italic text-white">{(liveCounts[cat.id] || cat.registeredCount || 0)} <span className="text-primary">Joined</span></span>
+                                                <span className="text-[10px] font-black italic text-white">{(cat.registeredCount || 0)} <span className="text-primary">Joined</span></span>
                                             </div>
                                         )}
                                     </div>

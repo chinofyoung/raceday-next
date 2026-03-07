@@ -88,7 +88,6 @@ export const eventSchema = z.object({
     categories: z.array(eventCategorySchema).min(1, "Add at least one distance category"),
     status: z.enum(["draft", "published", "cancelled", "completed"]).default("draft"),
     featured: z.boolean().default(false),
-    isLiveTrackingEnabled: z.boolean().default(true),
 }).refine((data) => {
     if (data.earlyBird?.enabled) {
         // specific check: every category must have earlyBirdPrice if enabled?

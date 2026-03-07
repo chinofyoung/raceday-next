@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useRouter } from "next/navigation";
 import { RaceEvent } from "@/types/event";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getUserRegistrations, getCategoryCounts } from "@/lib/services/registrationService";
-import { Announcement } from "@/types/announcement";
+import { getUserRegistrations } from "@/lib/services/registrationService";
 import dynamic from "next/dynamic";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 // Modular Components
 import { EventHero } from "./EventHero";
@@ -33,8 +35,12 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
     const [userRegistration, setUserRegistration] = useState<any>(null);
     const [activeSection, setActiveSection] = useState<string>("info");
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const [liveCounts, setLiveCounts] = useState<Record<string, number>>({});
+    const [showMap, setShowMap] = useState(false);
+    const mapSectionRef = useRef<HTMLDivElement>(null);
+
+    const announcements = useQuery(api.announcements.listByEvent, {
+        eventId: event.id as Id<"events">
+    });
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -98,28 +104,20 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     }, [user, event.id, authLoading]);
 
     useEffect(() => {
-        if (event.id) {
-            getCategoryCounts(event.id).then(counts => {
-                setLiveCounts(counts);
-            });
-        }
-    }, [event.id]);
-
-    useEffect(() => {
-        if (event.id) {
-            fetch(`/api/events/${event.id}/announcements`)
-                .then(res => {
-                    if (!res.ok) throw new Error("Failed to fetch");
-                    return res.json();
-                })
-                .then(data => {
-                    if (Array.isArray(data)) {
-                        setAnnouncements(data);
-                    }
-                })
-                .catch(err => console.error("Failed to fetch announcements:", err));
-        }
-    }, [event.id]);
+        const el = mapSectionRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setShowMap(true);
+                    observer.disconnect();
+                }
+            },
+            { rootMargin: "200px" }
+        );
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, []);
 
     const formatTimeAMPM = (timeStr: string) => {
         if (!timeStr) return "TBD";
@@ -157,22 +155,25 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                     <div className="space-y-32">
                         <EventInfo event={event} />
 
-                        <EventAnnouncements announcements={announcements} />
+                        <EventAnnouncements announcements={announcements ?? []} />
 
                         <EventCategories
                             event={event}
-                            liveCounts={liveCounts}
                             formatTimeAMPM={formatTimeAMPM}
                         />
 
                         <EventTimeline event={event} />
 
-                        <EventRoute
-                            event={event}
-                            activeRouteCategoryIndex={activeRouteCategoryIndex}
-                            setActiveRouteCategoryIndex={setActiveRouteCategoryIndex}
-                            RouteMapViewer={RouteMapViewer}
-                        />
+                        <div ref={mapSectionRef}>
+                            {showMap && (
+                                <EventRoute
+                                    event={event}
+                                    activeRouteCategoryIndex={activeRouteCategoryIndex}
+                                    setActiveRouteCategoryIndex={setActiveRouteCategoryIndex}
+                                    RouteMapViewer={RouteMapViewer}
+                                />
+                            )}
+                        </div>
                     </div>
                 </div>
             </PageWrapper>

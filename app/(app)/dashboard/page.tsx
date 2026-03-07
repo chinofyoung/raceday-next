@@ -7,6 +7,15 @@ import { api } from "@/convex/_generated/api";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { computeProfileCompletion } from "@/lib/utils";
 
+interface NormalizedRegistration {
+    _id: string;
+    id: string;
+    eventId: string;
+    status: string;
+    participantInfo: Record<string, unknown>;
+    [key: string]: unknown;
+}
+
 // Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RunnerView } from "@/components/dashboard/RunnerView";
@@ -20,11 +29,11 @@ export default function DashboardPage() {
         userId: user._id as any
     } : "skip");
 
-    const items = useMemo(() => {
-        return (convexRegistrations || []).map((r: any) => ({
+    const items = useMemo((): NormalizedRegistration[] => {
+        return (convexRegistrations || []).map((r) => ({
             ...r,
             id: r._id,
-            participantInfo: r.registrationData?.participantInfo || r.participantInfo,
+            participantInfo: (r as any).registrationData?.participantInfo || (r as any).participantInfo,
         }));
     }, [convexRegistrations]);
 
@@ -71,7 +80,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-8 text-white">
+        <PageWrapper className="pt-4 sm:pt-8 pb-6 sm:pb-12 space-y-4 sm:space-y-8 text-white">
             <DashboardHeader
                 userName={user?.displayName || ""}
                 isOrganizerView={false}

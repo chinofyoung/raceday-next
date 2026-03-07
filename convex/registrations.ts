@@ -26,18 +26,21 @@ export const getByUserId = query({
             .order("desc")
             .collect();
 
-        const results = [];
-        for (const reg of registrations) {
-            const event = await ctx.db.get(reg.eventId);
-            results.push({
+        const uniqueEventIds = [...new Set(registrations.map((r) => r.eventId))];
+        const fetchedEvents = await Promise.all(uniqueEventIds.map((id) => ctx.db.get(id)));
+        const eventMap = new Map(
+            fetchedEvents
+                .filter(Boolean)
+                .map((e) => [e!._id, e!])
+        );
+
+        return registrations.map((reg) => {
+            const event = eventMap.get(reg.eventId);
+            return {
                 ...reg,
-                event: event ? {
-                    ...event,
-                    id: event._id
-                } : null
-            });
-        }
-        return results;
+                event: event ? { ...event, id: event._id } : null,
+            };
+        });
     },
 });
 
@@ -143,6 +146,20 @@ export const create = mutation({
         totalPrice: v.number(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const caller = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!caller) throw new Error("User not found");
+
+        // Allow self-registration or proxy registration by organizers/admins
+        if (caller._id !== args.userId && caller.role !== "organizer" && caller.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
         const event = await ctx.db.get(args.eventId);
         if (!event) throw new Error("Event not found");
 

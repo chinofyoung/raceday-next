@@ -40,6 +40,22 @@ export const invite = mutation({
         invitedBy: v.string(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const event = await ctx.db.get(args.eventId);
+        if (!event) throw new Error("Event not found");
+
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
         return await ctx.db.insert("volunteers", {
             ...args,
             email: args.email.toLowerCase().trim(),
@@ -213,6 +229,7 @@ export const getMyVolunteerEvents = query({
                     date: e.date,
                     featuredImage: e.featuredImage,
                     location: e.location,
+                    eventStatus: e.status as string,
                     permissions: v.permissions,
                     volunteerId: v._id,
                     status: v.status as "accepted" | "pending",

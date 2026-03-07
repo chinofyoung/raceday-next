@@ -11,7 +11,7 @@ interface RunnerSidebarProps {
 
 export function RunnerSidebar({ upcomingCount, pastCount }: RunnerSidebarProps) {
     return (
-        <div className="space-y-8">
+        <div className="space-y-4 lg:space-y-8">
             {/* Announcements - TOP OF SIDEBAR */}
             <RunnerAnnouncements />
 

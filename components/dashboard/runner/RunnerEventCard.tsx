@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Trophy, QrCode, Package, MapPin, Activity } from "lucide-react";
+import { User, Trophy, QrCode, Package, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -109,13 +109,6 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                             <Link href={`/dashboard/events/${reg.eventId}/qr?regId=${reg.id}`}>
                                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300 ease-out" />
                                 <span className="relative flex items-center justify-center"><QrCode size={16} className="mr-2" /> View Pass</span>
-                            </Link>
-                        </Button>
-                    )}
-                    {(!isPast && reg.event?.isLiveTrackingEnabled) && (
-                        <Button variant="outline" asChild className="w-full sm:flex-1 lg:flex-none lg:w-auto lg:px-6 font-black italic uppercase border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 shadow-sm h-10 lg:h-10 text-xs">
-                            <Link href={`/events/${reg.eventId}/live`}>
-                                <Activity size={16} className="mr-2 animate-pulse" /> Live
                             </Link>
                         </Button>
                     )}

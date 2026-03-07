@@ -18,7 +18,6 @@ import type * as http from "../http.js";
 import type * as notifications from "../notifications.js";
 import type * as registrations from "../registrations.js";
 import type * as stats from "../stats.js";
-import type * as tracking from "../tracking.js";
 import type * as users from "../users.js";
 import type * as volunteers from "../volunteers.js";
 
@@ -39,7 +38,6 @@ declare const fullApi: ApiFromModules<{
   notifications: typeof notifications;
   registrations: typeof registrations;
   stats: typeof stats;
-  tracking: typeof tracking;
   users: typeof users;
   volunteers: typeof volunteers;
 }>;

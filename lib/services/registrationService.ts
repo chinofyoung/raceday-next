@@ -37,28 +37,33 @@ export async function getRegistrations(options: GetRegistrationsOptions = {}) {
         };
     } catch (error) {
         console.error("Error fetching registrations:", error);
-        throw error;
+        throw error; // Callers that paginate need to handle this
     }
 }
 
 export async function getRegistrationsWithEvents(options: GetRegistrationsOptions = {}) {
-    const { items: registrations, lastDoc } = await getRegistrations(options);
+    try {
+        const { items: registrations, lastDoc } = await getRegistrations(options);
 
-    if (registrations.length === 0) return { items: [], lastDoc };
+        if (registrations.length === 0) return { items: [], lastDoc };
 
-    // In Convex, we can't easily do a batch "in" query for multiple tables
-    // without a custom query. For now, let's fetch events one by one or improve later.
-    // Actually, we should probably add a getByIds query to convex/events.ts
+        const uniqueEventIds = [...new Set(registrations.map((reg) => reg.eventId as Id<"events">))];
+        const events = await fetchQuery(api.events.getByIds, { ids: uniqueEventIds });
+        const eventMap = new Map(events.map((event: any) => [event._id, event]));
 
-    const enrichedRegistrations = await Promise.all(registrations.map(async (reg) => {
-        const event = await fetchQuery(api.events.getById, { id: reg.eventId as Id<"events"> });
-        return {
-            ...reg,
-            event: event ? { ...event, id: event._id } : null
-        };
-    }));
+        const enrichedRegistrations = registrations.map((reg) => {
+            const event = eventMap.get(reg.eventId as Id<"events">);
+            return {
+                ...reg,
+                event: event ? { ...event, id: event._id } : null
+            };
+        });
 
-    return { items: enrichedRegistrations, lastDoc };
+        return { items: enrichedRegistrations, lastDoc };
+    } catch (error) {
+        console.error("Error fetching registrations with events:", error);
+        return { items: [], lastDoc: null };
+    }
 }
 
 export async function getUserRegistrations(userId: string) {

@@ -10,7 +10,7 @@ import { StationManager } from "./StationManager";
 import { useState } from "react";
 
 export function Step5Features() {
-    const { register, watch, setValue, formState: { errors } } = useFormContext<EventFormValues>();
+    const { watch, setValue, register, formState: { errors } } = useFormContext<EventFormValues>();
     const isVanityEnabled = watch("vanityRaceNumber.enabled");
     const categories = watch("categories");
     const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
@@ -22,32 +22,6 @@ export function Step5Features() {
             <div className="space-y-2 border-b border-white/5 pb-4">
                 <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Event Features</h2>
                 <p className="text-text-muted font-medium">Enhance your event experience with premium features.</p>
-            </div>
-
-            {/* Live Tracking Section */}
-            <div className="space-y-6">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary italic">
-                    <MapPin size={16} /> Live Participant Tracking
-                </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-surface/30 p-8 rounded-3xl border border-white/5 group hover:border-primary/30 transition-all">
-                    <div className="space-y-2">
-                        <label className="text-xl font-bold uppercase italic tracking-tight text-white flex items-center gap-2">
-                            Enable Live Tracking
-                        </label>
-                        <p className="text-sm text-text-muted font-medium leading-relaxed max-w-xl">
-                            Allow participants to broadcast their real-time location to the event map. This enhances safety and allows spectators to follow their friends and family.
-                        </p>
-                    </div>
-                    <label className="relative inline-block w-16 h-9 shrink-0 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            className="peer sr-only"
-                            {...register("isLiveTrackingEnabled")}
-                        />
-                        <div className="w-full h-full bg-white/10 rounded-full transition-colors peer-checked:bg-primary shadow-inner" />
-                        <div className="absolute top-1 left-1 bg-white w-7 h-7 rounded-full transition-transform peer-checked:translate-x-7 shadow-md" />
-                    </label>
-                </div>
             </div>
 
             {/* Vanity Numbers Section */}
@@ -162,7 +136,7 @@ export function Step5Features() {
                             Map Stations
                         </label>
                         <p className="text-sm text-text-muted font-medium leading-relaxed max-w-xl">
-                            Mark water stations, aid tents, and first aid points along the race route. These will be visible to runners on the event map and during live tracking.
+                            Mark water stations, aid tents, and first aid points along the race route. These will be visible to runners on the event map.
                         </p>
                     </div>
 

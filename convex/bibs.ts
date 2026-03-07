@@ -83,7 +83,21 @@ export const generate = mutation({
 
         if (!finalBib) throw new Error("Could not generate unique bib number");
 
+        // Atomically advance the counter to the chosen value so concurrent
+        // mutations start from a higher sequence and won't re-select this bib.
         await ctx.db.patch(counter!._id, { count: nextCount });
+
+        // Final uniqueness guard: verify the bib is still unclaimed after the
+        // counter has been claimed. If a concurrent mutation already inserted it,
+        // throw so the caller can retry from the application layer.
+        const collision = await ctx.db
+            .query("registrations")
+            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
+            .filter((q) => q.eq(q.field("raceNumber"), finalBib))
+            .first();
+
+        if (collision) throw new Error(`Bib ${finalBib} collision detected, please retry`);
+
         return finalBib;
     },
 });

@@ -4,20 +4,17 @@ import { v } from "convex/values";
 export const getPlatformStats = query({
     args: {},
     handler: async (ctx: QueryCtx) => {
-        const users = await ctx.db.query("users").collect();
-        const events = await ctx.db.query("events").collect();
+        const users = await ctx.db.query("users").take(10000);
+        const events = await ctx.db.query("events").take(10000);
         const registrations = await ctx.db
             .query("registrations")
             .filter((q) => q.eq(q.field("status"), "paid"))
-            .collect();
+            .take(10000);
 
-        // Organizer applications might be in a separate table or just role
-        // Let's assume there's a table for applications if it exists in schema
-        // Checking schema... it has 'organizerApplications'
         const pendingApps = await ctx.db
             .query("organizerApplications")
             .filter((q) => q.eq(q.field("status"), "pending"))
-            .collect();
+            .take(10000);
 
         const totalRevenue = registrations.reduce((sum, r) => sum + r.totalPrice, 0);
 

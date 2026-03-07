@@ -23,7 +23,7 @@ export function RunnerView({
     hasApplication,
     userRole
 }: RunnerViewProps) {
-    const now = new Date();
+    const now = useMemo(() => new Date(), []);
 
     // Sort items so most recent/upcoming makes sense.
     const { upcomingEvents, pastEvents } = useMemo(() => {
@@ -51,11 +51,11 @@ export function RunnerView({
     }, [items, now]);
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-500 pb-12">
+        <div className="space-y-4 sm:space-y-8 animate-in fade-in duration-500">
             <RunnerQuickActions hasApplication={hasApplication} userRole={userRole} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="lg:col-span-2 space-y-6 lg:space-y-12">
                     {/* Profile Completion Card */}
                     <ProfileCompletionCard completion={completion} />
 

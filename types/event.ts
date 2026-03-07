@@ -99,7 +99,6 @@ export interface RaceEvent {
     // Status & metadata
     status: EventStatus;
     featured: boolean;
-    isLiveTrackingEnabled?: boolean;
     createdAt: number;
     updatedAt: number;
 }

@@ -2,7 +2,6 @@
 
 import { RaceEvent } from "@/types/event";
 import { Button } from "@/components/ui/Button";
-import { Activity } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";
@@ -39,18 +38,6 @@ export function EventNavigation({ event, activeSection, scrollToSection, isRegis
 
                 {!isEventOver(event) && !isRegistrationClosed(event) && (
                     <div className="hidden lg:flex ml-8 items-center gap-4">
-                        {isRegistered && event.isLiveTrackingEnabled !== false && (
-                            <Button
-                                asChild
-                                variant="outline"
-                                size="sm"
-                                className="h-10 px-6 uppercase italic font-black text-xs border-primary/30 text-primary hover:bg-primary/10 tracking-widest hidden xl:flex"
-                            >
-                                <Link href={`/events/${event.id}/live`}>
-                                    <Activity size={14} className="mr-2 animate-pulse" /> Live Track
-                                </Link>
-                            </Button>
-                        )}
                         <Button
                             onClick={() => scrollToSection("categories")}
                             variant="primary"

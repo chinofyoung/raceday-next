@@ -16,7 +16,7 @@ export function EventRegistrationList({ title, events, isPast }: EventRegistrati
     if (events.length === 0 && isPast) return null;
 
     return (
-        <div className={isPast ? "space-y-6 pt-6" : "space-y-6"}>
+        <div className="space-y-4 lg:space-y-6">
             <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">{title}</h2>
 
             {events.length > 0 ? (

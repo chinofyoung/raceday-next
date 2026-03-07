@@ -3,6 +3,21 @@ import { Id } from "@/convex/_generated/dataModel";
 import { fetchQuery, fetchMutation } from "convex/nextjs";
 import { EventVolunteer, VolunteerPermission, VolunteerStatus } from "@/types/volunteer";
 
+function toEventVolunteer(v: any): EventVolunteer {
+    return {
+        id: v._id,
+        eventId: v.eventId,
+        email: v.email,
+        displayName: v.displayName,
+        permissions: v.permissions || [],
+        status: v.status,
+        invitedBy: v.invitedBy,
+        invitedAt: v.invitedAt,
+        acceptedAt: v.acceptedAt,
+        revokedAt: v.revokedAt,
+    };
+}
+
 export async function inviteVolunteer(
     eventId: string,
     email: string,
@@ -24,14 +39,14 @@ export async function inviteVolunteer(
         status: "pending",
         invitedBy,
         invitedAt: Date.now(),
-    } as unknown as EventVolunteer;
+    };
 }
 
 export async function getEventVolunteers(eventId: string): Promise<EventVolunteer[]> {
     const volunteers = await fetchQuery(api.volunteers.listByEvent, {
         eventId: eventId as Id<"events">
     });
-    return volunteers.map((v: any) => ({ ...v, id: v._id })) as unknown as EventVolunteer[];
+    return volunteers.map(toEventVolunteer);
 }
 
 export async function getVolunteerByEmail(eventId: string, email: string): Promise<EventVolunteer | null> {
@@ -40,7 +55,7 @@ export async function getVolunteerByEmail(eventId: string, email: string): Promi
         email
     });
     if (!volunteer) return null;
-    return { ...volunteer, id: volunteer._id } as unknown as EventVolunteer;
+    return toEventVolunteer(volunteer);
 }
 
 export async function acceptInvitation(
@@ -64,12 +79,12 @@ export async function revokeVolunteer(eventId: string, volunteerId: string): Pro
 
 export async function getVolunteerEventsByEmail(email: string): Promise<EventVolunteer[]> {
     const result = await fetchQuery(api.volunteers.getPendingByEmail, { email });
-    return result.map((v: any) => ({ ...v, id: v._id })) as unknown as EventVolunteer[];
+    return result.map(toEventVolunteer);
 }
 
 export async function getVolunteerEventsByUid(userId: string): Promise<EventVolunteer[]> {
     const result = await fetchQuery(api.volunteers.listByUser, {
         userId: userId as Id<"users">
     });
-    return result.map((v: any) => ({ ...v, id: v._id })) as unknown as EventVolunteer[];
+    return result.map(toEventVolunteer);
 }

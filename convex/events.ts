@@ -133,7 +133,6 @@ export const create = mutation({
         })),
         status: v.union(v.literal("draft"), v.literal("published")),
         featured: v.boolean(),
-        isLiveTrackingEnabled: v.optional(v.boolean()),
     },
     handler: async (ctx: MutationCtx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -231,7 +230,6 @@ export const update = mutation({
         }))),
         status: v.optional(v.union(v.literal("draft"), v.literal("published"), v.literal("cancelled"), v.literal("completed"))),
         featured: v.optional(v.boolean()),
-        isLiveTrackingEnabled: v.optional(v.boolean()),
     },
     handler: async (ctx: MutationCtx, args) => {
         const { id, ...updates } = args;
@@ -320,6 +318,14 @@ export const checkAccess = query({
         return { hasAccess: false, permissions: [] };
     },
 });
+export const getByIds = query({
+    args: { ids: v.array(v.id("events")) },
+    handler: async (ctx: QueryCtx, args) => {
+        const events = await Promise.all(args.ids.map((id) => ctx.db.get(id)));
+        return events.filter(Boolean);
+    },
+});
+
 export const getByIdInternal = internalQuery({
     args: { id: v.id("events") },
     handler: async (ctx, args) => {

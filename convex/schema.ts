@@ -46,7 +46,7 @@ export default defineSchema({
         expoPushToken: v.optional(v.string()),
         createdAt: v.number(),
         updatedAt: v.number(),
-    }).index("by_uid", ["uid"]).index("by_email", ["email"]),
+    }).index("by_uid", ["uid"]).index("by_email", ["email"]).index("by_role", ["role"]),
 
     events: defineTable({
         organizerId: v.id("users"),
@@ -134,7 +134,6 @@ export default defineSchema({
 
         status: v.union(v.literal("draft"), v.literal("published"), v.literal("cancelled"), v.literal("completed")),
         featured: v.boolean(),
-        isLiveTrackingEnabled: v.optional(v.boolean()),
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_organizer", ["organizerId"]).index("by_status", ["status"]),
@@ -158,11 +157,42 @@ export default defineSchema({
         createdAt: v.number(),
         updatedAt: v.number(),
         isProxy: v.optional(v.boolean()),
-        registrationData: v.optional(v.any()), // JSON blob
+        registrationData: v.optional(v.object({
+            participantInfo: v.optional(v.object({
+                firstName: v.optional(v.string()),
+                lastName: v.optional(v.string()),
+                name: v.optional(v.string()),
+                email: v.optional(v.string()),
+                phone: v.optional(v.string()),
+                gender: v.optional(v.string()),
+                birthDate: v.optional(v.string()),
+                tShirtSize: v.optional(v.string()),
+                singletSize: v.optional(v.string()),
+                emergencyContact: v.optional(v.object({
+                    name: v.optional(v.string()),
+                    phone: v.optional(v.string()),
+                    relationship: v.optional(v.string()),
+                })),
+                medicalConditions: v.optional(v.string()),
+            })),
+            vanityNumber: v.optional(v.string()),
+            vanityPremium: v.optional(v.number()),
+            basePrice: v.optional(v.number()),
+            totalPrice: v.optional(v.number()),
+            eventId: v.optional(v.string()),
+            categoryId: v.optional(v.string()),
+            registrationType: v.optional(v.string()),
+            userId: v.optional(v.string()),
+            registeredByUserId: v.optional(v.string()),
+            registeredByName: v.optional(v.string()),
+            isProxy: v.optional(v.boolean()),
+            termsAccepted: v.optional(v.boolean()),
+        })),
     })
         .index("by_user", ["userId"])
         .index("by_event", ["eventId"])
-        .index("by_user_event", ["userId", "eventId"]),
+        .index("by_user_event", ["userId", "eventId"])
+        .index("by_organizer", ["organizerId"]),
     bibCounters: defineTable({
         eventId: v.id("events"),
         categoryId: v.string(),
@@ -210,16 +240,4 @@ export default defineSchema({
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_event", ["eventId"]),
-    tracking: defineTable({
-        userId: v.id("users"),
-        eventId: v.id("events"),
-        categoryId: v.optional(v.string()),
-        displayName: v.string(),
-        lat: v.number(),
-        lng: v.number(),
-        bearing: v.optional(v.number()),
-        lastUpdatedAt: v.number(),
-        isActive: v.boolean(),
-    }).index("by_event", ["eventId"])
-        .index("by_user_event", ["userId", "eventId"]),
 });

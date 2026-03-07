@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, RegistrationFormValues } from "@/lib/validations/registration";
 import { RaceEvent } from "@/types/event";
@@ -21,69 +21,71 @@ import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { calculateCompletion } from "@/lib/validations/profile";
+import { useFormSteps } from "@/lib/hooks/useFormSteps";
 
 const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
+
+const STEP_FIELDS: Record<number, (keyof RegistrationFormValues | string)[]> = {
+    0: ["registrationType"],
+    1: ["categoryId"],
+    2: [
+        "participantInfo.name",
+        "participantInfo.email",
+        "participantInfo.phone",
+        "participantInfo.gender",
+        "participantInfo.birthDate",
+        "participantInfo.tShirtSize",
+        "participantInfo.singletSize",
+        "participantInfo.emergencyContact.name",
+        "participantInfo.emergencyContact.phone",
+        "participantInfo.emergencyContact.relationship",
+    ],
+    3: ["vanityNumber"],
+};
 
 interface RegistrationFormProps {
     event: RaceEvent;
     initialCategoryId?: string | null;
 }
 
-export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
+interface RegistrationFormContentProps extends RegistrationFormProps {
+    loading: boolean;
+    setLoading: (v: boolean) => void;
+    showLoginModal: boolean;
+    setShowLoginModal: (v: boolean) => void;
+    pendingSubmitData: RegistrationFormValues | null;
+    setPendingSubmitData: (v: RegistrationFormValues | null) => void;
+}
+
+function RegistrationFormContent({
+    event,
+    loading,
+    setLoading,
+    showLoginModal,
+    setShowLoginModal,
+    pendingSubmitData,
+    setPendingSubmitData,
+}: RegistrationFormContentProps) {
     const { user, refreshUser } = useAuth();
     const router = useRouter();
     const updateProfileMutation = useMutation(api.users.updateProfile);
-    const [currentStep, setCurrentStep] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [showLoginModal, setShowLoginModal] = useState(false);
-    const [pendingSubmitData, setPendingSubmitData] = useState<RegistrationFormValues | null>(null);
+    const { handleSubmit, watch, reset, getValues } = useFormContext<RegistrationFormValues>();
 
-    // If a category is pre-selected via URL, look up its price
-    const initialCategory = initialCategoryId
-        ? event.categories.find(c => (c.id || "0") === initialCategoryId)
-        : null;
-    const initialBasePrice = initialCategory ? getEffectivePrice(event, initialCategory) : 0;
+    const { currentStep, nextStep: baseNextStep, prevStep: basePrevStep } = useFormSteps<RegistrationFormValues>(
+        STEPS.length,
+        STEP_FIELDS as any
+    );
 
-    const methods = useForm<RegistrationFormValues>({
-        resolver: zodResolver(registrationSchema) as any,
-        defaultValues: {
-            eventId: event.id,
-            registrationType: "self",
-            categoryId: initialCategoryId || "",
-            participantInfo: {
-                name: user?.displayName || "",
-                email: user?.email || "",
-                phone: user?.phone || "",
-                gender: (user?.gender || "") as any,
-                birthDate: user?.birthDate || "",
-                tShirtSize: user?.tShirtSize || "",
-                singletSize: user?.singletSize || "",
-                emergencyContact: {
-                    name: user?.emergencyContact?.name || "",
-                    phone: user?.emergencyContact?.phone || "",
-                    relationship: user?.emergencyContact?.relationship || "",
-                },
-                medicalConditions: user?.medicalConditions || "",
-            },
-            vanityNumber: "",
-            basePrice: initialBasePrice,
-            vanityPremium: 0,
-            totalPrice: initialBasePrice,
-            termsAccepted: false,
-        },
-        mode: "onChange"
-    });
-
-    const registrationType = methods.watch("registrationType");
+    const registrationType = watch("registrationType");
 
     // Update form when user data loads or registration type changes
     useEffect(() => {
         if (!user) return;
 
-        const currentValues = methods.getValues();
+        const currentValues = getValues();
 
         if (registrationType === "self") {
-            methods.reset({
+            reset({
                 ...currentValues,
                 participantInfo: {
                     name: user.displayName || "",
@@ -102,35 +104,15 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
                 }
             });
         }
-    }, [user, registrationType, methods]);
+    }, [user, registrationType, reset, getValues]);
 
     const nextStep = async () => {
-        let fieldsToValidate: any[] = [];
-        if (currentStep === 0) fieldsToValidate = ["registrationType"];
-        if (currentStep === 1) fieldsToValidate = ["categoryId"];
-        if (currentStep === 2) fieldsToValidate = [
-            "participantInfo.name",
-            "participantInfo.email",
-            "participantInfo.phone",
-            "participantInfo.gender",
-            "participantInfo.birthDate",
-            "participantInfo.tShirtSize",
-            "participantInfo.singletSize",
-            "participantInfo.emergencyContact.name",
-            "participantInfo.emergencyContact.phone",
-            "participantInfo.emergencyContact.relationship"
-        ];
-        if (currentStep === 3) fieldsToValidate = ["vanityNumber"];
-
-        const isValid = await methods.trigger(fieldsToValidate);
-        if (isValid) {
-            setCurrentStep((prev) => Math.min(prev + 1, STEPS.length - 1));
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
+        await baseNextStep();
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
     const prevStep = () => {
-        setCurrentStep((prev) => Math.max(prev - 1, 0));
+        basePrevStep();
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
@@ -245,86 +227,141 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
     }, [user, pendingSubmitData, syncProfileFromRegistration, submitRegistration]);
 
     return (
-        <FormProvider {...methods}>
-            <div className="space-y-10">
-                {/* Progress Tracks */}
-                <div className="flex items-center justify-between relative">
-                    <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
-                    {STEPS.map((step, i) => (
-                        <div key={step} className="relative z-10 flex flex-col items-center gap-3">
-                            <div className={cn(
-                                "w-10 h-10 rounded-full flex items-center justify-center font-black italic transition-all duration-300 border-2",
-                                i < currentStep
-                                    ? "bg-cta border-cta text-white"
-                                    : i === currentStep
-                                        ? "bg-primary border-primary text-white scale-125 shadow-lg shadow-primary/20"
-                                        : "bg-surface border-white/10 text-text-muted"
-                            )}>
-                                {i < currentStep ? <CheckCircle2 size={18} /> : i + 1}
-                            </div>
-                            <span className={cn(
-                                "text-[10px] font-black uppercase tracking-widest italic transition-colors",
-                                i <= currentStep ? "text-white" : "text-text-muted"
-                            )}>
-                                {step}
-                            </span>
+        <div className="space-y-10">
+            {/* Progress Tracks */}
+            <div className="flex items-center justify-between relative">
+                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+                {STEPS.map((step, i) => (
+                    <div key={step} className="relative z-10 flex flex-col items-center gap-3">
+                        <div className={cn(
+                            "w-10 h-10 rounded-full flex items-center justify-center font-black italic transition-all duration-300 border-2",
+                            i < currentStep
+                                ? "bg-cta border-cta text-white"
+                                : i === currentStep
+                                    ? "bg-primary border-primary text-white scale-125 shadow-lg shadow-primary/20"
+                                    : "bg-surface border-white/10 text-text-muted"
+                        )}>
+                            {i < currentStep ? <CheckCircle2 size={18} /> : i + 1}
                         </div>
-                    ))}
-                </div>
+                        <span className={cn(
+                            "text-[10px] font-black uppercase tracking-widest italic transition-colors",
+                            i <= currentStep ? "text-white" : "text-text-muted"
+                        )}>
+                            {step}
+                        </span>
+                    </div>
+                ))}
+            </div>
 
-                {/* Form Steps */}
-                <form onSubmit={methods.handleSubmit(onSubmit)} className="space-y-12">
-                    {currentStep === 0 && <Step0Who />}
-                    {currentStep === 1 && <Step1Category event={event} />}
-                    {currentStep === 2 && <Step2Details event={event} />}
-                    {currentStep === 3 && <Step3Vanity event={event} />}
-                    {currentStep === 4 && <Step4Review event={event} />}
+            {/* Form Steps */}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+                {currentStep === 0 && <Step0Who />}
+                {currentStep === 1 && <Step1Category event={event} />}
+                {currentStep === 2 && <Step2Details event={event} />}
+                {currentStep === 3 && <Step3Vanity event={event} />}
+                {currentStep === 4 && <Step4Review event={event} />}
 
-                    {/* Navigation */}
-                    <div className="flex items-center justify-between pt-8 border-t border-white/5">
+                {/* Navigation */}
+                <div className="flex items-center justify-between pt-8 border-t border-white/5">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={prevStep}
+                        className={cn(currentStep === 0 && "invisible")}
+                        disabled={loading}
+                    >
+                        <ChevronLeft className="mr-2" size={18} /> Previous
+                    </Button>
+
+                    {currentStep === STEPS.length - 1 ? (
                         <Button
-                            type="button"
-                            variant="outline"
-                            onClick={prevStep}
-                            className={cn(currentStep === 0 && "invisible")}
+                            type="submit"
+                            variant="primary"
+                            className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 italic font-black"
                             disabled={loading}
                         >
-                            <ChevronLeft className="mr-2" size={18} /> Previous
+                            {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
                         </Button>
+                    ) : (
+                        <Button
+                            type="button"
+                            variant="primary"
+                            onClick={nextStep}
+                            className="px-12 italic font-black group"
+                            disabled={loading}
+                        >
+                            Next Step <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                        </Button>
+                    )}
+                </div>
+            </form>
 
-                        {currentStep === STEPS.length - 1 ? (
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 italic font-black"
-                                disabled={loading}
-                            >
-                                {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
-                            </Button>
-                        ) : (
-                            <Button
-                                type="button"
-                                variant="primary"
-                                onClick={nextStep}
-                                className="px-12 italic font-black group"
-                                disabled={loading}
-                            >
-                                Next Step <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
-                            </Button>
-                        )}
-                    </div>
-                </form>
+            {/* Login Prompt Modal for non-logged-in users */}
+            <LoginPromptModal
+                isOpen={showLoginModal}
+                onClose={() => {
+                    setShowLoginModal(false);
+                    setPendingSubmitData(null);
+                }}
+                onLoginSuccess={handleLoginSuccess}
+            />
+        </div>
+    );
+}
 
-                {/* Login Prompt Modal for non-logged-in users */}
-                <LoginPromptModal
-                    isOpen={showLoginModal}
-                    onClose={() => {
-                        setShowLoginModal(false);
-                        setPendingSubmitData(null);
-                    }}
-                    onLoginSuccess={handleLoginSuccess}
-                />
-            </div>
+export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
+    const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [pendingSubmitData, setPendingSubmitData] = useState<RegistrationFormValues | null>(null);
+
+    const initialCategory = initialCategoryId
+        ? event.categories.find(c => (c.id || "0") === initialCategoryId)
+        : null;
+    const initialBasePrice = initialCategory ? getEffectivePrice(event, initialCategory) : 0;
+
+    const methods = useForm<RegistrationFormValues>({
+        resolver: zodResolver(registrationSchema) as any,
+        defaultValues: {
+            eventId: event.id,
+            registrationType: "self",
+            categoryId: initialCategoryId || "",
+            participantInfo: {
+                name: user?.displayName || "",
+                email: user?.email || "",
+                phone: user?.phone || "",
+                gender: (user?.gender || "") as any,
+                birthDate: user?.birthDate || "",
+                tShirtSize: user?.tShirtSize || "",
+                singletSize: user?.singletSize || "",
+                emergencyContact: {
+                    name: user?.emergencyContact?.name || "",
+                    phone: user?.emergencyContact?.phone || "",
+                    relationship: user?.emergencyContact?.relationship || "",
+                },
+                medicalConditions: user?.medicalConditions || "",
+            },
+            vanityNumber: "",
+            basePrice: initialBasePrice,
+            vanityPremium: 0,
+            totalPrice: initialBasePrice,
+            termsAccepted: false,
+        },
+        mode: "onChange"
+    });
+
+    return (
+        <FormProvider {...methods}>
+            <RegistrationFormContent
+                event={event}
+                initialCategoryId={initialCategoryId}
+                loading={loading}
+                setLoading={setLoading}
+                showLoginModal={showLoginModal}
+                setShowLoginModal={setShowLoginModal}
+                pendingSubmitData={pendingSubmitData}
+                setPendingSubmitData={setPendingSubmitData}
+            />
         </FormProvider>
     );
 }
