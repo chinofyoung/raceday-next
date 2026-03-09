@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/Button";
 import {
@@ -22,11 +22,16 @@ export default function ApplicationsPage() {
     const [filter, setFilter] = useState<any>("pending");
     const [processing, setProcessing] = useState<string | null>(null);
 
-    const { data: applications, loading, hasMore, loadMore, refresh } = usePaginatedQuery<OrganizerApplication>({
+    const { data: rawApplications, loading, hasMore, loadMore, refresh } = usePaginatedQuery<any>({
         apiQuery: api.applications.list,
         args: { status: filter },
         pageSize: 20
     });
+
+    const applications = useMemo(() =>
+        rawApplications.map((d: any) => ({ id: d._id, ...d, ...d.data })) as OrganizerApplication[],
+        [rawApplications]
+    );
 
     useEffect(() => {
         refresh();

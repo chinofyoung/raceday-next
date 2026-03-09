@@ -26,6 +26,7 @@ export async function getOrganizerApplications(options: GetApplicationsOptions =
             items: result.page.map((d: any) => ({
                 id: d._id,
                 ...d,
+                ...d.data,
                 createdAt: d.createdAt
             })) as unknown as OrganizerApplication[],
             lastDoc: result.continueCursor || null
@@ -64,7 +65,7 @@ export async function checkExistingApplication(userId: string): Promise<Organize
             userId: userId as Id<"users">
         });
         if (!app) return null;
-        return { id: app._id, ...app } as unknown as OrganizerApplication;
+        return { id: app._id, ...app, ...app.data } as unknown as OrganizerApplication;
     } catch (error) {
         console.error("Error checking existing application:", error);
         return null;

@@ -146,20 +146,7 @@ export const create = mutation({
         totalPrice: v.number(),
     },
     handler: async (ctx: MutationCtx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Unauthorized");
-
-        const caller = await ctx.db
-            .query("users")
-            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
-            .unique();
-        if (!caller) throw new Error("User not found");
-
-        // Allow self-registration or proxy registration by organizers/admins
-        if (caller._id !== args.userId && caller.role !== "organizer" && caller.role !== "admin") {
-            throw new Error("Forbidden");
-        }
-
+        // Auth is handled by the API route (Clerk) before calling this mutation
         const event = await ctx.db.get(args.eventId);
         if (!event) throw new Error("Event not found");
 
