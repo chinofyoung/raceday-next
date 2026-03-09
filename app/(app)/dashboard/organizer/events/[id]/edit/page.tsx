@@ -8,7 +8,8 @@ import { useRouter, useParams } from "next/navigation";
 import { getEventById } from "@/lib/services/eventService";
 import { RaceEvent } from "@/types/event";
 import { Card } from "@/components/ui/Card";
-import { Loader2, ArrowLeft, ShieldAlert } from "lucide-react";
+import { ArrowLeft, ShieldAlert } from "lucide-react";
+import { EditEventSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { toInputDate } from "@/lib/utils";
@@ -74,8 +75,8 @@ export default function EditEventPage() {
 
     if (authLoading || loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
+            <PageWrapper className="pt-8 pb-12 space-y-10">
+                <EditEventSkeleton />
             </PageWrapper>
         );
     }

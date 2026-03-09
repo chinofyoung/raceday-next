@@ -10,9 +10,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
-    Loader2, ArrowLeft, Users, DollarSign, Calendar, MapPin,
+    ArrowLeft, Users, DollarSign, Calendar, MapPin,
     Edit2, Download, Search, QrCode, CheckCircle2, Copy, Monitor
 } from "lucide-react";
+import { EventDetailManagementSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -106,8 +107,8 @@ export default function EventDetailPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
+            <PageWrapper className="py-12 space-y-12">
+                <EventDetailManagementSkeleton />
             </PageWrapper>
         );
     }

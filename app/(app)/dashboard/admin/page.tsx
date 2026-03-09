@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
     Users, Calendar, DollarSign, ArrowRight, TrendingUp,
-    FileText, UserCheck, Loader2, BarChart3, Clock, Shield
+    FileText, UserCheck, BarChart3, Clock, Shield
 } from "lucide-react";
+import { Skeleton, AdminKPICardSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -67,8 +68,47 @@ export default function AdminDashboardPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
+            <PageWrapper className="pt-8 pb-12 space-y-10 text-white">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-1">
+                        <Skeleton className="h-10 w-80" />
+                        <Skeleton className="h-5 w-64" />
+                    </div>
+                    <Skeleton className="h-10 w-36 rounded-lg" />
+                </div>
+                {/* KPI Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <AdminKPICardSkeleton key={i} />
+                    ))}
+                </div>
+                {/* Main Content Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-8">
+                        <Skeleton className="h-[400px] w-full rounded-2xl" />
+                        <div className="space-y-4">
+                            <Skeleton className="h-8 w-48" />
+                            {Array.from({ length: 3 }).map((_, i) => (
+                                <Skeleton key={i} className="h-20 w-full rounded-2xl" />
+                            ))}
+                        </div>
+                    </div>
+                    <div className="space-y-8">
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-32" />
+                            {Array.from({ length: 4 }).map((_, i) => (
+                                <Skeleton key={i} className="h-14 w-full rounded-xl" />
+                            ))}
+                        </div>
+                        <div className="space-y-4">
+                            <Skeleton className="h-6 w-32" />
+                            {Array.from({ length: 3 }).map((_, i) => (
+                                <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </PageWrapper>
         );
     }

@@ -6,9 +6,10 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
-    Clock, ArrowLeft, Loader2, Shield,
+    Clock, ArrowLeft, Shield,
     User, Target, Info
 } from "lucide-react";
+import { Skeleton, AuditLogSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -31,8 +32,21 @@ export default function AuditLogsPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
+            <PageWrapper className="pt-8 pb-12 space-y-10">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-1">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-48" />
+                        <Skeleton className="h-5 w-80" />
+                    </div>
+                </div>
+                {/* Log entries */}
+                <div className="space-y-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                        <AuditLogSkeleton key={i} />
+                    ))}
+                </div>
             </PageWrapper>
         );
     }

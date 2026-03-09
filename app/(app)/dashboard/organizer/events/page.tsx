@@ -6,7 +6,8 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/Button";
-import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, Loader2, ArrowLeft } from "lucide-react";
+import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, ArrowLeft } from "lucide-react";
+import { Skeleton, EventCardSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation } from "convex/react";
@@ -45,8 +46,31 @@ export default function EventsManagementPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="animate-spin text-primary" size={48} />
+            <PageWrapper className="pt-8 pb-12 space-y-10">
+                {/* Header skeleton */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="space-y-4">
+                        <Skeleton className="h-4 w-32" />
+                        <div className="space-y-1">
+                            <Skeleton className="h-10 w-64" />
+                            <Skeleton className="h-5 w-96" />
+                        </div>
+                    </div>
+                </div>
+                {/* Quick actions skeleton */}
+                <div className="flex gap-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <Skeleton key={i} className="h-12 w-32 rounded-xl" />
+                    ))}
+                </div>
+                {/* Filter bar skeleton */}
+                <Skeleton className="h-16 w-full rounded-2xl" />
+                {/* Events grid skeleton */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                        <EventCardSkeleton key={i} />
+                    ))}
+                </div>
             </PageWrapper>
         );
     }

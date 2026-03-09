@@ -82,7 +82,7 @@ export default function EventsDirectoryPage() {
                     </p>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col md:flex-row max-w-lg gap-4">
                     <div className="relative flex-1 group">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center justify-center text-text-muted group-focus-within:text-primary transition-colors">
                             <Search size={20} />

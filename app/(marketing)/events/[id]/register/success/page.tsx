@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, Download, QrCode, ArrowRight, Share2, MapPin, Calendar } from "lucide-react";
+import { RegistrationSuccessSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -43,9 +44,9 @@ export default function RegistrationSuccessPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-            </div>
+            <PageWrapper className="pt-12 pb-24 max-w-7xl mx-auto space-y-12">
+                <RegistrationSuccessSkeleton />
+            </PageWrapper>
         );
     }
 

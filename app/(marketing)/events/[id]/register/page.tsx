@@ -7,7 +7,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
 import { RegistrationForm } from "@/components/forms/registration/RegistrationForm";
-import { Loader2, ArrowLeft, Info } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
+import { RegistrationFormSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { isRegistrationClosed } from "@/lib/earlyBirdUtils";
@@ -24,9 +25,9 @@ export default function RegisterPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <Loader2 className="animate-spin text-primary" size={48} />
-            </div>
+            <PageWrapper className="pt-8 pb-24 space-y-12">
+                <RegistrationFormSkeleton />
+            </PageWrapper>
         );
     }
 
@@ -61,7 +62,7 @@ export default function RegisterPage() {
 
     return (
         <PageWrapper className="pt-8 pb-24 space-y-12">
-            <div className="max-w-4xl mx-auto space-y-8">
+            <div className="w-full mx-auto space-y-8">
                 <div className="flex flex-col gap-4">
                     <Link href={`/events/${id}`} className="text-text-muted text-xs font-black uppercase tracking-widest flex items-center gap-1 hover:text-primary transition-colors italic">
                         <ArrowLeft size={14} /> Back to Event Details

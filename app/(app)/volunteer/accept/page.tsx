@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, Mail, AlertCircle, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { VolunteerInviteSkeleton } from "@/components/shared/Skeleton";
 import { toast } from "sonner";
 
 
@@ -61,8 +62,8 @@ export default function VolunteerAcceptPage() {
 
     if (authLoading || loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
-                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+            <PageWrapper className="max-w-2xl mx-auto py-20">
+                <VolunteerInviteSkeleton />
             </PageWrapper>
         );
     }
