@@ -17,6 +17,15 @@ export function useFormSteps<T extends FieldValues>(
     const isValid = await trigger(fields);
     if (isValid) {
       setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
+    } else {
+      // Focus the first field with an error
+      requestAnimationFrame(() => {
+        const firstError = document.querySelector<HTMLElement>('[aria-invalid="true"], .border-red-500\\/50');
+        if (firstError) {
+          firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstError.focus();
+        }
+      });
     }
   };
 

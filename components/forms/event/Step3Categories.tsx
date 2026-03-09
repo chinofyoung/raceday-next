@@ -290,15 +290,24 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Assembly Time</label>
-                                <input type="time" {...register(`categories.${index}.assemblyTime`)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all" />
+                                <input type="time" {...register(`categories.${index}.assemblyTime`)} aria-invalid={!!errors.categories?.[index]?.assemblyTime} className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.assemblyTime ? "border-red-500/50" : "border-white/10"}`} />
+                                {errors.categories?.[index]?.assemblyTime?.message && (
+                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].assemblyTime.message}</p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Gun Start</label>
-                                <input type="time" {...register(`categories.${index}.gunStartTime`)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all" />
+                                <input type="time" {...register(`categories.${index}.gunStartTime`)} aria-invalid={!!errors.categories?.[index]?.gunStartTime} className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.gunStartTime ? "border-red-500/50" : "border-white/10"}`} />
+                                {errors.categories?.[index]?.gunStartTime?.message && (
+                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].gunStartTime.message}</p>
+                                )}
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Cut-off Time</label>
-                                <input type="time" {...register(`categories.${index}.cutOffTime`)} className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all" />
+                                <input type="time" {...register(`categories.${index}.cutOffTime`)} aria-invalid={!!errors.categories?.[index]?.cutOffTime} className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.cutOffTime ? "border-red-500/50" : "border-white/10"}`} />
+                                {errors.categories?.[index]?.cutOffTime?.message && (
+                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].cutOffTime.message}</p>
+                                )}
                             </div>
                         </div>
                     </div>
