@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-export default async function proxy(req: NextRequest, ev: any) {
+export default async function middleware(req: NextRequest, ev: any) {
     const { clerkMiddleware } = await import("@clerk/nextjs/server");
     return clerkMiddleware()(req, ev);
 }
