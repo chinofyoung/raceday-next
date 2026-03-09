@@ -1,9 +1,6 @@
-import type { NextRequest } from "next/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default async function middleware(req: NextRequest, ev: any) {
-    const { clerkMiddleware } = await import("@clerk/nextjs/server");
-    return clerkMiddleware()(req, ev);
-}
+export default clerkMiddleware();
 
 export const config = {
     matcher: [
