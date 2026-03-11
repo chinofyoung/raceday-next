@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { ArrowRight, Calendar, Clock, MapPin, Scan, Users, Package } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

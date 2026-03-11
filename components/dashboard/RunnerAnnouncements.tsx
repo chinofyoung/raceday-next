@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Megaphone, X, Clock } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";

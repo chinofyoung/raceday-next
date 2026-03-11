@@ -5,7 +5,6 @@ import { RunnerQuickActions } from "@/components/dashboard/RunnerQuickActions";
 import { VolunteerDashboard } from "@/components/dashboard/volunteer/VolunteerDashboard";
 import { toDate } from "@/lib/utils";
 import { ProfileCompletionCard } from "./runner/ProfileCompletionCard";
-import { RunnerSidebar } from "./runner/RunnerSidebar";
 import { EventRegistrationList } from "./runner/EventRegistrationList";
 
 interface RunnerViewProps {
@@ -54,35 +53,25 @@ export function RunnerView({
         <div className="space-y-4 sm:space-y-8 animate-in fade-in duration-500">
             <RunnerQuickActions hasApplication={hasApplication} userRole={userRole} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-                <div className="lg:col-span-2 space-y-6 lg:space-y-12">
-                    {/* Profile Completion Card */}
-                    <ProfileCompletionCard completion={completion} />
+            <div className="space-y-6 lg:space-y-12">
+                {/* Profile Completion Card */}
+                <ProfileCompletionCard completion={completion} />
 
-                    {/* Volunteer Dashboard */}
-                    <VolunteerDashboard />
+                {/* Volunteer Dashboard */}
+                <VolunteerDashboard />
 
-                    {/* My Registered Events */}
-                    <EventRegistrationList
-                        title="My Registered Events"
-                        events={upcomingEvents}
-                    />
+                {/* My Registered Events */}
+                <EventRegistrationList
+                    title="My Registered Events"
+                    events={upcomingEvents}
+                />
 
-                    {/* My Past Events */}
-                    <EventRegistrationList
-                        title="My Past Events"
-                        events={pastEvents}
-                        isPast
-                    />
-                </div>
-
-                {/* Runner Sidebar */}
-                <div className="space-y-8">
-                    <RunnerSidebar
-                        upcomingCount={upcomingEvents.length}
-                        pastCount={pastEvents.length}
-                    />
-                </div>
+                {/* My Past Events */}
+                <EventRegistrationList
+                    title="My Past Events"
+                    events={pastEvents}
+                    isPast
+                />
             </div>
         </div>
     );

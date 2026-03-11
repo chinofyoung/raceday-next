@@ -3,8 +3,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { InviteVolunteerDialog } from "./InviteVolunteerDialog";
 import { EventVolunteer, VolunteerPermission } from "@/types/volunteer";
 import { format } from "date-fns";

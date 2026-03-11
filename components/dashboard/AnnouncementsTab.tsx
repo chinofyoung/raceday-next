@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/_LegacyInput";
 import { Megaphone, Mail, Loader2, Plus, Clock, Wand2, Sparkles, AlertCircle, Edit2, Trash2, X } from "lucide-react";

@@ -4,9 +4,9 @@ import { User, Trophy, QrCode, Package, MapPin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 
 interface RunnerEventCardProps {
     reg: any;

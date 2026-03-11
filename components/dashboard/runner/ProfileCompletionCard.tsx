@@ -2,7 +2,7 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface ProfileCompletionCardProps {

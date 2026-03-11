@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TrendingUp } from "lucide-react";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 
 interface OrganizerRevenueStatsProps {
     categoryRevenue: any[];

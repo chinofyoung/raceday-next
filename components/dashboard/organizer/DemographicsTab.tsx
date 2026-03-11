@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { RaceEvent } from "@/types/event";
 import {
     ResponsiveContainer,
