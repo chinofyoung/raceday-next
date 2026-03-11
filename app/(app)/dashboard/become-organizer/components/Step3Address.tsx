@@ -3,7 +3,6 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/_LegacySelect";
 import { PH_REGIONS, PH_PROVINCES } from "@/lib/constants/ph-regions";
 import { MapPin } from "lucide-react";
 import { useEffect } from "react";
@@ -64,19 +63,33 @@ export function Step3Address() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Select
-                        label="Region"
-                        {...register("address.region")}
-                        error={(errors.address as any)?.region?.message as string}
-                        options={PH_REGIONS.map(r => ({ value: r.code, label: r.name }))}
-                    />
-                    <Select
-                        label="Province"
-                        {...register("address.province")}
-                        error={(errors.address as any)?.province?.message as string}
-                        options={provinces.map(p => ({ value: p, label: p }))}
-                        disabled={!selectedRegion}
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Region</Label>
+                        <select
+                            {...register("address.region")}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all px-4 py-3.5 appearance-none cursor-pointer"
+                        >
+                            <option value="" disabled className="bg-surface text-text-muted">Select an option</option>
+                            {PH_REGIONS.map(r => (
+                                <option key={r.code} value={r.code} className="bg-surface text-white">{r.name}</option>
+                            ))}
+                        </select>
+                        {(errors.address as any)?.region?.message && <p className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">{(errors.address as any).region.message}</p>}
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Province</Label>
+                        <select
+                            {...register("address.province")}
+                            disabled={!selectedRegion}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all px-4 py-3.5 appearance-none cursor-pointer disabled:opacity-50"
+                        >
+                            <option value="" disabled className="bg-surface text-text-muted">Select an option</option>
+                            {provinces.map(p => (
+                                <option key={p} value={p} className="bg-surface text-white">{p}</option>
+                            ))}
+                        </select>
+                        {(errors.address as any)?.province?.message && <p className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">{(errors.address as any).province.message}</p>}
+                    </div>
                 </div>
 
                 <div className="space-y-2">

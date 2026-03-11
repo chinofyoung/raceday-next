@@ -1,7 +1,7 @@
 "use client";
 
 import { Announcement } from "@/types/announcement";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Clock, Megaphone } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";

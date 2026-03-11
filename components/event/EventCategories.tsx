@@ -1,8 +1,8 @@
 "use client";
 
 import { RaceEvent, EventCategory } from "@/types/event";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Clock, Timer, Users, ChevronRight, Trophy } from "lucide-react";
 import Link from "next/link";

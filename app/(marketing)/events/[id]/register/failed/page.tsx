@@ -2,7 +2,7 @@
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useSearchParams } from "next/navigation";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw, MessageSquare, ArrowLeft, XCircle } from "lucide-react";
 import Link from "next/link";

@@ -11,8 +11,8 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     Check, Loader2, Building2, Mail, Phone, Globe,
     ShieldCheck, CalendarCheck, AlertCircle, Save

@@ -5,8 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { getRegistrations } from "@/lib/services/registrationService";
 import { getEvents } from "@/lib/services/eventService";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/_LegacyInput";
-import { Select } from "@/components/ui/_LegacySelect";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow, format } from "date-fns";
 import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
@@ -125,20 +124,25 @@ export default function OrganizerRegistrationsPage() {
 
             <Card className="p-5 bg-surface/50 border border-white/5 relative overflow-hidden space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
-                    <div className="flex-1">
+                    <div className="flex-1 relative">
+                        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                         <Input
                             placeholder="Search by runner, email, or category..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            icon={<Search size={16} />}
+                            className="pl-9"
                         />
                     </div>
                     <div className="w-full md:w-64 shrink-0">
-                        <Select
-                            options={eventOptions}
+                        <select
                             value={selectedEventId}
                             onChange={(e) => setSelectedEventId(e.target.value)}
-                        />
+                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all px-4 py-2.5 appearance-none cursor-pointer"
+                        >
+                            {eventOptions.map(o => (
+                                <option key={o.value} value={o.value} className="bg-surface text-white">{o.label}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 

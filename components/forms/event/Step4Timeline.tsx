@@ -4,8 +4,9 @@ import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { EventFormValues } from "@/lib/validations/event";
 import { Plus, Trash2, Calendar, Clock, AlignLeft, Sparkles, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/_LegacyInput";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import { cn, generateId } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -147,12 +148,14 @@ export function Step4Timeline() {
                                 </div>
 
                                 <div className="md:col-span-8 space-y-4">
-                                    <Input
-                                        label="Activity Name"
-                                        {...register(`timeline.${index}.activity`)}
-                                        error={errors.timeline?.[index]?.activity?.message}
-                                        placeholder="e.g. Race Kit Collection"
-                                    />
+                                    <div className="space-y-2">
+                                        <Label className="text-xs font-bold uppercase tracking-widest text-text-muted">Activity Name</Label>
+                                        <Input
+                                            {...register(`timeline.${index}.activity`)}
+                                            placeholder="e.g. Race Kit Collection"
+                                        />
+                                        {errors.timeline?.[index]?.activity?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.timeline[index].activity.message}</p>}
+                                    </div>
                                     <div className="space-y-2">
                                         <label className="text-xs font-bold uppercase tracking-widest text-text-muted flex items-center gap-2">
                                             <AlignLeft size={12} /> Description (Optional)

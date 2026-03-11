@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default function EventLoading() {

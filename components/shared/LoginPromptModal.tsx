@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LogIn, X, ShieldCheck } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";

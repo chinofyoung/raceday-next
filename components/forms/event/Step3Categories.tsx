@@ -5,8 +5,9 @@ import { useFormContext, useFieldArray, Controller, useWatch } from "react-hook-
 import { Button } from "@/components/ui/button";
 import { EventFormValues } from "@/lib/validations/event";
 import { Plus, Trash2, Map, Shirt, Clock, Ruler, DollarSign, CloudUpload, Info, Users } from "lucide-react";
-import { Input } from "@/components/ui/_LegacyInput";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import { cn, generateId } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import dynamic from "next/dynamic";
@@ -184,25 +185,26 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                 <div className="space-y-8">
                     {/* Basic Fields */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="md:col-span-3">
+                        <div className="md:col-span-3 space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Category Name</Label>
                             <Input
-                                label="Category Name"
                                 {...register(`categories.${index}.name`)}
-                                error={errors.categories?.[index]?.name?.message}
                                 placeholder="e.g. 21K Half Marathon"
                             />
+                            {errors.categories?.[index]?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].name.message}</p>}
                         </div>
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Distance</label>
                             <div className="flex gap-2">
-                                <div className="flex-1">
+                                <div className="flex-1 relative">
+                                    <Ruler size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                     <Input
                                         type="number"
                                         {...register(`categories.${index}.distance`, { valueAsNumber: true })}
-                                        error={errors.categories?.[index]?.distance?.message}
                                         placeholder="e.g. 21"
-                                        icon={<Ruler size={16} />}
+                                        className="pl-9"
                                     />
+                                    {errors.categories?.[index]?.distance?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic mt-1">{errors.categories[index].distance.message}</p>}
                                 </div>
                                 <select
                                     {...register(`categories.${index}.distanceUnit`)}
@@ -213,44 +215,60 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                 </select>
                             </div>
                         </div>
-                        <Input
-                            type="number"
-                            label="Registration Price (PHP)"
-                            {...register(`categories.${index}.price`, { valueAsNumber: true })}
-                            error={errors.categories?.[index]?.price?.message}
-                            icon={<DollarSign size={16} />}
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Registration Price (PHP)</Label>
+                            <div className="relative">
+                                <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                <Input
+                                    type="number"
+                                    {...register(`categories.${index}.price`, { valueAsNumber: true })}
+                                    className="pl-9"
+                                />
+                            </div>
+                            {errors.categories?.[index]?.price?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].price.message}</p>}
+                        </div>
 
                         {watch("earlyBird.enabled") && (
-                            <Input
-                                type="number"
-                                label="Early Bird Price"
-                                {...register(`categories.${index}.earlyBirdPrice`, { valueAsNumber: true })}
-                                error={errors.categories?.[index]?.earlyBirdPrice?.message}
-                                icon={<DollarSign size={16} />}
-                                className="border-primary/50 bg-primary/5 text-primary"
-                            />
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Early Bird Price</Label>
+                                <div className="relative">
+                                    <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                    <Input
+                                        type="number"
+                                        {...register(`categories.${index}.earlyBirdPrice`, { valueAsNumber: true })}
+                                        className="pl-9 border-primary/50 bg-primary/5 text-primary"
+                                    />
+                                </div>
+                                {errors.categories?.[index]?.earlyBirdPrice?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].earlyBirdPrice.message}</p>}
+                            </div>
                         )}
 
-                        <Input
-                            label="Race Number Format"
-                            {...register(`categories.${index}.raceNumberFormat`)}
-                            error={errors.categories?.[index]?.raceNumberFormat?.message}
-                            placeholder="e.g. 21K-{number}"
-                            description="Use {number} as placeholder."
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Race Number Format</Label>
+                            <Input
+                                {...register(`categories.${index}.raceNumberFormat`)}
+                                placeholder="e.g. 21K-{number}"
+                            />
+                            {errors.categories?.[index]?.raceNumberFormat?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].raceNumberFormat.message}</p>}
+                            <p className="text-[10px] text-text-muted ml-1 italic opacity-50">Use {"{number}"} as placeholder.</p>
+                        </div>
 
                         <div className="space-y-4 md:col-span-3 pt-4 border-t border-white/5">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                                <Input
-                                    type="number"
-                                    label="Max Participants"
-                                    {...register(`categories.${index}.maxParticipants`, { valueAsNumber: true })}
-                                    error={errors.categories?.[index]?.maxParticipants?.message}
-                                    placeholder="0 for unlimited"
-                                    icon={<Users size={16} />}
-                                    description="Maximum number of registrants allowed for this category."
-                                />
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Max Participants</Label>
+                                    <div className="relative">
+                                        <Users size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+                                        <Input
+                                            type="number"
+                                            {...register(`categories.${index}.maxParticipants`, { valueAsNumber: true })}
+                                            placeholder="0 for unlimited"
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                    {errors.categories?.[index]?.maxParticipants?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].maxParticipants.message}</p>}
+                                    <p className="text-[10px] text-text-muted ml-1 italic opacity-50">Maximum number of registrants allowed for this category.</p>
+                                </div>
                                 <div className="pb-4">
                                     <label className="flex items-center gap-3 cursor-pointer group">
                                         <input

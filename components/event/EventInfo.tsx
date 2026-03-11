@@ -1,7 +1,7 @@
 "use client";
 
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Trophy, Users } from "lucide-react";
 import { EventGallery } from "./EventGallery";
 

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { formatDistance, cn } from "@/lib/utils";
 import { RaceEvent } from "@/types/event";
-import { Card, CardContent } from "@/components/ui/_LegacyCard";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { isEarlyBirdActive, isRegistrationClosed, getEffectivePrice } from "@/lib/earlyBirdUtils";
 import { useAuth } from "@/lib/hooks/useAuth";

@@ -9,7 +9,8 @@ import { Droplets, HeartPulse, Plus, X, MapPin, Trash2, Edit2, Check } from "luc
 import { EventFormValues, raceStationSchema } from "@/lib/validations/event";
 import { StationType, RaceStation } from "@/types/event";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 // Custom icons for stations
@@ -208,37 +209,43 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                             </div>
 
                             <div className="space-y-4">
-                                <Input
-                                    label="Label"
-                                    placeholder="e.g. KM 5 Water Station"
-                                    value={tempStation.label}
-                                    onChange={e => setTempStation(prev => ({ ...prev, label: e.target.value }))}
-                                    className="bg-surface border-white/10"
-                                />
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Label</Label>
+                                    <Input
+                                        placeholder="e.g. KM 5 Water Station"
+                                        value={tempStation.label}
+                                        onChange={e => setTempStation(prev => ({ ...prev, label: e.target.value }))}
+                                        className="bg-surface border-white/10"
+                                    />
+                                </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Input
-                                        label="Latitude"
-                                        type="number"
-                                        step="any"
-                                        value={tempStation.coordinates?.lat || ""}
-                                        onChange={e => setTempStation(prev => ({
-                                            ...prev,
-                                            coordinates: { ...prev.coordinates!, lat: parseFloat(e.target.value) || 0 }
-                                        }))}
-                                        className="bg-surface border-white/10"
-                                    />
-                                    <Input
-                                        label="Longitude"
-                                        type="number"
-                                        step="any"
-                                        value={tempStation.coordinates?.lng || ""}
-                                        onChange={e => setTempStation(prev => ({
-                                            ...prev,
-                                            coordinates: { ...prev.coordinates!, lng: parseFloat(e.target.value) || 0 }
-                                        }))}
-                                        className="bg-surface border-white/10"
-                                    />
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Latitude</Label>
+                                        <Input
+                                            type="number"
+                                            step="any"
+                                            value={tempStation.coordinates?.lat || ""}
+                                            onChange={e => setTempStation(prev => ({
+                                                ...prev,
+                                                coordinates: { ...prev.coordinates!, lat: parseFloat(e.target.value) || 0 }
+                                            }))}
+                                            className="bg-surface border-white/10"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Longitude</Label>
+                                        <Input
+                                            type="number"
+                                            step="any"
+                                            value={tempStation.coordinates?.lng || ""}
+                                            onChange={e => setTempStation(prev => ({
+                                                ...prev,
+                                                coordinates: { ...prev.coordinates!, lng: parseFloat(e.target.value) || 0 }
+                                            }))}
+                                            className="bg-surface border-white/10"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 

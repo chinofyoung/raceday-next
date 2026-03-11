@@ -3,7 +3,7 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { EventFormValues } from "@/lib/validations/event";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Sparkles, DollarSign, MapPin, Droplets } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StationManager } from "./StationManager";

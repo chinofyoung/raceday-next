@@ -3,7 +3,6 @@
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/_LegacySelect";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { PH_GOVERNMENT_ID_TYPES } from "@/lib/constants/ph-id-types";
@@ -65,12 +64,19 @@ export function Step4Verification() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Select
-                        label="Government ID Type"
-                        {...register("governmentId.type")}
-                        error={(errors.governmentId as any)?.type?.message as string}
-                        options={PH_GOVERNMENT_ID_TYPES}
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Government ID Type</Label>
+                        <select
+                            {...register("governmentId.type")}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all px-4 py-3.5 appearance-none cursor-pointer"
+                        >
+                            <option value="" disabled className="bg-surface text-text-muted">Select an option</option>
+                            {PH_GOVERNMENT_ID_TYPES.map((opt) => (
+                                <option key={opt.value} value={opt.value} className="bg-surface text-white">{opt.label}</option>
+                            ))}
+                        </select>
+                        {(errors.governmentId as any)?.type?.message && <p className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">{(errors.governmentId as any).type.message}</p>}
+                    </div>
                     <div className="space-y-2">
                         <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">ID Number</Label>
                         <Input

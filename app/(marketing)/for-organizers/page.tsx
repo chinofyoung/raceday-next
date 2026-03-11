@@ -1,6 +1,6 @@
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { CheckCircle2, Zap, BarChart3, QrCode } from "lucide-react";
 import Link from "next/link";
 

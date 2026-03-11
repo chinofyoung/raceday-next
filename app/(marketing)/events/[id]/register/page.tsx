@@ -8,9 +8,35 @@ import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
 import { RegistrationForm } from "@/components/forms/registration/RegistrationForm";
 import { ArrowLeft, Info } from "lucide-react";
-import { RegistrationFormSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
+
+function RegistrationFormSkeleton() {
+    return (
+        <div className="space-y-8">
+            <Skeleton className="h-4 w-24" />
+            <div className="space-y-3">
+                <Skeleton className="h-10 w-2/3" />
+                <Skeleton className="h-5 w-1/2" />
+            </div>
+            <div className="bg-surface/30 border border-white/5 rounded-2xl p-8 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                </div>
+                <div className="space-y-2"><Skeleton className="h-4 w-16" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-12" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                </div>
+                <div className="space-y-2"><Skeleton className="h-4 w-28" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                <div className="space-y-2"><Skeleton className="h-4 w-36" /><Skeleton className="h-11 w-full rounded-xl" /></div>
+                <Skeleton className="h-12 w-full rounded-xl" />
+            </div>
+        </div>
+    );
+}
 import { isRegistrationClosed } from "@/lib/earlyBirdUtils";
 
 export default function RegisterPage() {

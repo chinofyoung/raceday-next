@@ -1,7 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { EventFormValues } from "@/lib/validations/event";
 import { Loader2, Wand2 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";
@@ -23,13 +24,15 @@ export function Step1Basic() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6 md:col-span-2">
-                    <Input
-                        label="Event Name"
-                        {...register("name")}
-                        error={errors.name?.message}
-                        placeholder="e.g. Manila City Half Marathon 2026"
-                        className="text-lg font-bold"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Event Name</Label>
+                        <Input
+                            {...register("name")}
+                            placeholder="e.g. Manila City Half Marathon 2026"
+                            className="text-lg font-bold"
+                        />
+                        {errors.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.name.message}</p>}
+                    </div>
                 </div>
 
                 <div className="space-y-6">
@@ -100,21 +103,25 @@ export function Step1Basic() {
                 </div>
 
                 <div className="space-y-6">
-                    <Input
-                        label="Venue Name"
-                        {...register("location.name")}
-                        error={errors.location?.name?.message}
-                        placeholder="e.g. Bonifacio Global City"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Venue Name</Label>
+                        <Input
+                            {...register("location.name")}
+                            placeholder="e.g. Bonifacio Global City"
+                        />
+                        {errors.location?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.location.name.message}</p>}
+                    </div>
                 </div>
 
                 <div className="space-y-6">
-                    <Input
-                        label="Full Address"
-                        {...register("location.address")}
-                        error={errors.location?.address?.message}
-                        placeholder="e.g. 26th St, Taguig, Metro Manila"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Full Address</Label>
+                        <Input
+                            {...register("location.address")}
+                            placeholder="e.g. 26th St, Taguig, Metro Manila"
+                        />
+                        {errors.location?.address?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.location.address.message}</p>}
+                    </div>
                 </div>
             </div>
         </div>

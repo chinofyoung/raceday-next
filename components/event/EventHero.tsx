@@ -1,7 +1,7 @@
 "use client";
 
 import { RaceEvent } from "@/types/event";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, MapPin, Edit2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

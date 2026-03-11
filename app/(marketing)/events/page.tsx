@@ -6,13 +6,30 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/_LegacyInput";
 import { Search, Calendar, MapPin, Filter, Loader2, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { EventCardSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function EventCardSkeleton() {
+    return (
+        <div className="rounded-[2rem] bg-surface/30 border border-white/5 overflow-hidden">
+            <Skeleton className="aspect-video w-full rounded-none" />
+            <div className="p-6 space-y-4">
+                <div className="space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                </div>
+                <div className="flex justify-between items-center">
+                    <Skeleton className="h-8 w-20 rounded-lg" />
+                    <Skeleton className="h-4 w-24" />
+                </div>
+            </div>
+        </div>
+    );
+}
 import { useAuth } from "@/lib/hooks/useAuth";
 import { isEventOver } from "@/lib/earlyBirdUtils";
 import { useQuery } from "convex/react";

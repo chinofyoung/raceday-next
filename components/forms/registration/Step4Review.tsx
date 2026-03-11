@@ -3,8 +3,8 @@
 import { useFormContext } from "react-hook-form";
 import { RaceEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, User, Phone, Mail, Shirt, HeartPulse, FileText, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";

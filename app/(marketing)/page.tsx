@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ArrowRight, Calendar, MapPin, TrendingUp, Users, Zap, Trophy, Timer, Navigation, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { RaceEvent } from "@/types/event";
 import { format } from "date-fns";

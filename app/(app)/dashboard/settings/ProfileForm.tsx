@@ -11,7 +11,7 @@ import { profileSchema, ProfileFormValues, calculateCompletion } from "@/lib/val
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Check, Loader2, User as UserIcon, MapPin, ShieldAlert, Shirt, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImageUpload } from "@/components/ui/ImageUpload";

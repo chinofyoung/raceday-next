@@ -84,21 +84,6 @@ h6 {
   @apply font-bold uppercase tracking-wide;
 }
 
-.btn-primary {
-  @apply bg-cta text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer active:scale-95 hover:opacity-90 hover:-translate-y-0.5 shadow-md;
-}
-
-.btn-secondary {
-  @apply bg-transparent text-primary border-2 border-primary px-6 py-3 rounded-lg font-semibold transition-all duration-200 cursor-pointer active:scale-95 hover:bg-primary/10 hover:-translate-y-0.5;
-}
-
-.card {
-  @apply bg-surface rounded-xl p-6 shadow-md transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-1;
-}
-
-.input {
-  @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200;
-}
 
 /* Leaflet Dark Mode Overrides */
 .leaflet-control-zoom a {

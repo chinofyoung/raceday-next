@@ -3,8 +3,9 @@
 import { useFormContext } from "react-hook-form";
 import { RaceEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { Input } from "@/components/ui/_LegacyInput";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 import { User, Phone, Mail, Shirt, HeartPulse, ShieldAlert } from "lucide-react";
 
 interface Step2DetailsProps {
@@ -41,21 +42,21 @@ export function Step2Details({ event }: Step2DetailsProps) {
                         <User size={14} /> Basic Information
                     </div>
                     <Card className="p-6 bg-surface/30 border-white/5 space-y-4">
-                        <Input
-                            label="Full Name"
-                            {...register("participantInfo.name")}
-                            error={errors.participantInfo?.name?.message}
-                        />
-                        <Input
-                            label="Email Address"
-                            {...register("participantInfo.email")}
-                            error={errors.participantInfo?.email?.message}
-                        />
-                        <Input
-                            label="Phone Number"
-                            {...register("participantInfo.phone")}
-                            error={errors.participantInfo?.phone?.message}
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Full Name</Label>
+                            <Input {...register("participantInfo.name")} />
+                            {errors.participantInfo?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.name.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Email Address</Label>
+                            <Input {...register("participantInfo.email")} />
+                            {errors.participantInfo?.email?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.email.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Phone Number</Label>
+                            <Input {...register("participantInfo.phone")} />
+                            {errors.participantInfo?.phone?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.phone.message}</p>}
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
@@ -70,12 +71,11 @@ export function Step2Details({ event }: Step2DetailsProps) {
                                 </select>
                                 {errors.participantInfo?.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.participantInfo.gender.message}</p>}
                             </div>
-                            <Input
-                                type="date"
-                                label="Birth Date"
-                                {...register("participantInfo.birthDate")}
-                                error={errors.participantInfo?.birthDate?.message}
-                            />
+                            <div className="space-y-1.5">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Birth Date</Label>
+                                <Input type="date" {...register("participantInfo.birthDate")} />
+                                {errors.participantInfo?.birthDate?.message && <p className="text-[10px] text-red-500 font-bold italic">{errors.participantInfo.birthDate.message}</p>}
+                            </div>
                         </div>
                     </Card>
 
@@ -114,22 +114,21 @@ export function Step2Details({ event }: Step2DetailsProps) {
                         <HeartPulse size={14} /> Emergency Contact
                     </div>
                     <Card className="p-6 bg-surface/30 border-white/5 space-y-4">
-                        <Input
-                            label="Contact Name"
-                            {...register("participantInfo.emergencyContact.name")}
-                            error={errors.participantInfo?.emergencyContact?.name?.message}
-                        />
-                        <Input
-                            label="Contact Phone"
-                            {...register("participantInfo.emergencyContact.phone")}
-                            error={errors.participantInfo?.emergencyContact?.phone?.message}
-                        />
-                        <Input
-                            label="Relationship"
-                            {...register("participantInfo.emergencyContact.relationship")}
-                            error={errors.participantInfo?.emergencyContact?.relationship?.message}
-                            placeholder="e.g. Spouse, Parent"
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Contact Name</Label>
+                            <Input {...register("participantInfo.emergencyContact.name")} />
+                            {errors.participantInfo?.emergencyContact?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.emergencyContact.name.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Contact Phone</Label>
+                            <Input {...register("participantInfo.emergencyContact.phone")} />
+                            {errors.participantInfo?.emergencyContact?.phone?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.emergencyContact.phone.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Relationship</Label>
+                            <Input {...register("participantInfo.emergencyContact.relationship")} placeholder="e.g. Spouse, Parent" />
+                            {errors.participantInfo?.emergencyContact?.relationship?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.participantInfo.emergencyContact.relationship.message}</p>}
+                        </div>
                     </Card>
 
                     <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-yellow-500 italic mt-8">

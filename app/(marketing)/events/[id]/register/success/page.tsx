@@ -6,11 +6,69 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle2, Download, QrCode, ArrowRight, Share2, MapPin, Calendar } from "lucide-react";
-import { RegistrationSuccessSkeleton } from "@/components/shared/Skeleton";
+
+function RegistrationSuccessSkeleton() {
+    return (
+        <div className="flex flex-col items-center space-y-8">
+            <Skeleton className="w-20 h-20 rounded-full" />
+            <div className="space-y-2 text-center">
+                <Skeleton className="h-9 w-64 mx-auto" />
+                <Skeleton className="h-5 w-48 mx-auto" />
+            </div>
+            <div className="w-full max-w-lg rounded-[2.5rem] bg-[#0A0D10]/80 border border-white/5 overflow-hidden">
+                <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-6 w-20 rounded-full" />
+                    </div>
+                    <div className="grid grid-cols-4 gap-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="space-y-1">
+                                <Skeleton className="h-3 w-12" />
+                                <Skeleton className="h-5 w-16" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2">
+                    <Skeleton className="w-6 h-6 rounded-full" />
+                    <Skeleton className="h-px flex-1" />
+                    <Skeleton className="w-6 h-6 rounded-full" />
+                </div>
+                <div className="p-6 flex gap-6 items-start">
+                    <Skeleton className="w-[220px] h-[220px] rounded-2xl shrink-0" />
+                    <div className="flex-1 space-y-4">
+                        <div className="space-y-1">
+                            <Skeleton className="h-3 w-20" />
+                            <Skeleton className="h-8 w-16" />
+                        </div>
+                        <div className="space-y-2">
+                            <Skeleton className="h-4 w-32" />
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-4 w-28" />
+                        </div>
+                    </div>
+                </div>
+                <div className="p-6 pt-0">
+                    <Skeleton className="h-12 w-full rounded-xl" />
+                </div>
+            </div>
+            <div className="w-full max-w-lg bg-surface/30 border border-white/5 rounded-2xl p-6 space-y-3">
+                <Skeleton className="h-5 w-24" />
+                <div className="flex gap-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                        <Skeleton key={i} className="h-10 w-10 rounded-xl" />
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
