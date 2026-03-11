@@ -5,6 +5,27 @@ import {
     CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line
 } from "recharts";
 
+const tooltipContentStyleSm = {
+    backgroundColor: '#1f2937',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '12px',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
+    color: '#fff'
+} as const;
+
+const tooltipContentStyleXs = {
+    backgroundColor: '#1f2937',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '12px',
+    fontSize: '10px',
+    fontWeight: 'bold',
+    color: '#fff'
+} as const;
+
+const tooltipItemStyleWhite = { color: '#fff' } as const;
+
 export function RevenueBarChart({ data }: { data: any[] }) {
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -33,16 +54,8 @@ export function RevenueBarChart({ data }: { data: any[] }) {
                 />
                 <Tooltip
                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                    contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-                        color: '#fff'
-                    }}
-                    itemStyle={{ color: '#fff' }}
+                    contentStyle={tooltipContentStyleSm}
+                    itemStyle={tooltipItemStyleWhite}
                 />
                 <Bar dataKey="revenue" fill="url(#revenueGradient)" radius={[6, 6, 0, 0]} />
             </BarChart>
@@ -68,16 +81,8 @@ export function UsersPieChart({ data }: { data: any[] }) {
                     ))}
                 </Pie>
                 <Tooltip
-                    contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-                        color: '#fff'
-                    }}
-                    itemStyle={{ color: '#fff' }}
+                    contentStyle={tooltipContentStyleSm}
+                    itemStyle={tooltipItemStyleWhite}
                 />
             </PieChart>
         </ResponsiveContainer>
@@ -111,15 +116,8 @@ export function RegistrationsLineChart({ data }: { data: any[] }) {
                     tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
                 />
                 <Tooltip
-                    contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px',
-                        fontSize: '10px',
-                        fontWeight: 'bold',
-                        color: '#fff'
-                    }}
-                    itemStyle={{ color: '#fff' }}
+                    contentStyle={tooltipContentStyleXs}
+                    itemStyle={tooltipItemStyleWhite}
                 />
                 <Line
                     type="monotone"

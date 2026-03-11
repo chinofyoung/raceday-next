@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useState } from "react";
 import { TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ interface OrganizerRevenueStatsProps {
     totalRevenue: number;
 }
 
-export function OrganizerRevenueStats({ categoryRevenue, eventRevenue, totalRevenue }: OrganizerRevenueStatsProps) {
+function OrganizerRevenueStatsComponent({ categoryRevenue, eventRevenue, totalRevenue }: OrganizerRevenueStatsProps) {
     const [view, setView] = useState<"category" | "event">("category");
 
     if (categoryRevenue.length === 0 && eventRevenue.length === 0) return null;
@@ -81,3 +81,5 @@ export function OrganizerRevenueStats({ categoryRevenue, eventRevenue, totalReve
         </Card>
     );
 }
+
+export const OrganizerRevenueStats = memo(OrganizerRevenueStatsComponent);

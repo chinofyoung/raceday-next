@@ -117,28 +117,30 @@ export function OrganizerView({
         setIsEditing(false);
     }, [savedOrder]);
 
-    const widgetMap = useMemo<Record<WidgetId, React.ReactNode>>(() => ({
-        "revenue-stats": (
-            <OrganizerRevenueStats
-                categoryRevenue={categoryRevenue}
-                eventRevenue={eventRevenue}
-                totalRevenue={stats.revenue}
-            />
-        ),
-        "kit-fulfillment": (
-            <OrganizerKitFulfillment
-                claimPercentage={claimPercentage}
-                claimedKits={claimedKits}
-                totalParticipants={stats.secondary}
-            />
-        ),
-        "active-events": (
-            <OrganizerActiveEvents items={items} eventKitStats={eventKitStats} />
-        ),
-        "registrations-feed": (
-            <OrganizerRegistrationsFeed recentRegistrations={recentRegistrations} />
-        ),
-    }), [items, eventKitStats, recentRegistrations, categoryRevenue, eventRevenue, stats, claimedKits, claimPercentage]);
+    const renderWidget = useCallback((id: WidgetId) => {
+        switch (id) {
+            case "revenue-stats":
+                return (
+                    <OrganizerRevenueStats
+                        categoryRevenue={categoryRevenue}
+                        eventRevenue={eventRevenue}
+                        totalRevenue={stats.revenue}
+                    />
+                );
+            case "kit-fulfillment":
+                return (
+                    <OrganizerKitFulfillment
+                        claimPercentage={claimPercentage}
+                        claimedKits={claimedKits}
+                        totalParticipants={stats.secondary}
+                    />
+                );
+            case "active-events":
+                return <OrganizerActiveEvents items={items} eventKitStats={eventKitStats} />;
+            case "registrations-feed":
+                return <OrganizerRegistrationsFeed recentRegistrations={recentRegistrations} />;
+        }
+    }, [items, eventKitStats, recentRegistrations, categoryRevenue, eventRevenue, stats, claimedKits, claimPercentage]);
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-12">
@@ -190,7 +192,7 @@ export function OrganizerView({
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         {widgetOrder.map((id) => (
                             <DraggableWidget key={id} id={id} isEditing={isEditing} className="md:col-span-2">
-                                {widgetMap[id]}
+                                {renderWidget(id)}
                             </DraggableWidget>
                         ))}
                     </div>

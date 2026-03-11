@@ -60,22 +60,24 @@ export const generate = mutation({
             counter = await ctx.db.get(id);
         }
 
+        // Fetch all bib numbers for this event in one query so we can find
+        // the first gap without issuing a separate DB read per candidate number.
+        const existingBibs = await ctx.db
+            .query("registrations")
+            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
+            .collect();
+        const usedNumbers = new Set(existingBibs.map(r => r.raceNumber).filter(Boolean));
+
         let nextCount = counter!.count;
         let finalBib = "";
 
-        // Try up to 100 times to find an available bib (skipping vanity ones)
+        // Scan up to 100 candidates entirely in memory (no per-iteration DB round-trips)
         for (let i = 0; i < 100; i++) {
             nextCount++;
             const padded = String(nextCount).padStart(maxDigits, "0");
             const formatted = formatBib(padded);
 
-            const existing = await ctx.db
-                .query("registrations")
-                .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-                .filter((q) => q.eq(q.field("raceNumber"), formatted))
-                .first();
-
-            if (!existing) {
+            if (!usedNumbers.has(formatted)) {
                 finalBib = formatted;
                 break;
             }

@@ -17,12 +17,20 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { AnnouncementsTab } from "@/components/dashboard/AnnouncementsTab";
-import { DemographicsTab } from "@/components/dashboard/organizer/DemographicsTab";
+import dynamic from "next/dynamic";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { VolunteerManagement } from "@/components/dashboard/organizer/VolunteerManagement";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useParams, useRouter } from "next/navigation";
+
+const DemographicsTab = dynamic(
+    () => import("@/components/dashboard/organizer/DemographicsTab").then(mod => mod.DemographicsTab),
+    {
+        ssr: false,
+        loading: () => <div className="animate-pulse h-64 bg-muted rounded-lg" />,
+    }
+);
 
 export default function EventDetailPage() {
     const params = useParams();
@@ -37,38 +45,20 @@ export default function EventDetailPage() {
     const eventData = useQuery(api.events.getById, (id && isConvexId) ? { id: id as Id<"events"> } : "skip");
     const registrationsData = useQuery(api.registrations.list, (id && isConvexId) ? {
         eventId: id as Id<"events">,
-        paginationOpts: { numItems: 1000, cursor: null }
+        paginationOpts: { numItems: 100, cursor: null }
     } : "skip");
 
+    // Fetch volunteer record to determine permissions client-side (replaces the /api/events/:id/check-access fetch)
+    const volunteerRecord = useQuery(
+        api.volunteers.getByUserIdAndEvent,
+        (user?._id && id && isConvexId) ? { userId: user._id as Id<"users">, eventId: id as Id<"events"> } : "skip"
+    );
 
     const cloneMutation = useMutation(api.events.clone);
 
     const [activeTab, setActiveTab] = useState<string>("participants");
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "paid" | "pending">("paid");
-    const [permissions, setPermissions] = useState<string[]>([]);
-    const [accessLoading, setAccessLoading] = useState(true);
-
-    useEffect(() => {
-        if (id && user) {
-            checkAccess();
-        }
-    }, [id, user]);
-
-    const checkAccess = async () => {
-        setAccessLoading(true);
-        try {
-            const accessRes = await fetch(`/api/events/${id}/check-access`);
-            if (accessRes.ok) {
-                const accessData = await accessRes.json();
-                setPermissions(accessData.permissions || []);
-            }
-        } catch (error) {
-            console.error("Error checking access:", error);
-        } finally {
-            setAccessLoading(false);
-        }
-    };
 
     const event = useMemo(() => {
         if (!eventData) return null;
@@ -89,6 +79,12 @@ export default function EventDetailPage() {
 
     const isOrganizer = event?.organizerId === user?._id || role === "admin";
 
+    // Derive permissions from the volunteer record directly — no API fetch needed
+    const permissions: string[] = useMemo(() => {
+        if (isOrganizer) return [];
+        return (volunteerRecord?.permissions as string[]) ?? [];
+    }, [isOrganizer, volunteerRecord]);
+
     const availableTabs = (["participants", "stats", "revenue", "announcements", "volunteers"] as const).filter(tab => {
         if (isOrganizer) return true;
         if (tab === "participants") return permissions.includes("participants") || permissions.includes("kiosk");
@@ -102,7 +98,9 @@ export default function EventDetailPage() {
         }
     }, [availableTabs, activeTab]);
 
-    const loading = authLoading || accessLoading || (id && isConvexId && (eventData === undefined || registrationsData === undefined));
+    // volunteerRecord === undefined means the query is still loading; null means no record found (not a volunteer)
+    const volunteerLoading = !isOrganizer && volunteerRecord === undefined && user !== undefined;
+    const loading = authLoading || volunteerLoading || (id && isConvexId && (eventData === undefined || registrationsData === undefined));
 
     if (loading) {
         return (

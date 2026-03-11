@@ -13,7 +13,7 @@ export function EventTimeline({ event }: EventTimelineProps) {
             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white text-center">Event <span className="text-primary">Timeline</span></h2>
             <div className="space-y-0">
                 {event.timeline?.map((item, i) => (
-                    <div key={i} className="flex gap-8 group">
+                    <div key={`${item.time}-${item.activity}-${i}`} className="flex gap-8 group">
                         <div className="flex flex-col items-center">
                             <div className="w-4 h-4 rounded-full bg-primary shadow-[0_0_15px_rgba(249,115,22,.5)] group-hover:scale-125 transition-transform" />
                             {i !== (event.timeline?.length || 0) - 1 && <div className="w-0.5 flex-1 bg-white/5 my-2" />}

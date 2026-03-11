@@ -175,7 +175,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                         fill
                         sizes="100vw"
                         className="object-contain"
-                        quality={100}
+                        quality={85}
                         priority
                     />
                 </div>

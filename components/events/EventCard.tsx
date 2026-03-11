@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,7 +34,7 @@ interface EventCardProps {
     priority?: boolean;
 }
 
-export function EventCard({ event, onDelete, mode = "management", registrationStatus, priority = false }: EventCardProps) {
+function EventCardComponent({ event, onDelete, mode = "management", registrationStatus, priority = false }: EventCardProps) {
     const { user } = useAuth();
 
 
@@ -48,34 +48,48 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
     const eventDate = event.date ? new Date(event.date as string | number | Date) : null;
     const isValidDate = eventDate && !isNaN(eventDate.getTime());
 
-    // Calculate price ranges
-    const originalPrices = event.categories?.map(c => c.price) || [];
-    const minOriginal = originalPrices.length > 0 ? Math.min(...originalPrices) : 0;
-    const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0;
+    // Calculate price ranges (memoized to avoid recalculation on unrelated re-renders)
+    const {
+        originalPrices,
+        minOriginal,
+        maxOriginal,
+        effectivePrices,
+        minEffective,
+        maxEffective,
+        hasDiscount,
+        displayOriginal,
+        displayEffective,
+        capacity,
+    } = useMemo(() => {
+        const originalPrices = event.categories?.map(c => c.price) || [];
+        const minOriginal = originalPrices.length > 0 ? Math.min(...originalPrices) : 0;
+        const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0;
 
-    // Calculate effective price range
-    const effectivePrices = event.categories?.map(c => getEffectivePrice(event, c)) || [];
-    const minEffective = effectivePrices.length > 0 ? Math.min(...effectivePrices) : 0;
-    const maxEffective = effectivePrices.length > 0 ? Math.max(...effectivePrices) : 0;
+        const effectivePrices = event.categories?.map(c => getEffectivePrice(event, c)) || [];
+        const minEffective = effectivePrices.length > 0 ? Math.min(...effectivePrices) : 0;
+        const maxEffective = effectivePrices.length > 0 ? Math.max(...effectivePrices) : 0;
 
-    const hasDiscount = minEffective < minOriginal || maxEffective < maxOriginal;
+        const hasDiscount = minEffective < minOriginal || maxEffective < maxOriginal;
 
-    const displayOriginal = originalPrices.length > 0
-        ? minOriginal === maxOriginal ? `₱${minOriginal.toLocaleString()}` : `₱${minOriginal.toLocaleString()} - ₱${maxOriginal.toLocaleString()}`
-        : "";
+        const displayOriginal = originalPrices.length > 0
+            ? minOriginal === maxOriginal ? `₱${minOriginal.toLocaleString()}` : `₱${minOriginal.toLocaleString()} - ₱${maxOriginal.toLocaleString()}`
+            : "";
 
-    const displayEffective = effectivePrices.length > 0
-        ? minEffective === maxEffective ? `₱${minEffective.toLocaleString()}` : `₱${minEffective.toLocaleString()} - ₱${maxEffective.toLocaleString()}`
-        : "Free / TBD";
+        const displayEffective = effectivePrices.length > 0
+            ? minEffective === maxEffective ? `₱${minEffective.toLocaleString()}` : `₱${minEffective.toLocaleString()} - ₱${maxEffective.toLocaleString()}`
+            : "Free / TBD";
 
-    const capacity = event.categories?.reduce((acc, cat) => acc + (cat.maxParticipants || 0), 0) || 0;
+        const capacity = event.categories?.reduce((acc, cat) => acc + (cat.maxParticipants || 0), 0) || 0;
+
+        return { originalPrices, minOriginal, maxOriginal, effectivePrices, minEffective, maxEffective, hasDiscount, displayOriginal, displayEffective, capacity };
+    }, [event.categories]);
     const isNearlyFull = capacity > 0 && paidCount / capacity > 0.8;
 
     // Show participants if in management mode OR if at least one category has it enabled for public view
     const showParticipants = mode === "management" || (event.categories?.some(cat => cat.showRegisteredCount) ?? false);
 
     return (
-        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative hover:border-white/20 transition-all duration-300 cursor-pointer">
+        <Card className="group overflow-hidden border-white/5 flex flex-col h-full bg-surface/40 hover:bg-surface/60 p-0 relative hover:border-white/20 transition-all duration-300 cursor-pointer" >
             <Link href={`/${mode === "management" ? "dashboard/organizer/events" : "events"}/${event.id}`} className="absolute inset-0 z-10">
                 <span className="sr-only">View {event.name} details</span>
             </Link>
@@ -133,8 +147,8 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
 
                 {/* Categories Count Badge */}
                 <div className="absolute bottom-4 left-4 flex gap-2 z-20 pointer-events-none">
-                    {event.categories?.slice(0, 3).map((cat, i) => (
-                        <span key={i} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
+                    {event.categories?.slice(0, 3).map((cat) => (
+                        <span key={cat.id} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
                             {formatDistance(cat.distance, cat.distanceUnit) || cat.name}
                         </span>
                     ))}
@@ -252,3 +266,5 @@ export function EventCard({ event, onDelete, mode = "management", registrationSt
         </Card>
     );
 }
+
+export const EventCard = React.memo(EventCardComponent);

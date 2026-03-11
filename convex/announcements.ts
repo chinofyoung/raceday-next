@@ -52,11 +52,12 @@ export const create = mutation({
             updatedAt: Date.now(),
         });
 
-        // Get all registered users for this event
+        // Get all paid registrations using the composite index (avoids post-index filtering)
         const registrations = await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.eq(q.field("status"), "paid"))
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", "paid")
+            )
             .collect();
 
         const userIds = registrations.map(r => r.userId);
@@ -82,14 +83,11 @@ export const sendAnnouncementPushes = internalAction({
         body: v.string(),
     },
     handler: async (ctx, args) => {
-        // Fetch users in chunks to get tokens
-        const tokens: string[] = [];
-        for (const userId of args.userIds) {
-            const user = await ctx.runQuery(internal.users.getInternal, { id: userId });
-            if (user?.expoPushToken) {
-                tokens.push(user.expoPushToken);
-            }
-        }
+        // Batch-fetch all users in parallel instead of sequential runQuery calls
+        const users = await Promise.all(args.userIds.map(id => ctx.runQuery(internal.users.getInternal, { id })));
+        const tokens: string[] = users
+            .filter(u => u?.expoPushToken)
+            .map(u => u!.expoPushToken as string);
 
         if (tokens.length > 0) {
             await ctx.runAction(internal.notifications.sendPush, {

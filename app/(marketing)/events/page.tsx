@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { RaceEvent } from "@/types/event";
@@ -72,19 +72,24 @@ export default function EventsDirectoryPage() {
         };
     };
 
-    const filteredEvents = events.filter(event => {
-        const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            event.location.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const { filteredEvents, upcomingEvents, pastEvents } = useMemo(() => {
+        const filtered = events.filter(event => {
+            const matchesSearch = event.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                event.location.name.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const matchesDistance = activeFilter === "All" ||
-            event.categories?.some(cat => cat.name.includes(activeFilter) || String(cat.distance).includes(activeFilter.replace(/[^0-9.]/g, '')));
+            const matchesDistance = activeFilter === "All" ||
+                event.categories?.some(cat => cat.name.includes(activeFilter) || String(cat.distance).includes(activeFilter.replace(/[^0-9.]/g, '')));
 
-        return matchesSearch && matchesDistance;
-    });
+            return matchesSearch && matchesDistance;
+        });
 
-    const upcomingEvents = filteredEvents.filter(e => !isEventOver(e));
-    // Reverse past events to show the most recently ended events first
-    const pastEvents = filteredEvents.filter(e => isEventOver(e)).reverse();
+        return {
+            filteredEvents: filtered,
+            upcomingEvents: filtered.filter(e => !isEventOver(e)),
+            // Reverse past events to show the most recently ended events first
+            pastEvents: filtered.filter(e => isEventOver(e)).reverse(),
+        };
+    }, [events, searchTerm, activeFilter]);
 
     return (
         <PageWrapper className="pt-12 pb-24 space-y-12">

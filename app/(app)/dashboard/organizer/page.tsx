@@ -10,17 +10,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function OrganizerDashboardPage() {
     const { user, loading: authLoading } = useAuth();
 
-    // Organizer specific queries
     const convexEvents = useQuery(api.events.list, user ? {
         organizerId: user?._id as any,
         status: "all",
         paginationOpts: { numItems: 100, cursor: null }
     } : "skip");
 
-    const organizerRegistrations = useQuery(api.registrations.list, user ? {
+    const dashboardStats = useQuery(api.registrations.getOrganizerDashboardStats, user ? {
         organizerId: user._id as any,
-        status: "all",
-        paginationOpts: { numItems: 1000, cursor: null }
     } : "skip");
 
     const allEvents = useMemo(() => {
@@ -30,99 +27,90 @@ export default function OrganizerDashboardPage() {
         }));
     }, [convexEvents]);
 
-    const allRegistrations: any[] = useMemo(() => {
-        const rawRegs = organizerRegistrations?.page || [];
-
-        return rawRegs.map((r: any) => {
-            const event = allEvents.find(e => e._id === r.eventId);
-            const category = event?.categories?.find((c: any) => (c.id || "0") === r.categoryId);
-
-            return {
-                ...r,
-                id: r._id,
-                participantInfo: r.registrationData?.participantInfo || r.participantInfo,
-                eventName: event?.name || "Unknown Event",
-                categoryName: category?.name || r.categoryId
-            };
-        });
-    }, [organizerRegistrations, allEvents]);
+    const loading = authLoading || convexEvents === undefined || dashboardStats === undefined;
 
     const stats = {
         total: (convexEvents?.page || []).length,
-        secondary: allRegistrations.filter((r: any) => r.status === "paid").length,
-        revenue: allRegistrations.reduce((acc: any, r: any) => acc + (r.totalPrice || 0), 0),
-        claimedKits: allRegistrations.filter((r: any) => r.raceKitClaimed).length
+        secondary: dashboardStats?.totalRegistrations ?? 0,
+        revenue: dashboardStats?.totalRevenue ?? 0,
     };
 
-    const items = useMemo(() => {
-        const rawItems = (convexEvents?.page || []).filter((e: any) => e.status === "published").slice(0, 5);
-        return rawItems.map((item: any) => ({
-            ...item,
-            id: item._id || item.id
-        }));
-    }, [convexEvents]);
+    const claimedKits = dashboardStats?.claimedKits ?? 0;
+    const claimPercentage = dashboardStats?.claimPercentage ?? 0;
 
-    const loading = authLoading || convexEvents === undefined || organizerRegistrations === undefined;
-
-    // Derived organizer stats
-    const claimedKits = stats.claimedKits || 0;
-    const totalRegistrations = stats.secondary || 0;
-    const claimPercentage = totalRegistrations > 0 ? Math.round((claimedKits / totalRegistrations) * 100) : 0;
     const publishedEvents = useMemo(() => allEvents.filter(e => e.status === "published"), [allEvents]);
     const draftEvents = useMemo(() => allEvents.filter(e => e.status === "draft"), [allEvents]);
 
-    const recentRegistrations = useMemo(() => {
-        return [...allRegistrations]
-            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
-            .slice(0, 6);
-    }, [allRegistrations]);
+    // Top 5 published events for the active events widget
+    const items = useMemo(() => {
+        return allEvents
+            .filter((e: any) => e.status === "published")
+            .slice(0, 5);
+    }, [allEvents]);
 
-    const eventKitStats = useMemo(() => {
-        return items.map((event: any) => {
-            const eventRegs = allRegistrations.filter((r: any) => r.eventId === event.id);
-            const claimed = eventRegs.filter((r: any) => r.raceKitClaimed).length;
+    // Enrich recent registrations with event/category name and participantInfo
+    const recentRegistrations = useMemo(() => {
+        const recent = dashboardStats?.recentRegistrations ?? [];
+        return recent.map((r: any) => {
+            const event = allEvents.find(e => e._id === r.eventId);
+            const category = event?.categories?.find((c: any) => (c.id || "0") === r.categoryId);
             return {
-                ...event,
-                regCount: eventRegs.length,
-                claimedCount: claimed,
-                claimPercent: eventRegs.length > 0 ? Math.round((claimed / eventRegs.length) * 100) : 0
+                ...r,
+                id: r._id,
+                participantInfo: r.registrationData?.participantInfo ?? r.participantInfo,
+                eventName: event?.name ?? "Unknown Event",
+                categoryName: category?.name ?? r.categoryId,
             };
         });
-    }, [items, allRegistrations]);
+    }, [dashboardStats, allEvents]);
 
+    // Build eventKitStats for active (published) events using server-side eventStats
+    const eventKitStats = useMemo(() => {
+        const serverEventStats = dashboardStats?.eventStats ?? {};
+        return items.map((event: any) => {
+            const eStats = serverEventStats[event._id] ?? { total: 0, claimed: 0, revenue: 0 };
+            return {
+                ...event,
+                regCount: eStats.total,
+                claimedCount: eStats.claimed,
+                claimPercent: eStats.total > 0 ? Math.round((eStats.claimed / eStats.total) * 100) : 0,
+            };
+        });
+    }, [items, dashboardStats]);
+
+    // Build eventRevenue from server-side eventStats, merging event name
     const eventRevenue = useMemo(() => {
-        const eventMap = new Map<string, { id: string, name: string; count: number; revenue: number }>();
-        allRegistrations.forEach((r: any) => {
-            const eventId = r.eventId;
-            const event = allEvents.find(e => e._id === eventId);
-            const eventTitle = event?.name || "Unknown Event";
+        const serverEventStats = dashboardStats?.eventStats ?? {};
+        return Object.entries(serverEventStats)
+            .map(([eventId, eStats]) => {
+                const event = allEvents.find(e => e._id === eventId);
+                return {
+                    id: eventId,
+                    name: event?.name ?? "Unknown Event",
+                    count: (eStats as any).total,
+                    revenue: (eStats as any).revenue,
+                };
+            })
+            .sort((a, b) => b.revenue - a.revenue);
+    }, [dashboardStats, allEvents]);
 
-            const existing = eventMap.get(eventId) || { id: eventId, name: eventTitle, count: 0, revenue: 0 };
-            existing.count += 1;
-            existing.revenue += r.totalPrice || 0;
-            eventMap.set(eventId, existing);
-        });
-        return Array.from(eventMap.values()).sort((a, b) => b.revenue - a.revenue);
-    }, [allRegistrations, allEvents]);
-
+    // Build categoryRevenue from server-side categoryStats, merging names
     const categoryRevenue = useMemo(() => {
-        const catMap = new Map<string, { name: string; eventInfo: string; count: number; revenue: number }>();
-        allRegistrations.forEach((r: any) => {
-            const catId = r.categoryId || "Unknown";
-            const eventId = r.eventId || "Unknown";
-            const event = allEvents.find(e => e._id === eventId);
-            const eventTitle = event?.name || "Unknown Event";
-            const category = event?.categories?.find((c: any) => c.id === catId);
-            const categoryName = category?.name || catId;
-
-            const key = `${eventId}_${catId}`;
-            const existing = catMap.get(key) || { name: categoryName, eventInfo: eventTitle, count: 0, revenue: 0 };
-            existing.count += 1;
-            existing.revenue += r.totalPrice || 0;
-            catMap.set(key, existing);
-        });
-        return Array.from(catMap.values()).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
-    }, [allRegistrations, allEvents]);
+        const serverCategoryStats = dashboardStats?.categoryStats ?? {};
+        return Object.values(serverCategoryStats)
+            .map((cStats: any) => {
+                const event = allEvents.find(e => e._id === cStats.eventId);
+                const category = event?.categories?.find((c: any) => c.id === cStats.categoryId);
+                return {
+                    name: category?.name ?? cStats.categoryId,
+                    eventInfo: event?.name ?? "Unknown Event",
+                    count: cStats.count,
+                    revenue: cStats.revenue,
+                };
+            })
+            .sort((a, b) => b.revenue - a.revenue)
+            .slice(0, 5);
+    }, [dashboardStats, allEvents]);
 
     if (loading) {
         return (

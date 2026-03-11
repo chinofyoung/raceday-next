@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ShieldCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -9,7 +10,7 @@ interface OrganizerKitFulfillmentProps {
     totalParticipants: number;
 }
 
-export function OrganizerKitFulfillment({ claimPercentage, claimedKits, totalParticipants }: OrganizerKitFulfillmentProps) {
+function OrganizerKitFulfillmentComponent({ claimPercentage, claimedKits, totalParticipants }: OrganizerKitFulfillmentProps) {
     const validPercentage = isNaN(claimPercentage) ? 0 : claimPercentage;
     return (
         <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group flex flex-col h-full">
@@ -53,3 +54,5 @@ export function OrganizerKitFulfillment({ claimPercentage, claimedKits, totalPar
         </Card>
     );
 }
+
+export const OrganizerKitFulfillment = memo(OrganizerKitFulfillmentComponent);

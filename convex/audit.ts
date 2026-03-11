@@ -6,6 +6,14 @@ export const getLogs = query({
         limit: v.optional(v.number()),
     },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Not authenticated");
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user || user.role !== "admin") throw new Error("Unauthorized");
+
         return await ctx.db
             .query("auditLogs")
             .order("desc")

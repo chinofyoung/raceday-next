@@ -17,9 +17,16 @@ export default function OrganizerRegistrationsPage() {
 
     // Filters & Pagination
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [selectedEventId, setSelectedEventId] = useState<string>("all");
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
+
+    // Debounce search input to avoid filtering on every keystroke
+    useEffect(() => {
+        const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
 
     const convexEvents = useQuery(api.events.list, user ? {
         organizerId: user?._id as any,
@@ -30,7 +37,7 @@ export default function OrganizerRegistrationsPage() {
     const organizerRegistrations = useQuery(api.registrations.list, user ? {
         organizerId: user._id as any,
         status: "all",
-        paginationOpts: { numItems: 1000, cursor: null }
+        paginationOpts: { numItems: 200, cursor: null }
     } : "skip");
 
     const loading = authLoading || convexEvents === undefined || organizerRegistrations === undefined;
@@ -65,8 +72,9 @@ export default function OrganizerRegistrationsPage() {
     const filteredRegistrations = useMemo(() => {
         return enrichedRegistrations.filter((reg: any) => {
             const matchesEvent = selectedEventId === "all" || reg.eventId === selectedEventId;
-            const searchTerm = searchQuery.toLowerCase();
+            const searchTerm = debouncedSearch.toLowerCase();
             const matchesSearch =
+                !searchTerm ||
                 reg.participantInfo?.name?.toLowerCase().includes(searchTerm) ||
                 reg.participantInfo?.email?.toLowerCase().includes(searchTerm) ||
                 reg.eventName.toLowerCase().includes(searchTerm) ||
@@ -74,12 +82,12 @@ export default function OrganizerRegistrationsPage() {
 
             return matchesEvent && matchesSearch;
         });
-    }, [enrichedRegistrations, selectedEventId, searchQuery]);
+    }, [enrichedRegistrations, selectedEventId, debouncedSearch]);
 
     // Reset pagination when filters change
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchQuery, selectedEventId]);
+    }, [debouncedSearch, selectedEventId]);
 
     const totalPages = Math.ceil(filteredRegistrations.length / ITEMS_PER_PAGE);
 

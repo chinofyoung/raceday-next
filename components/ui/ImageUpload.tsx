@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CloudUpload, X, Loader2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,8 +48,8 @@ export function ImageUpload({
             return;
         }
 
-        if (file.size > 10 * 1024 * 1024) { // 10MB limit
-            toast.error("File too large", { description: "Max file size is 10MB." });
+        if (file.size > 5 * 1024 * 1024) { // 5MB limit
+            toast.error("File too large", { description: "Max file size is 5MB." });
             return;
         }
 
@@ -215,11 +216,12 @@ export function ImageUpload({
                 ) : value ? (
                     <>
                         {resourceType === "image" ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
+                            <Image
                                 src={value}
                                 alt="Uploaded"
-                                className="w-full h-full object-cover"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                className="object-cover"
                             />
                         ) : (
                             <div className="w-full h-full flex flex-col items-center justify-center bg-white/5">
@@ -265,7 +267,7 @@ export function ImageUpload({
                         <div className="text-center px-4">
                             <span className="block font-bold uppercase italic tracking-wider text-sm">Click to upload</span>
                             <span className="text-[10px] font-medium opacity-50 uppercase mt-1">
-                                {resourceType === "raw" ? "Any File (Max 10MB)" : "JPG, PNG, WEBP (Max 10MB)"}
+                                {resourceType === "raw" ? "Any File (Max 5MB)" : "JPG, PNG, WEBP (Max 5MB)"}
                             </span>
                         </div>
                     </div>

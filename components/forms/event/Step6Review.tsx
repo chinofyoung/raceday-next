@@ -105,7 +105,7 @@ export function Step6Review() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {data.categories?.map((cat, i) => (
-                                <Card key={i} className="p-4 bg-white/5 border-white/5 flex items-center justify-between">
+                                <Card key={cat.id || i} className="p-4 bg-white/5 border-white/5 flex items-center justify-between">
                                     <div className="space-y-1">
                                         <p className="text-sm font-black text-white italic uppercase">{cat.name}</p>
                                         <p className="text-xs text-primary font-bold">{formatDistance(cat.distance, cat.distanceUnit)}</p>
@@ -135,7 +135,7 @@ export function Step6Review() {
                         </div>
                         <div className="space-y-6 relative before:absolute before:left-2 before:top-2 before:bottom-2 before:w-px before:bg-white/10">
                             {data.timeline?.map((item, i) => (
-                                <div key={i} className="relative pl-8">
+                                <div key={`${item.time}-${item.activity}-${i}`} className="relative pl-8">
                                     <div className="absolute left-0 top-1 w-4 h-4 rounded-full bg-surface border-2 border-primary" />
                                     <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">{item.time}</p>
                                     <p className="text-sm font-bold text-white uppercase italic">{item.activity}</p>

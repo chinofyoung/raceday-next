@@ -2,6 +2,20 @@
 
 import { ResponsiveContainer, AreaChart, Area, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 
+const tooltipContentStyle = {
+    backgroundColor: '#1f2937',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '12px'
+} as const;
+
+const tooltipItemStyle = {
+    color: 'var(--color-primary)',
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    fontSize: '10px'
+} as const;
+
 export default function AdminOverviewChart({ data }: { data: any[] }) {
     return (
         <ResponsiveContainer width="100%" height="100%">
@@ -29,18 +43,8 @@ export default function AdminOverviewChart({ data }: { data: any[] }) {
                     tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
                 />
                 <Tooltip
-                    contentStyle={{
-                        backgroundColor: '#1f2937',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px'
-                    }}
-                    itemStyle={{
-                        color: 'var(--color-primary)',
-                        fontWeight: 'bold',
-                        fontStyle: 'italic',
-                        textTransform: 'uppercase',
-                        fontSize: '10px'
-                    }}
+                    contentStyle={tooltipContentStyle}
+                    itemStyle={tooltipItemStyle}
                 />
                 <Area
                     type="monotone"

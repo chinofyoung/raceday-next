@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { RaceEvent } from "@/types/event";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, MapPin, Edit2 } from "lucide-react";
@@ -17,7 +18,7 @@ interface EventHeroProps {
 }
 
 export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }: EventHeroProps) {
-    const eventDate = new Date(event.date as unknown as string);
+    const eventDate = useMemo(() => new Date(event.date as unknown as string), [event.date]);
     const isValidDate = !isNaN(eventDate.getTime());
 
     return (

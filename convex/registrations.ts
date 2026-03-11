@@ -1,18 +1,21 @@
 import { mutation, query, internalQuery, QueryCtx, MutationCtx } from "./_generated/server";
 import { v } from "convex/values";
+import { Id } from "./_generated/dataModel";
 import { paginationOptsValidator } from "convex/server";
 
 export const getCount = query({
     args: { eventId: v.id("events"), status: v.optional(v.string()) },
     handler: async (ctx, args) => {
         const status = args.status || "paid";
+        // Convex has no native COUNT — collect() is required to get a row count.
+        // We cap at 10 000 to prevent unbounded reads for extremely large events;
+        // real-world race events are unlikely to exceed this limit.
         const registrations = await ctx.db
             .query("registrations")
-            .filter((q) => q.and(
-                q.eq(q.field("eventId"), args.eventId),
-                q.eq(q.field("status"), status)
-            ))
-            .collect();
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", status as "paid" | "pending" | "cancelled")
+            )
+            .take(10000);
         return registrations.length;
     },
 });
@@ -78,10 +81,8 @@ export const getStats = query({
     handler: async (ctx: QueryCtx, args) => {
         const registrations = await ctx.db
             .query("registrations")
-            .filter((q) => q.and(
-                q.eq(q.field("organizerId"), args.organizerId),
-                q.eq(q.field("status"), "paid")
-            ))
+            .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId))
+            .filter((q) => q.eq(q.field("status"), "paid"))
             .collect();
 
         const totalRevenue = registrations.reduce((sum, r) => sum + r.totalPrice, 0);
@@ -98,14 +99,24 @@ export const getStats = query({
 export const getCategoryCounts = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
-        const registrations = await ctx.db
+        // Use by_event_status for paid registrations
+        const paid = await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter(q => q.or(q.eq(q.field("status"), "paid"), q.eq(q.field("status"), "pending")))
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", "paid")
+            )
+            .collect();
+
+        // Use by_event_status for pending registrations
+        const pending = await ctx.db
+            .query("registrations")
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", "pending")
+            )
             .collect();
 
         const counts: Record<string, number> = {};
-        registrations.forEach(r => {
+        [...paid, ...pending].forEach(r => {
             counts[r.categoryId] = (counts[r.categoryId] || 0) + 1;
         });
         return counts;
@@ -196,7 +207,13 @@ export const markAsPaid = mutation({
             updatedAt: Date.now(),
         });
 
-        // Increment event category count
+        // Increment the denormalized registeredCount on the event category.
+        // NOTE: There is currently no cancellation/refund mutation, so this
+        // counter is only ever incremented — never decremented. If a
+        // cancellation flow is added in the future, it must patch the
+        // corresponding category's registeredCount by -1 to keep it in sync.
+        // The authoritative count is always ctx.db.query("registrations") with
+        // by_event_status; registeredCount is a display-only cache.
         const event = await ctx.db.get(reg.eventId);
         if (event && event.categories) {
             const catIndex = event.categories.findIndex(c => (c.id || "0") === reg.categoryId);
@@ -218,11 +235,15 @@ export const markAsPaid = mutation({
 export const getEventFulfillmentStats = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        // Convex has no native COUNT — collect() is required to iterate rows.
+        // We cap at 10 000 to prevent unbounded reads; real-world race events
+        // are unlikely to exceed this limit.
         const registrations = await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.eq(q.field("status"), "paid"))
-            .collect();
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", "paid")
+            )
+            .take(10000);
 
         const total = registrations.length;
         const claimed = registrations.filter(r => r.raceKitClaimed).length;
@@ -251,16 +272,21 @@ export const search = query({
         const term = args.query.trim().toLowerCase();
         if (!term) return [];
 
+        // Use by_event_status index to fetch only paid registrations efficiently
         const registrations = await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.eq(q.field("status"), "paid"))
+            .withIndex("by_event_status", (q) =>
+                q.eq("eventId", args.eventId).eq("status", "paid")
+            )
             .collect();
 
-        return registrations.filter((r) =>
+        // Filter in-memory and cap results to avoid sending large payloads
+        const matched = registrations.filter((r) =>
             (r.registrationData?.participantInfo?.name?.toLowerCase().includes(term)) ||
             (r.raceNumber?.toLowerCase().includes(term))
         );
+
+        return matched.slice(0, 50);
     },
 });
 
@@ -271,36 +297,109 @@ export const getById = query({
     },
 });
 
-export const getEmailsForEvent = query({
-    args: { eventId: v.id("events") },
+export const getByUserAndEvent = query({
+    args: { userId: v.id("users"), eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
-        const registrations = await ctx.db
+        return await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.or(q.eq(q.field("status"), "paid"), q.eq(q.field("status"), "pending")))
-            .collect();
-
-        const emails = registrations
-            .map(r => (r as any).registrationData?.participantInfo?.email)
-            .filter(Boolean);
-
-        return [...new Set(emails)];
+            .withIndex("by_user_event", (q) =>
+                q.eq("userId", args.userId).eq("eventId", args.eventId)
+            )
+            .filter((q) =>
+                q.or(
+                    q.eq(q.field("status"), "paid"),
+                    q.eq(q.field("status"), "pending")
+                )
+            )
+            .first();
     },
 });
 
+// Shared helper: returns unique participant emails for an event (paid + pending)
+async function fetchEmailsForEvent(ctx: QueryCtx, eventId: Id<"events">): Promise<string[]> {
+    const paid = await ctx.db
+        .query("registrations")
+        .withIndex("by_event_status", (q) =>
+            q.eq("eventId", eventId).eq("status", "paid")
+        )
+        .collect();
+
+    const pending = await ctx.db
+        .query("registrations")
+        .withIndex("by_event_status", (q) =>
+            q.eq("eventId", eventId).eq("status", "pending")
+        )
+        .collect();
+
+    const emails = [...paid, ...pending]
+        .map(r => (r as any).registrationData?.participantInfo?.email)
+        .filter(Boolean);
+
+    return [...new Set(emails)] as string[];
+}
+
+export const getEmailsForEvent = query({
+    args: { eventId: v.id("events") },
+    handler: async (ctx: QueryCtx, args) => {
+        return fetchEmailsForEvent(ctx, args.eventId);
+    },
+});
+
+// Internal version used by emails.ts action — delegates to shared logic
 export const getEmailsForEventInternal = internalQuery({
     args: { eventId: v.id("events") },
+    handler: async (ctx, args): Promise<string[]> => {
+        return fetchEmailsForEvent(ctx, args.eventId);
+    },
+});
+
+export const getOrganizerDashboardStats = query({
+    args: { organizerId: v.id("users") },
     handler: async (ctx, args) => {
+        // Fetch all registrations for this organizer using the existing index
         const registrations = await ctx.db
             .query("registrations")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.or(q.eq(q.field("status"), "paid"), q.eq(q.field("status"), "pending")))
+            .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId))
             .collect();
 
-        const emails = registrations
-            .map(r => (r as any).registrationData?.participantInfo?.email)
-            .filter(Boolean);
+        const paid = registrations.filter(r => r.status === "paid");
+        const totalRevenue = paid.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
+        const claimedKits = paid.filter(r => r.raceKitClaimed).length;
 
-        return [...new Set(emails)] as string[];
+        // Group stats by eventId
+        const eventStats: Record<string, { total: number; claimed: number; revenue: number }> = {};
+        paid.forEach(r => {
+            const eid = r.eventId;
+            if (!eventStats[eid]) eventStats[eid] = { total: 0, claimed: 0, revenue: 0 };
+            eventStats[eid].total++;
+            if (r.raceKitClaimed) eventStats[eid].claimed++;
+            eventStats[eid].revenue += r.totalPrice || 0;
+        });
+
+        // Group stats by event+category
+        const categoryStats: Record<string, { count: number; revenue: number; eventId: string; categoryId: string }> = {};
+        paid.forEach(r => {
+            const key = `${r.eventId}:${r.categoryId}`;
+            if (!categoryStats[key]) {
+                categoryStats[key] = { count: 0, revenue: 0, eventId: r.eventId, categoryId: r.categoryId };
+            }
+            categoryStats[key].count++;
+            categoryStats[key].revenue += r.totalPrice || 0;
+        });
+
+        // Most recent 10 registrations across all statuses
+        const recent = [...registrations]
+            .sort((a, b) => (b._creationTime || 0) - (a._creationTime || 0))
+            .slice(0, 10);
+
+        return {
+            totalRegistrations: paid.length,
+            totalRevenue,
+            claimedKits,
+            claimPercentage: paid.length > 0 ? Math.round((claimedKits / paid.length) * 100) : 0,
+            eventStats,
+            categoryStats,
+            recentRegistrations: recent,
+        };
     },
 });

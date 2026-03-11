@@ -1,5 +1,6 @@
 // Imports updated
 import { useFormContext } from "react-hook-form";
+import Image from "next/image";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { EventFormValues } from "@/lib/validations/event";
 import { cn } from "@/lib/utils";
@@ -60,7 +61,7 @@ export function Step2Images() {
                     <div className="grid grid-cols-2 gap-4">
                         {galleryImages.map((img, i) => (
                             <div key={i} className="relative aspect-square rounded-2xl overflow-hidden group border border-white/5">
-                                <img src={img} alt={`Gallery ${i}`} className="w-full h-full object-cover" />
+                                <Image src={img} alt={`Gallery ${i}`} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
                                 <button
                                     type="button"
                                     onClick={() => removeGalleryImage(i)}

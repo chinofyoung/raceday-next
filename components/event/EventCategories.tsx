@@ -22,7 +22,7 @@ export function EventCategories({ event, formatTimeAMPM }: EventCategoriesProps)
             <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Race <span className="text-primary">Categories</span></h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {event.categories?.map((cat, i) => (
-                    <Card key={i} className="flex flex-col bg-surface/40 border-white/5 hover:border-white/20 transition-all group overflow-hidden relative shadow-2xl">
+                    <Card key={cat.id || i} className="flex flex-col bg-surface/40 border-white/5 hover:border-white/20 transition-all group overflow-hidden relative shadow-2xl">
                         <div className="absolute top-0 right-0 p-8 bg-primary/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors" />
 
                         <div className="p-6 flex-1 flex flex-col space-y-4 relative z-10">
@@ -62,7 +62,7 @@ export function EventCategories({ event, formatTimeAMPM }: EventCategoriesProps)
                                 <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">Inclusions</p>
                                 <div className="flex flex-wrap gap-1.5">
                                     {cat.inclusions?.map((inc, j) => (
-                                        <span key={j} className="px-2 py-0.5 bg-white/5 rounded text-xs font-bold text-white/90 border border-white/5 whitespace-nowrap">
+                                        <span key={`${inc}-${j}`} className="px-2 py-0.5 bg-white/5 rounded text-xs font-bold text-white/90 border border-white/5 whitespace-nowrap">
                                             {inc}
                                         </span>
                                     )) || <p className="text-[9px] text-text-muted italic">No inclusions listed</p>}

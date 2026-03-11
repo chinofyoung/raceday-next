@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { useRouter } from "next/navigation";
 import { RaceEvent } from "@/types/event";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getUserRegistrations } from "@/lib/services/registrationService";
 import dynamic from "next/dynamic";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -33,7 +31,6 @@ interface EventDetailClientProps {
 export function EventDetailClient({ event }: EventDetailClientProps) {
     const { user, loading: authLoading } = useAuth();
     const [activeRouteCategoryIndex, setActiveRouteCategoryIndex] = useState(0);
-    const [userRegistration, setUserRegistration] = useState<any>(null);
     const [activeSection, setActiveSection] = useState<string>("info");
     const [showMap, setShowMap] = useState(false);
     const mapSectionRef = useRef<HTMLDivElement>(null);
@@ -41,6 +38,17 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
     const announcements = useQuery(api.announcements.listByEvent, {
         eventId: event.id as Id<"events">
     });
+
+    // Replace service call with a direct Convex query — avoids a round-trip through getUserRegistrations
+    const userRegistrationData = useQuery(
+        api.registrations.getByUserAndEvent,
+        user?._id && event.id
+            ? { userId: user._id as Id<"users">, eventId: event.id as Id<"events"> }
+            : "skip"
+    );
+    // While authLoading or the query is still in-flight (undefined), treat as checking
+    const isCheckingRegistration = authLoading || (!!user?._id && userRegistrationData === undefined);
+    const userRegistration = userRegistrationData ?? null;
 
     useEffect(() => {
         const observer = new IntersectionObserver((entries) => {
@@ -86,22 +94,6 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
             });
         }
     };
-
-    const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
-
-    useEffect(() => {
-        if (!authLoading) {
-            if (user?._id && event.id) {
-                getUserRegistrations(user._id).then(regs => {
-                    const reg = regs.find(r => r.eventId === event.id && (r.status === 'paid' || r.status === 'pending'));
-                    setUserRegistration(reg);
-                    setIsCheckingRegistration(false);
-                });
-            } else {
-                setIsCheckingRegistration(false);
-            }
-        }
-    }, [user, event.id, authLoading]);
 
     useEffect(() => {
         const el = mapSectionRef.current;

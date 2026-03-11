@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -55,6 +57,12 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
     const [isDeleting, setIsDeleting] = React.useState(false);
 
     const volunteers = useQuery(api.volunteers.listByEvent, { eventId: eventId as Id<"events"> });
+
+    const filteredVolunteers = useMemo(
+        () => volunteers?.filter(v => activeTab === "active" ? v.status !== "revoked" : v.status === "revoked") ?? [],
+        [volunteers, activeTab]
+    );
+
     const revokeMutation = useMutation(api.volunteers.revoke);
     const restoreMutation = useMutation(api.volunteers.restore);
     const deleteMutation = useMutation(api.volunteers.remove);
@@ -195,15 +203,12 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 </Card>
             ) : (
                 <div className="grid gap-3">
-                    {volunteers
-                        .filter(v => activeTab === "active" ? v.status !== "revoked" : v.status === "revoked")
-                        .length === 0 ? (
+                    {filteredVolunteers.length === 0 ? (
                         <div className="p-12 text-center text-text-muted italic text-sm">
                             No {activeTab} volunteers found.
                         </div>
                     ) : (
-                        volunteers
-                            .filter(v => activeTab === "active" ? v.status !== "revoked" : v.status === "revoked")
+                        filteredVolunteers
                             .map((volunteer) => (
                                 <div
                                     key={volunteer._id}
@@ -212,7 +217,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/[0.1]">
                                             {volunteer.photoURL ? (
-                                                <img src={volunteer.photoURL} alt={volunteer.displayName || "Volunteer"} className="w-full h-full object-cover" />
+                                                <Image src={volunteer.photoURL} alt={volunteer.displayName || "Volunteer"} width={48} height={48} className="object-cover w-full h-full" />
                                             ) : (
                                                 <Mail className="w-5 h-5 text-text-muted" />
                                             )}

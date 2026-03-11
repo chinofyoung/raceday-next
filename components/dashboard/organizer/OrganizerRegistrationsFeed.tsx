@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Activity, Users } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +19,7 @@ interface OrganizerRegistrationsFeedProps {
     recentRegistrations: any[];
 }
 
-export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerRegistrationsFeedProps) {
+function OrganizerRegistrationsFeedComponent({ recentRegistrations }: OrganizerRegistrationsFeedProps) {
     return (
         <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 right-0 p-12 bg-cta/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
@@ -97,3 +98,5 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
         </Card>
     );
 }
+
+export const OrganizerRegistrationsFeed = memo(OrganizerRegistrationsFeedComponent);

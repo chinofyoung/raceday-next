@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,7 +16,7 @@ interface OrganizerActiveEventsProps {
     eventKitStats: any[];
 }
 
-export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveEventsProps) {
+function OrganizerActiveEventsComponent({ items, eventKitStats }: OrganizerActiveEventsProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -194,3 +194,5 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
         </Card>
     );
 }
+
+export const OrganizerActiveEvents = memo(OrganizerActiveEventsComponent);

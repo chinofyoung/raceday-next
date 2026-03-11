@@ -193,7 +193,8 @@ export default defineSchema({
         .index("by_user", ["userId"])
         .index("by_event", ["eventId"])
         .index("by_user_event", ["userId", "eventId"])
-        .index("by_organizer", ["organizerId"]),
+        .index("by_organizer", ["organizerId"])
+        .index("by_event_status", ["eventId", "status"]),
     bibCounters: defineTable({
         eventId: v.id("events"),
         categoryId: v.string(),
