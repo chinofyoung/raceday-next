@@ -73,6 +73,16 @@ Nav items change based on active role:
 - Analytics (`/dashboard/admin/analytics`)
 - Audit Logs (`/dashboard/admin/logs`)
 
+**Additional routes (not in sidebar but use the layout):**
+- `/dashboard/become-organizer` — accessible via Runner role, linked from profile/settings
+- `/dashboard/events/[id]/qr` — runner QR code page, navigated to from event detail
+- `/dashboard/organizer/events/create`, `/dashboard/organizer/events/[id]`, `/dashboard/organizer/events/[id]/edit` — nested event pages, breadcrumb-navigated
+
+**Full-screen pages (opt out of sidebar layout):**
+- `/dashboard/organizer/events/[id]/kiosk` — kiosk registration, no sidebar
+- `/dashboard/organizer/events/[id]/scanner` — QR scanner, no sidebar
+- These pages use their own minimal layout (back button only)
+
 **Mobile:** Sidebar renders as a `Sheet` (slide-over from left) triggered by a hamburger button in the top bar.
 
 **Collapsed state:** Icon-only sidebar. Hovering shows tooltips with labels.
@@ -95,6 +105,15 @@ Nav items change based on active role:
 | `components/ui/ConfirmModal.tsx` | `alert-dialog` | Map to AlertDialog pattern |
 | `components/shared/Skeleton.tsx` | `skeleton` | Replace custom Skeleton, keep specialized skeletons (EventCardSkeleton, etc.) using shadcn Skeleton as building block |
 
+### Retained & Updated Components
+
+These components have no shadcn equivalent but depend on custom UI imports that will change:
+
+| Component | Action |
+|---|---|
+| `components/ui/ImageUpload.tsx` | Keep as-is, update Button import to shadcn `button` |
+| `components/shared/LoginPromptModal.tsx` | Update Button import to shadcn `button`, migrate to shadcn `dialog` in Phase 7 |
+
 ### New Components
 
 | shadcn Component | Purpose |
@@ -114,34 +133,42 @@ Nav items change based on active role:
 
 ### shadcn CSS Variables
 
-Map existing design tokens to shadcn's CSS variable system in `globals.css`:
+The current project uses Tailwind v4's `@theme` directive with `--color-*` prefixed variables. shadcn components use utility classes like `bg-background`, `text-primary`, which in Tailwind v4 resolve to `--color-background`, `--color-primary` via the `@theme` block.
 
+**Strategy:** Place shadcn theme tokens inside the existing `@theme` block using Tailwind v4's `--color-*` prefix convention. This ensures `bg-primary`, `text-muted-foreground`, etc. work natively without modifying shadcn component source.
+
+Add to `@theme` in `globals.css`:
+```css
+@theme {
+  /* shadcn semantic tokens */
+  --color-background: #1f2937;
+  --color-foreground: #f8fafc;
+  --color-card: #374151;
+  --color-card-foreground: #f8fafc;
+  --color-primary: #f97316;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #fb923c;
+  --color-secondary-foreground: #ffffff;
+  --color-muted: #374151;
+  --color-muted-foreground: #94a3b8;
+  --color-accent: #374151;
+  --color-accent-foreground: #f8fafc;
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-border: rgba(255,255,255,0.05);
+  --color-input: rgba(255,255,255,0.05);
+  --color-ring: #f97316;
+  --color-sidebar-background: #374151;
+  --color-sidebar-foreground: #f8fafc;
+  --color-sidebar-primary: #f97316;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: rgba(255,255,255,0.05);
+  --color-sidebar-accent-foreground: #f8fafc;
+  --color-sidebar-border: rgba(255,255,255,0.05);
+}
 ```
---background: #1f2937 (current bg)
---foreground: #f8fafc (current text)
---card: #374151 (current surface)
---card-foreground: #f8fafc
---primary: #f97316 (orange)
---primary-foreground: #ffffff
---secondary: #fb923c (light orange)
---secondary-foreground: #ffffff
---muted: #374151
---muted-foreground: #94a3b8 (text-muted)
---accent: #374151
---accent-foreground: #f8fafc
---destructive: #ef4444
---destructive-foreground: #ffffff
---border: rgba(255,255,255,0.05)
---input: rgba(255,255,255,0.05)
---ring: #f97316
---sidebar-background: #374151
---sidebar-foreground: #f8fafc
---sidebar-primary: #f97316
---sidebar-primary-foreground: #ffffff
---sidebar-accent: rgba(255,255,255,0.05)
---sidebar-accent-foreground: #f8fafc
---sidebar-border: rgba(255,255,255,0.05)
-```
+
+**Note:** The existing `--color-primary`, `--color-background`, etc. tokens already align with shadcn's naming. Merge carefully to avoid duplicates — the existing tokens become the source of truth.
 
 ### Fonts
 
@@ -158,8 +185,9 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 ## Rollout Phases
 
 ### Phase 1 — Foundation
-- Initialize shadcn/ui (`npx shadcn@latest init`)
-- Configure theme CSS variables in `globals.css`
+- Initialize shadcn/ui (`npx shadcn@latest init`) — this installs `class-variance-authority`, `clsx`, `tailwind-merge`, and required Radix primitives
+- Configure theme tokens in `globals.css` `@theme` block using `--color-*` prefix convention for Tailwind v4 compatibility
+- shadcn generates lowercase filenames (`button.tsx`, `card.tsx`) — rename existing PascalCase custom components to `_Button.tsx` etc. to avoid macOS case-insensitive filesystem conflicts during transition
 - Install base components: `button`, `card`, `badge`, `skeleton`
 - Verify build works with both old and new components coexisting
 
@@ -202,8 +230,12 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 - Migrate event creation/edit forms
 - Migrate become-organizer multi-step form
 - Replace Modal/ConfirmModal usage across dashboard
-- Delete remaining old custom component files
+- Adopt shadcn `form` component to wrap existing `react-hook-form` + `zod` setup
+- Update `ImageUpload.tsx` to import shadcn `button`
+- Update `LoginPromptModal.tsx` to use shadcn `dialog` + `button`
+- Delete old custom component files **only when zero imports remain across entire codebase** (including non-dashboard pages)
 - Final audit: ensure no custom UI components remain in dashboard imports
+- Note: If marketing/public pages still import custom components, keep those files until a separate marketing migration. Do not break non-dashboard pages.
 
 ---
 
@@ -211,7 +243,7 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 
 ### New Files
 - `components.json` — shadcn config
-- `components/ui/*.tsx` — shadcn component files (overwrite existing custom ones progressively)
+- `components/ui/*.tsx` — shadcn component files (lowercase names: `button.tsx`, `card.tsx`, etc.)
 - `components/dashboard/DashboardSidebar.tsx` — sidebar with role switcher
 - `components/dashboard/DashboardTopBar.tsx` — breadcrumbs + actions bar
 - `lib/dashboard-nav.ts` — sidebar nav config per role
@@ -225,7 +257,7 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 - All dashboard page files — update component imports
 - All dashboard component files — update component imports
 
-### Deleted Files (after migration complete)
+### Deleted Files (only when zero imports remain across entire codebase)
 - `components/ui/Button.tsx` (replaced by shadcn button)
 - `components/ui/Card.tsx` (replaced by shadcn card)
 - `components/ui/Badge.tsx` (replaced by shadcn badge)
@@ -236,6 +268,9 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 - `components/ui/ConfirmModal.tsx` (replaced by shadcn alert-dialog)
 - `components/shared/Skeleton.tsx` (replaced by shadcn skeleton + specialized wrappers)
 - `components/dashboard/DashboardHeader.tsx` (functionality absorbed into sidebar + topbar)
+- `components/dashboard/runner/RunnerSidebar.tsx` (content absorbed into dashboard sidebar)
+
+Note: If any non-dashboard file still imports a custom component, that file stays until the marketing pages are migrated separately.
 
 ---
 
@@ -248,3 +283,6 @@ Map existing design tokens to shadcn's CSS variable system in `globals.css`:
 | Tailwind v4 compatibility | shadcn officially supports Tailwind v4; verify during Phase 1 init |
 | Mobile sidebar UX | Test Sheet-based sidebar on multiple screen sizes during Phase 2 |
 | Role switcher edge cases | Handle users with only one role (hide switcher), users with no organizer role trying to access organizer routes (redirect) |
+| macOS case-insensitive filesystem | Rename custom PascalCase components before shadcn generates lowercase equivalents — prevents file conflicts |
+| sonner toast duplication | Keep existing `sonner` — shadcn wraps it natively, no duplicate system needed |
+| Non-dashboard pages breaking | Only delete custom component files when zero imports remain across entire codebase, not just dashboard |
