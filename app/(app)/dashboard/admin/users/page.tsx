@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     Users, Search, Filter, ArrowLeft, Loader2,
     Mail, Calendar, Trophy, ChevronRight, User as UserIcon,
@@ -79,14 +78,14 @@ export default function UserManagementPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -249,6 +248,6 @@ export default function UserManagementPage() {
                     </Button>
                 </div>
             )}
-        </PageWrapper>
+        </div>
     );
 }

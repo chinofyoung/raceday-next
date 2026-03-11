@@ -1,10 +1,9 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/useAuth";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import { User, MapPin, Phone, ShieldAlert, Shirt, Edit2, CheckCircle2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -69,7 +68,7 @@ export default function ProfilePage() {
     ];
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-12">
+        <div className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
                     <Link href="/dashboard" className="text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors">
@@ -173,6 +172,6 @@ export default function ProfilePage() {
                     </div>
                 </div>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

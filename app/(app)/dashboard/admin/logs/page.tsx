@@ -2,14 +2,13 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     Clock, ArrowLeft, Shield,
     User, Target, Info
 } from "lucide-react";
-import { Skeleton, AuditLogSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,7 @@ export default function AuditLogsPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-8 pb-12 space-y-10">
+            <div className="space-y-10">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-1">
@@ -44,15 +43,27 @@ export default function AuditLogsPage() {
                 {/* Log entries */}
                 <div className="space-y-4">
                     {Array.from({ length: 5 }).map((_, i) => (
-                        <AuditLogSkeleton key={i} />
+                        <div key={i} className="p-6 rounded-xl border border-border bg-card flex gap-6 items-center">
+                            <Skeleton className="w-16 h-16 rounded-2xl shrink-0" />
+                            <div className="flex-1 space-y-3">
+                                <div className="flex gap-3">
+                                    <Skeleton className="h-5 w-32" />
+                                    <Skeleton className="h-5 w-24" />
+                                </div>
+                                <div className="flex gap-4">
+                                    <Skeleton className="h-6 w-48 rounded-lg" />
+                                    <Skeleton className="h-6 w-40 rounded-lg" />
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -114,6 +125,6 @@ export default function AuditLogsPage() {
                     ))
                 )}
             </div>
-        </PageWrapper>
+        </div>
     );
 }

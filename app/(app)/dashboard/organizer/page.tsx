@@ -4,10 +4,9 @@ import { useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { OrganizerView } from "@/components/dashboard/OrganizerView";
-import { Skeleton, EventCardSkeleton, StatCardSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function OrganizerDashboardPage() {
     const { user, loading: authLoading } = useAuth();
@@ -128,7 +127,7 @@ export default function OrganizerDashboardPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-8 pb-12 space-y-8">
+            <div className="space-y-8">
                 <div className="flex justify-between items-center bg-surface/50 p-6 rounded-[2rem] border border-white/5 mb-8">
                     <div className="space-y-3">
                         <Skeleton className="h-10 w-48" />
@@ -137,18 +136,27 @@ export default function OrganizerDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <StatCardSkeleton />
-                    <StatCardSkeleton />
-                    <StatCardSkeleton />
-                    <StatCardSkeleton />
+                    {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="p-4 rounded-xl border border-border bg-card">
+                            <Skeleton className="h-4 w-20 mb-2" />
+                            <Skeleton className="h-8 w-24" />
+                        </div>
+                    ))}
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
                     <div className="lg:col-span-2 space-y-6">
                         <Skeleton className="h-8 w-48 mt-2" />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <EventCardSkeleton />
-                            <EventCardSkeleton />
+                            {Array.from({ length: 2 }).map((_, i) => (
+                                <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden">
+                                    <Skeleton className="h-40 w-full" />
+                                    <div className="p-4 space-y-2">
+                                        <Skeleton className="h-5 w-3/4" />
+                                        <Skeleton className="h-4 w-1/2" />
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                     <div className="space-y-6">
@@ -156,12 +164,12 @@ export default function OrganizerDashboardPage() {
                         <Skeleton className="h-80 w-full rounded-2xl" />
                     </div>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-8 text-white">
+        <div className="space-y-8 text-white">
             <DashboardHeader
                 userName={user?.displayName || ""}
                 isOrganizerView={true}
@@ -180,6 +188,6 @@ export default function OrganizerDashboardPage() {
                 categoryRevenue={categoryRevenue}
                 eventRevenue={eventRevenue}
             />
-        </PageWrapper>
+        </div>
     );
 }

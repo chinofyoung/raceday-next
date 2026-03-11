@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { EventForm } from "@/components/forms/event/EventForm";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter, useParams } from "next/navigation";
 import { getEventById } from "@/lib/services/eventService";
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
-import { EditEventSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { toInputDate } from "@/lib/utils";
@@ -75,15 +74,38 @@ export default function EditEventPage() {
 
     if (authLoading || loading) {
         return (
-            <PageWrapper className="pt-8 pb-12 space-y-10">
-                <EditEventSkeleton />
-            </PageWrapper>
+            <div className="space-y-10">
+                <div className="space-y-4">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-12 w-64" />
+                    <Skeleton className="h-5 w-96" />
+                </div>
+                <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="space-y-2">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-10 w-full rounded-xl" />
+                            </div>
+                        ))}
+                    </div>
+                    <Skeleton className="h-32 w-full rounded-xl" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Array.from({ length: 2 }).map((_, i) => (
+                            <div key={i} className="space-y-2">
+                                <Skeleton className="h-4 w-24" />
+                                <Skeleton className="h-10 w-full rounded-xl" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         );
     }
 
     if (!eventData && !loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[70vh]">
+            <div className="flex items-center justify-center min-h-[70vh]">
                 <Card className="max-w-md p-10 text-center space-y-6 bg-surface border-red-500/20">
                     <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto text-red-500">
                         <ShieldAlert size={32} />
@@ -98,12 +120,12 @@ export default function EditEventPage() {
                         <Link href="/dashboard/events">Back to Events</Link>
                     </Button>
                 </Card>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             <div className="flex flex-col gap-4 mx-auto">
                 <Link href="/dashboard/events" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
                     <ArrowLeft size={14} /> Back to Events
@@ -117,6 +139,6 @@ export default function EditEventPage() {
             </div>
 
             <EventForm initialData={eventData as any} isEditing />
-        </PageWrapper>
+        </div>
     );
 }

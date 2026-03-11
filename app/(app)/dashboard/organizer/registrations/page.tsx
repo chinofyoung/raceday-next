@@ -2,13 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { getRegistrations } from "@/lib/services/registrationService";
 import { getEvents } from "@/lib/services/eventService";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/_LegacyInput";
 import { Select } from "@/components/ui/_LegacySelect";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow, format } from "date-fns";
 import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -93,7 +92,7 @@ export default function OrganizerRegistrationsPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border-primary/20 rounded-full" />
@@ -101,7 +100,7 @@ export default function OrganizerRegistrationsPage() {
                     </div>
                     <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic animate-pulse">Loading Registrations...</p>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
@@ -111,7 +110,7 @@ export default function OrganizerRegistrationsPage() {
     ];
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-8 text-white">
+        <div className="space-y-8 text-white">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
@@ -239,6 +238,6 @@ export default function OrganizerRegistrationsPage() {
                     </div>
                 )}
             </Card>
-        </PageWrapper>
+        </div>
     );
 }

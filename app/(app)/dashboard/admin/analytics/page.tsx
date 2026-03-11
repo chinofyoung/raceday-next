@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
     BarChart3, TrendingUp, DollarSign, Users,
     Calendar, ArrowLeft, Loader2, Download
@@ -128,14 +127,14 @@ export default function AnalyticsPage() {
 
     if (loading || !isClient) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -229,6 +228,6 @@ export default function AnalyticsPage() {
                     </div>
                 </Card>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

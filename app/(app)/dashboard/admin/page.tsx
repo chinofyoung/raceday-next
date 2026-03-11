@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     Users, Calendar, DollarSign, ArrowRight, TrendingUp,
     FileText, UserCheck, BarChart3, Clock, Shield
 } from "lucide-react";
-import { Skeleton, AdminKPICardSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -68,7 +67,7 @@ export default function AdminDashboardPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-8 pb-12 space-y-10 text-white">
+            <div className="space-y-10 text-white">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-1">
@@ -80,7 +79,15 @@ export default function AdminDashboardPage() {
                 {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {Array.from({ length: 4 }).map((_, i) => (
-                        <AdminKPICardSkeleton key={i} />
+                        <div key={i} className="p-6 rounded-xl border border-border bg-card space-y-4">
+                            <div className="flex items-center gap-4">
+                                <Skeleton className="w-12 h-12 rounded-xl" />
+                                <div className="space-y-2">
+                                    <Skeleton className="h-3 w-20" />
+                                    <Skeleton className="h-6 w-16" />
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
                 {/* Main Content Grid */}
@@ -109,12 +116,12 @@ export default function AdminDashboardPage() {
                         </div>
                     </div>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10 text-white">
+        <div className="space-y-10 text-white">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -335,6 +342,6 @@ export default function AdminDashboardPage() {
                     </Card>
                 </div>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

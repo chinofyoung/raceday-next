@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     Camera, Scan, ShieldCheck, XCircle,
     CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft
@@ -113,7 +112,7 @@ export default function EventScannerPage() {
     }, []);
 
     return (
-        <PageWrapper className="pt-8 pb-24 max-w-7xl mx-auto space-y-12">
+        <div className="max-w-7xl mx-auto space-y-12">
             <Link href={`/dashboard/events/${eventId}`} className="inline-flex items-center gap-2 text-text-muted hover:text-white mb-2 text-xs font-black uppercase tracking-widest italic transition-colors">
                 <ArrowLeft size={14} /> Back to Event
             </Link>
@@ -303,6 +302,6 @@ export default function EventScannerPage() {
                     )}
                 </div>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

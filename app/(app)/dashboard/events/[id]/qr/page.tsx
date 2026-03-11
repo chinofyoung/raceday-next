@@ -4,8 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { QrCode, Calendar, MapPin, Download, Package } from "lucide-react";
 import Link from "next/link";
@@ -30,21 +29,21 @@ export default function RacePassPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent" />
-            </PageWrapper>
+            </div>
         );
     }
 
     if (!event || !registration) {
         return (
-            <PageWrapper className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
                 <h1 className="text-2xl font-black uppercase italic text-white">Pass Not Found</h1>
                 <p className="text-text-muted italic">We couldn&apos;t find the entry pass you were looking for.</p>
                 <Button variant="outline" asChild>
                     <Link href="/dashboard">Back to Dashboard</Link>
                 </Button>
-            </PageWrapper>
+            </div>
         );
     }
 
@@ -52,7 +51,7 @@ export default function RacePassPage() {
     const participantInfo = registration.registrationData?.participantInfo || (registration as any).participantInfo;
 
     return (
-        <PageWrapper className="w-full max-w-xl mx-auto pt-8 pb-24 px-4 space-y-10">
+        <div className="w-full max-w-xl mx-auto space-y-10">
             <div className="text-center space-y-3">
                 <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white leading-none">
                     Race <span className="text-cta">Pass</span>
@@ -187,6 +186,6 @@ export default function RacePassPage() {
                     50% { top: 100%; }
                 }
             `}</style>
-        </PageWrapper>
+        </div>
     );
 }

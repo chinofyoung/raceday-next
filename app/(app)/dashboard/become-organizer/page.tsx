@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useForm, FormProvider, Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -173,15 +172,15 @@ export default function BecomeOrganizerPage() {
 
     if (checking) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[70vh]">
+            <div className="flex items-center justify-center min-h-[70vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
-            </PageWrapper>
+            </div>
         );
     }
 
     if (existingApp && !isModifying) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[70vh]">
+            <div className="flex items-center justify-center min-h-[70vh]">
                 <Card className="max-w-md p-10 text-center space-y-6 bg-surface shadow-2xl border-white/5">
                     <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary">
                         <ShieldCheck size={48} />
@@ -211,14 +210,14 @@ export default function BecomeOrganizerPage() {
                         )}
                     </div>
                 </Card>
-            </PageWrapper>
+            </div>
         );
     }
 
 
     if (submitted) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[70vh]">
+            <div className="flex items-center justify-center min-h-[70vh]">
                 <Card className="max-w-md p-10 text-center space-y-6 bg-surface shadow-2xl border-cta/20">
                     <div className="w-20 h-20 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta">
                         <CheckCircle2 size={48} />
@@ -233,12 +232,12 @@ export default function BecomeOrganizerPage() {
                         <Link href="/dashboard">Back to Dashboard</Link>
                     </Button>
                 </Card>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10 max-w-7xl mx-auto">
+        <div className="space-y-10 max-w-7xl mx-auto">
             <div className="flex flex-col gap-4">
                 <Link href="/dashboard" className="text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors">
                     <ArrowLeft size={12} /> Back to Dashboard
@@ -314,6 +313,6 @@ export default function BecomeOrganizerPage() {
                     Misrepresentation of identity or organization details may lead to permanent platform banning.
                 </p>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

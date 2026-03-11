@@ -6,7 +6,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     Scan, ShieldCheck, XCircle, CheckCircle2, AlertTriangle,
     User, Shirt, Hash, X, Monitor, Users, Package,

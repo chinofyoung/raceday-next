@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, ArrowLeft } from "lucide-react";
-import { Skeleton, EventCardSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useQuery, useMutation } from "convex/react";
@@ -46,7 +45,7 @@ export default function EventsManagementPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-8 pb-12 space-y-10">
+            <div className="space-y-10">
                 {/* Header skeleton */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-4">
@@ -68,15 +67,25 @@ export default function EventsManagementPage() {
                 {/* Events grid skeleton */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {Array.from({ length: 6 }).map((_, i) => (
-                        <EventCardSkeleton key={i} />
+                        <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden">
+                            <Skeleton className="h-48 w-full" />
+                            <div className="p-4 space-y-3">
+                                <Skeleton className="h-5 w-3/4" />
+                                <Skeleton className="h-4 w-1/2" />
+                                <div className="flex gap-2 pt-2">
+                                    <Skeleton className="h-8 w-20 rounded-lg" />
+                                    <Skeleton className="h-8 w-20 rounded-lg" />
+                                </div>
+                            </div>
+                        </div>
                     ))}
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
                     <Link href="/dashboard/organizer" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
@@ -139,6 +148,6 @@ export default function EventsManagementPage() {
                     ))}
                 </div>
             )}
-        </PageWrapper>
+        </div>
     );
 }

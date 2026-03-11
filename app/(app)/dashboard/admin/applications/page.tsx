@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { Button } from "@/components/ui/button";
 import {
     UserCheck, ArrowLeft, Loader2, Download, Filter
@@ -138,7 +137,7 @@ export default function ApplicationsPage() {
     };
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-10">
+        <div className="space-y-10">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
@@ -222,6 +221,6 @@ export default function ApplicationsPage() {
                     </Button>
                 </div>
             )}
-        </PageWrapper>
+        </div>
     );
 }

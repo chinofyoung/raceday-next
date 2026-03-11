@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { computeProfileCompletion } from "@/lib/utils";
 
 interface NormalizedRegistration {
@@ -19,7 +18,7 @@ interface NormalizedRegistration {
 // Components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RunnerView } from "@/components/dashboard/RunnerView";
-import { Skeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
     const { user, role, loading: authLoading } = useAuth();
@@ -46,7 +45,7 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-4 sm:pt-8 pb-6 sm:pb-12 space-y-4 sm:space-y-8">
+            <div className="space-y-4 sm:space-y-8">
                 {/* Header Skeleton */}
                 <div className="flex justify-between items-center bg-surface/50 p-6 rounded-[2rem] border border-white/5">
                     <div className="space-y-3">
@@ -110,12 +109,12 @@ export default function DashboardPage() {
                         </div>
                     </div>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
     return (
-        <PageWrapper className="pt-4 sm:pt-8 pb-6 sm:pb-12 space-y-4 sm:space-y-8 text-white">
+        <div className="space-y-4 sm:space-y-8 text-white">
             <DashboardHeader
                 userName={user?.displayName || ""}
                 isOrganizerView={false}
@@ -128,6 +127,6 @@ export default function DashboardPage() {
                 hasApplication={false}
                 userRole={user?.role}
             />
-        </PageWrapper>
+        </div>
     );
 }

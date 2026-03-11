@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { ProfileForm } from "./ProfileForm";
 import { OrganizerProfileForm } from "./OrganizerProfileForm";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -18,7 +17,7 @@ export default function SettingsPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="flex flex-col items-center gap-4">
                     <div className="relative">
                         <div className="w-16 h-16 border-4 border-primary/20 rounded-full" />
@@ -26,7 +25,7 @@ export default function SettingsPage() {
                     </div>
                     <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic animate-pulse">Loading Settings...</p>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
@@ -52,7 +51,7 @@ export default function SettingsPage() {
     ];
 
     return (
-        <PageWrapper className="pt-8 pb-12 space-y-8">
+        <div className="space-y-8">
             {/* Header */}
             <div className="space-y-1">
                 <Link
@@ -126,6 +125,6 @@ export default function SettingsPage() {
                 {activeTab === "profile" && <ProfileForm />}
                 {activeTab === "organizer" && isOrganizer && <OrganizerProfileForm />}
             </div>
-        </PageWrapper>
+        </div>
     );
 }

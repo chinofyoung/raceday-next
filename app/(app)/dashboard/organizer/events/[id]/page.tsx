@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     ArrowLeft, Users, DollarSign, Calendar, MapPin,
     Edit2, Download, Search, QrCode, CheckCircle2, Copy, Monitor
 } from "lucide-react";
-import { EventDetailManagementSkeleton } from "@/components/shared/Skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -107,20 +106,50 @@ export default function EventDetailPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="py-12 space-y-12">
-                <EventDetailManagementSkeleton />
-            </PageWrapper>
+            <div className="space-y-12">
+                <div className="space-y-8">
+                    <div className="space-y-4">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-16 w-2/3" />
+                        <div className="flex gap-4">
+                            <Skeleton className="h-5 w-40" />
+                            <Skeleton className="h-5 w-40" />
+                        </div>
+                    </div>
+                    <div className="flex gap-3">
+                        <Skeleton className="h-10 w-32 rounded-xl" />
+                        <Skeleton className="h-10 w-24 rounded-xl" />
+                        <Skeleton className="h-10 w-28 rounded-xl" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="p-6 rounded-xl border border-border bg-card space-y-2">
+                                <Skeleton className="h-3 w-24" />
+                                <Skeleton className="h-8 w-20" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="space-y-6">
+                    <div className="flex gap-8 border-b border-white/5 pb-px">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <Skeleton key={i} className="h-4 w-20" />
+                        ))}
+                    </div>
+                    <Skeleton className="h-64 w-full rounded-xl" />
+                </div>
+            </div>
         );
     }
 
     if (!event) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center space-y-4">
                     <h1 className="text-2xl font-bold text-white uppercase italic">Event not found</h1>
                     <Button asChild variant="primary"><Link href="/dashboard/organizer">Back to Dashboard</Link></Button>
                 </div>
-            </PageWrapper>
+            </div>
         );
     }
 
@@ -143,7 +172,7 @@ export default function EventDetailPage() {
     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
 
     return (
-        <PageWrapper className="py-12 space-y-12">
+        <div className="space-y-12">
             <div className="space-y-8">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
@@ -433,6 +462,6 @@ export default function EventDetailPage() {
                     )}
                 </div>
             </div>
-        </PageWrapper>
+        </div>
     );
 }

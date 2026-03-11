@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { OrganizerApplication, OrganizerType } from "@/types/user";
-import { Card } from "@/components/ui/_LegacyCard";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/_LegacyBadge";
+import { Badge } from "@/components/ui/badge";
 import {
     UserCheck, Mail, Phone, Calendar, ChevronDown, ChevronUp,
     ShieldCheck, Globe, MapPin, Building2, ExternalLink,
