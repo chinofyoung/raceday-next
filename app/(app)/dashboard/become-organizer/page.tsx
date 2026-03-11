@@ -239,7 +239,7 @@ export default function BecomeOrganizerPage() {
     return (
         <div className="space-y-10 max-w-7xl mx-auto">
             <div className="flex flex-col gap-4">
-                <Link href="/dashboard" className="text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors">
+                <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
                 <div className="space-y-1">

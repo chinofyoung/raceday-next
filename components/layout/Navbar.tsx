@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, LayoutDashboard, Shield } from "lucide-react";
+import { Menu, X, LayoutDashboard, Shield, Calendar, BarChart3, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -11,9 +11,9 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
 const NAV_LINKS = [
-    { label: "Events", href: "/events" },
-    { label: "For Organizers", href: "/for-organizers" },
-    { label: "About", href: "/about" },
+    { label: "Events", href: "/events", icon: Calendar },
+    { label: "For Organizers", href: "/for-organizers", icon: BarChart3 },
+    { label: "About", href: "/about", icon: Info },
 ];
 
 export function Navbar() {
@@ -142,86 +142,148 @@ export function Navbar() {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-[105] bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsOpen(false)} />
-                    <div id="mobile-nav-menu" className="fixed top-0 left-0 bottom-0 z-[110] w-4/5 max-w-sm bg-surface border-r border-white/10 p-6 shadow-2xl animate-in slide-in-from-left md:hidden overflow-y-auto">
-                        <div className="flex justify-between items-center mb-8">
-                            <span className="text-xl font-black italic uppercase tracking-wider text-white">Menu</span>
+                    <div id="mobile-nav-menu" className="fixed top-0 left-0 bottom-0 z-[110] w-4/5 max-w-sm bg-sidebar border-r border-sidebar-border shadow-2xl animate-in slide-in-from-left md:hidden overflow-y-auto flex flex-col">
+                        {/* Header: Logo + close button */}
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-sidebar-border shrink-0">
+                            <Link href="/" onClick={() => setIsOpen(false)} className="block px-2 py-2">
+                                <Image
+                                    src="/logo.png"
+                                    alt="RaceDay"
+                                    width={200}
+                                    height={40}
+                                    className="h-8 w-auto object-contain object-left"
+                                />
+                            </Link>
                             <button
-                                className="text-text p-2 hover:bg-white/5 rounded-lg"
+                                className="text-sidebar-foreground p-2 hover:bg-sidebar-accent rounded-lg transition-colors"
                                 onClick={() => setIsOpen(false)}
                                 aria-label="Close navigation menu"
                             >
-                                <X />
+                                <X size={20} />
                             </button>
                         </div>
-                        <div className="flex flex-col gap-4">
-                            {NAV_LINKS.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
-                                    className={cn(
-                                        "text-lg font-semibold py-4 transition-colors border-b border-white/5 last:border-0",
-                                        pathname === link.href ? "text-white bg-primary/40 rounded-lg pl-4 -ml-4" : "text-text hover:text-primary"
-                                    )}
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                            <div className="pt-4 space-y-4">
-                                {loading ? (
-                                    <div className="flex items-center gap-3 px-1">
-                                        <div className="w-10 h-10 rounded-full bg-white/5 animate-pulse" />
-                                        <div className="w-32 h-5 bg-white/5 rounded animate-pulse" />
+
+                        {/* Nav content */}
+                        <div className="flex flex-col flex-1 py-2 overflow-y-auto">
+                            {/* Browse group */}
+                            <div className="px-4 py-2">
+                                <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1 px-2">Browse</p>
+                                <div className="flex flex-col gap-1">
+                                    {NAV_LINKS.map((link) => {
+                                        const Icon = link.icon;
+                                        const isActive = pathname === link.href;
+                                        return (
+                                            <Link
+                                                key={link.href}
+                                                href={link.href}
+                                                onClick={() => setIsOpen(false)}
+                                                className={cn(
+                                                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                                    isActive
+                                                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                                )}
+                                            >
+                                                <Icon size={16} className="shrink-0" />
+                                                <span>{link.label}</span>
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Account group - SignedIn only */}
+                            {loading ? (
+                                <div className="px-4 py-2 mt-2">
+                                    <div className="flex items-center gap-3 px-3 py-2">
+                                        <div className="w-8 h-8 rounded-full bg-sidebar-accent animate-pulse shrink-0" />
+                                        <div className="w-32 h-4 bg-sidebar-accent rounded animate-pulse" />
                                     </div>
-                                ) : (
-                                    <>
-                                        <SignedIn>
+                                </div>
+                            ) : (
+                                <SignedIn>
+                                    <div className="px-4 py-2 mt-2">
+                                        <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-1 px-2">Account</p>
+                                        <div className="flex flex-col gap-1">
                                             <Link
                                                 href="/dashboard"
-                                                className={cn(
-                                                    "flex items-center gap-3 text-lg font-semibold py-4 transition-colors",
-                                                    pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && !pathname.startsWith("/dashboard/organizer") ? "text-primary" : "text-text hover:text-primary"
-                                                )}
                                                 onClick={() => setIsOpen(false)}
+                                                className={cn(
+                                                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                                    pathname.startsWith("/dashboard") && pathname !== "/dashboard/admin" && !pathname.startsWith("/dashboard/organizer")
+                                                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                                )}
                                             >
-                                                <LayoutDashboard size={20} className="text-primary" />
-                                                Dashboard
+                                                <LayoutDashboard size={16} className="shrink-0" />
+                                                <span>Dashboard</span>
                                             </Link>
                                             {user?.role === "admin" && (
                                                 <Link
                                                     href="/dashboard/admin"
-                                                    className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
                                                     onClick={() => setIsOpen(false)}
+                                                    className={cn(
+                                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                                        pathname === "/dashboard/admin"
+                                                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                                    )}
                                                 >
-                                                    <Shield size={20} />
-                                                    Admin Panel
+                                                    <Shield size={16} className="shrink-0" />
+                                                    <span>Admin Panel</span>
                                                 </Link>
                                             )}
                                             {(user?.role === "organizer" || user?.role === "admin") && (
                                                 <Link
                                                     href="/dashboard/organizer/events"
-                                                    className="flex items-center gap-3 text-lg font-semibold py-4 text-cta hover:opacity-80 transition-colors"
                                                     onClick={() => setIsOpen(false)}
+                                                    className={cn(
+                                                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                                                        pathname.startsWith("/dashboard/organizer")
+                                                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                                                            : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                                                    )}
                                                 >
-                                                    <LayoutDashboard size={20} />
-                                                    Manage Events
+                                                    <BarChart3 size={16} className="shrink-0" />
+                                                    <span>Manage Events</span>
                                                 </Link>
                                             )}
-                                            <div className="py-4 flex justify-between items-center border-t border-white/5">
-                                                <span className="text-lg font-semibold text-text-muted">Account</span>
-                                                <UserButton />
-                                            </div>
-                                        </SignedIn>
-                                        <SignedOut>
-                                            <Button className="w-full" asChild>
-                                                <Link href="/auth/login" onClick={() => setIsOpen(false)}>
-                                                    Sign In
-                                                </Link>
-                                            </Button>
-                                        </SignedOut>
-                                    </>
-                                )}
-                            </div>
+                                        </div>
+                                    </div>
+                                </SignedIn>
+                            )}
+                        </div>
+
+                        {/* Footer: UserButton or Sign In */}
+                        <div className="shrink-0 border-t border-sidebar-border px-6 py-4">
+                            {loading ? (
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-sidebar-accent animate-pulse" />
+                                    <div className="w-24 h-4 bg-sidebar-accent rounded animate-pulse" />
+                                </div>
+                            ) : (
+                                <>
+                                    <SignedIn>
+                                        <div className="flex items-center gap-3">
+                                            <UserButton
+                                                appearance={{
+                                                    elements: {
+                                                        userButtonAvatarBox: "w-8 h-8 border border-primary/20 hover:border-primary transition-all",
+                                                    }
+                                                }}
+                                            />
+                                            <span className="text-sm font-medium text-sidebar-foreground">My Account</span>
+                                        </div>
+                                    </SignedIn>
+                                    <SignedOut>
+                                        <Button className="w-full" asChild>
+                                            <Link href="/auth/login" onClick={() => setIsOpen(false)}>
+                                                Sign In
+                                            </Link>
+                                        </Button>
+                                    </SignedOut>
+                                </>
+                            )}
                         </div>
                     </div>
                 </>

@@ -20,6 +20,7 @@ export default function EventsManagementPage() {
     const searchParams = useSearchParams();
     const initialStatus = searchParams.get("status") || "all";
     const [filter, setFilter] = useState<string>(initialStatus);
+    const [search, setSearch] = useState("");
     const removeEvent = useMutation(api.events.remove);
 
     const convexEvents = useQuery(api.events.list, user?._id ? {
@@ -43,7 +44,17 @@ export default function EventsManagementPage() {
         }
     };
 
-    const filteredEvents = events.filter(e => filter === "all" || e.status === filter);
+    const filteredEvents = useMemo(() => {
+        const query = search.toLowerCase().trim();
+        return events.filter(e => {
+            const matchesFilter = filter === "all" || e.status === filter;
+            const matchesSearch = !query
+                || e.name?.toLowerCase().includes(query)
+                || e.location?.name?.toLowerCase().includes(query)
+                || e.location?.address?.toLowerCase().includes(query);
+            return matchesFilter && matchesSearch;
+        });
+    }, [events, filter, search]);
 
     if (loading) {
         return (
@@ -118,6 +129,8 @@ export default function EventsManagementPage() {
                         <input
                             type="text"
                             placeholder="Search events..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 bg-background border border-white/5 rounded-lg text-sm focus:outline-none focus:border-primary transition-all"
                         />
                     </div>

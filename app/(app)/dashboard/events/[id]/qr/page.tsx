@@ -6,7 +6,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { QrCode, Calendar, MapPin, Download, Package } from "lucide-react";
+import { QrCode, Calendar, MapPin, Download, Package, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
@@ -40,9 +40,12 @@ export default function RacePassPage() {
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
                 <h1 className="text-2xl font-black uppercase italic text-white">Pass Not Found</h1>
                 <p className="text-text-muted italic">We couldn&apos;t find the entry pass you were looking for.</p>
-                <Button variant="outline" asChild>
-                    <Link href="/dashboard">Back to Dashboard</Link>
-                </Button>
+                <Link
+                    href="/dashboard"
+                    className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4"
+                >
+                    <ArrowLeft size={12} /> Back to Dashboard
+                </Link>
             </div>
         );
     }

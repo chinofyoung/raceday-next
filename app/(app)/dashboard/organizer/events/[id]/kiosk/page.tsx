@@ -249,7 +249,7 @@ export default function KioskModePage() {
                         <Search size={12} /> Manual Search
                     </button>
                     <button
-                        onClick={() => router.push(`/dashboard/events/${eventId}`)}
+                        onClick={() => router.push(`/dashboard/organizer/events/${eventId}`)}
                         className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black uppercase italic tracking-wider text-text-muted hover:text-white hover:border-white/20 transition-all cursor-pointer"
                     >
                         <X size={12} /> Exit Kiosk

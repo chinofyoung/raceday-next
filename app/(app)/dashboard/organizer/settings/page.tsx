@@ -1,12 +1,12 @@
 "use client";
 
-import { ProfileForm } from "./ProfileForm";
+import { OrganizerProfileForm } from "../../settings/OrganizerProfileForm";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-export default function SettingsPage() {
-    const { loading } = useAuth();
+export default function OrganizerSettingsPage() {
+    const { user, loading } = useAuth();
 
     if (loading) {
         return (
@@ -27,21 +27,21 @@ export default function SettingsPage() {
             {/* Header */}
             <div className="space-y-1">
                 <Link
-                    href="/dashboard"
+                    href="/dashboard/organizer"
                     className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4"
                 >
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
                 <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
-                    Settings
+                    Organizer Settings
                 </h1>
                 <p className="text-text-muted font-medium italic">
-                    Manage your profile and account preferences.
+                    Manage your organization profile and details.
                 </p>
             </div>
 
-            {/* Profile Form */}
-            <ProfileForm />
+            {/* Content */}
+            <OrganizerProfileForm />
         </div>
     );
 }

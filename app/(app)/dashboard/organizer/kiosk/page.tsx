@@ -55,7 +55,7 @@ export default function KioskSelectPage() {
                             </div>
                             <div className="space-y-1">
                                 <h3 className="font-bold text-white truncate">{event.name}</h3>
-                                <p className="text-xs text-text-muted italic">{event.location || "No location"}</p>
+                                <p className="text-xs text-text-muted italic">{event.location?.name || "No location"}</p>
                             </div>
                         </Link>
                     ))}

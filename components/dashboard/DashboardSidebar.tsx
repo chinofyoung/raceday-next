@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -37,14 +37,7 @@ export function DashboardSidebar() {
   const allNavGroups = getNavForRole(activeRole);
   const availableRoles = getAvailableRoles(userRole || "runner");
 
-  // Separate settings from nav groups to render it in the footer
-  const settingsItem = allNavGroups
-    .flatMap((g) => g.items)
-    .find((item) => item.href === "/dashboard/settings");
-  const navGroups = allNavGroups.map((group) => ({
-    ...group,
-    items: group.items.filter((item) => item.href !== "/dashboard/settings"),
-  }));
+  const navGroups = allNavGroups;
   const currentRoleOption =
     availableRoles.find((r) => r.value === activeRole) || availableRoles[0];
 
@@ -145,25 +138,6 @@ export function DashboardSidebar() {
         ))}
       </SidebarContent>
 
-      {settingsItem && (
-        <SidebarFooter className="px-4">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                size="lg"
-                isActive={pathname === settingsItem.href}
-                tooltip={settingsItem.title}
-                render={
-                  <Link href={settingsItem.href}>
-                    <settingsItem.icon />
-                    <span>{settingsItem.title}</span>
-                  </Link>
-                }
-              />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarFooter>
-      )}
     </Sidebar>
   );
 }

@@ -71,7 +71,7 @@ export default function ProfilePage() {
         <div className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
-                    <Link href="/dashboard" className="text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors">
+                    <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
                         <ArrowLeft size={12} /> Back to Dashboard
                     </Link>
                     <div className="flex items-center gap-6">

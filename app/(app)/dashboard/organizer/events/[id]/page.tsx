@@ -177,8 +177,8 @@ export default function EventDetailPage() {
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative">
                     <div className="space-y-4">
-                        <Link href="/dashboard/organizer" className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-muted hover:text-white transition-colors group w-fit">
-                            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+                        <Link href="/dashboard/organizer" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
+                            <ArrowLeft size={12} /> Back to Dashboard
                         </Link>
                         <div>
                             <div className="flex items-center gap-3 mb-2">

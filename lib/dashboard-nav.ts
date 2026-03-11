@@ -33,7 +33,6 @@ export const runnerNav: NavGroup[] = [
     items: [
       { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
       { title: "Profile", href: "/dashboard/profile", icon: User },
-      { title: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
   {
@@ -41,6 +40,7 @@ export const runnerNav: NavGroup[] = [
     items: [
       { title: "Find Races", href: "/events", icon: Trophy },
       { title: "View Site", href: "/", icon: Globe },
+      { title: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
 ];
@@ -52,7 +52,6 @@ export const organizerNav: NavGroup[] = [
       { title: "Overview", href: "/dashboard/organizer", icon: LayoutDashboard },
       { title: "Events", href: "/dashboard/organizer/events", icon: Calendar },
       { title: "Registrations", href: "/dashboard/organizer/registrations", icon: ClipboardList },
-      { title: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
   {
@@ -61,6 +60,7 @@ export const organizerNav: NavGroup[] = [
       { title: "Create Event", href: "/dashboard/organizer/events/create", icon: PlusCircle },
       { title: "Kiosk Mode", href: "/dashboard/organizer/kiosk", icon: Monitor },
       { title: "Scanner", href: "/dashboard/organizer/scanner", icon: ScanLine },
+      { title: "Settings", href: "/dashboard/organizer/settings", icon: Settings },
     ],
   },
 ];
