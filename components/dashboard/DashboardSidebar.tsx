@@ -11,6 +11,7 @@ import {
 
   SidebarGroup,
   SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -54,7 +55,39 @@ export function DashboardSidebar() {
           />
         </Link>
 
-        {availableRoles.length > 1 && (
+      </SidebarHeader>
+
+      <SidebarContent className="justify-center">
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label} className="px-4">
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarMenu className="gap-1">
+              {group.items.map((item) => (
+                <SidebarMenuItem key={item.href}>
+                  <SidebarMenuButton
+                    size="lg"
+                    isActive={
+                      pathname === item.href ||
+                      (item.title !== "Overview" &&
+                        pathname.startsWith(item.href + "/"))
+                    }
+                    tooltip={item.title}
+                    render={
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    }
+                  />
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+
+      {availableRoles.length > 1 && (
+        <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
               <DropdownMenu>
@@ -84,7 +117,7 @@ export function DashboardSidebar() {
                 <DropdownMenuContent
                   className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                   align="start"
-                  side="bottom"
+                  side="top"
                   sideOffset={4}
                 >
                   {availableRoles.map((role) => (
@@ -106,37 +139,8 @@ export function DashboardSidebar() {
               </DropdownMenu>
             </SidebarMenuItem>
           </SidebarMenu>
-        )}
-      </SidebarHeader>
-
-      <SidebarContent>
-        {navGroups.map((group) => (
-          <SidebarGroup key={group.label} className="px-4">
-            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarMenu className="gap-1">
-              {group.items.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    size="lg"
-                    isActive={
-                      pathname === item.href ||
-                      (item.title !== "Overview" &&
-                        pathname.startsWith(item.href + "/"))
-                    }
-                    tooltip={item.title}
-                    render={
-                      <Link href={item.href}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </Link>
-                    }
-                  />
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
-        ))}
-      </SidebarContent>
+        </SidebarFooter>
+      )}
 
     </Sidebar>
   );

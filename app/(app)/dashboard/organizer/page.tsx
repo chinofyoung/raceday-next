@@ -126,41 +126,41 @@ export default function OrganizerDashboardPage() {
 
     if (loading) {
         return (
-            <div className="space-y-8">
-                <div className="flex justify-between items-center bg-surface/50 p-6 rounded-[2rem] border border-white/5 mb-8">
-                    <div className="space-y-3">
-                        <Skeleton className="h-10 w-48" />
-                        <Skeleton className="h-4 w-64" />
-                    </div>
+            <div className="space-y-8 text-white">
+                {/* Header */}
+                <div className="space-y-1">
+                    <Skeleton className="h-10 w-64" />
+                    <Skeleton className="h-5 w-80" />
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="p-4 rounded-xl border border-border bg-card">
-                            <Skeleton className="h-4 w-20 mb-2" />
-                            <Skeleton className="h-8 w-24" />
-                        </div>
-                    ))}
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-                    <div className="lg:col-span-2 space-y-6">
-                        <Skeleton className="h-8 w-48 mt-2" />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            {Array.from({ length: 2 }).map((_, i) => (
-                                <div key={i} className="rounded-2xl border border-border bg-card overflow-hidden">
-                                    <Skeleton className="h-40 w-full" />
-                                    <div className="p-4 space-y-2">
-                                        <Skeleton className="h-5 w-3/4" />
-                                        <Skeleton className="h-4 w-1/2" />
-                                    </div>
+                {/* Stats row */}
+                <div className="space-y-6">
+                    <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="p-6 rounded-xl bg-white/5 border border-white/10 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <Skeleton className="w-12 h-12 rounded-2xl" />
+                                    <Skeleton className="h-5 w-12 rounded-full" />
                                 </div>
-                            ))}
-                        </div>
+                                <div className="space-y-1">
+                                    <Skeleton className="h-10 w-20" />
+                                    <Skeleton className="h-3 w-24" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <div className="space-y-6">
-                        <Skeleton className="h-8 w-40 mt-2" />
-                        <Skeleton className="h-80 w-full rounded-2xl" />
+
+                    {/* Widgets grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="md:col-span-2 rounded-2xl bg-white/5 border border-white/10 p-6 space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <Skeleton className="h-6 w-40" />
+                                    <Skeleton className="h-5 w-16 rounded-full" />
+                                </div>
+                                <Skeleton className="h-48 w-full rounded-xl" />
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

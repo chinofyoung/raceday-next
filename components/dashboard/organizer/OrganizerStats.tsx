@@ -13,7 +13,7 @@ interface OrganizerStatsProps {
 
 export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, claimedKits }: OrganizerStatsProps) {
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
             <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors cursor-pointer">
                 <Link href="/dashboard/organizer/events" className="absolute inset-0 z-0" aria-label="View all events" />
                 <div className="absolute top-0 right-0 p-8 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-colors duration-500" />
