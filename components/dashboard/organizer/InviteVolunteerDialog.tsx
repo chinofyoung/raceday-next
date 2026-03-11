@@ -75,7 +75,7 @@ export function InviteVolunteerDialog({
                 </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">
                         Gmail Address
                     </Label>
                     <div className="relative">
@@ -93,12 +93,12 @@ export function InviteVolunteerDialog({
                 </div>
 
                 <div className="space-y-4">
-                    <label className="text-sm font-bold uppercase tracking-wider text-text-muted">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">
                         Permissions
                     </label>
 
                     <div className="grid gap-3">
-                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-colors">
+                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/5 transition-colors">
                             <input
                                 type="checkbox"
                                 value="kiosk"
@@ -111,7 +111,7 @@ export function InviteVolunteerDialog({
                             </div>
                         </label>
 
-                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-colors">
+                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/5 transition-colors">
                             <input
                                 type="checkbox"
                                 value="participants"
@@ -124,7 +124,7 @@ export function InviteVolunteerDialog({
                             </div>
                         </label>
 
-                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/[0.04] transition-colors opacity-50">
+                        <label className="flex items-start gap-3 p-3 rounded-xl border border-white/[0.08] bg-white/[0.02] cursor-pointer hover:bg-white/5 transition-colors opacity-50">
                             <input
                                 type="checkbox"
                                 value="announcements"

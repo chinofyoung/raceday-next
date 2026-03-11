@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Trophy, Plus, Settings, Globe } from "lucide-react";
+import { Plus, Settings, Trophy, Globe } from "lucide-react";
 import { BaseQuickAction } from "./shared/BaseQuickAction";
 
 interface RunnerQuickActionsProps {
@@ -11,21 +11,18 @@ interface RunnerQuickActionsProps {
 export function RunnerQuickActions({ hasApplication, userRole }: RunnerQuickActionsProps) {
     return (
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-3">
-
             <BaseQuickAction
                 href="/events"
                 icon={Trophy}
                 label="Find Races"
-                variant="cta"
-            />
-
-            <BaseQuickAction
-                href="/dashboard/settings"
-                icon={Settings}
-                label="Edit Profile"
                 variant="primary"
             />
-
+            <BaseQuickAction
+                href="/"
+                icon={Globe}
+                label="View Site"
+                variant="secondary"
+            />
             {userRole === "runner" && (
                 <BaseQuickAction
                     href="/dashboard/become-organizer"
@@ -34,13 +31,6 @@ export function RunnerQuickActions({ hasApplication, userRole }: RunnerQuickActi
                     variant="secondary"
                 />
             )}
-
-            <BaseQuickAction
-                href="/"
-                icon={Globe}
-                label="View Site"
-                variant="secondary"
-            />
         </div>
     );
 }

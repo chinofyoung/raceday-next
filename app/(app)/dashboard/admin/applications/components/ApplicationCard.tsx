@@ -49,7 +49,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
     return (
         <Card className={cn(
-            "bg-surface/40 border-white/5 transition-all relative group overflow-hidden",
+            "bg-surface/40 border-white/5 transition-colors relative group overflow-hidden",
             expanded ? "ring-2 ring-primary/20 bg-surface/60" : "hover:bg-surface/50"
         )}>
             {/* Header / Summary Row */}
@@ -85,7 +85,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                         variant="ghost"
                         size="sm"
                         onClick={() => setExpanded(!expanded)}
-                        className="gap-2 text-[10px] font-black uppercase italic bg-white/5"
+                        className="gap-2 text-xs font-black italic uppercase bg-white/5 transition-colors"
                     >
                         {expanded ? (
                             <><ChevronUp size={16} /> Hide Details</>
@@ -239,7 +239,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="outline"
                                     onClick={() => onNeedsInfo(app)}
                                     disabled={processing}
-                                    className="gap-2 text-[10px] font-black uppercase italic border-cta/30 text-cta hover:bg-cta/5"
+                                    className="gap-2 text-xs font-black italic uppercase border-cta/30 text-cta hover:bg-cta/5 transition-colors"
                                 >
                                     <Info size={16} /> Request More Info
                                 </Button>
@@ -247,7 +247,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="outline"
                                     onClick={() => onReject(app)}
                                     disabled={processing}
-                                    className="gap-2 text-[10px] font-black uppercase italic border-red-500/30 text-red-500 hover:bg-red-500/5"
+                                    className="gap-2 text-xs font-black italic uppercase border-red-500/30 text-red-500 hover:bg-red-500/5 transition-colors"
                                 >
                                     <XCircle size={16} /> Reject
                                 </Button>
@@ -255,7 +255,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="primary"
                                     onClick={() => onApprove(app)}
                                     disabled={processing}
-                                    className="gap-2 text-[10px] font-black uppercase italic bg-success hover:bg-success/80 border-none"
+                                    className="gap-2 text-xs font-black italic uppercase bg-success hover:bg-success/80 border-none transition-colors"
                                 >
                                     {processing ? <Loader2 className="animate-spin" size={16} /> : <><CheckCircle2 size={16} /> Approve Organization</>}
                                 </Button>

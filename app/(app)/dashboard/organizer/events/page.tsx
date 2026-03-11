@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
+import { useSearchParams } from "next/navigation";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,9 @@ import { OrganizerQuickActions } from "@/components/dashboard/organizer/Organize
 
 export default function EventsManagementPage() {
     const { user, loading: authLoading } = useAuth();
-    const [filter, setFilter] = useState<string>("all");
+    const searchParams = useSearchParams();
+    const initialStatus = searchParams.get("status") || "all";
+    const [filter, setFilter] = useState<string>(initialStatus);
     const removeEvent = useMutation(api.events.remove);
 
     const convexEvents = useQuery(api.events.list, user?._id ? {

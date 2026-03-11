@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Users, Calendar, DollarSign, ArrowRight, TrendingUp,
-    FileText, UserCheck, BarChart3, Clock, Shield
+    FileText, UserCheck, BarChart3, Clock, Shield,
+    Trophy, Globe
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -283,6 +284,24 @@ export default function AdminDashboardPage() {
                                         <span className="font-bold uppercase italic text-sm">Audit Logs</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-blue-500" />
+                                </div>
+                            </Link>
+                            <Link href="/events" className="block p-4 bg-surface rounded-xl border border-white/5 hover:border-primary/50 transition-all group">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Trophy size={18} className="text-primary" />
+                                        <span className="font-bold uppercase italic text-sm">Find Races</span>
+                                    </div>
+                                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-primary" />
+                                </div>
+                            </Link>
+                            <Link href="/" className="block p-4 bg-surface rounded-xl border border-white/5 hover:bg-white/5 transition-all group">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Globe size={18} className="text-text-muted transition-colors group-hover:text-white" />
+                                        <span className="font-bold uppercase italic text-sm">View Site</span>
+                                    </div>
+                                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-white" />
                                 </div>
                             </Link>
                         </div>

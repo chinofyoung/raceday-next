@@ -4,7 +4,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronsUpDown, Check } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@/lib/hooks/useAuth";
 import {
   Sidebar,
@@ -32,35 +31,35 @@ import {
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, role: userRole } = useAuth();
+  const { role: userRole } = useAuth();
 
   const activeRole = getActiveRole(pathname);
-  const navGroups = getNavForRole(activeRole);
+  const allNavGroups = getNavForRole(activeRole);
   const availableRoles = getAvailableRoles(userRole || "runner");
+
+  // Separate settings from nav groups to render it in the footer
+  const settingsItem = allNavGroups
+    .flatMap((g) => g.items)
+    .find((item) => item.href === "/dashboard/settings");
+  const navGroups = allNavGroups.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => item.href !== "/dashboard/settings"),
+  }));
   const currentRoleOption =
     availableRoles.find((r) => r.value === activeRole) || availableRoles[0];
 
   return (
-    <Sidebar collapsible="icon" className="border-sidebar-border">
+    <Sidebar collapsible="none" className="sticky top-0 h-svh border-sidebar-border">
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              render={
-                <Link href="/">
-                  <Image
-                    src="/logo.png"
-                    alt="RaceDay"
-                    width={120}
-                    height={32}
-                    className="h-6 w-auto object-contain"
-                  />
-                </Link>
-              }
-            />
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <Link href="/" className="block px-2 py-2">
+          <Image
+            src="/logo.png"
+            alt="RaceDay"
+            width={200}
+            height={40}
+            className="h-8 w-full object-contain object-left"
+          />
+        </Link>
 
         {availableRoles.length > 1 && (
           <SidebarMenu>
@@ -119,12 +118,13 @@ export function DashboardSidebar() {
 
       <SidebarContent>
         {navGroups.map((group) => (
-          <SidebarGroup key={group.label}>
+          <SidebarGroup key={group.label} className="px-4">
             <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               {group.items.map((item) => (
                 <SidebarMenuItem key={item.href}>
                   <SidebarMenuButton
+                    size="lg"
                     isActive={
                       pathname === item.href ||
                       (item.href !== "/dashboard" &&
@@ -145,29 +145,25 @@ export function DashboardSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <UserButton
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "size-8",
-                  },
-                }}
+      {settingsItem && (
+        <SidebarFooter className="px-4">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                size="lg"
+                isActive={pathname === settingsItem.href}
+                tooltip={settingsItem.title}
+                render={
+                  <Link href={settingsItem.href}>
+                    <settingsItem.icon />
+                    <span>{settingsItem.title}</span>
+                  </Link>
+                }
               />
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {user?.displayName || "User"}
-                </span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {user?.email || ""}
-                </span>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 }

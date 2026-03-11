@@ -26,6 +26,12 @@ export function OrganizerQuickActions({ items }: OrganizerQuickActionsProps) {
             />
 
             <BaseQuickAction
+                href="/events"
+                icon={Zap}
+                label="Find Races"
+                variant="secondary"
+            />
+            <BaseQuickAction
                 href="/"
                 icon={Globe}
                 label="View Site"

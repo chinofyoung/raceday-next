@@ -163,12 +163,12 @@ export function OrganizerProfileForm() {
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Organization Name</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Organization Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. RunPH Events" {...register("name")} />
                             {errors.name && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.name.message}</p>}
                         </div>
                         <div className="space-y-3">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Organization Type</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Organization Type</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {ORGANIZER_TYPES.map((type) => (
                                     <button
@@ -206,12 +206,12 @@ export function OrganizerProfileForm() {
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Email</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Email</Label>
                             <Input type="email" className="bg-white/5 border-white/10 rounded-xl" placeholder="events@yourorg.com" {...register("contactEmail")} />
                             {errors.contactEmail && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.contactEmail.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Phone Number</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Phone Number</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09171234567" {...register("phone")} />
                             {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
                         </div>

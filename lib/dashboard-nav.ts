@@ -9,6 +9,7 @@ import {
   Shield,
   ClipboardList,
   Trophy,
+  Globe,
   type LucideIcon,
 } from "lucide-react";
 
@@ -28,7 +29,6 @@ export const runnerNav: NavGroup[] = [
     label: "Main",
     items: [
       { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
-      { title: "My Events", href: "/dashboard/events", icon: Calendar },
       { title: "Profile", href: "/dashboard/profile", icon: User },
       { title: "Settings", href: "/dashboard/settings", icon: Settings },
     ],

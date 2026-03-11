@@ -178,7 +178,6 @@ export default function OrganizerDashboardPage() {
 
             <OrganizerView
                 items={items}
-                allEvents={allEvents}
                 publishedEvents={publishedEvents}
                 draftEvents={draftEvents}
                 stats={stats}

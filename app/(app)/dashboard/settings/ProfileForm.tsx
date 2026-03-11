@@ -124,12 +124,12 @@ export function ProfileForm() {
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Display Name</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Display Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("displayName")} />
                             {errors.displayName && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.displayName.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Phone Number</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Phone Number</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09123456789" {...register("phone")} />
                             {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
                         </div>
@@ -138,7 +138,7 @@ export function ProfileForm() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
                                 <select
                                     {...register("gender")}
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text text-sm focus:outline-none focus:border-primary transition-all appearance-none"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-colors px-4 py-2.5 appearance-none cursor-pointer"
                                 >
                                     <option value="" className="bg-surface">Select</option>
                                     <option value="male" className="bg-surface">Male</option>
@@ -148,16 +148,16 @@ export function ProfileForm() {
                                 {errors.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.gender.message}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Birth Date</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Birth Date</Label>
                                 <Input type="date" className="bg-white/5 border-white/10 rounded-xl" {...register("birthDate")} />
                                 {errors.birthDate && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.birthDate.message}</p>}
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Medical Conditions</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Medical Conditions</label>
                             <textarea
                                 {...register("medicalConditions")}
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all min-h-[100px]"
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors min-h-[120px]"
                                 placeholder="List any allergies or medical conditions..."
                             />
                         </div>
@@ -172,26 +172,26 @@ export function ProfileForm() {
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Street Address</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Street Address</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="Building, Street Name" {...register("address.street")} />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">City</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">City</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.city")} />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Province</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Province</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.province")} />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">ZIP Code</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">ZIP Code</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.zipCode")} />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Country</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Country</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.country")} />
                             </div>
                         </div>
@@ -206,15 +206,15 @@ export function ProfileForm() {
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Name</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.name")} />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Relationship</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Relationship</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.relationship")} />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Phone</Label>
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Phone</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.phone")} />
                             {errors.emergencyContact?.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.emergencyContact.phone.message}</p>}
                         </div>
@@ -229,7 +229,7 @@ export function ProfileForm() {
                     </div>
                     <div className="space-y-6">
                         <div className="space-y-3">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">T-Shirt Size</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">T-Shirt Size</label>
                             <div className="flex flex-wrap gap-2">
                                 {SIZES.map((size) => (
                                     <button
@@ -237,9 +237,9 @@ export function ProfileForm() {
                                         type="button"
                                         onClick={() => setValue("tShirtSize", size as any, { shouldDirty: true })}
                                         className={cn(
-                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all cursor-pointer",
+                                            "px-4 py-2 rounded-xl font-bold text-xs border transition-colors cursor-pointer",
                                             watchedFields.tShirtSize === size
-                                                ? "bg-primary border-primary text-white shadow-lg scale-105"
+                                                ? "bg-primary border-primary text-white shadow-lg"
                                                 : "bg-white/5 border-white/10 text-text-muted hover:border-primary/50"
                                         )}
                                     >
@@ -249,7 +249,7 @@ export function ProfileForm() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Singlet Size</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Singlet Size</label>
                             <div className="flex flex-wrap gap-2">
                                 {SIZES.map((size) => (
                                     <button
@@ -257,10 +257,10 @@ export function ProfileForm() {
                                         type="button"
                                         onClick={() => setValue("singletSize", size as any, { shouldDirty: true })}
                                         className={cn(
-                                            "px-4 py-2 rounded-lg font-bold text-xs border transition-all cursor-pointer",
+                                            "px-4 py-2 rounded-xl font-bold text-xs border transition-colors cursor-pointer",
                                             watchedFields.singletSize === size
-                                                ? "bg-cta border-cta text-white shadow-lg scale-105"
-                                                : "bg-white/5 border-white/10 text-text-muted hover:border-cta/50"
+                                                ? "bg-primary border-primary text-white shadow-lg"
+                                                : "bg-white/5 border-white/10 text-text-muted hover:border-primary/50"
                                         )}
                                     >
                                         {size}

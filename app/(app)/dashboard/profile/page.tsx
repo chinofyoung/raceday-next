@@ -155,7 +155,7 @@ export default function ProfilePage() {
                                 : "Complete your profile to unlock faster event registrations and ensure accurate kit sizing."}
                         </p>
                         {completion < 100 && (
-                            <Button variant="outline" className="w-full py-6 text-lg" asChild>
+                            <Button variant="outline" size="lg" className="w-full font-black italic uppercase tracking-wider" asChild>
                                 <Link href="/dashboard/settings">Finish Profile</Link>
                             </Button>
                         )}

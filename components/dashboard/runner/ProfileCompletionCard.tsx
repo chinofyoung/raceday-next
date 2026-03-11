@@ -26,7 +26,7 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
                 <h3 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white drop-shadow-sm">Complete your profile</h3>
                 <p className="text-sm sm:text-base text-text-muted leading-relaxed font-medium italic">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
             </div>
-            <Button variant="primary" asChild className="relative z-10 w-full md:w-auto font-black italic uppercase text-white shadow-lg shadow-primary/20 h-12 md:h-auto whitespace-nowrap">
+            <Button variant="primary" asChild className="relative z-10 w-full md:w-auto font-black italic uppercase text-white shadow-lg shadow-primary/20 whitespace-nowrap">
                 <Link href="/dashboard/settings">Complete Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
             </Button>
         </Card>

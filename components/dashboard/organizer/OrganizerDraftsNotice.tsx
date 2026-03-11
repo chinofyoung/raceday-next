@@ -13,21 +13,24 @@ export function OrganizerDraftsNotice({ draftEventsCount }: OrganizerDraftsNotic
     if (draftEventsCount === 0) return null;
 
     return (
-        <Card className="p-4 bg-amber-500/5 border border-amber-500/20 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0">
-                    <AlertTriangle size={16} />
-                </div>
-                <div>
-                    <p className="text-sm font-bold italic text-white">
-                        {draftEventsCount} draft event{draftEventsCount > 1 ? "s" : ""} awaiting publishing
-                    </p>
-                    <p className="text-[10px] text-text-muted font-medium italic">Finish setting up and publish to start accepting registrations.</p>
-                </div>
-            </div>
-            <Button size="sm" variant="outline" asChild className="border-amber-500/20 text-amber-500 hover:bg-amber-500/10 font-bold italic uppercase text-[10px] shrink-0">
-                <Link href="/dashboard/organizer/events">View Drafts</Link>
-            </Button>
-        </Card>
+        <div className="flex justify-start">
+            <Link href="/dashboard/organizer/events?status=draft" className="group block">
+                <Card className="p-6 w-48 aspect-square bg-amber-500/5 border border-amber-500/20 flex flex-col items-center justify-center text-center gap-3 hover:bg-amber-500/10 transition-all active:scale-95 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 bg-amber-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-amber-500/10 transition-colors" />
+                    <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 relative z-10">
+                        <AlertTriangle size={24} />
+                    </div>
+                    <div className="relative z-10">
+                        <p className="text-2xl font-black italic text-white leading-none">
+                            {draftEventsCount}
+                        </p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mt-2">
+                            Draft Event{draftEventsCount > 1 ? "s" : ""}
+                        </p>
+                        <p className="text-[9px] text-text-muted font-bold italic uppercase tracking-wider mt-1">Awaiting Publishing</p>
+                    </div>
+                </Card>
+            </Link>
+        </div>
     );
 }

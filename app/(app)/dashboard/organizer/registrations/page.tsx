@@ -1,24 +1,19 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { getRegistrations } from "@/lib/services/registrationService";
-import { getEvents } from "@/lib/services/eventService";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { formatDistanceToNow, format } from "date-fns";
+import { format } from "date-fns";
 import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { Registration } from "@/types/registration";
-import { RaceEvent } from "@/types/event";
 import { Button } from "@/components/ui/button";
 
 export default function OrganizerRegistrationsPage() {
     const { user, loading: authLoading } = useAuth();
-    const [registrations, setRegistrations] = useState<Registration[]>([]);
-    const [events, setEvents] = useState<RaceEvent[]>([]);
-    const [loading, setLoading] = useState(true);
 
     // Filters & Pagination
     const [searchQuery, setSearchQuery] = useState("");
@@ -26,37 +21,41 @@ export default function OrganizerRegistrationsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
 
-    useEffect(() => {
-        if (!authLoading && user) {
-            fetchData();
-        } else if (!authLoading && !user) {
-            setLoading(false);
-        }
-    }, [user, authLoading]);
+    const convexEvents = useQuery(api.events.list, user ? {
+        organizerId: user?._id as any,
+        status: "all",
+        paginationOpts: { numItems: 100, cursor: null }
+    } : "skip");
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const [eventsRes, regsRes] = await Promise.all([
-                getEvents({ organizerId: user!.uid, limitCount: 100, status: "all" }),
-                getRegistrations({ organizerId: user!.uid, status: "paid", limitCount: 1000 })
-            ]);
-            setEvents(eventsRes.items);
-            setRegistrations(regsRes.items);
-        } catch (error) {
-            console.error("Failed to load registrations data", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const organizerRegistrations = useQuery(api.registrations.list, user ? {
+        organizerId: user._id as any,
+        status: "all",
+        paginationOpts: { numItems: 1000, cursor: null }
+    } : "skip");
+
+    const loading = authLoading || convexEvents === undefined || organizerRegistrations === undefined;
+
+    const events = useMemo(() => {
+        return (convexEvents?.page || []).map((e: any) => ({
+            ...e,
+            id: e._id
+        }));
+    }, [convexEvents]);
+
+    const registrations = useMemo(() => {
+        return (organizerRegistrations?.page || []).map((r: any) => ({
+            ...r,
+            id: r._id,
+            participantInfo: r.registrationData?.participantInfo || r.participantInfo,
+        }));
+    }, [organizerRegistrations]);
 
     const enrichedRegistrations = useMemo(() => {
-        return registrations.map(reg => {
-            const event = events.find(e => e.id === reg.eventId);
-            const category = event?.categories?.find(c => c.id === reg.categoryId);
+        return registrations.map((reg: any) => {
+            const event = events.find((e: any) => e.id === reg.eventId);
+            const category = event?.categories?.find((c: any) => c.id === reg.categoryId);
             return {
                 ...reg,
-                participantInfo: reg.registrationData?.participantInfo || reg.participantInfo,
                 eventName: event?.name || "Unknown Event",
                 categoryName: category?.name || reg.categoryId
             };
@@ -64,7 +63,7 @@ export default function OrganizerRegistrationsPage() {
     }, [registrations, events]);
 
     const filteredRegistrations = useMemo(() => {
-        return enrichedRegistrations.filter(reg => {
+        return enrichedRegistrations.filter((reg: any) => {
             const matchesEvent = selectedEventId === "all" || reg.eventId === selectedEventId;
             const searchTerm = searchQuery.toLowerCase();
             const matchesSearch =
@@ -122,7 +121,7 @@ export default function OrganizerRegistrationsPage() {
                 </div>
             </div>
 
-            <Card className="p-5 bg-surface/50 border border-white/5 relative overflow-hidden space-y-6">
+            <Card className="p-6 bg-surface/50 border border-white/5 relative overflow-hidden space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <div className="flex-1 relative">
                         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
@@ -137,7 +136,7 @@ export default function OrganizerRegistrationsPage() {
                         <select
                             value={selectedEventId}
                             onChange={(e) => setSelectedEventId(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-all px-4 py-2.5 appearance-none cursor-pointer"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-colors px-4 py-2.5 appearance-none cursor-pointer"
                         >
                             {eventOptions.map(o => (
                                 <option key={o.value} value={o.value} className="bg-surface text-white">{o.label}</option>
@@ -160,8 +159,8 @@ export default function OrganizerRegistrationsPage() {
                         {/* Table Body */}
                         <div className="divide-y divide-white/5">
                             {paginatedRegistrations.length > 0 ? (
-                                paginatedRegistrations.map((reg) => (
-                                    <div key={reg.id} className="grid grid-cols-12 gap-4 px-4 py-4 items-center hover:bg-white/[0.02] transition-colors">
+                                paginatedRegistrations.map((reg: any) => (
+                                    <div key={reg.id} className="grid grid-cols-12 gap-4 px-4 py-4 items-center hover:bg-white/5 transition-colors">
                                         <div className="col-span-3 flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black italic text-sm uppercase shrink-0">
                                                 {reg.participantInfo?.name?.charAt(0) || "?"}
@@ -191,15 +190,15 @@ export default function OrganizerRegistrationsPage() {
                                         <div className="col-span-2 flex flex-col items-end gap-1 shrink-0">
                                             <div className="flex gap-1.5">
                                                 {reg.status === "paid" ? (
-                                                    <Badge variant="success" className="bg-green-500/20 text-green-400 border-none text-[8px] font-black italic uppercase px-2 py-0.5">Paid</Badge>
+                                                    <Badge variant="success" className="bg-green-500/20 text-green-400 border-none text-[9px] font-black italic uppercase px-2 py-0.5">Paid</Badge>
                                                 ) : (
-                                                    <Badge variant="outline" className="text-yellow-400 border-yellow-400/30 text-[8px] font-black italic uppercase px-2 py-0.5">{reg.status}</Badge>
+                                                    <Badge variant="outline" className="text-yellow-400 border-yellow-400/30 text-[9px] font-black italic uppercase px-2 py-0.5">{reg.status}</Badge>
                                                 )}
                                             </div>
                                             {reg.raceKitClaimed ? (
-                                                <Badge variant="success" className="bg-cta/20 text-cta border-none text-[8px] font-black italic uppercase px-2 py-0.5 mt-1">Kit Claimed</Badge>
+                                                <Badge variant="success" className="bg-cta/20 text-cta border-none text-[9px] font-black italic uppercase px-2 py-0.5 mt-1">Kit Claimed</Badge>
                                             ) : (
-                                                <Badge variant="outline" className="border-white/10 text-text-muted text-[8px] font-black italic uppercase px-2 py-0.5 mt-1">Pending Kit</Badge>
+                                                <Badge variant="outline" className="border-white/10 text-text-muted text-[9px] font-black italic uppercase px-2 py-0.5 mt-1">Pending Kit</Badge>
                                             )}
                                         </div>
                                     </div>

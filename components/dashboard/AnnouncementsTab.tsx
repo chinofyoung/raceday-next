@@ -208,7 +208,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Announcement Title</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Announcement Title</Label>
                                 <Input
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
@@ -229,13 +229,13 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
                         <div className="space-y-6 relative group">
                             <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">Message & Details</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Message & Details</label>
                                 <div className="relative">
                                     <button
                                         type="button"
                                         onClick={() => setShowAiMenu(!showAiMenu)}
                                         disabled={isAiLoading || submitting}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-all disabled:opacity-50"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-colors disabled:opacity-50"
                                     >
                                         {isAiLoading ? <Loader2 size={10} className="animate-spin" /> : <Wand2 size={10} />}
                                         AI Assist
@@ -270,7 +270,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 required
                                 disabled={isAiLoading}
                                 className={cn(
-                                    "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all min-h-[150px]",
+                                    "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors min-h-[120px]",
                                     isAiLoading && "opacity-50"
                                 )}
                             />
@@ -331,7 +331,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Announcement Title</Label>
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Announcement Title</Label>
                                 <Input
                                     value={editingAnnouncement.title}
                                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, title: e.target.value })}
@@ -351,14 +351,14 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                         />
 
                         <div className="space-y-6">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">Message & Details</label>
+                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Message & Details</label>
                             <textarea
                                 value={editingAnnouncement.message}
                                 onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, message: e.target.value })}
                                 placeholder="Write your announcement details here..."
                                 rows={6}
                                 required
-                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all min-h-[150px]"
+                                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors min-h-[120px]"
                             />
                         </div>
 
@@ -420,7 +420,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 <div className="flex items-center gap-1.5">
                                     <button
                                         onClick={() => setEditingAnnouncement(announcement)}
-                                        className="p-2 hover:bg-blue-500/10 hover:text-blue-400 rounded-lg text-text-muted transition-all"
+                                        className="p-2 hover:bg-blue-500/10 hover:text-blue-400 rounded-xl text-text-muted transition-colors"
                                         title="Edit Announcement"
                                     >
                                         <Edit2 size={16} />
@@ -428,7 +428,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                     <button
                                         onClick={() => handleDelete(announcement._id)}
                                         disabled={isDeletingId === announcement._id}
-                                        className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-lg text-text-muted transition-all disabled:opacity-50"
+                                        className="p-2 hover:bg-red-500/10 hover:text-red-400 rounded-xl text-text-muted transition-colors disabled:opacity-50"
                                         title="Delete Announcement"
                                     >
                                         {isDeletingId === announcement._id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}

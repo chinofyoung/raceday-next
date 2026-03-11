@@ -39,11 +39,11 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                     <Table>
                         <TableHeader>
                             <TableRow className="border-white/10 hover:bg-transparent">
-                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-wider">Participant</TableHead>
-                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-wider">Event</TableHead>
-                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-wider">Category</TableHead>
-                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-wider">Status</TableHead>
-                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-wider text-right">Date</TableHead>
+                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-widest">Participant</TableHead>
+                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-widest">Event</TableHead>
+                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-widest">Category</TableHead>
+                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-widest">Status</TableHead>
+                                <TableHead className="text-text-muted text-[10px] font-black uppercase italic tracking-widest text-right">Date</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -60,12 +60,12 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                                         </div>
                                     </TableCell>
                                     <TableCell className="py-3">
-                                        <span className="text-[11px] text-text-muted font-bold italic uppercase tracking-wider truncate max-w-[120px] block">
+                                        <span className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest truncate max-w-[120px] block">
                                             {reg.eventName || "Event"}
                                         </span>
                                     </TableCell>
                                     <TableCell className="py-3">
-                                        <span className="text-[11px] text-primary font-bold italic uppercase tracking-wider truncate max-w-[100px] block">
+                                        <span className="text-[10px] text-primary font-bold italic uppercase tracking-widest truncate max-w-[100px] block">
                                             {reg.categoryName || reg.categoryId}
                                         </span>
                                     </TableCell>

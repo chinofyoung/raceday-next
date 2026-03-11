@@ -45,7 +45,7 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Active Events</h2>
-                    <Badge variant="secondary" className="bg-cta/10 text-cta border-cta/20 text-[9px] font-black italic uppercase px-2.5 py-0.5">
+                    <Badge variant="secondary" className="bg-cta/10 text-cta border-cta/20 text-[10px] font-black italic uppercase px-2.5 py-0.5">
                         {items.length} Live
                     </Badge>
                 </div>
@@ -141,12 +141,12 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
 
                                 {/* Action Buttons */}
                                 <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20">
-                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs h-10">
+                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs">
                                         <Link href={`/dashboard/organizer/events/${event.id}`}>
                                             Manage
                                         </Link>
                                     </Button>
-                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-xs h-10">
+                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-xs">
                                         <Link href={`/dashboard/organizer/events/${event.id}/scanner`}>
                                             <Scan size={14} className="mr-2" /> Scan
                                         </Link>

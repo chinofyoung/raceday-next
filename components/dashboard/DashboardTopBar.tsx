@@ -1,8 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
+import { UserButton } from "@clerk/nextjs";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -39,8 +38,6 @@ export function DashboardTopBar() {
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-border px-4">
-      <SidebarTrigger className="-ml-1" />
-      <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumb>
         <BreadcrumbList>
           {crumbs.map((crumb, i) => (
@@ -57,6 +54,17 @@ export function DashboardTopBar() {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="ml-auto">
+        <UserButton
+          showName
+          appearance={{
+            elements: {
+              userButtonAvatarBox: "size-10",
+              userButtonOuterIdentifier: "text-sm font-bold text-foreground",
+            },
+          }}
+        />
+      </div>
     </header>
   );
 }

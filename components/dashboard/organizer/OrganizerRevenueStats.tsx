@@ -61,7 +61,7 @@ export function OrganizerRevenueStats({ categoryRevenue, eventRevenue, totalReve
                             <span className="text-sm font-black text-green-400 italic shrink-0">₱{item.revenue.toLocaleString()}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="flex-1 h-2 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                            <div className="flex-1 h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
                                 <div
                                     className="h-full bg-gradient-to-r from-green-500 to-emerald-400 rounded-full transition-all duration-1000 ease-out"
                                     style={{ width: `${data.length > 0 ? (item.revenue / (data[0]?.revenue || 1)) * 100 : 0}%` }}

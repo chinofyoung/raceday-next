@@ -104,13 +104,13 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "accepted":
-                return <Badge variant="success" className="uppercase text-[10px]">Active</Badge>;
+                return <Badge variant="success" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Active</Badge>;
             case "pending":
-                return <Badge variant="warning" className="uppercase text-[10px]">Pending</Badge>;
+                return <Badge variant="warning" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Pending</Badge>;
             case "revoked":
-                return <Badge variant="destructive" className="uppercase text-[10px]">Revoked</Badge>;
+                return <Badge variant="destructive" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Revoked</Badge>;
             default:
-                return <Badge variant="secondary" className="uppercase text-[10px]">{status}</Badge>;
+                return <Badge variant="secondary" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">{status}</Badge>;
         }
     };
 
@@ -157,7 +157,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 <button
                     onClick={() => setActiveTab("active")}
                     className={cn(
-                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-all relative",
+                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-colors relative",
                         activeTab === "active" ? "text-primary" : "text-text-muted hover:text-white"
                     )}
                 >
@@ -169,7 +169,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 <button
                     onClick={() => setActiveTab("revoked")}
                     className={cn(
-                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-all relative",
+                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-colors relative",
                         activeTab === "revoked" ? "text-red-500" : "text-text-muted hover:text-white"
                     )}
                 >
@@ -207,7 +207,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                             .map((volunteer) => (
                                 <div
                                     key={volunteer._id}
-                                    className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-200"
+                                    className="group relative flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 rounded-2xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/5 transition-colors"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-xl bg-white/[0.05] flex items-center justify-center overflow-hidden border border-white/[0.1]">
@@ -242,7 +242,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                     <div className="mt-4 sm:mt-0 flex items-center justify-between sm:justify-end gap-6">
                                         <div className="flex flex-wrap gap-1.5">
                                             {volunteer.permissions.map((p: string) => (
-                                                <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase">
+                                                <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] font-black italic uppercase px-2.5 py-0.5">
                                                     {getPermissionLabel(p)}
                                                 </Badge>
                                             ))}
@@ -252,7 +252,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                             {volunteer.status !== 'revoked' ? (
                                                 <button
                                                     onClick={() => setRevokeModal({ open: true, volunteerId: volunteer._id })}
-                                                    className="p-2 rounded-lg bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
+                                                    className="p-2 rounded-xl bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
                                                     title="Revoke access"
                                                 >
                                                     <UserMinus className="w-5 h-5" />
@@ -260,7 +260,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                             ) : (
                                                 <button
                                                     onClick={() => setRestoreModal({ open: true, volunteerId: volunteer._id })}
-                                                    className="p-2 rounded-lg bg-emerald-500/0 hover:bg-emerald-500/10 text-text-muted hover:text-emerald-500 transition-colors"
+                                                    className="p-2 rounded-xl bg-emerald-500/0 hover:bg-emerald-500/10 text-text-muted hover:text-emerald-500 transition-colors"
                                                     title="Restore access"
                                                 >
                                                     <RotateCcw className="w-5 h-5" />
@@ -268,7 +268,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                             )}
                                             <button
                                                 onClick={() => setDeleteModal({ open: true, volunteerId: volunteer._id })}
-                                                className="p-2 rounded-lg bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
+                                                className="p-2 rounded-xl bg-red-500/0 hover:bg-red-500/10 text-text-muted hover:text-red-500 transition-colors"
                                                 title="Delete volunteer"
                                             >
                                                 <Trash2 className="w-5 h-5" />

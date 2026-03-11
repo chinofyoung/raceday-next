@@ -293,7 +293,7 @@ export default function EventDetailPage() {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={cn(
-                                "pb-4 text-xs font-black uppercase tracking-widest transition-all relative",
+                                "pb-4 text-xs font-black uppercase tracking-widest italic transition-all relative",
                                 activeTab === tab ? "text-primary" : "text-text-muted hover:text-white"
                             )}
                         >
@@ -356,7 +356,7 @@ export default function EventDetailPage() {
                                         </thead>
                                         <tbody className="divide-y divide-white/5">
                                             {filteredParticipants.length > 0 ? filteredParticipants.map((reg: any) => (
-                                                <tr key={reg.id} className="hover:bg-white/[0.02] transition-colors">
+                                                <tr key={reg.id} className="hover:bg-white/5 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-3">
                                                             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black italic text-xs uppercase">
@@ -378,9 +378,9 @@ export default function EventDetailPage() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         {reg.raceKitClaimed ? (
-                                                            <Badge variant="success" className="bg-cta text-white border-none uppercase text-[8px] font-black italic tracking-widest">Claimed</Badge>
+                                                            <Badge variant="success" className="bg-cta text-white border-none uppercase text-[9px] font-black italic tracking-widest">Claimed</Badge>
                                                         ) : (
-                                                            <Badge variant="outline" className="border-white/10 text-text-muted uppercase text-[8px] font-black italic tracking-widest">Unclaimed</Badge>
+                                                            <Badge variant="outline" className="border-white/10 text-text-muted uppercase text-[9px] font-black italic tracking-widest">Unclaimed</Badge>
                                                         )}
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
