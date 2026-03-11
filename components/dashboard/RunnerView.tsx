@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { RunnerQuickActions } from "@/components/dashboard/RunnerQuickActions";
 import { VolunteerDashboard } from "@/components/dashboard/volunteer/VolunteerDashboard";
 import { toDate } from "@/lib/utils";
 import { ProfileCompletionCard } from "./runner/ProfileCompletionCard";
@@ -51,8 +50,6 @@ export function RunnerView({
 
     return (
         <div className="space-y-4 sm:space-y-8 animate-in fade-in duration-500">
-            <RunnerQuickActions hasApplication={hasApplication} userRole={userRole} />
-
             <div className="space-y-6 lg:space-y-12">
                 {/* Profile Completion Card */}
                 <ProfileCompletionCard completion={completion} />

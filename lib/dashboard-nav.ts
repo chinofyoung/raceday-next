@@ -10,6 +10,9 @@ import {
   ClipboardList,
   Trophy,
   Globe,
+  Monitor,
+  ScanLine,
+  PlusCircle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -33,6 +36,13 @@ export const runnerNav: NavGroup[] = [
       { title: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
+  {
+    label: "Quick Links",
+    items: [
+      { title: "Find Races", href: "/events", icon: Trophy },
+      { title: "View Site", href: "/", icon: Globe },
+    ],
+  },
 ];
 
 export const organizerNav: NavGroup[] = [
@@ -43,6 +53,14 @@ export const organizerNav: NavGroup[] = [
       { title: "Events", href: "/dashboard/organizer/events", icon: Calendar },
       { title: "Registrations", href: "/dashboard/organizer/registrations", icon: ClipboardList },
       { title: "Settings", href: "/dashboard/settings", icon: Settings },
+    ],
+  },
+  {
+    label: "Quick Links",
+    items: [
+      { title: "Create Event", href: "/dashboard/organizer/events/create", icon: PlusCircle },
+      { title: "Kiosk Mode", href: "/dashboard/organizer/kiosk", icon: Monitor },
+      { title: "Scanner", href: "/dashboard/organizer/scanner", icon: ScanLine },
     ],
   },
 ];

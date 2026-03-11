@@ -10,10 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
     Camera, Scan, ShieldCheck, XCircle,
-    CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft
+    CheckCircle2, AlertTriangle, User, Shirt, Hash
 } from "lucide-react";
 import { toast } from "sonner";
-import Link from "next/link";
 import dynamic from "next/dynamic";
 
 const QRScanner = dynamic(
@@ -113,17 +112,12 @@ export default function EventScannerPage() {
 
     return (
         <div className="max-w-7xl mx-auto space-y-12">
-            <Link href={`/dashboard/events/${eventId}`} className="inline-flex items-center gap-2 text-text-muted hover:text-white mb-2 text-xs font-black uppercase tracking-widest italic transition-colors">
-                <ArrowLeft size={14} /> Back to Event
-            </Link>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-primary text-[10px] font-black uppercase tracking-widest italic animate-pulse">
-                        <Camera size={14} /> LIVE Scanner Mode
-                    </div>
-                    <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-white">
-                        Race Kit <span className="text-cta">Fulfillment</span>.
+                <div className="space-y-1">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                        Race Kit <span className="text-primary">Scanner</span>
                     </h1>
+                    <p className="text-text-muted font-medium italic">Scan runner QR codes to fulfill race kits.</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="p-4 bg-surface/50 border border-white/5 rounded-2xl flex items-center gap-4">

@@ -1,6 +1,5 @@
 "use client";
 
-import { OrganizerQuickActions } from "./organizer/OrganizerQuickActions";
 import { OrganizerStats } from "./organizer/OrganizerStats";
 import { OrganizerActiveEvents } from "./organizer/OrganizerActiveEvents";
 import { OrganizerDraftsNotice } from "./organizer/OrganizerDraftsNotice";
@@ -35,8 +34,6 @@ export function OrganizerView({
 }: OrganizerViewProps) {
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-12">
-            <OrganizerQuickActions items={items} />
-
             <OrganizerDraftsNotice draftEventsCount={draftEvents.length} />
 
             <OrganizerStats

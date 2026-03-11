@@ -14,7 +14,6 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { format } from "date-fns";
-import { OrganizerQuickActions } from "@/components/dashboard/organizer/OrganizerQuickActions";
 
 export default function EventsManagementPage() {
     const { user, loading: authLoading } = useAuth();
@@ -97,8 +96,6 @@ export default function EventsManagementPage() {
                     </div>
                 </div>
             </div>
-
-            <OrganizerQuickActions items={events} />
 
             <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-surface/50 p-4 rounded-2xl border border-white/5">
                 <div className="flex gap-2 w-full md:w-auto overflow-x-auto no-scrollbar pb-2 md:pb-0">

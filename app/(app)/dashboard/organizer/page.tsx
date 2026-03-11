@@ -55,7 +55,7 @@ export default function OrganizerDashboardPage() {
     };
 
     const items = useMemo(() => {
-        const rawItems = (convexEvents?.page || []).slice(0, 5);
+        const rawItems = (convexEvents?.page || []).filter((e: any) => e.status === "published").slice(0, 5);
         return rawItems.map((item: any) => ({
             ...item,
             id: item._id || item.id

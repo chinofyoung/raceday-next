@@ -49,7 +49,7 @@ export function DashboardSidebar() {
     availableRoles.find((r) => r.value === activeRole) || availableRoles[0];
 
   return (
-    <Sidebar collapsible="none" className="sticky top-0 h-svh border-sidebar-border">
+    <Sidebar collapsible="offcanvas" className="sticky top-0 h-svh border-sidebar-border">
       <SidebarHeader>
         <Link href="/" className="block px-2 py-2">
           <Image
@@ -127,8 +127,8 @@ export function DashboardSidebar() {
                     size="lg"
                     isActive={
                       pathname === item.href ||
-                      (item.href !== "/dashboard" &&
-                        pathname.startsWith(item.href))
+                      (item.title !== "Overview" &&
+                        pathname.startsWith(item.href + "/"))
                     }
                     tooltip={item.title}
                     render={

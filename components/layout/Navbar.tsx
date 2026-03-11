@@ -53,6 +53,17 @@ export function Navbar() {
                 )}
             >
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    {/* Mobile Toggle - Left side for consistency with dashboard */}
+                    <button
+                        className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
+                        onClick={() => setIsOpen(!isOpen)}
+                        aria-expanded={isOpen}
+                        aria-controls="mobile-nav-menu"
+                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                    >
+                        {isOpen ? <X /> : <Menu />}
+                    </button>
+
                     <Link href="/" className="flex items-center transition-transform hover:scale-105 active:scale-95">
                         <Image
                             src="/logo.png"
@@ -122,16 +133,8 @@ export function Navbar() {
                         )}
                     </div>
 
-                    {/* Mobile Toggle */}
-                    <button
-                        className="md:hidden text-text p-2 hover:bg-white/5 rounded-lg"
-                        onClick={() => setIsOpen(!isOpen)}
-                        aria-expanded={isOpen}
-                        aria-controls="mobile-nav-menu"
-                        aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
-                    >
-                        {isOpen ? <X /> : <Menu />}
-                    </button>
+                    {/* Spacer for mobile to balance the left burger menu */}
+                    <div className="md:hidden w-10" />
                 </div>
             </nav>
 
@@ -139,7 +142,7 @@ export function Navbar() {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-[105] bg-black/60 backdrop-blur-sm md:hidden" onClick={() => setIsOpen(false)} />
-                    <div id="mobile-nav-menu" className="fixed top-0 right-0 bottom-0 z-[110] w-4/5 max-w-sm bg-surface border-l border-white/10 p-6 shadow-2xl animate-in slide-in-from-right md:hidden overflow-y-auto">
+                    <div id="mobile-nav-menu" className="fixed top-0 left-0 bottom-0 z-[110] w-4/5 max-w-sm bg-surface border-r border-white/10 p-6 shadow-2xl animate-in slide-in-from-left md:hidden overflow-y-auto">
                         <div className="flex justify-between items-center mb-8">
                             <span className="text-xl font-black italic uppercase tracking-wider text-white">Menu</span>
                             <button
