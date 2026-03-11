@@ -1,7 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/_LegacySelect";
 import { PH_REGIONS, PH_PROVINCES } from "@/lib/constants/ph-regions";
 import { MapPin } from "lucide-react";
@@ -28,27 +29,38 @@ export function Step3Address() {
                 <p className="text-text-muted font-medium">Official business or operating address.</p>
             </div>
             <div className="grid grid-cols-1 gap-6">
-                <Input
-                    label="Street Address / Bldg / Suite"
-                    {...register("address.street")}
-                    error={(errors.address as any)?.street?.message as string}
-                    placeholder="Unit 123, Street Name"
-                    icon={<MapPin size={18} />}
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Street Address / Bldg / Suite</Label>
+                    <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><MapPin className="size-4" /></div>
+                        <Input
+                            className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                            placeholder="Unit 123, Street Name"
+                            {...register("address.street")}
+                        />
+                    </div>
+                    {(errors.address as any)?.street && <p className="text-[10px] text-destructive font-bold uppercase italic">{(errors.address as any).street.message as string}</p>}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                        label="Barangay"
-                        {...register("address.barangay")}
-                        error={(errors.address as any)?.barangay?.message as string}
-                        placeholder="e.g. Brgy. San Antonio"
-                    />
-                    <Input
-                        label="City / Municipality"
-                        {...register("address.city")}
-                        error={(errors.address as any)?.city?.message as string}
-                        placeholder="e.g. Makati City"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Barangay</Label>
+                        <Input
+                            className="bg-white/5 border-white/10 rounded-xl"
+                            placeholder="e.g. Brgy. San Antonio"
+                            {...register("address.barangay")}
+                        />
+                        {(errors.address as any)?.barangay && <p className="text-[10px] text-destructive font-bold uppercase italic">{(errors.address as any).barangay.message as string}</p>}
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">City / Municipality</Label>
+                        <Input
+                            className="bg-white/5 border-white/10 rounded-xl"
+                            placeholder="e.g. Makati City"
+                            {...register("address.city")}
+                        />
+                        {(errors.address as any)?.city && <p className="text-[10px] text-destructive font-bold uppercase italic">{(errors.address as any).city.message as string}</p>}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -67,13 +79,16 @@ export function Step3Address() {
                     />
                 </div>
 
-                <Input
-                    label="ZIP Code"
-                    {...register("address.zipCode")}
-                    error={(errors.address as any)?.zipCode?.message as string}
-                    placeholder="e.g. 1200"
-                    maxLength={4}
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">ZIP Code</Label>
+                    <Input
+                        className="bg-white/5 border-white/10 rounded-xl"
+                        placeholder="e.g. 1200"
+                        maxLength={4}
+                        {...register("address.zipCode")}
+                    />
+                    {(errors.address as any)?.zipCode && <p className="text-[10px] text-destructive font-bold uppercase italic">{(errors.address as any).zipCode.message as string}</p>}
+                </div>
             </div>
         </div>
     );

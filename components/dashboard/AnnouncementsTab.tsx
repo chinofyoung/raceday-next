@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Megaphone, Mail, Loader2, Plus, Clock, Wand2, Sparkles, AlertCircle, Edit2, Trash2, X } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -206,14 +207,16 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
-                            <Input
-                                label="Announcement Title"
-                                value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                placeholder="e.g., Change in Assembly Time"
-                                required
-                                className="text-lg font-bold"
-                            />
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Announcement Title</Label>
+                                <Input
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    placeholder="e.g., Change in Assembly Time"
+                                    required
+                                    className="bg-white/5 border-white/10 rounded-xl text-lg font-bold"
+                                />
+                            </div>
                         </div>
 
                         <ImageUpload
@@ -327,14 +330,16 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
-                            <Input
-                                label="Announcement Title"
-                                value={editingAnnouncement.title}
-                                onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, title: e.target.value })}
-                                placeholder="e.g., Change in Assembly Time"
-                                required
-                                className="text-lg font-bold"
-                            />
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Announcement Title</Label>
+                                <Input
+                                    value={editingAnnouncement.title}
+                                    onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, title: e.target.value })}
+                                    placeholder="e.g., Change in Assembly Time"
+                                    required
+                                    className="bg-white/5 border-white/10 rounded-xl text-lg font-bold"
+                                />
+                            </div>
                         </div>
 
                         <ImageUpload

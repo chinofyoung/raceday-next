@@ -1,8 +1,9 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
-import { Textarea } from "@/components/ui/_LegacyTextarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { OrganizerType } from "@/types/user";
 import { cn } from "@/lib/utils";
 import { User, Building2, Trophy, School, Heart, Users } from "lucide-react";
@@ -58,13 +59,20 @@ export function Step1OrgInfo() {
             </div>
 
             <div className="space-y-6">
-                <Input
-                    label="Organization / Name"
-                    {...register("organizerName")}
-                    error={errors.organizerName?.message as string}
-                    placeholder="e.g. Run Ph, City Sports Office"
-                    description="This is the name runners will see as the host of your events."
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">
+                        Organization / Name
+                    </Label>
+                    <Input
+                        className="bg-white/5 border-white/10 rounded-xl"
+                        placeholder="e.g. Run Ph, City Sports Office"
+                        {...register("organizerName")}
+                    />
+                    {errors.organizerName && (
+                        <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.organizerName.message as string}</p>
+                    )}
+                    <p className="text-[10px] text-muted-foreground italic opacity-50">This is the name runners will see as the host of your events.</p>
+                </div>
 
                 <div className="space-y-3">
                     <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">
@@ -110,13 +118,20 @@ export function Step1OrgInfo() {
                     )}
                 </div>
 
-                <Textarea
-                    label="Description"
-                    {...register("description")}
-                    error={errors.description?.message as string}
-                    placeholder="Briefly describe what your organization does and the types of events you plan to organize..."
-                    description="Give us more context about your experience and focus."
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">
+                        Description
+                    </Label>
+                    <Textarea
+                        className="bg-white/5 border-white/10 rounded-xl min-h-[120px] resize-none"
+                        placeholder="Briefly describe what your organization does and the types of events you plan to organize..."
+                        {...register("description")}
+                    />
+                    {errors.description && (
+                        <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.description.message as string}</p>
+                    )}
+                    <p className="text-[10px] text-muted-foreground italic opacity-50">Give us more context about your experience and focus.</p>
+                </div>
             </div>
         </div>
     );

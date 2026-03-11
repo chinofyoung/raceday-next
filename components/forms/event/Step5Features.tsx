@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
 import { EventFormValues } from "@/lib/validations/event";
 import { Card } from "@/components/ui/_LegacyCard";
 import { Sparkles, DollarSign, MapPin, Droplets } from "lucide-react";
@@ -76,10 +76,10 @@ export function Step5Features() {
                             <Input
                                 type="number"
                                 {...register("vanityRaceNumber.premiumPrice", { valueAsNumber: true })}
-                                error={errors.vanityRaceNumber?.premiumPrice?.message}
                                 placeholder="e.g. 500"
-                                className="text-2xl font-black"
+                                className="bg-white/5 border-white/10 rounded-xl text-2xl font-black"
                             />
+                            {errors.vanityRaceNumber?.premiumPrice && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.vanityRaceNumber.premiumPrice.message}</p>}
                             <p className="text-xs text-text-muted font-medium italic">
                                 Applied when a runner chooses a specific race number.
                             </p>
@@ -97,10 +97,10 @@ export function Step5Features() {
                                         min: 1,
                                         max: 10
                                     })}
-                                    error={errors.vanityRaceNumber?.maxDigits?.message}
                                     placeholder="e.g. 4"
-                                    className="text-2xl font-black w-32"
+                                    className="bg-white/5 border-white/10 rounded-xl text-2xl font-black w-32"
                                 />
+                                {errors.vanityRaceNumber?.maxDigits && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.vanityRaceNumber.maxDigits.message}</p>}
                                 <div className="flex-1 flex gap-2">
                                     {Array.from({ length: watch("vanityRaceNumber.maxDigits") || 4 }).map((_, i) => (
                                         <div key={i} className="flex-1 aspect-square md:aspect-auto md:h-12 border-2 border-dashed border-cta/30 rounded-lg flex items-center justify-center text-cta/40 font-black italic text-xl">

@@ -12,20 +12,16 @@ import { toDate } from "@/lib/utils";
 import {
     Users,
     Trash2,
-    Settings,
     UserPlus,
     Mail,
     Clock,
     CheckCircle2,
     ShieldX,
-    ShieldCheck,
-    Search,
-    ShieldAlert,
     RotateCcw,
     UserMinus
 } from "lucide-react";
 import { toast } from "sonner";
-import { ConfirmModal } from "@/components/ui/_LegacyConfirmModal";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -292,41 +288,56 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 onSuccess={() => { }}
             />
 
-            <ConfirmModal
-                open={revokeModal.open}
-                onConfirm={handleRevoke}
-                onCancel={() => setRevokeModal({ open: false, volunteerId: null })}
-                title="Revoke Volunteer Access?"
-                description="This volunteer will immediately lose access to kiosk mode and participant data for this event. They will need to be re-invited to regain access."
-                confirmLabel="Revoke"
-                confirmVariant="danger"
-                icon={<ShieldAlert className="text-red-500" size={24} />}
-                isLoading={isRevoking}
-            />
+            <AlertDialog open={revokeModal.open} onOpenChange={(open) => !open && setRevokeModal({ open: false, volunteerId: null })}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Revoke Volunteer Access?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This volunteer will immediately lose access to kiosk mode and participant data for this event. They will need to be re-invited to regain access.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setRevokeModal({ open: false, volunteerId: null })}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleRevoke} disabled={isRevoking} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            {isRevoking ? "Revoking..." : "Revoke"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
-            <ConfirmModal
-                open={restoreModal.open}
-                onConfirm={handleRestore}
-                onCancel={() => setRestoreModal({ open: false, volunteerId: null })}
-                title="Restore Volunteer Access?"
-                description="This will restore the volunteer's access with their previous permission settings. Are you sure?"
-                confirmLabel="Restore"
-                confirmVariant="primary"
-                icon={<ShieldCheck className="text-emerald-500" size={24} />}
-                isLoading={isRestoring}
-            />
+            <AlertDialog open={restoreModal.open} onOpenChange={(open) => !open && setRestoreModal({ open: false, volunteerId: null })}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Restore Volunteer Access?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will restore the volunteer&apos;s access with their previous permission settings. Are you sure?
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setRestoreModal({ open: false, volunteerId: null })}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleRestore} disabled={isRestoring}>
+                            {isRestoring ? "Restoring..." : "Restore"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
-            <ConfirmModal
-                open={deleteModal.open}
-                onConfirm={handleDelete}
-                onCancel={() => setDeleteModal({ open: false, volunteerId: null })}
-                title="Delete Volunteer?"
-                description="This will permanently delete the volunteer invitation and their access. This action cannot be undone."
-                confirmLabel="Delete"
-                confirmVariant="danger"
-                icon={<Trash2 className="text-red-500" size={24} />}
-                isLoading={isDeleting}
-            />
+            <AlertDialog open={deleteModal.open} onOpenChange={(open) => !open && setDeleteModal({ open: false, volunteerId: null })}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Volunteer?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete the volunteer invitation and their access. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDeleteModal({ open: false, volunteerId: null })}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            {isDeleting ? "Deleting..." : "Delete"}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

@@ -8,7 +8,8 @@ import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/_LegacyCard";
 import { Badge } from "@/components/ui/_LegacyBadge";
@@ -161,12 +162,11 @@ export function OrganizerProfileForm() {
                         <h3 className="font-black italic uppercase tracking-tight">Organization Info</h3>
                     </div>
                     <div className="space-y-4">
-                        <Input
-                            label="Organization Name"
-                            {...register("name")}
-                            error={errors.name?.message}
-                            placeholder="e.g. RunPH Events"
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Organization Name</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. RunPH Events" {...register("name")} />
+                            {errors.name && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.name.message}</p>}
+                        </div>
                         <div className="space-y-3">
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Organization Type</label>
                             <div className="grid grid-cols-2 gap-2">
@@ -205,19 +205,16 @@ export function OrganizerProfileForm() {
                         <h3 className="font-black italic uppercase tracking-tight">Contact Details</h3>
                     </div>
                     <div className="space-y-4">
-                        <Input
-                            label="Contact Email"
-                            type="email"
-                            {...register("contactEmail")}
-                            error={errors.contactEmail?.message}
-                            placeholder="events@yourorg.com"
-                        />
-                        <Input
-                            label="Phone Number"
-                            {...register("phone")}
-                            error={errors.phone?.message}
-                            placeholder="e.g. 09171234567"
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Email</Label>
+                            <Input type="email" className="bg-white/5 border-white/10 rounded-xl" placeholder="events@yourorg.com" {...register("contactEmail")} />
+                            {errors.contactEmail && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.contactEmail.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Phone Number</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09171234567" {...register("phone")} />
+                            {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
+                        </div>
                     </div>
                 </Card>
             </div>

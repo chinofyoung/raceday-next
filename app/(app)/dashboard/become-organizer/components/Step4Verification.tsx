@@ -1,9 +1,10 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/_LegacySelect";
-import { Textarea } from "@/components/ui/_LegacyTextarea";
+import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { PH_GOVERNMENT_ID_TYPES } from "@/lib/constants/ph-id-types";
 import { ShieldCheck, Calendar, Info } from "lucide-react";
@@ -32,19 +33,25 @@ export function Step4Verification() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                        label="BIR TIN (Optional)"
-                        {...register("organizerTIN")}
-                        error={errors.organizerTIN?.message as string}
-                        placeholder="XXX-XXX-XXX-XXX"
-                        description="Format: 000-000-000-000"
-                    />
-                    <Input
-                        label="DTI / SEC Registration No. (Optional)"
-                        {...register("dtiSecRegistration")}
-                        error={errors.dtiSecRegistration?.message as string}
-                        placeholder="e.g. 1234567"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">BIR TIN (Optional)</Label>
+                        <Input
+                            className="bg-white/5 border-white/10 rounded-xl"
+                            placeholder="XXX-XXX-XXX-XXX"
+                            {...register("organizerTIN")}
+                        />
+                        {errors.organizerTIN && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.organizerTIN.message as string}</p>}
+                        <p className="text-[10px] text-muted-foreground italic opacity-50">Format: 000-000-000-000</p>
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">DTI / SEC Registration No. (Optional)</Label>
+                        <Input
+                            className="bg-white/5 border-white/10 rounded-xl"
+                            placeholder="e.g. 1234567"
+                            {...register("dtiSecRegistration")}
+                        />
+                        {errors.dtiSecRegistration && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.dtiSecRegistration.message as string}</p>}
+                    </div>
                 </div>
             </div>
 
@@ -64,12 +71,15 @@ export function Step4Verification() {
                         error={(errors.governmentId as any)?.type?.message as string}
                         options={PH_GOVERNMENT_ID_TYPES}
                     />
-                    <Input
-                        label="ID Number"
-                        {...register("governmentId.idNumber")}
-                        error={(errors.governmentId as any)?.idNumber?.message as string}
-                        placeholder="Enter ID number"
-                    />
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">ID Number</Label>
+                        <Input
+                            className="bg-white/5 border-white/10 rounded-xl"
+                            placeholder="Enter ID number"
+                            {...register("governmentId.idNumber")}
+                        />
+                        {(errors.governmentId as any)?.idNumber && <p className="text-[10px] text-destructive font-bold uppercase italic">{(errors.governmentId as any).idNumber.message}</p>}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -125,22 +135,27 @@ export function Step4Verification() {
                     />
                 </div>
 
-                <Textarea
-                    label="Past Events Organized"
-                    {...register("pastEventsDescription")}
-                    error={errors.pastEventsDescription?.message as string}
-                    placeholder="List some of the events you have organized in the past..."
-                    description="Helps us understand your track record."
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Past Events Organized</Label>
+                    <Textarea
+                        className="bg-white/5 border-white/10 rounded-xl min-h-[120px] resize-none"
+                        placeholder="List some of the events you have organized in the past..."
+                        {...register("pastEventsDescription")}
+                    />
+                    {errors.pastEventsDescription && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.pastEventsDescription.message as string}</p>}
+                    <p className="text-[10px] text-muted-foreground italic opacity-50">Helps us understand your track record.</p>
+                </div>
 
-                <Input
-                    label="Estimated Events Per Year"
-                    type="number"
-                    {...register("estimatedEventsPerYear")}
-                    error={errors.estimatedEventsPerYear?.message as string}
-                    placeholder="e.g. 5"
-                    className="md:max-w-[200px]"
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Estimated Events Per Year</Label>
+                    <Input
+                        type="number"
+                        className="bg-white/5 border-white/10 rounded-xl md:max-w-[200px]"
+                        placeholder="e.g. 5"
+                        {...register("estimatedEventsPerYear")}
+                    />
+                    {errors.estimatedEventsPerYear && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.estimatedEventsPerYear.message as string}</p>}
+                </div>
             </div>
 
             <div className="p-4 bg-cta/5 border border-cta/20 rounded-2xl">

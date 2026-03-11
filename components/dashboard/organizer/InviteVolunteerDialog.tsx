@@ -1,9 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { Modal } from "@/components/ui/_LegacyModal";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { volunteerInviteSchema, VolunteerInviteFormValues } from "@/lib/validations/volunteer";
@@ -67,22 +68,26 @@ export function InviteVolunteerDialog({
     };
 
     return (
-        <Modal open={open} onClose={onClose} title="Invite Volunteer">
+        <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Invite Volunteer</DialogTitle>
+                </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-bold uppercase tracking-wider text-text-muted">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
                         Gmail Address
-                    </label>
+                    </Label>
                     <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
                             {...register("email")}
                             placeholder="volunteer@gmail.com"
-                            className="pl-10"
-                            error={errors.email?.message}
+                            className="pl-10 bg-white/5 border-white/10 rounded-xl"
                         />
                     </div>
-                    <p className="text-xs text-text-muted">
+                    {errors.email && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.email.message}</p>}
+                    <p className="text-xs text-muted-foreground">
                         Volunteer must have a Google/Gmail account to accept the invitation.
                     </p>
                 </div>
@@ -159,6 +164,7 @@ export function InviteVolunteerDialog({
                     </Button>
                 </div>
             </form>
-        </Modal>
+            </DialogContent>
+        </Dialog>
     );
 }

@@ -8,7 +8,8 @@ import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { profileSchema, ProfileFormValues, calculateCompletion } from "@/lib/validations/profile";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/_LegacyCard";
 import { Check, Loader2, User as UserIcon, MapPin, ShieldAlert, Shirt, Save } from "lucide-react";
@@ -122,17 +123,16 @@ export function ProfileForm() {
                         <h3 className="font-black italic uppercase tracking-tight">Personal Information</h3>
                     </div>
                     <div className="space-y-4">
-                        <Input
-                            label="Display Name"
-                            {...register("displayName")}
-                            error={errors.displayName?.message}
-                        />
-                        <Input
-                            label="Phone Number"
-                            {...register("phone")}
-                            error={errors.phone?.message}
-                            placeholder="e.g. 09123456789"
-                        />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Display Name</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" {...register("displayName")} />
+                            {errors.displayName && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.displayName.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Phone Number</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09123456789" {...register("phone")} />
+                            {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
@@ -147,12 +147,11 @@ export function ProfileForm() {
                                 </select>
                                 {errors.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.gender.message}</p>}
                             </div>
-                            <Input
-                                type="date"
-                                label="Birth Date"
-                                {...register("birthDate")}
-                                error={errors.birthDate?.message}
-                            />
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Birth Date</Label>
+                                <Input type="date" className="bg-white/5 border-white/10 rounded-xl" {...register("birthDate")} />
+                                {errors.birthDate && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.birthDate.message}</p>}
+                            </div>
                         </div>
                         <div className="space-y-2">
                             <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Medical Conditions</label>
@@ -172,14 +171,29 @@ export function ProfileForm() {
                         <h3 className="font-black italic uppercase tracking-tight">Residential Address</h3>
                     </div>
                     <div className="space-y-4">
-                        <Input label="Street Address" {...register("address.street")} placeholder="Building, Street Name" />
-                        <div className="grid grid-cols-2 gap-4">
-                            <Input label="City" {...register("address.city")} />
-                            <Input label="Province" {...register("address.province")} />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Street Address</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="Building, Street Name" {...register("address.street")} />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                            <Input label="ZIP Code" {...register("address.zipCode")} />
-                            <Input label="Country" {...register("address.country")} />
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">City</Label>
+                                <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.city")} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Province</Label>
+                                <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.province")} />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">ZIP Code</Label>
+                                <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.zipCode")} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Country</Label>
+                                <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.country")} />
+                            </div>
                         </div>
                     </div>
                 </Card>
@@ -191,9 +205,19 @@ export function ProfileForm() {
                         <h3 className="font-black italic uppercase tracking-tight">Emergency Contact</h3>
                     </div>
                     <div className="space-y-4">
-                        <Input label="Contact Name" {...register("emergencyContact.name")} />
-                        <Input label="Relationship" {...register("emergencyContact.relationship")} />
-                        <Input label="Contact Phone" {...register("emergencyContact.phone")} error={errors.emergencyContact?.phone?.message} />
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Name</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.name")} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Relationship</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.relationship")} />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Phone</Label>
+                            <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.phone")} />
+                            {errors.emergencyContact?.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.emergencyContact.phone.message}</p>}
+                        </div>
                     </div>
                 </Card>
 

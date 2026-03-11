@@ -1,7 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/_LegacyInput";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Mail, Phone, Globe, User } from "lucide-react";
 
 export function Step2Contact() {
@@ -14,49 +15,74 @@ export function Step2Contact() {
                 <p className="text-text-muted font-medium">How we and your participants can reach you.</p>
             </div>
             <div className="grid grid-cols-1 gap-6">
-                <Input
-                    label="Contact Person"
-                    {...register("contactPerson")}
-                    error={errors.contactPerson?.message as string}
-                    placeholder="Full Name"
-                    icon={<User size={18} />}
-                />
-
-                <Input
-                    label="Business Email"
-                    {...register("contactEmail")}
-                    error={errors.contactEmail?.message as string}
-                    placeholder="email@example.com"
-                    icon={<Mail size={18} />}
-                    description="Where we will send official communications."
-                />
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Input
-                        label="Mobile Number"
-                        {...register("phone")}
-                        error={errors.phone?.message as string}
-                        placeholder="0917 123 4567"
-                        icon={<Phone size={18} />}
-                        description="Primary PH contact number (09XXXXXXXXX)"
-                    />
-                    <Input
-                        label="Alternate Phone (Optional)"
-                        {...register("alternatePhone")}
-                        error={errors.alternatePhone?.message as string}
-                        placeholder="Landline or other mobile"
-                        icon={<Phone size={18} />}
-                    />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Contact Person</Label>
+                    <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><User className="size-4" /></div>
+                        <Input
+                            className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                            placeholder="Full Name"
+                            {...register("contactPerson")}
+                        />
+                    </div>
+                    {errors.contactPerson && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.contactPerson.message as string}</p>}
                 </div>
 
-                <Input
-                    label="Website / Social Media (Optional)"
-                    {...register("website")}
-                    error={errors.website?.message as string}
-                    placeholder="https://facebook.com/yourpage"
-                    icon={<Globe size={18} />}
-                    description="Link to your organization website or Facebook page."
-                />
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Business Email</Label>
+                    <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><Mail className="size-4" /></div>
+                        <Input
+                            className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                            placeholder="email@example.com"
+                            {...register("contactEmail")}
+                        />
+                    </div>
+                    {errors.contactEmail && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.contactEmail.message as string}</p>}
+                    <p className="text-[10px] text-muted-foreground italic opacity-50">Where we will send official communications.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Mobile Number</Label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><Phone className="size-4" /></div>
+                            <Input
+                                className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                                placeholder="0917 123 4567"
+                                {...register("phone")}
+                            />
+                        </div>
+                        {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message as string}</p>}
+                        <p className="text-[10px] text-muted-foreground italic opacity-50">Primary PH contact number (09XXXXXXXXX)</p>
+                    </div>
+                    <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Alternate Phone (Optional)</Label>
+                        <div className="relative">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><Phone className="size-4" /></div>
+                            <Input
+                                className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                                placeholder="Landline or other mobile"
+                                {...register("alternatePhone")}
+                            />
+                        </div>
+                        {errors.alternatePhone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.alternatePhone.message as string}</p>}
+                    </div>
+                </div>
+
+                <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">Website / Social Media (Optional)</Label>
+                    <div className="relative">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"><Globe className="size-4" /></div>
+                        <Input
+                            className="pl-12 bg-white/5 border-white/10 rounded-xl"
+                            placeholder="https://facebook.com/yourpage"
+                            {...register("website")}
+                        />
+                    </div>
+                    {errors.website && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.website.message as string}</p>}
+                    <p className="text-[10px] text-muted-foreground italic opacity-50">Link to your organization website or Facebook page.</p>
+                </div>
             </div>
         </div>
     );
