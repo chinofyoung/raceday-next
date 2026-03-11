@@ -236,3 +236,25 @@ export const getInternal = internalQuery({
         return await ctx.db.get(args.id);
     },
 });
+
+export const updateDashboardLayout = mutation({
+    args: {
+        layout: v.array(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+
+        if (!user) throw new Error("User not found");
+
+        await ctx.db.patch(user._id, {
+            dashboardLayout: args.layout,
+            updatedAt: Date.now(),
+        });
+    },
+});
