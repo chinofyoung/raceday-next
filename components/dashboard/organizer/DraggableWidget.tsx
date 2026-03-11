@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
@@ -7,10 +8,11 @@ import { GripVertical } from "lucide-react";
 interface DraggableWidgetProps {
     id: string;
     isEditing: boolean;
-    children: React.ReactNode;
+    className?: string;
+    children: ReactNode;
 }
 
-export function DraggableWidget({ id, isEditing, children }: DraggableWidgetProps) {
+export function DraggableWidget({ id, isEditing, className, children }: DraggableWidgetProps) {
     const {
         attributes,
         listeners,
@@ -29,7 +31,7 @@ export function DraggableWidget({ id, isEditing, children }: DraggableWidgetProp
         <div
             ref={setNodeRef}
             style={style}
-            className={`md:col-span-2 relative ${
+            className={`relative ${className || ""} ${
                 isDragging ? "z-50 opacity-75" : ""
             } ${isEditing ? "ring-1 ring-white/10 rounded-2xl" : ""}`}
         >

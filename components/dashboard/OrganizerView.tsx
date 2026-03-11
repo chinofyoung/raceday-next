@@ -67,8 +67,11 @@ export function OrganizerView({
     const updateLayout = useMutation(api.users.updateDashboardLayout);
 
     const savedOrder = useMemo(() => {
-        const layout = (user as any)?.dashboardLayout as string[] | undefined;
-        if (!layout || layout.length !== DEFAULT_WIDGET_ORDER.length) {
+        const layout = user?.dashboardLayout;
+        const isValid = layout &&
+            layout.length === DEFAULT_WIDGET_ORDER.length &&
+            layout.every((id) => (DEFAULT_WIDGET_ORDER as readonly string[]).includes(id));
+        if (!isValid) {
             return [...DEFAULT_WIDGET_ORDER];
         }
         return layout as WidgetId[];
@@ -101,8 +104,12 @@ export function OrganizerView({
     }, []);
 
     const handleSave = useCallback(async () => {
-        await updateLayout({ layout: [...widgetOrder] });
-        setIsEditing(false);
+        try {
+            await updateLayout({ layout: [...widgetOrder] });
+            setIsEditing(false);
+        } catch (err) {
+            console.error("Failed to save layout", err);
+        }
     }, [widgetOrder, updateLayout]);
 
     const handleCancel = useCallback(() => {
@@ -110,7 +117,7 @@ export function OrganizerView({
         setIsEditing(false);
     }, [savedOrder]);
 
-    const widgetMap: Record<WidgetId, React.ReactNode> = {
+    const widgetMap = useMemo<Record<WidgetId, React.ReactNode>>(() => ({
         "revenue-stats": (
             <OrganizerRevenueStats
                 categoryRevenue={categoryRevenue}
@@ -131,7 +138,7 @@ export function OrganizerView({
         "registrations-feed": (
             <OrganizerRegistrationsFeed recentRegistrations={recentRegistrations} />
         ),
-    };
+    }), [items, eventKitStats, recentRegistrations, categoryRevenue, eventRevenue, stats, claimedKits, claimPercentage]);
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500 pb-12">
@@ -182,7 +189,7 @@ export function OrganizerView({
                 <SortableContext items={widgetOrder} strategy={rectSortingStrategy}>
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         {widgetOrder.map((id) => (
-                            <DraggableWidget key={id} id={id} isEditing={isEditing}>
+                            <DraggableWidget key={id} id={id} isEditing={isEditing} className="md:col-span-2">
                                 {widgetMap[id]}
                             </DraggableWidget>
                         ))}

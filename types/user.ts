@@ -53,6 +53,7 @@ export interface User {
 
     // Metadata
     profileCompletion: number; // 0–100
+    dashboardLayout?: string[];
     volunteerEvents?: string[]; // Array of eventIds where user is a volunteer
     createdAt: UniversalTimestamp;
     updatedAt: UniversalTimestamp;

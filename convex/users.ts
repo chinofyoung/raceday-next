@@ -251,6 +251,13 @@ export const updateDashboardLayout = mutation({
             .unique();
 
         if (!user) throw new Error("User not found");
+        if (user.role !== "organizer" && user.role !== "admin") throw new Error("Forbidden");
+
+        const VALID_WIDGET_IDS = ["revenue-stats", "kit-fulfillment", "active-events", "registrations-feed"];
+        const isValid =
+            args.layout.length === VALID_WIDGET_IDS.length &&
+            args.layout.every((id) => VALID_WIDGET_IDS.includes(id));
+        if (!isValid) throw new Error("Invalid layout");
 
         await ctx.db.patch(user._id, {
             dashboardLayout: args.layout,
