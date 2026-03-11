@@ -140,7 +140,7 @@ export function Step4Timeline() {
                                     <input
                                         type="time"
                                         {...register(`timeline.${index}.time`)}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text text-sm focus:outline-none focus:border-primary transition-all [color-scheme:dark]"
+                                        className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text text-sm focus:outline-none focus:border-primary transition-all [color-scheme:dark]"
                                     />
                                     {errors.timeline?.[index]?.time?.message && (
                                         <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.timeline[index].time.message}</p>

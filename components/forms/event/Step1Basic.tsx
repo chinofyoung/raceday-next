@@ -41,7 +41,7 @@ export function Step1Basic() {
                         <input
                             type="date"
                             {...register("date")}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
+                            className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
                         {errors.date?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.date.message}</p>}
                     </div>
@@ -53,7 +53,7 @@ export function Step1Basic() {
                         <input
                             type="date"
                             {...register("registrationEndDate")}
-                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
+                            className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
                         {errors.registrationEndDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.registrationEndDate.message}</p>}
                     </div>
