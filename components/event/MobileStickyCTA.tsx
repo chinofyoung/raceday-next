@@ -1,7 +1,7 @@
 "use client";
 
 import { RaceEvent } from "@/types/event";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";

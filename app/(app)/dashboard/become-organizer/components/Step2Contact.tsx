@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/_LegacyInput";
 import { Mail, Phone, Globe, User } from "lucide-react";
 
 export function Step2Contact() {

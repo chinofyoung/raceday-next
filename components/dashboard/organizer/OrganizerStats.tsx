@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { Calendar, Users, DollarSign, Package } from "lucide-react";
 
 interface OrganizerStatsProps {

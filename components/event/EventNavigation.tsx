@@ -1,7 +1,7 @@
 "use client";
 
 import { RaceEvent } from "@/types/event";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { isEventOver, isRegistrationClosed } from "@/lib/earlyBirdUtils";

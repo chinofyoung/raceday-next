@@ -1,8 +1,8 @@
 "use client";
 
 import { Activity, Users } from "lucide-react";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
 

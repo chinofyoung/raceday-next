@@ -6,9 +6,9 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import {
     ArrowLeft, Users, DollarSign, Calendar, MapPin,
     Edit2, Download, Search, QrCode, CheckCircle2, Copy, Monitor

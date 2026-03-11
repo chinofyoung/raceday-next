@@ -2,8 +2,8 @@
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useSearchParams } from "next/navigation";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw, MessageSquare, ArrowLeft, XCircle } from "lucide-react";
 import Link from "next/link";
 

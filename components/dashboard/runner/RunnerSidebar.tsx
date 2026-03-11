@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle2 } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
 
 interface RunnerSidebarProps {

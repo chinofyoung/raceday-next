@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { RaceEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import { Search, CheckCircle2, AlertCircle, Loader2, Sparkles, Hash, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 

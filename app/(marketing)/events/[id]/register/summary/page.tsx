@@ -1,8 +1,8 @@
 "use client";
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/_LegacyCard";
 import { CheckCircle2, CreditCard, ArrowRight, Home, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";

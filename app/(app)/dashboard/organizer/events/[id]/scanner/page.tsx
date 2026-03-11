@@ -6,9 +6,9 @@ import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import {
     Camera, Scan, ShieldCheck, XCircle,
     CheckCircle2, AlertTriangle, User, Shirt, Hash, ArrowLeft

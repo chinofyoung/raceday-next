@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
 import { LogIn, X, ShieldCheck } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";

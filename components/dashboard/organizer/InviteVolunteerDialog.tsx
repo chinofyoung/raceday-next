@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Modal } from "@/components/ui/_LegacyModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/_LegacyInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { volunteerInviteSchema, VolunteerInviteFormValues } from "@/lib/validations/volunteer";

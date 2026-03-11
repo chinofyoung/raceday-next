@@ -5,10 +5,10 @@ import { EventForm } from "@/components/forms/event/EventForm";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { ShieldAlert, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function CreateEventPage() {
     const { role, loading } = useAuth();

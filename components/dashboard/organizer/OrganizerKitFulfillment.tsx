@@ -1,7 +1,7 @@
 "use client";
 
 import { ShieldCheck } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 
 interface OrganizerKitFulfillmentProps {
     claimPercentage: number;

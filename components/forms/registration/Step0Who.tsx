@@ -2,7 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { User, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 

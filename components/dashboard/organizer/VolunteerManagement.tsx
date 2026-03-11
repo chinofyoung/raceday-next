@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import { InviteVolunteerDialog } from "./InviteVolunteerDialog";
 import { EventVolunteer, VolunteerPermission } from "@/types/volunteer";
 import { format } from "date-fns";
@@ -25,7 +25,7 @@ import {
     UserMinus
 } from "lucide-react";
 import { toast } from "sonner";
-import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { ConfirmModal } from "@/components/ui/_LegacyConfirmModal";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";

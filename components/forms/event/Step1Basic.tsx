@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/_LegacyInput";
 import { EventFormValues } from "@/lib/validations/event";
 import { Loader2, Wand2 } from "lucide-react";
 import { useAuth } from "@clerk/nextjs";

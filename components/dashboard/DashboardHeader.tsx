@@ -2,7 +2,7 @@
 
 import { Settings, Trophy, BarChart3 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { cn } from "@/lib/utils";
 

@@ -2,9 +2,9 @@
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import { User, MapPin, Phone, ShieldAlert, Shirt, Edit2, CheckCircle2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

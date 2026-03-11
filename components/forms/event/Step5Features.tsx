@@ -1,9 +1,9 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
+import { Input } from "@/components/ui/_LegacyInput";
 import { EventFormValues } from "@/lib/validations/event";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { Sparkles, DollarSign, MapPin, Droplets } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { StationManager } from "./StationManager";

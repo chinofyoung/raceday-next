@@ -1,11 +1,11 @@
 "use client";
 
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { EventFormValues } from "@/lib/validations/event";
 import { Plus, Trash2, Calendar, Clock, AlignLeft, Sparkles, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Card } from "@/components/ui/_LegacyCard";
 import { cn, generateId } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";

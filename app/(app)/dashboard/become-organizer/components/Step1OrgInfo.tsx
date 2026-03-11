@@ -1,8 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Textarea } from "@/components/ui/_LegacyTextarea";
 import { OrganizerType } from "@/types/user";
 import { cn } from "@/lib/utils";
 import { User, Building2, Trophy, School, Heart, Users } from "lucide-react";

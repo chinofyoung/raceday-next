@@ -5,7 +5,7 @@ import { EventFormValues } from "@/lib/validations/event";
 import { Calendar, MapPin, AlignLeft, Ruler, Clock, Sparkles, Image as ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
 

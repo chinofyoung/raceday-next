@@ -5,16 +5,16 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { getRegistrations } from "@/lib/services/registrationService";
 import { getEvents } from "@/lib/services/eventService";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Select } from "@/components/ui/_LegacySelect";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import { formatDistanceToNow, format } from "date-fns";
 import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Registration } from "@/types/registration";
 import { RaceEvent } from "@/types/event";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 
 export default function OrganizerRegistrationsPage() {
     const { user, loading: authLoading } = useAuth();

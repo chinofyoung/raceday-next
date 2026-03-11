@@ -8,8 +8,8 @@ import L from "leaflet";
 import { Droplets, HeartPulse, Plus, X, MapPin, Trash2, Edit2, Check } from "lucide-react";
 import { EventFormValues, raceStationSchema } from "@/lib/validations/event";
 import { StationType, RaceStation } from "@/types/event";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/_LegacyInput";
 import { cn } from "@/lib/utils";
 
 // Custom icons for stations

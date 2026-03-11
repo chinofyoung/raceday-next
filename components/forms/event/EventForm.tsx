@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { eventSchema, EventFormValues, EventFormInput } from "@/lib/validations/event";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronRight, ChevronLeft, Save, Send } from "lucide-react";
 import { Step1Basic } from "./Step1Basic";

@@ -1,8 +1,8 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Select } from "@/components/ui/_LegacySelect";
 import { PH_REGIONS, PH_PROVINCES } from "@/lib/constants/ph-regions";
 import { MapPin } from "lucide-react";
 import { useEffect } from "react";

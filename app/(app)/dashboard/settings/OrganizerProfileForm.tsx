@@ -8,10 +8,10 @@ import { useMutation } from "convex/react";
 import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import { useAuth } from "@/lib/hooks/useAuth";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import {
     Check, Loader2, Building2, Mail, Phone, Globe,
     ShieldCheck, CalendarCheck, AlertCircle, Save

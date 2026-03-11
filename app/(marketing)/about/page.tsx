@@ -1,6 +1,6 @@
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/_LegacyCard";
 import { Mail, Github, Twitter, MapPin } from "lucide-react";
 
 export default function AboutPage() {

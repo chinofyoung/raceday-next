@@ -1,9 +1,9 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { Textarea } from "@/components/ui/Textarea";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Select } from "@/components/ui/_LegacySelect";
+import { Textarea } from "@/components/ui/_LegacyTextarea";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { PH_GOVERNMENT_ID_TYPES } from "@/lib/constants/ph-id-types";
 import { ShieldCheck, Calendar, Info } from "lucide-react";

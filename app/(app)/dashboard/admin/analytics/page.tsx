@@ -2,15 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import {
     BarChart3, TrendingUp, DollarSign, Users,
     Calendar, ArrowLeft, Loader2, Download
 } from "lucide-react";
 import Link from "next/link";
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval, isWithinInterval, startOfDay } from "date-fns";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
 import { getRegistrations } from "@/lib/services/registrationService";

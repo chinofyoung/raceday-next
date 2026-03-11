@@ -5,7 +5,7 @@ import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { RaceEvent } from "@/types/event";
 import { EventCard } from "@/components/events/EventCard";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Plus, Search, Filter, MoreVertical, Edit2, Eye, Trash2, Calendar, MapPin, Users, ArrowLeft } from "lucide-react";
 import { Skeleton, EventCardSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";

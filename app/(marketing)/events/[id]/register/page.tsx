@@ -10,7 +10,7 @@ import { RegistrationForm } from "@/components/forms/registration/RegistrationFo
 import { ArrowLeft, Info } from "lucide-react";
 import { RegistrationFormSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { isRegistrationClosed } from "@/lib/earlyBirdUtils";
 
 export default function RegisterPage() {

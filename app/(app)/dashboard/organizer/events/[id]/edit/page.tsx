@@ -7,11 +7,11 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter, useParams } from "next/navigation";
 import { getEventById } from "@/lib/services/eventService";
 import { RaceEvent } from "@/types/event";
-import { Card } from "@/components/ui/Card";
+import { Card } from "@/components/ui/_LegacyCard";
 import { ArrowLeft, ShieldAlert } from "lucide-react";
 import { EditEventSkeleton } from "@/components/shared/Skeleton";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { toInputDate } from "@/lib/utils";
 
 export default function EditEventPage() {

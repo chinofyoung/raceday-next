@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/_LegacyInput";
 import { Megaphone, Mail, Loader2, Plus, Clock, Wand2, Sparkles, AlertCircle, Edit2, Trash2, X } from "lucide-react";
 import { format } from "date-fns";
 import { useAuth } from "@/lib/hooks/useAuth";

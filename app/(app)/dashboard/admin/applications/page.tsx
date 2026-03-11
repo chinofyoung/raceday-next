@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import {
     UserCheck, ArrowLeft, Loader2, Download, Filter
 } from "lucide-react";

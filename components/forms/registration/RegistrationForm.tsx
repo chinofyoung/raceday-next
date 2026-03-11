@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, RegistrationFormValues } from "@/lib/validations/registration";
 import { RaceEvent } from "@/types/event";
 import { getEffectivePrice } from "@/lib/earlyBirdUtils";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { Loader2, ChevronRight, ChevronLeft, CheckCircle2 } from "lucide-react";

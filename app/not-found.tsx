@@ -1,7 +1,7 @@
 "use client";
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 

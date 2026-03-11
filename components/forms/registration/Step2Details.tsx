@@ -3,8 +3,8 @@
 import { useFormContext } from "react-hook-form";
 import { RaceEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { Input } from "@/components/ui/Input";
-import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/_LegacyInput";
+import { Card } from "@/components/ui/_LegacyCard";
 import { User, Phone, Mail, Shirt, HeartPulse, ShieldAlert } from "lucide-react";
 
 interface Step2DetailsProps {

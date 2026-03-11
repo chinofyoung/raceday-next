@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/_LegacyBadge";
 import {
     Calendar, Search, Filter, ArrowLeft, Loader2,
     MapPin, Users, Trophy, MoreVertical, Star,

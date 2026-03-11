@@ -2,8 +2,8 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/_LegacyCard";
+import { Button } from "@/components/ui/button";
 
 interface ProfileCompletionCardProps {
     completion: number;

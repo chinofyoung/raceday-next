@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { CloudUpload, X, Loader2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
