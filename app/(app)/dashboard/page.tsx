@@ -16,7 +16,6 @@ interface NormalizedRegistration {
 }
 
 // Components
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RunnerView } from "@/components/dashboard/RunnerView";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -115,10 +114,12 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-4 sm:space-y-8 text-white">
-            <DashboardHeader
-                userName={user?.displayName || ""}
-                isOrganizerView={false}
-            />
+            <div className="space-y-1">
+                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    Hello, <span className="text-primary">{user?.displayName?.split(' ')[0] || "there"}</span>
+                </h1>
+                <p className="text-text-muted font-medium italic">Welcome back to your race command center.</p>
+            </div>
 
             <RunnerView
                 completion={completion}

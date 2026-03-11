@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { OrganizerView } from "@/components/dashboard/OrganizerView";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -170,10 +169,12 @@ export default function OrganizerDashboardPage() {
 
     return (
         <div className="space-y-8 text-white">
-            <DashboardHeader
-                userName={user?.displayName || ""}
-                isOrganizerView={true}
-            />
+            <div className="space-y-1">
+                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    Hello, <span className="text-primary">{user?.displayName?.split(' ')[0] || "there"}</span>
+                </h1>
+                <p className="text-text-muted font-medium italic">Your race command center. Everything at a glance.</p>
+            </div>
 
             <OrganizerView
                 items={items}
