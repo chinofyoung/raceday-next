@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
     DndContext,
     closestCenter,
@@ -78,7 +78,7 @@ export function OrganizerView({
     const [widgetOrder, setWidgetOrder] = useState<WidgetId[]>(savedOrder);
 
     // Sync local state when saved order changes (e.g. on first load)
-    useMemo(() => {
+    useEffect(() => {
         if (!isEditing) {
             setWidgetOrder(savedOrder);
         }
