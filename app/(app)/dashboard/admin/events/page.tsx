@@ -115,7 +115,8 @@ export default function AdminEventManagementPage() {
     };
 
     const filteredEvents = events.filter(e => {
-        const matchesSearch = e.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = e.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            e.location?.name?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === "all" || e.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
