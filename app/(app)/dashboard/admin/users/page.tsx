@@ -9,6 +9,13 @@ import {
     Mail, Calendar, Trophy, ChevronRight, User as UserIcon,
     MoreVertical, Shield, UserCog, Ban, Download
 } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useMutation } from "convex/react";
@@ -203,30 +210,32 @@ export default function UserManagementPage() {
                                 </div>
 
                                 {/* Actions */}
-                                <div className="col-span-2 flex justify-end items-center gap-2">
-                                    <div className="flex items-center gap-1 p-1 bg-background/50 rounded-lg border border-white/5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary"
-                                            title="Promote/Demote"
-                                            onClick={() => handleRoleChange(user._id, user.role === "runner" ? "organizer" : "runner")}
-                                            disabled={processing === user._id}
-                                        >
-                                            <UserCog size={14} />
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="ghost"
-                                            className="h-8 w-8 p-0 hover:bg-red-500/20 hover:text-red-500"
-                                            title="Ban User"
-                                        >
-                                            <Ban size={14} />
-                                        </Button>
-                                    </div>
-                                    <Button size="sm" variant="outline" className="h-8 w-8 p-0 font-black italic uppercase border-white/10">
-                                        <MoreVertical size={14} />
-                                    </Button>
+                                <div className="col-span-2 flex justify-end items-center">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger render={
+                                            <Button size="sm" variant="outline" className="h-8 w-8 p-0 font-black italic uppercase border-white/10">
+                                                <MoreVertical size={14} />
+                                            </Button>
+                                        } />
+                                        <DropdownMenuContent align="end" sideOffset={4}>
+                                            <DropdownMenuItem
+                                                className="gap-2 cursor-pointer"
+                                                onClick={() => handleRoleChange(user._id, user.role === "runner" ? "organizer" : "runner")}
+                                                disabled={processing === user._id}
+                                            >
+                                                <UserCog size={14} />
+                                                {user.role === "runner" ? "Promote to Organizer" : "Demote to Runner"}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                                variant="destructive"
+                                                className="gap-2 cursor-pointer"
+                                            >
+                                                <Ban size={14} />
+                                                Ban User
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             </div>
                         </Card>

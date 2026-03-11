@@ -25,140 +25,172 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
 
     if (eventKitStats.length === 0) {
         return (
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Active Events</h2>
+            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group flex flex-col h-full">
+                {/* Decorative blur glow */}
+                <div className="absolute top-0 right-0 p-12 bg-cta/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-cta/20 transition-colors duration-500 pointer-events-none" />
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6 relative z-10">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-cta/20 flex items-center justify-center text-cta border border-cta/20">
+                            <Calendar size={16} />
+                        </div>
+                        <h3 className="text-base font-black uppercase italic tracking-tight text-white">Active Events</h3>
+                    </div>
                 </div>
-                <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-4">
-                    <Calendar className="mx-auto text-text-muted opacity-20" size={48} />
+
+                {/* Empty state */}
+                <div className="flex-1 flex flex-col items-center justify-center py-8 text-center gap-4 relative z-10">
+                    <Calendar className="text-text-muted opacity-20" size={48} />
                     <p className="text-text-muted italic font-medium">You haven&apos;t created any events yet.</p>
                     <Button variant="primary" asChild className="bg-cta border-none italic font-black uppercase">
-                        <Link href="/dashboard/organizer/events/create">Build First Event <ArrowRight size={16} className="ml-2" /></Link>
+                        <Link href="/dashboard/organizer/events/create">
+                            Build First Event <ArrowRight size={16} className="ml-2" />
+                        </Link>
                     </Button>
-                </Card>
-            </div>
+                </div>
+            </Card>
         );
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Active Events</h2>
+        <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group flex flex-col h-full">
+            {/* Decorative blur glow */}
+            <div className="absolute top-0 right-0 p-12 bg-cta/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-cta/20 transition-colors duration-500 pointer-events-none" />
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6 relative z-10">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-cta/20 flex items-center justify-center text-cta border border-cta/20">
+                        <Calendar size={16} />
+                    </div>
+                    <h3 className="text-base font-black uppercase italic tracking-tight text-white">Active Events</h3>
                     <Badge variant="secondary" className="bg-cta/10 text-cta border-cta/20 text-[10px] font-black italic uppercase px-2.5 py-0.5">
                         {items.length} Live
                     </Badge>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {/* Event list */}
+            <div className="flex flex-col gap-3 relative z-10">
                 {eventKitStats.map((event) => {
                     const parsedDate = event.date ? new Date(event.date) : null;
                     const isValidDate = parsedDate && !isNaN(parsedDate.getTime());
                     const isUpcoming = isValidDate && isAfter(parsedDate, new Date());
 
                     return (
-                        <Card key={event.id} className="bg-white/5 border-white/10 hover:border-cta/30 transition-all group overflow-hidden flex flex-col h-full relative cursor-pointer">
-                            {/* Background Glow */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-cta/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            
-                            <Link href={`/dashboard/organizer/events/${event.id}`} className="absolute inset-0 z-0" aria-label="Manage event" />
+                        <div
+                            key={event.id}
+                            className="group/card relative flex flex-col sm:flex-row sm:items-center gap-4 bg-black/20 hover:bg-white/5 border border-white/5 hover:border-cta/20 rounded-2xl p-4 transition-all duration-300 overflow-hidden"
+                        >
+                            {/* Subtle hover glow */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-cta/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
 
-                            <div className="p-3 flex-1 flex flex-col gap-3 relative z-10 pointer-events-none">
-                                {/* Header: Image & Title */}
-                                <div className="flex items-start gap-4">
-                                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-cta transition-colors overflow-hidden shrink-0 border border-white/10 shadow-lg relative">
+                            {/* Invisible full-card link layer */}
+                            <Link
+                                href={`/dashboard/organizer/events/${event.id}`}
+                                className="absolute inset-0 z-0 rounded-2xl"
+                                aria-label={`Manage ${event.name}`}
+                            />
 
-                                        {event.featuredImage ? (
-                                            <Image
-                                                src={event.featuredImage}
-                                                alt={event.name}
-                                                fill
-                                                sizes="(max-width: 768px) 64px, 64px"
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <Calendar size={28} />
-                                        )}
+                            {/* Left: Event image */}
+                            <div className="relative w-14 h-14 sm:w-12 sm:h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0 shadow-md self-start sm:self-auto">
+                                {event.featuredImage ? (
+                                    <Image
+                                        src={event.featuredImage}
+                                        alt={event.name}
+                                        fill
+                                        sizes="56px"
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center text-text-muted group-hover/card:text-cta transition-colors">
+                                        <Calendar size={20} />
                                     </div>
-                                    <div className="min-w-0 flex-1 pt-1">
-                                        <h4 className="font-black italic uppercase text-lg text-white leading-tight truncate group-hover:text-cta transition-colors">{event.name}</h4>
-                                        <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted font-bold uppercase italic tracking-widest mt-2">
-                                            {isValidDate && (
-                                                <span className="flex items-center gap-1.5">
-                                                    <Clock size={12} className="text-primary" />
-                                                    {mounted ? (isUpcoming ? formatDistanceToNow(parsedDate, { addSuffix: true }) : format(parsedDate, "MMM d, yyyy")) : format(parsedDate, "MMM d, yyyy")}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
+                                )}
+                            </div>
+
+                            {/* Middle: Event info */}
+                            <div className="flex-1 min-w-0">
+                                <h4 className="font-black italic uppercase text-sm text-white leading-tight truncate group-hover/card:text-cta transition-colors">
+                                    {event.name}
+                                </h4>
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                                    {isValidDate && (
+                                        <span className="flex items-center gap-1 text-[10px] font-bold uppercase italic tracking-widest text-text-muted">
+                                            <Clock size={10} className="text-primary shrink-0" />
+                                            {mounted
+                                                ? isUpcoming
+                                                    ? formatDistanceToNow(parsedDate, { addSuffix: true })
+                                                    : format(parsedDate, "MMM d, yyyy")
+                                                : format(parsedDate, "MMM d, yyyy")}
+                                        </span>
+                                    )}
+                                    <span className="flex items-center gap-1 text-[10px] font-bold uppercase italic tracking-widest text-text-muted">
+                                        <MapPin size={10} className="text-primary shrink-0" />
+                                        {event.location?.name || "TBA"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Right: Stats + kit progress + actions */}
+                            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 relative z-10 pointer-events-auto">
+                                {/* Runners count */}
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                    <Users size={12} className="text-cta" />
+                                    <span className="text-sm font-black italic text-white">{event.regCount}</span>
+                                    <span className="text-[10px] font-black uppercase italic tracking-widest text-text-muted">runners</span>
                                 </div>
 
-                                {/* Stats Row */}
-                                <div className="flex items-center justify-between bg-black/20 rounded-xl p-3 border border-white/5 mt-2">
-                                    <div className="flex flex-col">
-                                        <div className="flex items-center gap-1.5 opacity-70">
-                                            <Users size={12} className="text-cta" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Runners</span>
-                                        </div>
-                                        <p className="text-xl font-black italic text-white leading-none mt-1">{event.regCount}</p>
-                                    </div>
-                                    <div className="flex flex-col text-right items-end">
-                                        <div className="flex items-center gap-1.5 opacity-70">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Location</span>
-                                            <MapPin size={12} className="text-primary" />
-                                        </div>
-                                        <p className="text-sm font-bold italic text-white truncate max-w-[120px] leading-none mt-1">{event.location?.name || "TBA"}</p>
-                                    </div>
-                                </div>
-
-                                {/* Spacer to push buttons/progress to bottom */}
-                                <div className="flex-1" />
-
-                                {/* Kit Fulfillment Progress */}
+                                {/* Kit fulfillment progress */}
                                 {event.regCount > 0 && (
-                                    <div className="mt-2 pt-4 border-t border-white/5">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
-                                                <Package size={12} className="text-amber-500" />
-                                                Kit Fulfillment
-                                            </span>
-                                            <span className="text-xs font-black italic text-white">
-                                                {event.claimPercent}%
-                                            </span>
-                                        </div>
-                                        <div className="w-full h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5">
+                                    <div className="flex items-center gap-2 shrink-0 w-28 sm:w-36">
+                                        <Package size={10} className="text-amber-500 shrink-0" />
+                                        <div className="flex-1 h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5 min-w-[60px]">
                                             <div
                                                 className={cn(
                                                     "h-full rounded-full transition-all duration-1000",
-                                                    event.claimPercent === 100 ? "bg-gradient-to-r from-cta to-emerald-400" :
-                                                        event.claimPercent > 50 ? "bg-gradient-to-r from-amber-500 to-amber-400" :
-                                                            "bg-gradient-to-r from-primary to-orange-400"
+                                                    event.claimPercent === 100
+                                                        ? "bg-gradient-to-r from-cta to-emerald-400"
+                                                        : event.claimPercent > 50
+                                                            ? "bg-gradient-to-r from-amber-500 to-amber-400"
+                                                            : "bg-gradient-to-r from-primary to-orange-400"
                                                 )}
                                                 style={{ width: `${event.claimPercent}%` }}
                                             />
                                         </div>
+                                        <span className="text-[10px] font-black italic text-white shrink-0">{event.claimPercent}%</span>
                                     </div>
                                 )}
 
-                                {/* Action Buttons */}
-                                <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20 pointer-events-auto">
-                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs">
+                                {/* Action buttons */}
+                                <div className="flex gap-2 shrink-0 ml-auto">
+                                    <Button
+                                        size="xs"
+                                        variant="outline"
+                                        asChild
+                                        className="bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-[10px]"
+                                    >
                                         <Link href={`/dashboard/organizer/events/${event.id}`}>
                                             Manage
                                         </Link>
                                     </Button>
-                                    <Button size="sm" variant="outline" asChild className="flex-1 bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-xs">
+                                    <Button
+                                        size="xs"
+                                        variant="outline"
+                                        asChild
+                                        className="bg-cta/10 hover:bg-cta/20 border-cta/20 text-cta font-black italic uppercase text-[10px]"
+                                    >
                                         <Link href={`/dashboard/organizer/events/${event.id}/scanner`}>
-                                            <Scan size={14} className="mr-2" /> Scan
+                                            <Scan size={12} /> Scan
                                         </Link>
                                     </Button>
                                 </div>
                             </div>
-                        </Card>
+                        </div>
                     );
                 })}
             </div>
-        </div>
+        </Card>
     );
 }

@@ -28,8 +28,16 @@ export function usePaginatedQuery<T>({ apiQuery, args = {}, pageSize = 20 }: Use
         // but we could implement it if we were using a non-convex query.
     };
 
+    const data = useMemo(() =>
+        (results ?? []).map((doc: any) => ({
+            ...doc,
+            id: doc._id ?? doc.id,
+        })) as T[],
+        [results]
+    );
+
     return {
-        data: results as T[],
+        data,
         loading,
         error: null, // Convex handles errors via its own mechanism
         hasMore,
