@@ -50,7 +50,7 @@ export function VolunteerDashboard() {
 
                     <div className="flex flex-col gap-4">
                         {pendingEvents.map((event) => (
-                            <Card key={`pending-${event.id}`} className="group overflow-hidden border-primary/20 bg-primary/5 hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between p-6 gap-6">
+                            <Card key={`pending-${event.id}`} className="group overflow-hidden border-primary/20 bg-primary/5 hover:border-primary/50 transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between p-6 gap-6 cursor-pointer">
                                 {/* Event Info */}
                                 <div className="space-y-3 flex-1">
                                     <div>
@@ -109,7 +109,7 @@ export function VolunteerDashboard() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {activeEvents.map((event) => (
-                            <Card key={event.id} className="group overflow-hidden border-white/[0.08] bg-surface-lighter hover:border-primary/50 transition-all duration-300">
+                            <Card key={event.id} className="group overflow-hidden border-white/[0.08] bg-surface-lighter hover:border-primary/50 transition-all duration-300 cursor-pointer">
                                 {/* Event Image */}
                                 <div className="relative h-40 overflow-hidden">
                                     <img

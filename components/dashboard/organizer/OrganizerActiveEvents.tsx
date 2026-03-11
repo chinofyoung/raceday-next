@@ -61,8 +61,10 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                         <Card key={event.id} className="bg-white/5 border-white/10 hover:border-cta/30 transition-all group overflow-hidden flex flex-col h-full relative cursor-pointer">
                             {/* Background Glow */}
                             <div className="absolute inset-0 bg-gradient-to-br from-cta/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                            
+                            <Link href={`/dashboard/organizer/events/${event.id}`} className="absolute inset-0 z-0" aria-label="Manage event" />
 
-                            <div className="p-3 flex-1 flex flex-col gap-3 relative z-10">
+                            <div className="p-3 flex-1 flex flex-col gap-3 relative z-10 pointer-events-none">
                                 {/* Header: Image & Title */}
                                 <div className="flex items-start gap-4">
                                     <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-text-muted group-hover:text-cta transition-colors overflow-hidden shrink-0 border border-white/10 shadow-lg relative">
@@ -140,7 +142,7 @@ export function OrganizerActiveEvents({ items, eventKitStats }: OrganizerActiveE
                                 )}
 
                                 {/* Action Buttons */}
-                                <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20">
+                                <div className="flex gap-2 mt-2 pt-4 border-t border-white/5 relative z-20 pointer-events-auto">
                                     <Button size="sm" variant="outline" asChild className="flex-1 bg-white/5 hover:bg-white/10 border-white/10 text-white font-black italic uppercase text-xs">
                                         <Link href={`/dashboard/organizer/events/${event.id}`}>
                                             Manage

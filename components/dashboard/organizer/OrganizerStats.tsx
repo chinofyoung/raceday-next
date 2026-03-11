@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Calendar, Users, DollarSign, Package } from "lucide-react";
+import Link from "next/link";
 
 interface OrganizerStatsProps {
     stats: { total: number; secondary: number; revenue: number };
@@ -13,9 +14,10 @@ interface OrganizerStatsProps {
 export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, claimedKits }: OrganizerStatsProps) {
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors">
+            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors cursor-pointer">
+                <Link href="/dashboard/organizer/events" className="absolute inset-0 z-0" aria-label="View all events" />
                 <div className="absolute top-0 right-0 p-8 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-colors duration-500" />
-                <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <div className="relative z-10 flex flex-col h-full justify-between gap-4 pointer-events-none">
                     <div className="flex items-center justify-between">
                         <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary border border-primary/20">
                             <Calendar size={24} />
@@ -31,9 +33,10 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                 </div>
             </Card>
 
-            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors">
+            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors cursor-pointer">
+                <Link href="/dashboard/organizer/registrations" className="absolute inset-0 z-0" aria-label="View all registrations" />
                 <div className="absolute top-0 right-0 p-8 bg-cta/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-cta/20 transition-colors duration-500" />
-                <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                <div className="relative z-10 flex flex-col h-full justify-between gap-4 pointer-events-none">
                     <div className="flex items-center justify-between">
                         <div className="w-12 h-12 rounded-2xl bg-cta/20 flex items-center justify-center text-cta border border-cta/20">
                             <Users size={24} />
@@ -46,7 +49,7 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                 </div>
             </Card>
 
-            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors">
+            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors cursor-pointer">
                 <div className="absolute top-0 right-0 p-8 bg-green-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-green-500/20 transition-colors duration-500" />
                 <div className="relative z-10 flex flex-col h-full justify-between gap-4">
                     <div className="flex items-center justify-between">
@@ -64,7 +67,7 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                 </div>
             </Card>
 
-            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors">
+            <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group hover:bg-white/10 transition-colors cursor-pointer">
                 <div className="absolute top-0 right-0 p-8 bg-amber-500/10 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-amber-500/20 transition-colors duration-500" />
                 <div className="relative z-10 flex flex-col h-full justify-between gap-4">
                     <div className="flex items-center justify-between">

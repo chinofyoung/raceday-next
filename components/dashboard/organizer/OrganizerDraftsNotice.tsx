@@ -15,7 +15,7 @@ export function OrganizerDraftsNotice({ draftEventsCount }: OrganizerDraftsNotic
     return (
         <div className="flex justify-start">
             <Link href="/dashboard/organizer/events?status=draft" className="group block">
-                <Card className="p-6 w-48 aspect-square bg-amber-500/5 border border-amber-500/20 flex flex-col items-center justify-center text-center gap-3 hover:bg-amber-500/10 transition-all active:scale-95 relative overflow-hidden">
+                <Card className="p-6 w-48 aspect-square bg-amber-500/5 border border-amber-500/20 flex flex-col items-center justify-center text-center gap-3 hover:bg-amber-500/10 transition-all active:scale-95 relative overflow-hidden cursor-pointer">
                     <div className="absolute top-0 right-0 p-8 bg-amber-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-amber-500/10 transition-colors" />
                     <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 shrink-0 relative z-10">
                         <AlertTriangle size={24} />

@@ -45,7 +45,7 @@ export function BaseQuickAction({ href, onClick, icon: Icon, label, variant = "s
     );
 
     const className = cn(
-        "flex items-center gap-2 px-4 py-2 md:px-3 md:py-1.5 md:gap-1.5 border rounded-xl transition-all group shadow-sm active:scale-95",
+        "flex items-center gap-2 px-4 py-2 md:px-3 md:py-1.5 md:gap-1.5 border rounded-xl transition-all group shadow-sm active:scale-95 cursor-pointer",
         styles.container,
         extraClassName
     );

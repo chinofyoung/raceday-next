@@ -48,7 +48,7 @@ export function OrganizerRegistrationsFeed({ recentRegistrations }: OrganizerReg
                         </TableHeader>
                         <TableBody>
                             {recentRegistrations.map((reg) => (
-                                <TableRow key={reg.id} className="border-white/5 hover:bg-white/5 transition-colors group">
+                                <TableRow key={reg.id} className="border-white/5 hover:bg-white/5 transition-colors group cursor-pointer">
                                     <TableCell className="py-3">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary font-black italic text-xs uppercase shrink-0 border border-primary/20 group-hover:bg-primary/30 transition-colors">

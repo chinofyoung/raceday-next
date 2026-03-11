@@ -18,13 +18,15 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
 
     return (
         <Card className={cn(
-            "flex flex-col pt-0 gap-0 bg-surface/40 border-white/5 hover:bg-surface/60 hover:border-white/10 transition-all duration-300 relative group overflow-hidden shadow-sm hover:shadow-lg",
+            "flex flex-col pt-0 gap-0 bg-surface/40 border-white/5 hover:bg-surface/60 hover:border-white/10 transition-all duration-300 relative group overflow-hidden shadow-sm hover:shadow-lg cursor-pointer",
             isPast ? "opacity-90 grayscale-[0.3]" : ""
         )}>
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[80px] -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors duration-700 opacity-50 mix-blend-screen pointer-events-none" />
+            
+            <Link href={`/events/${reg.eventId}`} className="absolute inset-0 z-0" aria-label="View event details" />
 
             {/* Event Image */}
-            <div className="w-full aspect-[3/2] bg-black/40 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors overflow-hidden relative border-b border-white/5">
+            <div className="w-full aspect-[3/2] bg-black/40 flex items-center justify-center text-text-muted group-hover:text-primary transition-colors overflow-hidden relative border-b border-white/5 pointer-events-none">
                 {reg.event?.featuredImage ? (
                     <Image
                         src={reg.event.featuredImage}
@@ -43,7 +45,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
             </div>
 
             {/* Card Content */}
-            <div className="flex flex-col flex-1 gap-3 p-4 z-10">
+            <div className="flex flex-col flex-1 gap-3 p-4 z-10 pointer-events-none">
 
                 {/* Title */}
                 <h4 className="text-lg font-black italic uppercase text-white leading-tight tracking-tight line-clamp-2">
@@ -104,7 +106,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                 <div className="flex-1" />
 
                 {/* Actions */}
-                <div className="flex gap-2 pt-1">
+                <div className="flex gap-2 pt-1 z-20 pointer-events-auto">
                     {(!isPast && reg.status === "paid") && (
                         <Button asChild className="flex-1 h-10">
                             <Link href={`/dashboard/events/${reg.eventId}/qr?regId=${reg.id}`}>
