@@ -4,7 +4,6 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { PageWrapper } from "@/components/layout/PageWrapper";
 
 export default function OrganizerLayout({ children }: { children: React.ReactNode }) {
     const { role, loading } = useAuth();
@@ -18,9 +17,9 @@ export default function OrganizerLayout({ children }: { children: React.ReactNod
 
     if (loading) {
         return (
-            <PageWrapper className="flex items-center justify-center min-h-[60vh]">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <Loader2 className="animate-spin text-primary" size={48} />
-            </PageWrapper>
+            </div>
         );
     }
 

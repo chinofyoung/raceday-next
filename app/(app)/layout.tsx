@@ -10,6 +10,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { clerkUser, loading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
+    const isDashboard = pathname.startsWith("/dashboard");
 
     useEffect(() => {
         if (!loading && !clerkUser) {
@@ -35,6 +36,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
                 <p className="text-text-muted font-medium uppercase tracking-widest text-xs">Redirecting to login...</p>
+            </div>
+        );
+    }
+
+    if (isDashboard) {
+        return (
+            <div className="min-h-screen bg-background selection:bg-primary/30 selection:text-white">
+                {children}
             </div>
         );
     }
