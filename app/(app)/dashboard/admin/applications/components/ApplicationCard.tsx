@@ -97,7 +97,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                     {app.status === "pending" || app.status === "needs_info" ? (
                         <div className="flex gap-2">
                             <Button
-                                variant="primary"
+                                variant="default"
                                 size="sm"
                                 onClick={() => onApprove(app)}
                                 disabled={processing}
