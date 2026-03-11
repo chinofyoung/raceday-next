@@ -151,7 +151,7 @@ export default function AdminEventManagementPage() {
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Global <span className="text-primary">Event Oversight</span>
                     </h1>
                     <p className="text-text-muted font-medium italic">Manage, feature, and audit all platform events.</p>

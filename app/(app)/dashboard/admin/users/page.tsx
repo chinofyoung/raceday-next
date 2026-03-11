@@ -94,7 +94,7 @@ export default function UserManagementPage() {
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         User <span className="text-primary">Management</span>
                     </h1>
                     <p className="text-text-muted font-medium italic">Track and moderate all platform participants.</p>

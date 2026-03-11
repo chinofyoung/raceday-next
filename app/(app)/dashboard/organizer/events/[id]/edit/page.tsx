@@ -131,7 +131,7 @@ export default function EditEventPage() {
                     <ArrowLeft size={14} /> Back to Events
                 </Link>
                 <div className="space-y-1">
-                    <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Edit <span className="text-primary">Event</span>.
                     </h1>
                     <p className="text-lg text-text-muted font-medium italic">Make changes to your race details, categories, or timeline.</p>

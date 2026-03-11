@@ -91,11 +91,8 @@ export default function EventsManagementPage() {
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
-                    <Link href="/dashboard/organizer" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
-                        <ArrowLeft size={14} /> Back to Dashboard
-                    </Link>
                     <div className="space-y-1">
-                        <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Event <span className="text-primary">Management</span></h1>
+                        <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">Event <span className="text-primary">Management</span></h1>
                         <p className="text-text-muted font-medium italic">Track registrations, manage categories, and update event details.</p>
                     </div>
                 </div>

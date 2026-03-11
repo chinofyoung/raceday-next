@@ -146,7 +146,7 @@ export default function ApplicationsPage() {
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Organizer <span className="text-primary">Applications</span>
                     </h1>
                     <p className="text-text-muted font-medium italic">Review and manage platform organizer requests.</p>

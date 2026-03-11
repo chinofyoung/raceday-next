@@ -143,7 +143,7 @@ export default function AnalyticsPage() {
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Platform <span className="text-primary">Analytics</span>
                     </h1>
                     <p className="text-text-muted font-medium italic">Deep dive into platform growth and revenue performance.</p>

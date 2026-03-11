@@ -111,13 +111,8 @@ export default function OrganizerRegistrationsPage() {
         <div className="space-y-8 text-white">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                    <div className="flex items-center gap-3">
-                        <Link href="/dashboard/organizer" className="p-2 -ml-2 hover:bg-white/5 rounded-full transition-colors text-text-muted hover:text-white">
-                            <ArrowLeft size={20} />
-                        </Link>
-                        <h1 className="text-3xl font-black uppercase tracking-tight italic">All Sign-Ups</h1>
-                    </div>
-                    <p className="text-text-muted text-sm italic ml-10">Manage and view all runner registrations.</p>
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">All <span className="text-primary">Sign-Ups</span></h1>
+                    <p className="text-text-muted font-medium italic">Manage and view all runner registrations.</p>
                 </div>
             </div>
 

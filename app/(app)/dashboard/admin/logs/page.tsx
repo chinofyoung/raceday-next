@@ -72,7 +72,7 @@ export default function AuditLogsPage() {
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Audit <span className="text-primary">Logs</span>
                     </h1>
                     <p className="text-text-muted font-medium italic">Monitor all administrative actions and system overrides.</p>

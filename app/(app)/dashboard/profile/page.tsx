@@ -85,7 +85,7 @@ export default function ProfilePage() {
                             )}
                         </div>
                         <div className="space-y-1">
-                            <h1 className="text-4xl font-black italic uppercase tracking-tight text-white leading-none">{user.displayName}</h1>
+                            <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white leading-none">{user.displayName}</h1>
                             <Badge variant="outline" className="border-primary text-primary px-3 py-0.5">{user.role}</Badge>
                         </div>
                     </div>

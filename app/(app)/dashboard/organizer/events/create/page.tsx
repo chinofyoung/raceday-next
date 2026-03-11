@@ -43,7 +43,7 @@ export default function CreateEventPage() {
                     <ArrowLeft size={14} /> Back to Dashboard
                 </Link>
                 <div className="space-y-1">
-                    <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
                         Launch Your <span className="text-primary">Next Race</span>.
                     </h1>
                     <p className="text-lg text-text-muted font-medium italic">Create, configure, and manage your marathon or race event.</p>
