@@ -23,6 +23,9 @@ export const getCount = query({
 export const getByUserId = query({
     args: { userId: v.id("users") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         const registrations = await ctx.db
             .query("registrations")
             .withIndex("by_user", (q) => q.eq("userId", args.userId))
@@ -56,6 +59,9 @@ export const list = query({
         paginationOpts: paginationOptsValidator,
     },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         let q: any = ctx.db.query("registrations");
         let statusHandled = false;
 
@@ -230,6 +236,9 @@ export const markAsPaid = mutation({
 export const getEventFulfillmentStats = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         // Convex has no native COUNT — collect() is required to iterate rows.
         // We cap at 10 000 to prevent unbounded reads; real-world race events
         // are unlikely to exceed this limit.
@@ -295,6 +304,9 @@ export const search = query({
         query: v.string()
     },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         const term = args.query.trim().toLowerCase();
         if (!term) return [];
 
@@ -320,13 +332,49 @@ export const search = query({
 export const getById = query({
     args: { id: v.id("registrations") },
     handler: async (ctx: QueryCtx, args) => {
-        return await ctx.db.get(args.id);
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const reg = await ctx.db.get(args.id);
+        if (!reg) return null;
+
+        // Verify caller is the registration owner, event organizer, admin, or event volunteer
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        if (user.role === "admin" || reg.userId === user._id) {
+            return reg;
+        }
+
+        const event = await ctx.db.get(reg.eventId);
+        if (event && event.organizerId === user._id) {
+            return reg;
+        }
+
+        const volunteer = await ctx.db
+            .query("volunteers")
+            .withIndex("by_event_user", (q) =>
+                q.eq("eventId", reg.eventId).eq("userId", user._id)
+            )
+            .filter((q) => q.eq(q.field("status"), "accepted"))
+            .first();
+        if (volunteer) {
+            return reg;
+        }
+
+        throw new Error("Forbidden");
     },
 });
 
 export const getByUserAndEvent = query({
     args: { userId: v.id("users"), eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("registrations")
             .withIndex("by_user_event", (q) =>
@@ -368,6 +416,22 @@ async function fetchEmailsForEvent(ctx: QueryCtx, eventId: Id<"events">): Promis
 export const getEmailsForEvent = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        if (user.role !== "admin") {
+            const event = await ctx.db.get(args.eventId);
+            if (!event || event.organizerId !== user._id) {
+                throw new Error("Forbidden");
+            }
+        }
+
         return fetchEmailsForEvent(ctx, args.eventId);
     },
 });
@@ -383,6 +447,9 @@ export const getEmailsForEventInternal = internalQuery({
 export const getOrganizerDashboardStats = query({
     args: { organizerId: v.id("users") },
     handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         // Fetch only PAID registrations using composite index — no post-filter
         const paid = await ctx.db
             .query("registrations")

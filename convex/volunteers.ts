@@ -7,6 +7,23 @@ import { v } from "convex/values";
 export const listByEvent = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        // Only organizer or admin can list all volunteers for an event
+        if (user.role !== "admin") {
+            const event = await ctx.db.get(args.eventId);
+            if (!event || event.organizerId !== user._id) {
+                throw new Error("Forbidden");
+            }
+        }
+
         return await ctx.db
             .query("volunteers")
             .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
@@ -17,6 +34,9 @@ export const listByEvent = query({
 export const getByEmail = query({
     args: { eventId: v.id("events"), email: v.string() },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("volunteers")
             .withIndex("by_email_event", (q) =>
@@ -29,6 +49,9 @@ export const getByEmail = query({
 export const getById = query({
     args: { id: v.id("volunteers") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db.get(args.id);
     },
 });
@@ -223,6 +246,9 @@ export const remove = mutation({
 export const getPendingByEmail = query({
     args: { email: v.string() },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("volunteers")
             .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase().trim()))
@@ -234,6 +260,9 @@ export const getPendingByEmail = query({
 export const listByUser = query({
     args: { userId: v.id("users") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("volunteers")
             .withIndex("by_user", (q) => q.eq("userId", args.userId))
@@ -245,6 +274,9 @@ export const listByUser = query({
 export const getByUserIdAndEvent = query({
     args: { userId: v.id("users"), eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("volunteers")
             .withIndex("by_event_user", (q) =>
@@ -258,6 +290,9 @@ export const getByUserIdAndEvent = query({
 export const getMyVolunteerEvents = query({
     args: { email: v.string(), userId: v.optional(v.id("users")) },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         // 1. Get pending invitations by email
         const pending = await ctx.db
             .query("volunteers")
@@ -304,6 +339,9 @@ export const getMyVolunteerEvents = query({
 export const getInviteDetails = query({
     args: { id: v.id("volunteers"), eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         const volunteer = await ctx.db.get(args.id);
         if (!volunteer || volunteer.eventId !== args.eventId) {
             return null;

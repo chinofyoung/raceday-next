@@ -8,6 +8,15 @@ export const list = query({
         paginationOpts: paginationOptsValidator,
     },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user || user.role !== "admin") throw new Error("Forbidden: admin only");
+
         let q: any = ctx.db.query("organizerApplications");
 
         if (args.status && args.status !== "all") {
@@ -21,6 +30,9 @@ export const list = query({
 export const getByUserId = query({
     args: { userId: v.id("users") },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         return await ctx.db
             .query("organizerApplications")
             .withIndex("by_user", (q) => q.eq("userId", args.userId))
@@ -38,6 +50,15 @@ export const submit = mutation({
         data: v.any(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        // Verify the caller is the user submitting the application
+        const user = await ctx.db.get(args.userId);
+        if (!user || user.uid !== identity.subject) {
+            throw new Error("Forbidden: can only submit applications for yourself");
+        }
+
         // 1. Create application
         const appId = await ctx.db.insert("organizerApplications", {
             userId: args.userId,
@@ -71,6 +92,20 @@ export const update = mutation({
         data: v.any(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        // Verify the caller owns this application
+        const user = await ctx.db.get(args.userId);
+        if (!user || user.uid !== identity.subject) {
+            throw new Error("Forbidden: can only update your own application");
+        }
+
+        const app = await ctx.db.get(args.id);
+        if (!app || app.userId !== args.userId) {
+            throw new Error("Forbidden: application does not belong to this user");
+        }
+
         await ctx.db.patch(args.id, {
             data: args.data,
             status: "pending",

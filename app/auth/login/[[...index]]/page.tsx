@@ -12,7 +12,11 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get("redirect") || "/dashboard";
+    const rawRedirect = searchParams.get("redirect") || "/dashboard";
+    // Prevent open redirect: only allow relative paths (starting with /), block protocol-relative URLs
+    const redirectTo = (rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") && !rawRedirect.includes("://"))
+        ? rawRedirect
+        : "/dashboard";
 
     const handleGoogleLogin = async () => {
         if (!isSignInLoaded || !isSignUpLoaded) return;

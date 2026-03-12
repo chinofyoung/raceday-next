@@ -9,7 +9,11 @@ export const dynamic = 'force-dynamic';
 
 function escapeCsvValue(value: any): string {
     if (value === null || value === undefined) return '""';
-    const stringValue = String(value);
+    let stringValue = String(value);
+    // Prevent CSV/formula injection: prefix dangerous leading characters with a single quote
+    if (/^[=+\-@\t\r]/.test(stringValue)) {
+        stringValue = `'${stringValue}`;
+    }
     if (stringValue.includes('"') || stringValue.includes(',') || stringValue.includes('\n')) {
         return `"${stringValue.replace(/"/g, '""')}"`;
     }

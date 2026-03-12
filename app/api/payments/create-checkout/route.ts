@@ -67,7 +67,12 @@ export async function POST(req: Request) {
             }, { status: 400 });
         }
 
-        const totalAmount = Math.round(expectedBasePrice + (registrationData.vanityPremium || 0));
+        // Validate vanity premium server-side to prevent price tampering
+        let vanityPremium = 0;
+        if (registrationData.vanityNumber && eventData.vanityRaceNumber?.enabled) {
+            vanityPremium = eventData.vanityRaceNumber.premiumPrice || 0;
+        }
+        const totalAmount = Math.round(expectedBasePrice + vanityPremium);
 
         // Handle FREE registrations — skip Xendit entirely
         if (totalAmount <= 0) {
@@ -134,10 +139,10 @@ export async function POST(req: Request) {
                     quantity: 1,
                     price: Math.round(registrationData.basePrice),
                 },
-                ...(registrationData.vanityPremium > 0 ? [{
+                ...(vanityPremium > 0 ? [{
                     name: `Vanity Number: ${registrationData.vanityNumber}`,
                     quantity: 1,
-                    price: Math.round(registrationData.vanityPremium),
+                    price: Math.round(vanityPremium),
                 }] : [])
             ]
         };

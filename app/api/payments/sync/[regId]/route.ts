@@ -3,6 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchQuery, fetchMutation } from "convex/nextjs";
 import { generateBibAndQR } from "@/lib/bibUtils";
+import { auth as clerkAuth } from "@clerk/nextjs/server";
 
 const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
@@ -11,6 +12,11 @@ export async function GET(
     { params }: { params: Promise<{ regId: string }> }
 ) {
     try {
+        const { userId } = await clerkAuth();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const { regId: registrationId } = await params;
         const regData = await fetchQuery(api.registrations.getById, { id: registrationId as Id<"registrations"> });
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
+import { auth as clerkAuth } from "@clerk/nextjs/server";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,11 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { userId } = await clerkAuth();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
         const { id: eventId } = await context.params;
 
         if (!eventId || eventId === "undefined" || eventId.length < 10) {
