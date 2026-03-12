@@ -57,7 +57,7 @@ export function DashboardSidebar() {
 
       </SidebarHeader>
 
-      <SidebarContent className="justify-center">
+      <SidebarContent className="justify-start">
         {navGroups.map((group) => (
           <SidebarGroup key={group.label} className="px-4">
             <SidebarGroupLabel>{group.label}</SidebarGroupLabel>

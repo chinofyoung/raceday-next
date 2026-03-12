@@ -9,20 +9,36 @@ export const list = query({
         paginationOpts: paginationOptsValidator,
     },
     handler: async (ctx: QueryCtx, args) => {
-        let q = ctx.db.query("events");
+        const hasStatus = args.status && args.status !== "all";
+        const status = hasStatus
+            ? (args.status as "draft" | "published" | "cancelled" | "completed")
+            : null;
 
-        if (args.status && args.status !== "all") {
-            const status = args.status as "draft" | "published" | "cancelled" | "completed";
-            return await q.withIndex("by_status", (q) => q.eq("status", status))
-                .order("desc")
-                .paginate(args.paginationOpts);
-        } else if (args.organizerId) {
-            return await q.withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId!))
+        if (args.organizerId && hasStatus) {
+            // Filter by organizer via index, then apply status filter in-memory.
+            // No composite index exists on (organizerId, status) for events.
+            return await ctx.db.query("events")
+                .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId!))
+                .filter((q) => q.eq(q.field("status"), status))
                 .order("desc")
                 .paginate(args.paginationOpts);
         }
 
-        return await q.order("desc").paginate(args.paginationOpts);
+        if (args.organizerId) {
+            return await ctx.db.query("events")
+                .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId!))
+                .order("desc")
+                .paginate(args.paginationOpts);
+        }
+
+        if (hasStatus) {
+            return await ctx.db.query("events")
+                .withIndex("by_status", (q) => q.eq("status", status!))
+                .order("desc")
+                .paginate(args.paginationOpts);
+        }
+
+        return await ctx.db.query("events").order("desc").paginate(args.paginationOpts);
     },
 });
 
