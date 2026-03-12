@@ -19,6 +19,8 @@ export const generate = mutation({
         categoryId: v.string(),
         vanityNumber: v.optional(v.string()),
     },
+    // Called from server-side API routes (create-checkout, webhook, sync) via fetchMutation.
+    // Auth is enforced at the API route layer; Convex fetchMutation doesn't forward user identity.
     handler: async (ctx: MutationCtx, args) => {
         const event = await ctx.db.get(args.eventId);
         if (!event) throw new Error("Event not found");
@@ -60,12 +62,13 @@ export const generate = mutation({
             counter = await ctx.db.get(id);
         }
 
-        // Fetch all bib numbers for this event in one query so we can find
+        // Fetch bib numbers for this event in one query so we can find
         // the first gap without issuing a separate DB read per candidate number.
+        // Capped at 10000 to prevent unbounded reads for large events.
         const existingBibs = await ctx.db
             .query("registrations")
             .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .collect();
+            .take(10000);
         const usedNumbers = new Set(existingBibs.map(r => r.raceNumber).filter(Boolean));
 
         let nextCount = counter!.count;

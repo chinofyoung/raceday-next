@@ -11,22 +11,28 @@ export const getPlatformStats = query({
             .unique();
         if (!requester || requester.role !== "admin") throw new Error("Unauthorized");
 
-        // Collect full tables — Convex doesn't have a native COUNT, but we avoid
-        // the arbitrary 10000 cap so real counts are never silently truncated.
-        const users = await ctx.db.query("users").collect();
-        const events = await ctx.db.query("events").collect();
+        // Count users by role using the by_role index (avoids full table scan)
+        const [runners, organizers, admins] = await Promise.all([
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "runner")).collect(),
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "organizer")).collect(),
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "admin")).collect(),
+        ]);
 
-        // Use the by_organizer index (which forces a full scan) is not available
-        // for status — fall back to collect() but only pull paid registrations
-        // so we don't drag every field of every registration across the wire
-        // for the revenue sum.  The by_event_status index requires an eventId,
-        // so we must scan the whole table; collect() is the right call here.
+        // Count events by status using the by_status index
+        const [publishedEvents, draftEvents, cancelledEvents, completedEvents] = await Promise.all([
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "published")).collect(),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "draft")).collect(),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "cancelled")).collect(),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "completed")).collect(),
+        ]);
+
+        // Paid registrations — still requires table scan since no status-only index exists,
+        // but users and events tables are now indexed
         const paidRegistrations = await ctx.db
             .query("registrations")
             .filter((q) => q.eq(q.field("status"), "paid"))
             .collect();
 
-        // Use the by_status index for pending applications to avoid a full scan
         const pendingApps = await ctx.db
             .query("organizerApplications")
             .withIndex("by_status", (q) => q.eq("status", "pending"))
@@ -34,19 +40,17 @@ export const getPlatformStats = query({
 
         const totalRevenue = paidRegistrations.reduce((sum, r) => sum + r.totalPrice, 0);
 
-        const usersByRole = {
-            runner: users.filter(u => u.role === "runner").length,
-            organizer: users.filter(u => u.role === "organizer").length,
-            admin: users.filter(u => u.role === "admin").length,
-        };
-
         return {
-            totalUsers: users.length,
-            totalEvents: events.length,
+            totalUsers: runners.length + organizers.length + admins.length,
+            totalEvents: publishedEvents.length + draftEvents.length + cancelledEvents.length + completedEvents.length,
             totalRegistrations: paidRegistrations.length,
             totalRevenue,
             pendingApplications: pendingApps.length,
-            usersByRole,
+            usersByRole: {
+                runner: runners.length,
+                organizer: organizers.length,
+                admin: admins.length,
+            },
         };
     },
 });

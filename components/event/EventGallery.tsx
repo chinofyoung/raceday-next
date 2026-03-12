@@ -41,7 +41,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
         setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
     }, [images.length]);
 
-    // Keyboard navigation
+    // Keyboard navigation + body overflow cleanup
     useEffect(() => {
         if (!isOpen) return;
 
@@ -52,7 +52,11 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
         };
 
         window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+            // Ensure body scroll is restored if component unmounts while lightbox is open
+            document.body.style.overflow = "auto";
+        };
     }, [isOpen, closeLightbox, nextImage, prevImage]);
 
     // Handle single image differently? Plan says "Show it as a single larger thumbnail".
@@ -101,7 +105,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
 
                     return (
                         <div
-                            key={index}
+                            key={img}
                             className="group relative aspect-square cursor-pointer overflow-hidden rounded-xl border border-white/5 bg-surface/50"
                             onClick={() => openLightbox(index)}
                         >

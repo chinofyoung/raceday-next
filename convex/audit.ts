@@ -21,6 +21,9 @@ export const getLogs = query({
     },
 });
 
+// Called from server-side admin utility (lib/admin/audit.ts) via fetchMutation.
+// Auth is enforced at the calling admin pages/API routes via Clerk;
+// Convex fetchMutation doesn't forward user identity.
 export const log = mutation({
     args: {
         adminId: v.string(),

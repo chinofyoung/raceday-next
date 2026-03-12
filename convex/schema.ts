@@ -194,7 +194,8 @@ export default defineSchema({
         .index("by_event", ["eventId"])
         .index("by_user_event", ["userId", "eventId"])
         .index("by_organizer", ["organizerId"])
-        .index("by_event_status", ["eventId", "status"]),
+        .index("by_event_status", ["eventId", "status"])
+        .index("by_organizer_status", ["organizerId", "status"]),
     bibCounters: defineTable({
         eventId: v.id("events"),
         categoryId: v.string(),
@@ -229,7 +230,7 @@ export default defineSchema({
         invitedAt: v.number(),
         acceptedAt: v.optional(v.number()),
         revokedAt: v.optional(v.number()),
-    }).index("by_event", ["eventId"]).index("by_email", ["email"]).index("by_user", ["userId"]),
+    }).index("by_event", ["eventId"]).index("by_email", ["email"]).index("by_user", ["userId"]).index("by_event_user", ["eventId", "userId"]).index("by_email_event", ["email", "eventId"]),
     announcements: defineTable({
         eventId: v.id("events"),
         organizerId: v.id("users"),

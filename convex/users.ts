@@ -237,6 +237,13 @@ export const getInternal = internalQuery({
     },
 });
 
+export const getInternalBatch = internalQuery({
+    args: { ids: v.array(v.id("users")) },
+    handler: async (ctx, args) => {
+        return await Promise.all(args.ids.map(id => ctx.db.get(id)));
+    },
+});
+
 export const updateDashboardLayout = mutation({
     args: {
         layout: v.array(v.string()),

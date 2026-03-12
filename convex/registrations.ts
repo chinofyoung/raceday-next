@@ -57,18 +57,23 @@ export const list = query({
     },
     handler: async (ctx: QueryCtx, args) => {
         let q: any = ctx.db.query("registrations");
+        let statusHandled = false;
 
         if (args.userId) {
             q = q.withIndex("by_user", (q: any) => q.eq("userId", args.userId));
+        } else if (args.organizerId && args.status && args.status !== "all") {
+            // Use composite index when both organizerId and status are provided
+            q = q.withIndex("by_organizer_status", (q: any) =>
+                q.eq("organizerId", args.organizerId).eq("status", args.status)
+            );
+            statusHandled = true;
+        } else if (args.organizerId) {
+            q = q.withIndex("by_organizer", (q: any) => q.eq("organizerId", args.organizerId));
         } else if (args.eventId) {
             q = q.withIndex("by_event", (q: any) => q.eq("eventId", args.eventId));
         }
 
-        if (args.organizerId) {
-            q = q.filter((q: any) => q.eq(q.field("organizerId"), args.organizerId));
-        }
-
-        if (args.status && args.status !== "all") {
+        if (!statusHandled && args.status && args.status !== "all") {
             q = q.filter((q: any) => q.eq(q.field("status"), args.status));
         }
 
@@ -76,48 +81,21 @@ export const list = query({
     },
 });
 
-export const getStats = query({
-    args: { organizerId: v.id("users") },
-    handler: async (ctx: QueryCtx, args) => {
-        const registrations = await ctx.db
-            .query("registrations")
-            .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId))
-            .filter((q) => q.eq(q.field("status"), "paid"))
-            .collect();
-
-        const totalRevenue = registrations.reduce((sum, r) => sum + r.totalPrice, 0);
-        const claimedKits = registrations.filter(r => r.raceKitClaimed).length;
-
-        return {
-            totalRevenue,
-            totalRegistrations: registrations.length,
-            claimedKits
-        };
-    },
-});
-
 export const getCategoryCounts = query({
     args: { eventId: v.id("events") },
     handler: async (ctx: QueryCtx, args) => {
-        // Use by_event_status for paid registrations
-        const paid = await ctx.db
+        // Single query on by_event index, filter non-cancelled in memory
+        // Replaces 2 separate indexed queries + 2 collects
+        const registrations = await ctx.db
             .query("registrations")
-            .withIndex("by_event_status", (q) =>
-                q.eq("eventId", args.eventId).eq("status", "paid")
-            )
-            .collect();
-
-        // Use by_event_status for pending registrations
-        const pending = await ctx.db
-            .query("registrations")
-            .withIndex("by_event_status", (q) =>
-                q.eq("eventId", args.eventId).eq("status", "pending")
-            )
+            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
             .collect();
 
         const counts: Record<string, number> = {};
-        [...paid, ...pending].forEach(r => {
-            counts[r.categoryId] = (counts[r.categoryId] || 0) + 1;
+        registrations.forEach(r => {
+            if (r.status === "paid" || r.status === "pending") {
+                counts[r.categoryId] = (counts[r.categoryId] || 0) + 1;
+            }
         });
         return counts;
     },
@@ -130,16 +108,15 @@ export const checkExisting = query({
         categoryId: v.string(),
     },
     handler: async (ctx: QueryCtx, args) => {
+        // Only block if user already has a PAID registration for this category.
+        // Pending registrations should not block retries — user may have abandoned checkout.
         const existing = await ctx.db
             .query("registrations")
             .withIndex("by_user", (q) => q.eq("userId", args.userId))
             .filter((q) => q.and(
                 q.eq(q.field("eventId"), args.eventId),
                 q.eq(q.field("categoryId"), args.categoryId),
-                q.or(
-                    q.eq(q.field("status"), "paid"),
-                    q.eq(q.field("status"), "pending")
-                ),
+                q.eq(q.field("status"), "paid"),
                 q.eq(q.field("isProxy"), false)
             ))
             .first();
@@ -172,6 +149,9 @@ export const create = mutation({
     },
 });
 
+// Called from server-side API routes only (create-checkout).
+// Auth is enforced at the API route layer via Clerk; Convex fetchMutation
+// does not forward the user's identity token, so ctx.auth is unavailable here.
 export const updatePaymentInfo = mutation({
     args: {
         id: v.id("registrations"),
@@ -179,6 +159,11 @@ export const updatePaymentInfo = mutation({
         xenditInvoiceUrl: v.string(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const reg = await ctx.db.get(args.id);
+        if (!reg) throw new Error("Registration not found");
+        // Only allow updating payment info on pending registrations
+        if (reg.status !== "pending") throw new Error("Registration is not pending");
+
         await ctx.db.patch(args.id, {
             xenditInvoiceId: args.xenditInvoiceId,
             xenditInvoiceUrl: args.xenditInvoiceUrl,
@@ -197,6 +182,16 @@ export const markAsPaid = mutation({
     handler: async (ctx: MutationCtx, args) => {
         const reg = await ctx.db.get(args.id);
         if (!reg) throw new Error("Registration not found");
+
+        // State guard: prevent marking as paid unless payment was properly initiated.
+        // Free registrations (totalPrice=0) are allowed; paid registrations must have
+        // a xenditInvoiceId set by updatePaymentInfo (which requires auth).
+        if (reg.totalPrice > 0 && !reg.xenditInvoiceId) {
+            throw new Error("Cannot mark as paid: no payment invoice found");
+        }
+        if (reg.status === "paid") {
+            return; // Idempotent — already paid
+        }
 
         await ctx.db.patch(args.id, {
             status: "paid",
@@ -255,6 +250,37 @@ export const getEventFulfillmentStats = query({
 export const markAsClaimed = mutation({
     args: { id: v.id("registrations") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        // Only organizers, admins, or volunteers can claim kits
+        const reg = await ctx.db.get(args.id);
+        if (!reg) throw new Error("Registration not found");
+
+        if (user.role !== "admin") {
+            const event = await ctx.db.get(reg.eventId);
+            if (!event) throw new Error("Event not found");
+
+            const isOrganizer = event.organizerId === user._id;
+            const isVolunteer = await ctx.db
+                .query("volunteers")
+                .withIndex("by_event_user", (q) =>
+                    q.eq("eventId", reg.eventId).eq("userId", user._id)
+                )
+                .filter((q) => q.eq(q.field("status"), "accepted"))
+                .first();
+
+            if (!isOrganizer && !isVolunteer) {
+                throw new Error("Forbidden: only event staff can claim kits");
+            }
+        }
+
         await ctx.db.patch(args.id, {
             raceKitClaimed: true,
             raceKitClaimedAt: Date.now(),
@@ -273,12 +299,13 @@ export const search = query({
         if (!term) return [];
 
         // Use by_event_status index to fetch only paid registrations efficiently
+        // Capped at 5000 to prevent unbounded reads for massive events
         const registrations = await ctx.db
             .query("registrations")
             .withIndex("by_event_status", (q) =>
                 q.eq("eventId", args.eventId).eq("status", "paid")
             )
-            .collect();
+            .take(5000);
 
         // Filter in-memory and cap results to avoid sending large payloads
         const matched = registrations.filter((r) =>
@@ -356,13 +383,14 @@ export const getEmailsForEventInternal = internalQuery({
 export const getOrganizerDashboardStats = query({
     args: { organizerId: v.id("users") },
     handler: async (ctx, args) => {
-        // Fetch all registrations for this organizer using the existing index
-        const registrations = await ctx.db
+        // Fetch only PAID registrations using composite index — no post-filter
+        const paid = await ctx.db
             .query("registrations")
-            .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId))
+            .withIndex("by_organizer_status", (q) =>
+                q.eq("organizerId", args.organizerId).eq("status", "paid")
+            )
             .collect();
 
-        const paid = registrations.filter(r => r.status === "paid");
         const totalRevenue = paid.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
         const claimedKits = paid.filter(r => r.raceKitClaimed).length;
 
@@ -387,10 +415,12 @@ export const getOrganizerDashboardStats = query({
             categoryStats[key].revenue += r.totalPrice || 0;
         });
 
-        // Most recent 10 registrations across all statuses
-        const recent = [...registrations]
-            .sort((a, b) => (b._creationTime || 0) - (a._creationTime || 0))
-            .slice(0, 10);
+        // Most recent 10 registrations — bounded query on by_organizer index
+        const recent = await ctx.db
+            .query("registrations")
+            .withIndex("by_organizer", (q) => q.eq("organizerId", args.organizerId))
+            .order("desc")
+            .take(10);
 
         return {
             totalRegistrations: paid.length,

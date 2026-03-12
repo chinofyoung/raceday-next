@@ -97,9 +97,14 @@ export const review = mutation({
         status: v.union(v.literal("approved"), v.literal("rejected")),
         reason: v.optional(v.string()),
     },
+    // Called from server-side admin service (lib/services/applicationService.ts) via fetchMutation.
+    // Auth is enforced at the admin page layer via Clerk.
     handler: async (ctx: MutationCtx, args) => {
         const app = await ctx.db.get(args.id);
         if (!app) throw new Error("Application not found");
+
+        // Prevent re-reviewing already processed applications
+        if (app.status !== "pending") throw new Error("Application already reviewed");
 
         await ctx.db.patch(args.id, {
             status: args.status,

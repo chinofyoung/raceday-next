@@ -300,11 +300,10 @@ export const checkAccess = query({
         // Check volunteers
         const volunteer = await ctx.db
             .query("volunteers")
-            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
-            .filter((q) => q.and(
-                q.eq(q.field("userId"), user._id),
-                q.eq(q.field("status"), "accepted")
-            ))
+            .withIndex("by_event_user", (q) =>
+                q.eq("eventId", args.eventId).eq("userId", user._id)
+            )
+            .filter((q) => q.eq(q.field("status"), "accepted"))
             .first();
 
         if (volunteer) {
@@ -336,8 +335,21 @@ export const getByIdInternal = internalQuery({
 export const clone = mutation({
     args: { id: v.id("events") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
         const event = await ctx.db.get(args.id);
         if (!event) throw new Error("Event not found");
+
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
 
         const { _id, _creationTime, ...data } = event;
         return await ctx.db.insert("events", {

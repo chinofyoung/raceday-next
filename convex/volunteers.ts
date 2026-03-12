@@ -19,8 +19,9 @@ export const getByEmail = query({
     handler: async (ctx: QueryCtx, args) => {
         return await ctx.db
             .query("volunteers")
-            .withIndex("by_email", (q) => q.eq("email", args.email.toLowerCase()))
-            .filter((q) => q.eq(q.field("eventId"), args.eventId))
+            .withIndex("by_email_event", (q) =>
+                q.eq("email", args.email.toLowerCase()).eq("eventId", args.eventId)
+            )
             .first();
     },
 });
@@ -71,11 +72,24 @@ export const accept = mutation({
         userId: v.id("users"),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
         const user = await ctx.db.get(args.userId);
         if (!user) throw new Error("User not found");
 
+        // Verify the accepting user owns this identity
+        if (user.uid !== identity.subject) {
+            throw new Error("Forbidden: can only accept invitations for yourself");
+        }
+
         const volunteer = await ctx.db.get(args.id);
         if (!volunteer) throw new Error("Invitation not found");
+
+        // Verify the invitation email matches the user's email
+        if (volunteer.email !== user.email.toLowerCase()) {
+            throw new Error("Forbidden: invitation email does not match your account");
+        }
 
         await ctx.db.patch(args.id, {
             userId: args.userId,
@@ -98,8 +112,23 @@ export const accept = mutation({
 export const revoke = mutation({
     args: { id: v.id("volunteers") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
         const volunteer = await ctx.db.get(args.id);
         if (!volunteer) return;
+
+        const event = await ctx.db.get(volunteer.eventId);
+        if (!event) return;
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
 
         await ctx.db.patch(args.id, {
             status: "revoked",
@@ -120,8 +149,23 @@ export const revoke = mutation({
 export const restore = mutation({
     args: { id: v.id("volunteers") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
         const volunteer = await ctx.db.get(args.id);
         if (!volunteer) return;
+
+        const event = await ctx.db.get(volunteer.eventId);
+        if (!event) return;
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
 
         await ctx.db.patch(args.id, {
             status: volunteer.userId ? "accepted" : "pending",
@@ -145,8 +189,23 @@ export const restore = mutation({
 export const remove = mutation({
     args: { id: v.id("volunteers") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
         const volunteer = await ctx.db.get(args.id);
         if (!volunteer) return;
+
+        const event = await ctx.db.get(volunteer.eventId);
+        if (!event) return;
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
 
         if (volunteer.userId) {
             const user = await ctx.db.get(volunteer.userId);
@@ -188,8 +247,9 @@ export const getByUserIdAndEvent = query({
     handler: async (ctx: QueryCtx, args) => {
         return await ctx.db
             .query("volunteers")
-            .withIndex("by_user", (q) => q.eq("userId", args.userId))
-            .filter((q) => q.eq(q.field("eventId"), args.eventId))
+            .withIndex("by_event_user", (q) =>
+                q.eq("eventId", args.eventId).eq("userId", args.userId)
+            )
             .filter((q) => q.eq(q.field("status"), "accepted"))
             .unique();
     },

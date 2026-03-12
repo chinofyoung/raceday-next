@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la ./app/\\\\\\(app\\\\\\))",
+      "Bash(grep -r \"export const\" ./convex/*.ts | head -50)",
+      "Bash(grep -r \"export const\" ./convex/*.ts | tail -20)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(marketing\\)'/events/page.tsx)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/page.tsx)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/events/page.tsx)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/registrations/page.tsx)",
+      "Bash(wc -l ./convex/*.ts ./lib/**/*.ts ./components/**/*.tsx 2>/dev/null | tail -1)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/events/'[id]'/page.tsx)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/events/'[id]'/kiosk/page.tsx | head -100)",
+      "Bash(cat /c/Users/chino/code/raceday/app/'\\(app\\)'/dashboard/organizer/events/'[id]'/scanner/page.tsx | head -100)",
+      "Bash(cd C:/Users/chino/code/raceday && npx tsc --noEmit --project tsconfig.json 2>&1 | head -50)",
+      "Bash(cd C:/Users/chino/code/raceday && npx convex typecheck 2>&1 | head -30)",
+      "Bash(cd C:/Users/chino/code/raceday && npx next build 2>&1 | tail -30)",
+      "Bash(grep -n \"useEffect\\\\|useMemo\" /c/Users/chino/code/raceday/app/\\\\\\(app\\\\\\)/dashboard/organizer/events/\\\\[id\\\\]/page.tsx)",
+      "Bash(grep -r \"import.*\\\\{.*useQuery\" /c/Users/chino/code/raceday/app /c/Users/chino/code/raceday/components 2>/dev/null | wc -l)",
+      "Bash(cd C:/Users/chino/code/raceday && npx tsc --noEmit --project tsconfig.json 2>&1 | head -30)",
+      "Bash(cd C:/Users/chino/code/raceday && npx next build 2>&1 | tail -15)",
+      "Bash(cd C:/Users/chino/code/raceday && npx tsc --noEmit 2>&1 | head -20)",
+      "Bash(cd C:/Users/chino/code/raceday && npx next build 2>&1 | tail -10)",
+      "Bash(cd C:/Users/chino/code/raceday && npx tsc --noEmit 2>&1 | head -10)"
+    ]
+  }
+}

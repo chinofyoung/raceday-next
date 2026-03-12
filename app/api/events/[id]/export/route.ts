@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
+import { auth as clerkAuth } from "@clerk/nextjs/server";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,17 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
+        // Auth check: require authenticated user who is the event organizer or admin
+        const { userId: clerkUserId } = await clerkAuth();
+        if (!clerkUserId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
+
+        const currentUser = await fetchQuery(api.users.getByUid, { uid: clerkUserId });
+        if (!currentUser) {
+            return new NextResponse("User not found", { status: 401 });
+        }
+
         const { searchParams } = new URL(request.url);
         const statusFilter = searchParams.get("status") || "all";
         const q = searchParams.get("q") || "";
@@ -30,6 +42,11 @@ export async function GET(
         const eventData: any = await fetchQuery(api.events.getById, { id: eventId as Id<"events"> });
         if (!eventData) {
             return new NextResponse("Event not found", { status: 404 });
+        }
+
+        // Verify ownership: only the event organizer or admin can export
+        if (currentUser._id !== eventData.organizerId && currentUser.role !== "admin") {
+            return new NextResponse("Forbidden", { status: 403 });
         }
         const categoriesMap = new Map<string, string>();
         if (eventData.categories) {

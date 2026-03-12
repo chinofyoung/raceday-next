@@ -21,10 +21,10 @@ export function RunnerView({
     hasApplication,
     userRole
 }: RunnerViewProps) {
-    const now = useMemo(() => new Date(), []);
-
     // Sort items so most recent/upcoming makes sense.
+    // Use fresh Date on each items change so classifications stay current.
     const { upcomingEvents, pastEvents } = useMemo(() => {
+        const now = new Date();
         const upcoming = items.filter(reg => {
             if (!reg.event) return true;
             const eventDate = toDate(reg.event.date);
@@ -46,7 +46,7 @@ export function RunnerView({
         });
 
         return { upcomingEvents: upcoming, pastEvents: past };
-    }, [items, now]);
+    }, [items]);
 
     return (
         <div className="space-y-4 sm:space-y-8 animate-in fade-in duration-500">

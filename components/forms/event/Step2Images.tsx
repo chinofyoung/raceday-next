@@ -60,8 +60,8 @@ export function Step2Images() {
 
                     <div className="grid grid-cols-2 gap-4">
                         {galleryImages.map((img, i) => (
-                            <div key={i} className="relative aspect-square rounded-2xl overflow-hidden group border border-white/5">
-                                <Image src={img} alt={`Gallery ${i}`} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
+                            <div key={img} className="relative aspect-square rounded-2xl overflow-hidden group border border-white/5">
+                                <Image src={img} alt={`Gallery image ${i + 1}`} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
                                 <button
                                     type="button"
                                     onClick={() => removeGalleryImage(i)}

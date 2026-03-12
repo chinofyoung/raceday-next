@@ -83,9 +83,9 @@ export const sendAnnouncementPushes = internalAction({
         body: v.string(),
     },
     handler: async (ctx, args) => {
-        // Batch-fetch all users in parallel instead of sequential runQuery calls
-        const users = await Promise.all(args.userIds.map(id => ctx.runQuery(internal.users.getInternal, { id })));
-        const tokens: string[] = users
+        // Single batch query instead of N individual queries
+        const users = await ctx.runQuery(internal.users.getInternalBatch, { ids: args.userIds });
+        const tokens: string[] = (users as any[])
             .filter(u => u?.expoPushToken)
             .map(u => u!.expoPushToken as string);
 
@@ -119,6 +119,22 @@ export const update = mutation({
         data: v.any(),
     },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const announcement = await ctx.db.get(args.id);
+        if (!announcement) throw new Error("Announcement not found");
+
+        if (user._id !== announcement.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
         await ctx.db.patch(args.id, {
             ...args.data,
             updatedAt: Date.now(),
@@ -129,6 +145,22 @@ export const update = mutation({
 export const remove = mutation({
     args: { id: v.id("announcements") },
     handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const announcement = await ctx.db.get(args.id);
+        if (!announcement) throw new Error("Announcement not found");
+
+        if (user._id !== announcement.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
         await ctx.db.delete(args.id);
     },
 });

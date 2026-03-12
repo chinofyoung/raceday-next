@@ -22,7 +22,7 @@ export function EventRoute({ event, activeRouteCategoryIndex, setActiveRouteCate
                     <div className="flex flex-wrap gap-2">
                         {event.categories.map((cat, i) => (
                             <button
-                                key={i}
+                                key={cat.id || i}
                                 onClick={() => setActiveRouteCategoryIndex(i)}
                                 className={cn(
                                     "px-4 py-2 rounded-lg text-xs font-black uppercase italic tracking-wider transition-all border",

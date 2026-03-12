@@ -93,13 +93,3 @@ export async function getCategoryCounts(eventId: string) {
     }
 }
 
-export async function getOrganizerStats(organizerId: string) {
-    try {
-        return await fetchQuery(api.registrations.getStats, {
-            organizerId: organizerId as Id<"users">
-        });
-    } catch (error) {
-        console.error("Error fetching organizer stats:", error);
-        return { totalRevenue: 0, totalRegistrations: 0, claimedKits: 0 };
-    }
-}
