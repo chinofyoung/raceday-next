@@ -11,12 +11,13 @@ const XENDIT_SECRET_KEY = process.env.XENDIT_SECRET_KEY;
 
 export async function POST(req: Request) {
     try {
-        const { userId: clerkUserId } = await clerkAuth();
+        const { userId: clerkUserId, getToken } = await clerkAuth();
+        const token = await getToken({ template: "convex" });
         const body = await req.json();
         const { registrationData, eventName, categoryName } = body;
 
         // 0. Get user ID from Convex
-        const user = clerkUserId ? await fetchQuery(api.users.getByUid, { uid: clerkUserId }) : null;
+        const user = clerkUserId ? await fetchQuery(api.users.getByUid, { uid: clerkUserId }, { token: token ?? undefined }) : null;
         const userId = user?._id;
 
         // VERIFY EVENT & PRICE
@@ -180,6 +181,6 @@ export async function POST(req: Request) {
 
     } catch (error: any) {
         console.error("Payment Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred processing your payment. Please try again." }, { status: 500 });
     }
 }

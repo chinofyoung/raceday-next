@@ -203,6 +203,8 @@ export const current = query({
 export const getByUid = query({
     args: { uid: v.string() },
     handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return null;
         return await ctx.db
             .query("users")
             .withIndex("by_uid", (q) => q.eq("uid", args.uid))

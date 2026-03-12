@@ -22,8 +22,7 @@ export const getLogs = query({
 });
 
 // Called from server-side admin utility (lib/admin/audit.ts) via fetchMutation.
-// Auth is enforced at the calling admin pages/API routes via Clerk;
-// Convex fetchMutation doesn't forward user identity.
+// Requires either an authenticated admin session or a valid CONVEX_ADMIN_SECRET.
 export const log = mutation({
     args: {
         adminId: v.string(),
@@ -32,10 +31,19 @@ export const log = mutation({
         targetId: v.string(),
         targetName: v.string(),
         details: v.optional(v.string()),
+        serverSecret: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+        // Require either authenticated admin or valid server secret
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            if (args.serverSecret !== process.env.CONVEX_ADMIN_SECRET) {
+                throw new Error("Unauthorized");
+            }
+        }
+        const { serverSecret, ...logData } = args;
         await ctx.db.insert("auditLogs", {
-            ...args,
+            ...logData,
             timestamp: Date.now(),
         });
     },

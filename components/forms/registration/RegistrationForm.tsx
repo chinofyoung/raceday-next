@@ -230,7 +230,7 @@ function RegistrationFormContent({
         <div className="space-y-10">
             {/* Progress Tracks */}
             <div className="flex items-center justify-between relative">
-                <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
+                <div className="absolute top-5 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
                 {STEPS.map((step, i) => (
                     <div key={step} className="relative z-10 flex flex-col items-center gap-3">
                         <div className={cn(

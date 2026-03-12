@@ -58,7 +58,7 @@ export const create = mutation({
             .withIndex("by_event_status", (q) =>
                 q.eq("eventId", args.eventId).eq("status", "paid")
             )
-            .collect();
+            .take(10000);
 
         const userIds = registrations.map(r => r.userId);
 
@@ -116,7 +116,9 @@ export const updateSentCount = internalMutation({
 export const update = mutation({
     args: {
         id: v.id("announcements"),
-        data: v.any(),
+        title: v.optional(v.string()),
+        message: v.optional(v.string()),
+        imageUrl: v.optional(v.string()),
     },
     handler: async (ctx: MutationCtx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -135,10 +137,13 @@ export const update = mutation({
             throw new Error("Forbidden");
         }
 
-        await ctx.db.patch(args.id, {
-            ...args.data,
-            updatedAt: Date.now(),
-        });
+        const { id, ...updates } = args;
+        const patch: Record<string, any> = { updatedAt: Date.now() };
+        if (updates.title !== undefined) patch.title = updates.title;
+        if (updates.message !== undefined) patch.message = updates.message;
+        if (updates.imageUrl !== undefined) patch.imageUrl = updates.imageUrl;
+
+        await ctx.db.patch(args.id, patch);
     },
 });
 

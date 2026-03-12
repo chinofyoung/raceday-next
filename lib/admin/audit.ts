@@ -28,6 +28,7 @@ export async function logAdminAction(
             targetId: targetId || "unknown",
             targetName: targetName || "Unknown Target",
             details: details || "",
+            serverSecret: process.env.CONVEX_ADMIN_SECRET || "",
         });
     } catch (error) {
         console.error("Error logging admin action:", error);

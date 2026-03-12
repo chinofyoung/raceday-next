@@ -26,23 +26,60 @@ export default function ForOrganizersPage() {
     return (
         <PageWrapper className="pb-24 space-y-24">
             {/* Hero */}
-            <section className="pt-12 text-center space-y-6 max-w-7xl mx-auto">
-                <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tight">
-                    Host Your Next <br />
-                    <span className="text-primary">Great Race</span> With Us.
-                </h1>
-                <p className="text-xl text-text-muted max-w-2xl mx-auto">
-                    From local 5K fun runs to international full marathons, RaceDay provides the tools you need to manage your event from start to finish line.
-                </p>
-                <div className="pt-6">
-                    <Button size="lg" className="text-lg uppercase italic tracking-wider h-16 px-10" asChild>
-                        <Link href="/dashboard/become-organizer">Apply to Host Now</Link>
-                    </Button>
+            <section className="relative pt-16 lg:pt-24 pb-8 lg:pb-12 text-center space-y-6 max-w-7xl mx-auto">
+                {/* Atmospheric glow */}
+                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen pointer-events-none overflow-hidden" aria-hidden="true">
+                    <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
+                </div>
+
+                <div className="relative z-10 space-y-6">
+                    {/* Orientation badge */}
+                    <div className="flex justify-center">
+                        <div className="inline-flex items-center gap-2.5 px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-sm">
+                            <span className="flex h-2 w-2 rounded-full bg-primary" />
+                            <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-text-muted">
+                                For Event Organizers
+                            </span>
+                        </div>
+                    </div>
+
+                    <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tight text-balance">
+                        <span className="text-primary">Run Your Event.</span>
+                        <br />
+                        Not Your Spreadsheets.
+                    </h1>
+
+                    <p className="text-xl text-text-muted max-w-3xl mx-auto">
+                        From local 5K fun runs to international full marathons, RaceDay provides the tools you need to manage your event from start to finish line.
+                    </p>
+
+                    <div className="pt-6 flex flex-col items-center gap-3">
+                        <Button size="lg" className="text-lg uppercase italic tracking-wider font-black h-16 px-12 shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white" asChild>
+                            <Link href="/dashboard/become-organizer">Start Hosting</Link>
+                        </Button>
+                        <a href="#features" className="text-sm text-text-muted hover:text-white transition-colors underline underline-offset-4">
+                            See what&apos;s included
+                        </a>
+                    </div>
+
+                    {/* Social proof stats */}
+                    <div className="flex flex-wrap justify-center gap-8 pt-4 text-center">
+                        {[
+                            { value: "50+", label: "Events Managed" },
+                            { value: "10K+", label: "Registrations Processed" },
+                            { value: "Free", label: "To Get Started" },
+                        ].map(stat => (
+                            <div key={stat.label} className="space-y-1">
+                                <p className="text-3xl font-black italic text-white">{stat.value}</p>
+                                <p className="text-xs font-bold uppercase tracking-widest text-text-muted">{stat.label}</p>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
 
             {/* Benefit Grid */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <section id="features" className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {features.map((feature, i) => (
                     <Card key={i} className="p-8 space-y-5 bg-surface/50 border border-white/5 hover:border-white/10 hover:bg-surface/80 transition-all cursor-default translate-y-0 group">
                         <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner">
@@ -144,8 +181,8 @@ export default function ForOrganizersPage() {
                 <p className="text-text-muted max-w-xl mx-auto italic">
                     Join hundreds of successful organizers who trust RaceDay for their event management.
                 </p>
-                <Button size="lg" variant="primary" asChild>
-                    <Link href="/dashboard/become-organizer" className="px-12">Get Started</Link>
+                <Button variant="outline" size="lg" className="uppercase italic tracking-wider font-black px-12 !border-orange-500 text-orange-500 hover:!bg-orange-500/10 hover:!text-orange-500" asChild>
+                    <Link href="/dashboard/become-organizer">Get Started</Link>
                 </Button>
             </section>
         </PageWrapper>

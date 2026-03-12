@@ -75,13 +75,13 @@ export default async function HomePage() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4 pt-2">
-                            <Button size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black px-8 shadow-xl shadow-cta/20" asChild>
+                            <Button size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black px-12 shadow-xl shadow-green-500/20 bg-green-600 hover:!bg-green-700 text-white" asChild>
                                 <Link href="/events" className="flex items-center gap-2">
                                     Browse Events
                                     <ArrowRight size={18} />
                                 </Link>
                             </Button>
-                            <Button variant="outline" size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black" asChild>
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto text-base uppercase italic tracking-wider font-black px-12 !border-orange-500 text-orange-500 hover:!bg-orange-500/10 hover:!text-orange-500" asChild>
                                 <Link href="/for-organizers">Host an Event</Link>
                             </Button>
                         </div>

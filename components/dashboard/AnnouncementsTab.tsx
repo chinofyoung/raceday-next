@@ -99,11 +99,9 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             try {
                 await updateMutation({
                     id: editingAnnouncement._id,
-                    data: {
-                        title: editingAnnouncement.title,
-                        message: editingAnnouncement.message,
-                        imageUrl: editingAnnouncement.imageUrl
-                    }
+                    title: editingAnnouncement.title,
+                    message: editingAnnouncement.message,
+                    imageUrl: editingAnnouncement.imageUrl,
                 });
                 toast.success("Announcement updated!");
                 setEditingAnnouncement(null);

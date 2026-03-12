@@ -13,30 +13,29 @@ export const getPlatformStats = query({
 
         // Count users by role using the by_role index (avoids full table scan)
         const [runners, organizers, admins] = await Promise.all([
-            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "runner")).collect(),
-            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "organizer")).collect(),
-            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "admin")).collect(),
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "runner")).take(50000),
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "organizer")).take(50000),
+            ctx.db.query("users").withIndex("by_role", (q) => q.eq("role", "admin")).take(50000),
         ]);
 
         // Count events by status using the by_status index
         const [publishedEvents, draftEvents, cancelledEvents, completedEvents] = await Promise.all([
-            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "published")).collect(),
-            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "draft")).collect(),
-            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "cancelled")).collect(),
-            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "completed")).collect(),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "published")).take(50000),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "draft")).take(50000),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "cancelled")).take(50000),
+            ctx.db.query("events").withIndex("by_status", (q) => q.eq("status", "completed")).take(50000),
         ]);
 
-        // Paid registrations — still requires table scan since no status-only index exists,
-        // but users and events tables are now indexed
+        // Paid registrations — uses the by_status index to avoid a full table scan
         const paidRegistrations = await ctx.db
             .query("registrations")
-            .filter((q) => q.eq(q.field("status"), "paid"))
-            .collect();
+            .withIndex("by_status", (q) => q.eq("status", "paid"))
+            .take(50000);
 
         const pendingApps = await ctx.db
             .query("organizerApplications")
             .withIndex("by_status", (q) => q.eq("status", "pending"))
-            .collect();
+            .take(10000);
 
         const totalRevenue = paidRegistrations.reduce((sum, r) => sum + r.totalPrice, 0);
 

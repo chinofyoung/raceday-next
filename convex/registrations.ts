@@ -456,7 +456,7 @@ export const getOrganizerDashboardStats = query({
             .withIndex("by_organizer_status", (q) =>
                 q.eq("organizerId", args.organizerId).eq("status", "paid")
             )
-            .collect();
+            .take(10000);
 
         const totalRevenue = paid.reduce((sum, r) => sum + (r.totalPrice || 0), 0);
         const claimedKits = paid.filter(r => r.raceKitClaimed).length;

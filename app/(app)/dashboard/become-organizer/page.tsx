@@ -18,7 +18,10 @@ import {
     organizerStep3Schema,
     organizerStep4Schema
 } from "@/lib/validations/organizer";
-import { submitOrganizerApplication, checkExistingApplication, updateOrganizerApplication } from "@/lib/services/applicationService";
+import { submitOrganizerApplication, updateOrganizerApplication } from "@/lib/services/applicationService";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 import { OrganizerFormStepper } from "./components/OrganizerFormStepper";
 import { Step1OrgInfo } from "./components/Step1OrgInfo";
@@ -43,9 +46,18 @@ export default function BecomeOrganizerPage() {
     const [highestStep, setHighestStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [checking, setChecking] = useState(true);
-    const [existingApp, setExistingApp] = useState<OrganizerApplication | null>(null);
     const [isModifying, setIsModifying] = useState(false);
+
+    const existingAppResult = useQuery(
+        api.applications.getByUserId,
+        user?._id ? { userId: user._id as Id<"users"> } : "skip"
+    );
+
+    // existingAppResult is undefined while loading, null when no application found, or the document
+    const checking = existingAppResult === undefined && !!user?._id;
+    const existingApp: OrganizerApplication | null = existingAppResult
+        ? ({ id: existingAppResult._id, ...existingAppResult, ...existingAppResult.data } as unknown as OrganizerApplication)
+        : null;
 
 
     const methods = useForm<OrganizerFormValues>({
@@ -76,23 +88,6 @@ export default function BecomeOrganizerPage() {
 
     const { handleSubmit, trigger, formState: { errors }, reset } = methods;
 
-    useEffect(() => {
-        const checkApp = async () => {
-            if (!user?._id) return;
-            try {
-                const app = await checkExistingApplication(user._id);
-                if (app) {
-                    setExistingApp(app);
-                }
-            } catch (error) {
-                console.error("Error checking existing application:", error);
-            } finally {
-                setChecking(false);
-            }
-        };
-        checkApp();
-    }, [user]);
-
     // Pre-fill data when existing app or user is loaded
     useEffect(() => {
         if (existingApp) {
@@ -108,7 +103,7 @@ export default function BecomeOrganizerPage() {
                 phone: user.phone || "",
             });
         }
-    }, [user, existingApp, reset]);
+    }, [user, existingAppResult, reset]);
 
 
     const handleNext = async () => {

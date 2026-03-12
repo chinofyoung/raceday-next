@@ -26,12 +26,13 @@ export async function GET(
 ) {
     try {
         // Auth check: require authenticated user who is the event organizer or admin
-        const { userId: clerkUserId } = await clerkAuth();
+        const { userId: clerkUserId, getToken } = await clerkAuth();
         if (!clerkUserId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
+        const token = await getToken({ template: "convex" });
 
-        const currentUser = await fetchQuery(api.users.getByUid, { uid: clerkUserId });
+        const currentUser = await fetchQuery(api.users.getByUid, { uid: clerkUserId }, { token: token ?? undefined });
         if (!currentUser) {
             return new NextResponse("User not found", { status: 401 });
         }

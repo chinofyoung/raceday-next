@@ -312,25 +312,29 @@ export const getMyVolunteerEvents = query({
 
         const allVolunteering = [...pending, ...accepted];
 
-        // 3. Resolve event details for each
-        const results = await Promise.all(
-            allVolunteering.map(async (v) => {
-                const event = await ctx.db.get(v.eventId);
-                if (!event) return null;
-                const e = event as any;
-                return {
-                    id: e._id,
-                    name: e.name,
-                    date: e.date,
-                    featuredImage: e.featuredImage,
-                    location: e.location,
-                    eventStatus: e.status as string,
-                    permissions: v.permissions,
-                    volunteerId: v._id,
-                    status: v.status as "accepted" | "pending",
-                };
-            })
+        // 3. Resolve event details for each — deduplicate fetches when multiple volunteer
+        //    records point to the same event
+        const uniqueEventIds = [...new Set(allVolunteering.map(v => v.eventId))];
+        const events = await Promise.all(uniqueEventIds.map(id => ctx.db.get(id)));
+        const eventMap = new Map(
+            events.filter(Boolean).map(e => [e!._id, e!])
         );
+
+        const results = allVolunteering.map((v) => {
+            const event = eventMap.get(v.eventId);
+            if (!event) return null;
+            return {
+                id: event._id,
+                name: (event as any).name,
+                date: (event as any).date,
+                featuredImage: (event as any).featuredImage,
+                location: (event as any).location,
+                eventStatus: (event as any).status as string,
+                permissions: v.permissions,
+                volunteerId: v._id,
+                status: v.status as "accepted" | "pending",
+            };
+        });
 
         return results.filter((r) => r !== null);
     },

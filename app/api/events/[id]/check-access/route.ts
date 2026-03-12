@@ -12,10 +12,11 @@ export async function GET(
     context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { userId: clerkId } = await auth();
+        const { userId: clerkId, getToken } = await auth();
         if (!clerkId) {
             return new NextResponse("Unauthorized", { status: 401 });
         }
+        const token = await getToken({ template: "convex" });
 
         const { id: eventId } = await context.params;
 
@@ -25,7 +26,7 @@ export async function GET(
         }
 
         // Get user from Convex
-        const user = await fetchQuery(api.users.getByUid, { uid: clerkId });
+        const user = await fetchQuery(api.users.getByUid, { uid: clerkId }, { token: token ?? undefined });
         if (!user) {
             return new NextResponse("User not found", { status: 404 });
         }

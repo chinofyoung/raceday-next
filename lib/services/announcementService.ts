@@ -47,7 +47,9 @@ export async function createAnnouncement(data: CreateAnnouncementInput & { sentC
 export async function updateAnnouncement(eventId: string, announcementId: string, data: Partial<Announcement>): Promise<void> {
     await fetchMutation(api.announcements.update, {
         id: announcementId as Id<"announcements">,
-        data,
+        title: data.title,
+        message: data.message,
+        imageUrl: data.imageUrl,
     });
 }
 
