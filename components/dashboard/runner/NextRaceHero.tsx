@@ -68,12 +68,12 @@ export function NextRaceHero({ registration }: NextRaceHeroProps) {
     const categoryName = event.categories?.find((c) => c.id === reg.categoryId)?.name || reg.categoryId || "Open";
 
     return (
-        <Card className="bg-surface/40 border-primary/20 rounded-2xl overflow-hidden relative group">
+        <Card className="bg-surface/40 border-primary/20 rounded-2xl overflow-hidden relative group py-0 gap-0">
             <div className="absolute top-0 right-0 w-72 h-72 bg-primary/8 rounded-full blur-[100px] -mr-20 -mt-20 opacity-50 mix-blend-screen pointer-events-none" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] items-stretch">
                 {/* Image */}
-                <div className="aspect-[16/9] md:aspect-auto md:h-full bg-black/40 relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+                <div className="aspect-[16/9] md:aspect-auto bg-black/40 relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
                     {event.featuredImage ? (
                         <Image
                             src={event.featuredImage}
