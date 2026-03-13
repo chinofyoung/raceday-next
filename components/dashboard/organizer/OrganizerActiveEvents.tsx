@@ -81,7 +81,7 @@ function OrganizerActiveEventsComponent({ items, eventKitStats }: OrganizerActiv
                     return (
                         <div
                             key={event.id}
-                            className="group/card relative flex flex-col sm:flex-row sm:items-center gap-4 bg-black/20 hover:bg-white/5 border border-white/5 hover:border-cta/20 rounded-2xl p-4 transition-all duration-300 overflow-hidden"
+                            className="group/card relative flex flex-col gap-4 bg-black/20 hover:bg-white/5 border border-white/5 hover:border-cta/20 rounded-2xl p-4 transition-all duration-300 overflow-hidden"
                         >
                             {/* Subtle hover glow */}
                             <div className="absolute inset-0 bg-gradient-to-r from-cta/5 via-transparent to-transparent opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
@@ -93,48 +93,48 @@ function OrganizerActiveEventsComponent({ items, eventKitStats }: OrganizerActiv
                                 aria-label={`Manage ${event.name}`}
                             />
 
-                            {/* Left: Event image */}
-                            <div className="relative w-14 h-14 sm:w-12 sm:h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0 shadow-md self-start sm:self-auto">
-                                {event.featuredImage ? (
-                                    <Image
-                                        src={event.featuredImage}
-                                        alt={event.name}
-                                        fill
-                                        sizes="56px"
-                                        className="object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-text-muted group-hover/card:text-cta transition-colors">
-                                        <Calendar size={20} />
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Middle: Event info */}
-                            <div className="flex-1 min-w-0">
-                                <h4 className="font-bold text-sm text-white leading-tight truncate group-hover/card:text-cta transition-colors">
-                                    {event.name}
-                                </h4>
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
-                                    {isValidDate && (
-                                        <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
-                                            <Clock size={10} className="text-primary shrink-0" />
-                                            {mounted
-                                                ? isUpcoming
-                                                    ? formatDistanceToNow(parsedDate, { addSuffix: true })
-                                                    : format(parsedDate, "MMM d, yyyy")
-                                                : format(parsedDate, "MMM d, yyyy")}
-                                        </span>
+                            {/* Top row: Image + Event info */}
+                            <div className="flex items-center gap-4">
+                                <div className="relative w-12 h-12 rounded-xl bg-white/5 border border-white/10 overflow-hidden shrink-0 shadow-md">
+                                    {event.featuredImage ? (
+                                        <Image
+                                            src={event.featuredImage}
+                                            alt={event.name}
+                                            fill
+                                            sizes="48px"
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-text-muted group-hover/card:text-cta transition-colors">
+                                            <Calendar size={20} />
+                                        </div>
                                     )}
-                                    <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
-                                        <MapPin size={10} className="text-primary shrink-0" />
-                                        {event.location?.name || "TBA"}
-                                    </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="font-bold text-sm text-white leading-tight truncate group-hover/card:text-cta transition-colors">
+                                        {event.name}
+                                    </h4>
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                                        {isValidDate && (
+                                            <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                                                <Clock size={10} className="text-primary shrink-0" />
+                                                {mounted
+                                                    ? isUpcoming
+                                                        ? formatDistanceToNow(parsedDate, { addSuffix: true })
+                                                        : format(parsedDate, "MMM d, yyyy")
+                                                    : format(parsedDate, "MMM d, yyyy")}
+                                            </span>
+                                        )}
+                                        <span className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-text-muted">
+                                            <MapPin size={10} className="text-primary shrink-0" />
+                                            {event.location?.name || "TBA"}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Right: Stats + kit progress + actions */}
-                            <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 relative z-10 pointer-events-auto">
+                            {/* Bottom row: Stats + kit progress + actions */}
+                            <div className="flex flex-wrap items-center gap-3 pl-16 relative z-10 pointer-events-auto">
                                 {/* Runners count */}
                                 <div className="flex items-center gap-1.5 shrink-0">
                                     <Users size={12} className="text-cta" />
@@ -144,7 +144,7 @@ function OrganizerActiveEventsComponent({ items, eventKitStats }: OrganizerActiv
 
                                 {/* Kit fulfillment progress */}
                                 {event.regCount > 0 && (
-                                    <div className="flex items-center gap-2 shrink-0 w-28 sm:w-36">
+                                    <div className="flex items-center gap-2 shrink-0 w-36">
                                         <Package size={10} className="text-amber-500 shrink-0" />
                                         <div className="flex-1 h-1.5 bg-black/40 rounded-full overflow-hidden border border-white/5 min-w-[60px]">
                                             <div
