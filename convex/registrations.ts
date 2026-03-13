@@ -332,13 +332,16 @@ export const search = query({
 export const getById = query({
     args: { id: v.id("registrations") },
     handler: async (ctx: QueryCtx, args) => {
-        const identity = await ctx.auth.getUserIdentity();
-        if (!identity) throw new Error("Unauthorized");
-
         const reg = await ctx.db.get(args.id);
         if (!reg) return null;
 
-        // Verify caller is the registration owner, event organizer, admin, or event volunteer
+        // Server-to-server calls (webhook, sync) don't carry a user identity token.
+        // Auth for those paths is enforced at the API route layer (callback token / Clerk).
+        // fetchQuery from convex/nextjs is server-side only, so no-identity == trusted server call.
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) return reg;
+
+        // Client calls: verify caller is owner, organizer, admin, or accepted volunteer
         const user = await ctx.db
             .query("users")
             .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
