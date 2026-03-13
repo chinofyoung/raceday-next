@@ -51,7 +51,7 @@ export function RunnerAnnouncements() {
     return (
         <div className="space-y-4 mb-8">
             <h3 className="text-sm font-bold uppercase tracking-tight text-white flex items-center gap-2">
-                <Megaphone size={16} className="text-cta" /> Important Notifications
+                <Megaphone size={16} className="text-cta" /> Announcements
             </h3>
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {announcements.map((announcement) => (
