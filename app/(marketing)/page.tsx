@@ -39,16 +39,24 @@ export default async function HomePage() {
         <PageWrapper className="space-y-24 pb-20">
             {/* Hero Section */}
             <section className="relative pt-16 pb-8 lg:pt-28 lg:pb-16 overflow-visible">
-                {/* Atmospheric glow — reduced to 5-8% opacity */}
-                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen pointer-events-none overflow-hidden" aria-hidden="true">
-                    <div className="absolute -top-40 right-0 w-[500px] h-[500px] bg-primary/[0.06] rounded-full blur-[150px]" />
-                    <div className="absolute -bottom-40 left-0 w-[400px] h-[400px] bg-cta/[0.05] rounded-full blur-[130px]" />
+                {/* Background hero image — full bleed */}
+                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen overflow-hidden pointer-events-none" aria-hidden="true">
+                    <Image
+                        src="/placeholder-running.jpg"
+                        alt=""
+                        fill
+                        sizes="100vw"
+                        className="object-cover"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-background/80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/40" />
                 </div>
 
                 <div className="relative z-10 space-y-14">
                     {/* Top Badge */}
                     <div className="flex justify-center lg:justify-start">
-                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full">
+                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full backdrop-blur-sm">
                             <span className="flex h-1.5 w-1.5 rounded-full bg-cta" />
                             <span className="text-xs font-semibold text-text-muted">
                                 The Running Community Platform
@@ -75,27 +83,27 @@ export default async function HomePage() {
                                     <ArrowRight size={16} />
                                 </Link>
                             </Button>
-                            <Button variant="outline" size="lg" className="w-full sm:w-auto font-medium px-8 border-white/[0.12] text-text hover:bg-white/[0.03]" asChild>
+                            <Button variant="outline" size="lg" className="w-full sm:w-auto font-medium px-8 border-white/[0.12] text-text hover:bg-white/[0.03] backdrop-blur-sm" asChild>
                                 <Link href="/for-organizers">Host an Event</Link>
                             </Button>
                         </div>
                     </div>
 
                     {/* Stats Strip — clean divided grid, no icons per stat */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-white/[0.06] rounded-xl overflow-hidden">
-                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-[1px] bg-white/[0.06] rounded-xl overflow-hidden backdrop-blur-sm">
+                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background/80">
                             <span className="text-3xl font-bold text-white leading-none">50+</span>
                             <span className="text-xs uppercase tracking-wider text-text-muted">Events Listed</span>
                         </div>
-                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background">
+                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background/80">
                             <span className="text-3xl font-bold text-white leading-none">10K+</span>
                             <span className="text-xs uppercase tracking-wider text-text-muted">Runners Joined</span>
                         </div>
-                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background">
+                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background/80">
                             <span className="text-3xl font-bold text-white leading-none">200+</span>
                             <span className="text-xs uppercase tracking-wider text-text-muted">Race Categories</span>
                         </div>
-                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background">
+                        <div className="flex flex-col items-center py-7 px-6 gap-1.5 bg-background/80">
                             <span className="text-3xl font-bold text-white leading-none">30s</span>
                             <span className="text-xs uppercase tracking-wider text-text-muted">Avg. Registration</span>
                         </div>

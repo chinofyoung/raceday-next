@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle2, Zap, BarChart3, QrCode } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ForOrganizersPage() {
     const features = [
@@ -30,15 +31,24 @@ export default function ForOrganizersPage() {
         <PageWrapper className="pb-24 space-y-24">
             {/* Hero */}
             <section className="relative pt-16 lg:pt-24 pb-8 lg:pb-12 text-center space-y-6 max-w-7xl mx-auto">
-                {/* Atmospheric glow */}
-                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen pointer-events-none overflow-hidden" aria-hidden="true">
-                    <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
+                {/* Background hero image — full bleed */}
+                <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen overflow-hidden pointer-events-none" aria-hidden="true">
+                    <Image
+                        src="/placeholder-running.jpg"
+                        alt=""
+                        fill
+                        sizes="100vw"
+                        className="object-cover"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-background/80" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/40" />
                 </div>
 
                 <div className="relative z-10 space-y-6">
                     {/* Orientation badge */}
                     <div className="flex justify-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/[0.04] border border-white/[0.08] rounded-full backdrop-blur-sm">
                             <span className="flex h-2 w-2 rounded-full bg-primary" />
                             <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                                 For Event Organizers
