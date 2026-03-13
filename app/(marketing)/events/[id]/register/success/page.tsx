@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
@@ -20,7 +20,7 @@ function RegistrationSuccessSkeleton() {
                 <Skeleton className="h-9 w-64 mx-auto" />
                 <Skeleton className="h-5 w-48 mx-auto" />
             </div>
-            <div className="w-full max-w-lg rounded-2xl bg-[#0A0D10]/80 border border-white/5 overflow-hidden">
+            <div className="w-full max-w-lg rounded-2xl bg-white/[0.03] border border-white/5 overflow-hidden">
                 <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between">
                         <Skeleton className="h-6 w-48" />
@@ -89,14 +89,26 @@ export default function RegistrationSuccessPage() {
 
     const loading = registration === undefined || event === undefined;
 
+    const [syncAttempts, setSyncAttempts] = useState(0);
+    const MAX_SYNC_ATTEMPTS = 60; // 3 minutes at 3s intervals
+    const SLOW_SYNC_THRESHOLD = 20; // ~60 seconds
+
     useEffect(() => {
-        if (registration && registration.status === "pending") {
-            const sync = async () => {
-                await fetch(`/api/payments/sync/${registrationId}`);
-            };
-            sync();
-        }
-    }, [registration, registrationId]);
+        if (!registrationId || registration?.status !== "pending") return;
+
+        const interval = setInterval(async () => {
+            setSyncAttempts((prev) => {
+                if (prev >= MAX_SYNC_ATTEMPTS) {
+                    clearInterval(interval);
+                    return prev;
+                }
+                return prev + 1;
+            });
+            await fetch(`/api/payments/sync/${registrationId}`);
+        }, 3000);
+
+        return () => clearInterval(interval);
+    }, [registrationId, registration?.status]);
 
     const categoryName = (event?.categories as any[])?.find((c: any) => c.id === registration?.categoryId)?.name || registration?.categoryId;
 
@@ -131,7 +143,7 @@ export default function RegistrationSuccessPage() {
                     <div className="absolute -top-12 -left-12 w-64 h-64 bg-cta/10 rounded-full blur-[100px] -z-10" />
                     <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -z-10" />
 
-                    <div className="flex flex-col w-full bg-[#0A0D10]/80 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
+                    <div className="flex flex-col w-full bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
 
                         {/* 1. Header Section: Event & Status */}
                         <div className="p-8 md:p-10 space-y-6 relative overflow-hidden">
@@ -152,8 +164,8 @@ export default function RegistrationSuccessPage() {
                                     <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Payment Status</p>
                                     <Badge
                                         className={cn(
-                                            "uppercase font-semibold text-xs px-4 py-1.5 border-none shadow-lg shadow-emerald-500/20",
-                                            registration?.status === "paid" ? "bg-emerald-500 text-black" : "bg-amber-500 text-black"
+                                            "uppercase font-semibold text-xs px-4 py-1.5 border-none shadow-lg shadow-cta/20",
+                                            registration?.status === "paid" ? "bg-cta text-black" : "bg-amber-500 text-black"
                                         )}
                                     >
                                         <span className="">
@@ -238,7 +250,7 @@ export default function RegistrationSuccessPage() {
                                     <div className="inline-block px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-xl skew-x-[-12deg]">
                                         <span className="text-xs font-semibold uppercase tracking-wider text-primary skew-x-[12deg] block">RACE NUMBER</span>
                                     </div>
-                                    <h3 className="text-6xl md:text-6xl font-bold text-white uppercase tracking-tightest leading-none">
+                                    <h3 className="text-6xl md:text-6xl font-bold text-white tracking-tight leading-none">
                                         {registration?.status === "paid" ? registration?.raceNumber : "---"}
                                     </h3>
                                 </div>
@@ -246,7 +258,7 @@ export default function RegistrationSuccessPage() {
                                 <div className="space-y-4 pt-6 border-t border-white/5">
                                     <div>
                                         <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">Athlete</p>
-                                        <h4 className="text-2xl font-bold text-white uppercase tracking-tight">{registration?.registrationData?.participantInfo?.name}</h4>
+                                        <h4 className="text-2xl font-bold text-white tracking-tight">{registration?.registrationData?.participantInfo?.name}</h4>
                                         <p className="text-xs text-text-muted font-bold opacity-70">{registration?.registrationData?.participantInfo?.email}</p>
                                     </div>
                                 </div>
@@ -257,16 +269,21 @@ export default function RegistrationSuccessPage() {
                         <div className="p-8 md:p-10 bg-white/[0.02] border-t border-white/5 space-y-4 text-center">
                             <Button
                                 variant="outline"
-                                className="w-full h-16 gap-3 font-bold uppercase text-white hover:bg-white/5 border-white/10 rounded-2xl group relative overflow-hidden active:scale-[0.98] transition-all"
+                                className="w-full h-14 gap-3 font-semibold text-white hover:bg-white/3 border border-white/12 rounded-lg group relative overflow-hidden active:scale-[0.98] transition-all"
                                 onClick={() => window.print()}
                                 disabled={registration?.status !== "paid"}
                             >
                                 <Download size={20} className="group-hover:translate-y-0.5 transition-transform" />
                                 {registration?.status === "paid" ? "Download Race Pass" : "Confirming Payment Status..."}
                             </Button>
-                            <p className="text-xs text-text-muted font-bold uppercase tracking-wider">
+                            <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">
                                 Required for race kit collection & mandatory equipment checking
                             </p>
+                            {registration?.status === "pending" && syncAttempts >= SLOW_SYNC_THRESHOLD && (
+                                <p className="text-xs text-amber-400 font-semibold mt-2">
+                                    Payment verification is taking longer than expected. Please refresh the page.
+                                </p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -278,11 +295,11 @@ export default function RegistrationSuccessPage() {
                             <Share2 size={24} />
                         </div>
                         <div>
-                            <h4 className="text-sm font-bold uppercase text-white tracking-tight">Athlete Shoutout</h4>
-                            <p className="text-xs text-text-muted font-bold uppercase tracking-wider">Broadcast your entry to the community</p>
+                            <h4 className="text-sm font-bold text-white tracking-tight">Athlete shoutout</h4>
+                            <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Broadcast your entry to the community</p>
                         </div>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-primary font-bold uppercase hover:bg-primary/10 rounded-xl">
+                    <Button variant="ghost" size="sm" className="text-primary font-semibold hover:bg-primary/10 rounded-xl">
                         Share <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
                     </Button>
                 </Card>
@@ -290,23 +307,16 @@ export default function RegistrationSuccessPage() {
 
             {/* ── FOOTER NAVIGATION ───────────────────────────── */}
             <div className="flex flex-col md:flex-row gap-4 pt-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 max-w-2xl mx-auto w-full">
-                <Button className="flex-1 h-16 bg-cta hover:bg-cta-hover border-none font-bold uppercase tracking-[0.1em] shadow-2xl shadow-cta/30 group rounded-2xl active:scale-[0.98] transition-all" asChild>
+                <Button className="flex-1 h-14 bg-cta hover:bg-cta/90 border-none font-semibold px-8 py-3 rounded-lg group active:scale-[0.98] transition-all" asChild>
                     <Link href="/dashboard">
-                        Go to Athlete Dashboard <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        Go to athlete dashboard <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </Button>
-                <Button variant="outline" className="flex-1 h-16 font-bold uppercase tracking-[0.1em] border-white/10 text-white rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all" asChild>
-                    <Link href={`/events/${eventId}`}>Event Details Page</Link>
+                <Button variant="outline" className="flex-1 h-14 font-medium px-8 py-3 border border-white/12 text-text rounded-lg hover:bg-white/3 active:scale-[0.98] transition-all" asChild>
+                    <Link href={`/events/${eventId}`}>Event details page</Link>
                 </Button>
             </div>
 
-            <style jsx global>{`
-                @keyframes scan {
-                    0%, 100% { top: 0%; }
-                    50% { top: 100%; }
-                }
-                .tracking-tightest { letter-spacing: -0.05em; }
-            `}</style>
         </PageWrapper>
     );
 }

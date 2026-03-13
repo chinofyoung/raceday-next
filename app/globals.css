@@ -116,3 +116,8 @@ h6 {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes scan {
+  0%, 100% { top: 0%; }
+  50% { top: 100%; }
+}
