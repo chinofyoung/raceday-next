@@ -19,10 +19,10 @@ export default function RegistrationFailedPage() {
                     <XCircle size={56} />
                 </div>
                 <div className="space-y-2">
-                    <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
                         Payment <span className="text-red-500">Failed</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic">
+                    <p className="text-lg text-text-muted font-medium">
                         Something went wrong during the transaction. Don&apos;t worry, your slot isn&apos;t gone yet!
                     </p>
                 </div>
@@ -32,27 +32,27 @@ export default function RegistrationFailedPage() {
                 <div className="absolute top-0 right-0 p-12 bg-red-500/5 rounded-full blur-3xl -mr-16 -mt-16" />
 
                 <div className="space-y-4 relative z-10 text-center">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-red-500 text-[10px] font-black uppercase tracking-widest italic">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-full text-red-500 text-xs font-semibold uppercase tracking-wider">
                         <AlertCircle size={14} /> {error || "Transaction Cancelled or Declined"}
                     </div>
-                    <p className="text-text-muted text-sm leading-relaxed italic font-medium px-6">
+                    <p className="text-text-muted text-sm leading-relaxed font-medium px-6">
                         Common issues include insufficient funds, credit card restrictions, or network interruptions. Please try again or use a different payment method.
                     </p>
                 </div>
 
                 <div className="flex flex-col gap-4 relative z-10 pt-4">
-                    <Button className="h-14 bg-red-500 hover:bg-red-600 border-none font-black italic uppercase tracking-widest shadow-xl shadow-red-500/20 group" asChild>
+                    <Button className="h-14 bg-red-500 hover:bg-red-600 border-none font-bold uppercase tracking-wider shadow-xl shadow-red-500/20 group" asChild>
                         <Link href={`/events/${eventId}/register`}>
                             Try Again <RefreshCw className="ml-2 group-hover:rotate-180 transition-transform duration-500" size={18} />
                         </Link>
                     </Button>
                     <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" className="h-12 border-white/10 font-bold italic uppercase text-xs gap-2" asChild>
+                        <Button variant="outline" className="h-12 border-white/10 font-bold uppercase text-xs gap-2" asChild>
                             <Link href="/support">
                                 <MessageSquare size={16} /> Contact Support
                             </Link>
                         </Button>
-                        <Button variant="outline" className="h-12 border-white/10 font-bold italic uppercase text-xs gap-2" asChild>
+                        <Button variant="outline" className="h-12 border-white/10 font-bold uppercase text-xs gap-2" asChild>
                             <Link href={`/events/${eventId}`}>
                                 <ArrowLeft size={16} /> Back to Event
                             </Link>
@@ -61,7 +61,7 @@ export default function RegistrationFailedPage() {
                 </div>
             </Card>
 
-            <p className="text-center text-[10px] text-text-muted font-black uppercase tracking-widest italic opacity-50">
+            <p className="text-center text-xs text-text-muted font-semibold uppercase tracking-wider opacity-50">
                 Secure Payment Powered by Xendit
             </p>
         </PageWrapper>

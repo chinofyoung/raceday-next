@@ -112,7 +112,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                 <div className="absolute top-4 left-4 flex flex-col gap-2 z-20 pointer-events-none">
                     {mode === "management" && (
                         <span className={cn(
-                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md border border-white/10",
+                            "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-2xl backdrop-blur-md border border-white/10",
                             event.status === "published" ? "bg-green-500/80 text-white" :
                                 event.status === "draft" ? "bg-orange-500/80 text-white" : "bg-white/20 text-white"
                         )}>
@@ -121,7 +121,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                     )}
                     {mode === "discovery" && event.status === "published" && (
                         <span className={cn(
-                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md text-white border border-white/10",
+                            "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-2xl backdrop-blur-md text-white border border-white/10",
                             isRegistrationClosed(event) ? "bg-red-500/90" :
                                 isEarlyBirdActive(event) ? "bg-green-500/90" :
                                     "bg-cta/90"
@@ -136,7 +136,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                 {registrationStatus?.isRegistered && (
                     <div className="absolute top-4 right-4 z-20 pointer-events-none">
                         <div className={cn(
-                            "px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white border border-white/10",
+                            "px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-white border border-white/10",
                             registrationStatus.status === "paid" ? "bg-blue-500/90" : "bg-orange-500/90"
                         )}>
                             <CheckCircle2 size={12} fill="currentColor" className="text-white/20" />
@@ -148,12 +148,12 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                 {/* Categories Count Badge */}
                 <div className="absolute bottom-4 left-4 flex gap-2 z-20 pointer-events-none">
                     {event.categories?.slice(0, 3).map((cat) => (
-                        <span key={cat.id} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
+                        <span key={cat.id} className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-xs font-bold text-white border border-white/10 uppercase">
                             {formatDistance(cat.distance, cat.distanceUnit) || cat.name}
                         </span>
                     ))}
                     {event.categories?.length > 3 && (
-                        <span className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-[9px] font-bold text-white border border-white/10 uppercase italic">
+                        <span className="px-2 py-0.5 rounded-md bg-black/40 backdrop-blur-sm text-xs font-bold text-white border border-white/10 uppercase">
                             +{event.categories.length - 3}
                         </span>
                     )}
@@ -164,17 +164,17 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                 {/* Title & Date */}
                 <div className="space-y-2">
                     <div className="flex justify-between items-start gap-4">
-                        <h3 className="text-xl font-black italic uppercase tracking-tighter text-white leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+                        <h3 className="text-xl font-bold tracking-tight text-white leading-tight line-clamp-2 group-hover:text-primary transition-colors">
                             {event.name}
                         </h3>
                     </div>
 
                     <div className="flex flex-wrap gap-y-2 gap-x-4">
-                        <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold italic">
+                        <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold">
                             <Calendar size={14} className="text-primary" />
                             {isValidDate ? format(eventDate, "MMM d, yyyy") : "TBD"}
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold italic">
+                        <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold">
                             <MapPin size={14} className="text-primary" />
                             <span className="line-clamp-1">{event.location?.name || "TBA"}</span>
                         </div>
@@ -184,24 +184,24 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                 {/* Highlights / Stats Grid */}
                 <div className="grid grid-cols-2 gap-3 py-4 border-y border-white/5 mx-[-20px] px-[20px] bg-white/[0.02]">
                     <div className="space-y-1">
-                        <p className="text-[9px] font-black uppercase text-text-muted tracking-widest opacity-60">Entry Fee</p>
+                        <p className="text-xs font-semibold uppercase text-text-muted tracking-wider opacity-60">Entry Fee</p>
                         <div className="flex items-center gap-2">
                             <Tag size={14} className="text-cta" />
                             <div className="flex flex-col items-start leading-none gap-0.5">
                                 {hasDiscount && (
-                                    <span className="text-[10px] font-bold text-text-muted line-through decoration-red-500/50">{displayOriginal}</span>
+                                    <span className="text-xs font-bold text-text-muted line-through decoration-red-500/50">{displayOriginal}</span>
                                 )}
-                                <span className={cn("text-sm font-black italic", hasDiscount ? "text-green-400" : "text-white")}>{displayEffective}</span>
+                                <span className={cn("text-sm font-bold", hasDiscount ? "text-green-400" : "text-white")}>{displayEffective}</span>
                             </div>
                         </div>
                     </div>
                     {showParticipants && (
                         <div className="space-y-1 text-right">
-                            <p className="text-[9px] font-black uppercase text-text-muted tracking-widest opacity-60">Participants</p>
+                            <p className="text-xs font-semibold uppercase text-text-muted tracking-wider opacity-60">Participants</p>
                             <div className="flex items-center gap-2 justify-end">
                                 <Users size={14} className={cn(isNearlyFull ? "text-orange-500" : "text-blue-400")} />
-                                <span className="text-sm font-black italic text-white">
-                                    {paidCount}{capacity > 0 && <span className="text-text-muted opacity-40 text-[10px] ml-1">/ {capacity}</span>}
+                                <span className="text-sm font-bold text-white">
+                                    {paidCount}{capacity > 0 && <span className="text-text-muted opacity-40 text-xs ml-1">/ {capacity}</span>}
                                 </span>
                             </div>
                         </div>
@@ -230,7 +230,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                                 </Button>
                             </div>
 
-                            <Button variant="outline" size="sm" className="text-[10px] uppercase font-black italic h-8 px-3 border-white/10 hover:bg-primary hover:text-white group/btn" asChild>
+                            <Button variant="outline" size="sm" className="text-xs uppercase font-semibold h-8 px-3 border-white/10 hover:bg-primary hover:text-white group/btn" asChild>
                                 <Link href={`/dashboard/organizer/events/${event.id}`} className="flex items-center gap-1.5">
                                     Manage <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
                                 </Link>
@@ -241,7 +241,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                             {event.vanityRaceNumber?.enabled ? (
                                 <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-400/10 border border-amber-400/20 rounded-lg">
                                     <Trophy size={12} className="text-amber-400" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-amber-400 italic">
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-amber-400">
                                         Premium Kits
                                     </span>
                                 </div>
@@ -254,7 +254,7 @@ function EventCardComponent({ event, onDelete, mode = "management", registration
                                         <Link href={`/dashboard/organizer/events/${event.id}/edit`}><Edit2 size={14} /></Link>
                                     </Button>
                                 )}
-                                <Button variant="primary" size="sm" className="text-[10px] uppercase font-black italic h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>
+                                <Button variant="primary" size="sm" className="text-xs uppercase font-semibold h-8 px-4 bg-primary hover:scale-105 transition-transform group/btn" asChild>
                                     <Link href={`/events/${event.id}`} className="flex items-center gap-1.5">
                                         View Details <ArrowRight size={12} className="transition-transform group-hover/btn:translate-x-1" />
                                     </Link>

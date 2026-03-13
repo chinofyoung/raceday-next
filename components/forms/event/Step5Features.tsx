@@ -20,13 +20,13 @@ export function Step5Features() {
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2 border-b border-white/5 pb-4">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Event Features</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Event Features</h2>
                 <p className="text-text-muted font-medium">Enhance your event experience with premium features.</p>
             </div>
 
             {/* Vanity Numbers Section */}
             <div className="pt-8 border-t border-white/5 space-y-8">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary italic">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
                     <Sparkles size={16} /> Vanity Race Numbers
                 </div>
 
@@ -57,7 +57,7 @@ export function Step5Features() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-xl font-bold uppercase italic tracking-tight text-white">Vanity Numbers</h3>
+                                <h3 className="text-xl font-bold tracking-tight text-white">Vanity Numbers</h3>
                                 <p className="text-sm text-text-muted font-medium leading-relaxed">
                                     Runners love picking meaningful numbers (birthdays, anniversaries, or lucky digits).
                                 </p>
@@ -70,23 +70,23 @@ export function Step5Features() {
                         isVanityEnabled ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8 pointer-events-none"
                     )}>
                         <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cta italic">
+                            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cta">
                                 <DollarSign size={16} /> Extension Fee
                             </div>
                             <Input
                                 type="number"
                                 {...register("vanityRaceNumber.premiumPrice", { valueAsNumber: true })}
                                 placeholder="e.g. 500"
-                                className="bg-white/5 border-white/10 rounded-xl text-2xl font-black"
+                                className="bg-white/5 border-white/10 rounded-xl text-2xl font-bold"
                             />
-                            {errors.vanityRaceNumber?.premiumPrice && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.vanityRaceNumber.premiumPrice.message}</p>}
-                            <p className="text-xs text-text-muted font-medium italic">
+                            {errors.vanityRaceNumber?.premiumPrice && <p className="text-xs text-destructive font-bold uppercase">{errors.vanityRaceNumber.premiumPrice.message}</p>}
+                            <p className="text-xs text-text-muted font-medium">
                                 Applied when a runner chooses a specific race number.
                             </p>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-cta italic">
+                            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-cta">
                                 <Sparkles size={16} /> Max Digits Allowed
                             </div>
                             <div className="flex items-center gap-4">
@@ -98,24 +98,24 @@ export function Step5Features() {
                                         max: 10
                                     })}
                                     placeholder="e.g. 4"
-                                    className="bg-white/5 border-white/10 rounded-xl text-2xl font-black w-32"
+                                    className="bg-white/5 border-white/10 rounded-xl text-2xl font-bold w-32"
                                 />
-                                {errors.vanityRaceNumber?.maxDigits && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.vanityRaceNumber.maxDigits.message}</p>}
+                                {errors.vanityRaceNumber?.maxDigits && <p className="text-xs text-destructive font-bold uppercase">{errors.vanityRaceNumber.maxDigits.message}</p>}
                                 <div className="flex-1 flex gap-2">
                                     {Array.from({ length: watch("vanityRaceNumber.maxDigits") || 4 }).map((_, i) => (
-                                        <div key={i} className="flex-1 aspect-square md:aspect-auto md:h-12 border-2 border-dashed border-cta/30 rounded-lg flex items-center justify-center text-cta/40 font-black italic text-xl">
+                                        <div key={i} className="flex-1 aspect-square md:aspect-auto md:h-12 border-2 border-dashed border-cta/30 rounded-lg flex items-center justify-center text-cta/40 font-bold text-xl">
                                             {i + 1}
                                         </div>
                                     ))}
                                 </div>
                             </div>
-                            <p className="text-xs text-text-muted font-medium italic">
+                            <p className="text-xs text-text-muted font-medium">
                                 Defines the length of the vanity number (e.g., 4 digits = 0001 to 9999).
                             </p>
                         </div>
 
                         <div className="p-6 bg-cta/10 border border-cta/20 rounded-2xl space-y-3">
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-cta">Revenue Boost</h4>
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-cta">Revenue Boost</h4>
                             <p className="text-xs text-text-muted leading-relaxed font-medium">
                                 This feature is high-demand and provides a simple way to increase your event's average transaction value without adding overhead.
                             </p>
@@ -126,13 +126,13 @@ export function Step5Features() {
 
             {/* Race Support Stations Section */}
             <div className="pt-8 border-t border-white/5 space-y-8 pb-12">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary italic">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
                     <Droplets size={16} /> Race Support Stations
                 </div>
 
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-xl font-bold uppercase italic tracking-tight text-white flex items-center gap-2">
+                        <label className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                             Map Stations
                         </label>
                         <p className="text-sm text-text-muted font-medium leading-relaxed max-w-xl">
@@ -146,7 +146,7 @@ export function Step5Features() {
                                 <MapPin size={32} />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-white uppercase italic tracking-tight">GPX Route Required</h3>
+                                <h3 className="text-lg font-bold text-white tracking-tight">GPX Route Required</h3>
                                 <p className="text-text-muted text-xs max-w-xs mx-auto mt-1">
                                     You need to upload a GPX route in Step 3 (Categories) before you can place stations on the map.
                                 </p>
@@ -162,7 +162,7 @@ export function Step5Features() {
                                             type="button"
                                             onClick={() => setActiveCategoryIndex(idx)}
                                             className={cn(
-                                                "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest italic transition-all",
+                                                "px-6 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all",
                                                 activeCategoryIndex === idx
                                                     ? "bg-primary text-white shadow-lg shadow-primary/20"
                                                     : "text-text-muted hover:text-white hover:bg-white/5"

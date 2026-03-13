@@ -13,7 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
-import { getPlatformStats, PlatformStats } from "@/lib/services/statsService";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { getEvents } from "@/lib/services/eventService";
 import { getOrganizerApplications } from "@/lib/services/applicationService";
 import dynamic from "next/dynamic";
@@ -24,8 +25,8 @@ const AdminOverviewChart = dynamic(
 );
 
 export default function AdminDashboardPage() {
+    const stats = useQuery(api.stats.getPlatformStats);
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState<PlatformStats | null>(null);
     const [chartData, setChartData] = useState<any[]>([]);
     const [recentEvents, setRecentEvents] = useState<any[]>([]);
     const [recentApps, setRecentApps] = useState<any[]>([]);
@@ -38,13 +39,11 @@ export default function AdminDashboardPage() {
         setLoading(true);
         try {
             // Use Stage 3.1: Parallelize Independent Queries
-            const [statsResult, eventsResult, appsResult] = await Promise.all([
-                getPlatformStats(),
+            const [eventsResult, appsResult] = await Promise.all([
                 getEvents({ limitCount: 3, status: "all" }),
                 getOrganizerApplications({ limitCount: 3, status: "pending" })
             ]);
 
-            setStats(statsResult);
             setRecentEvents(eventsResult.items);
             setRecentApps(appsResult.items);
 
@@ -66,7 +65,7 @@ export default function AdminDashboardPage() {
         }
     };
 
-    if (loading) {
+    if (loading || stats === undefined) {
         return (
             <div className="space-y-10 text-white">
                 {/* Header */}

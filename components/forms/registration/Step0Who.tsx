@@ -17,8 +17,8 @@ export function Step0Who() {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-1">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Who is this <span className="text-primary">Registration For?</span></h2>
-                <p className="text-text-muted font-medium italic">Select whether you are registering for yourself or someone else.</p>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Who is this <span className="text-primary">Registration For?</span></h2>
+                <p className="text-text-muted font-medium">Select whether you are registering for yourself or someone else.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,7 +40,7 @@ export function Step0Who() {
                         </div>
                         <div className="space-y-2">
                             <h3 className={cn(
-                                "text-xl font-black italic uppercase transition-colors",
+                                "text-xl font-bold transition-colors",
                                 registrationType === "self" ? "text-white" : "text-text-muted group-hover:text-white"
                             )}>Myself</h3>
                             <p className="text-xs text-text-muted font-medium leading-relaxed">
@@ -68,7 +68,7 @@ export function Step0Who() {
                         </div>
                         <div className="space-y-2">
                             <h3 className={cn(
-                                "text-xl font-black italic uppercase transition-colors",
+                                "text-xl font-bold transition-colors",
                                 registrationType === "proxy" ? "text-white" : "text-text-muted group-hover:text-white"
                             )}>Someone Else</h3>
                             <p className="text-xs text-text-muted font-medium leading-relaxed">
@@ -79,7 +79,7 @@ export function Step0Who() {
                 </Card>
             </div>
             {errors.registrationType && (
-                <p className="text-sm text-red-500 font-bold italic text-center animate-in fade-in">
+                <p className="text-sm text-red-500 font-bold text-center animate-in fade-in">
                     Please select who this registration is for
                 </p>
             )}

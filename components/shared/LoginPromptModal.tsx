@@ -53,10 +53,10 @@ export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromp
                             <ShieldCheck size={32} className="text-primary" />
                         </div>
                     </div>
-                    <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">
+                    <h2 className="text-3xl font-bold tracking-tight text-white">
                         Almost <span className="text-primary">There!</span>
                     </h2>
-                    <p className="text-sm text-text-muted font-medium italic leading-relaxed">
+                    <p className="text-sm text-text-muted font-medium leading-relaxed">
                         Sign in to complete your registration and secure your slot. Your registration details have been saved.
                     </p>
                 </div>
@@ -65,7 +65,7 @@ export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromp
                     <Button
                         variant="primary"
                         size="lg"
-                        className="w-full h-14 text-lg font-bold uppercase italic tracking-wider gap-3 bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20"
+                        className="w-full h-14 text-lg font-bold tracking-wider gap-3 bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20"
                         onClick={handleLogin}
                     >
                         <LogIn size={20} />
@@ -73,7 +73,7 @@ export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromp
                     </Button>
                 </div>
 
-                <p className="text-center text-[10px] text-text-muted font-bold italic uppercase tracking-widest">
+                <p className="text-center text-xs text-text-muted font-semibold uppercase tracking-wider">
                     Your registration data is safe and will be submitted after login
                 </p>
             </Card>

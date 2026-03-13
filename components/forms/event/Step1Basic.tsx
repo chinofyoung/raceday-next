@@ -18,51 +18,51 @@ export function Step1Basic() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2 border-b border-white/5 pb-4">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Event Basics</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Event Basics</h2>
                 <p className="text-text-muted font-medium">Define the core identity of your race.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-6 md:col-span-2">
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Event Name</Label>
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Event Name</Label>
                         <Input
                             {...register("name")}
                             placeholder="e.g. Manila City Half Marathon 2026"
                             className="text-lg font-bold"
                         />
-                        {errors.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.name.message}</p>}
+                        {errors.name?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.name.message}</p>}
                     </div>
                 </div>
 
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Event Date</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-text-muted">Event Date</label>
                         <input
                             type="date"
                             {...register("date")}
                             className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
-                        {errors.date?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.date.message}</p>}
+                        {errors.date?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.date.message}</p>}
                     </div>
                 </div>
 
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Registration Deadline</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-text-muted">Registration Deadline</label>
                         <input
                             type="date"
                             {...register("registrationEndDate")}
                             className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                         />
-                        {errors.registrationEndDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.registrationEndDate.message}</p>}
+                        {errors.registrationEndDate?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.registrationEndDate.message}</p>}
                     </div>
                 </div>
 
                 <div className="space-y-6 md:col-span-2 relative group">
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Description & Details</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-text-muted">Description & Details</label>
                             <button
                                 type="button"
                                 onClick={async () => {
@@ -87,7 +87,7 @@ export function Step1Basic() {
                                     }
                                 }}
                                 disabled={isGenerating}
-                                className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-all disabled:opacity-50"
+                                className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-all disabled:opacity-50"
                             >
                                 {isGenerating ? <Loader2 size={10} className="animate-spin" /> : <Wand2 size={10} />}
                                 Improve with AI
@@ -98,29 +98,29 @@ export function Step1Basic() {
                             className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all min-h-[200px]"
                             placeholder="Provide a detailed description of the event, rules, registration details, etc."
                         />
-                        {errors.description?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.description.message}</p>}
+                        {errors.description?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.description.message}</p>}
                     </div>
                 </div>
 
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Venue Name</Label>
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Venue Name</Label>
                         <Input
                             {...register("location.name")}
                             placeholder="e.g. Bonifacio Global City"
                         />
-                        {errors.location?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.location.name.message}</p>}
+                        {errors.location?.name?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.location.name.message}</p>}
                     </div>
                 </div>
 
                 <div className="space-y-6">
                     <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Full Address</Label>
+                        <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Full Address</Label>
                         <Input
                             {...register("location.address")}
                             placeholder="e.g. 26th St, Taguig, Metro Manila"
                         />
-                        {errors.location?.address?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic tracking-wide">{errors.location.address.message}</p>}
+                        {errors.location?.address?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.location.address.message}</p>}
                     </div>
                 </div>
             </div>

@@ -63,7 +63,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
     if (images.length === 1) {
         return (
             <div className="space-y-6">
-                <h3 className="text-xl font-black italic uppercase tracking-tighter text-white">
+                <h3 className="text-xl font-bold tracking-tight text-white">
                     Event <span className="text-primary">Gallery</span>
                 </h3>
                 <div
@@ -94,7 +94,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
 
     return (
         <div className="space-y-6">
-            <h3 className="text-xl font-black italic uppercase tracking-tighter text-white">
+            <h3 className="text-xl font-bold tracking-tight text-white">
                 Event <span className="text-primary">Gallery</span>
             </h3>
 
@@ -123,7 +123,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                                 showOverlay && "opacity-100 bg-black/60 group-hover:bg-black/70"
                             )}>
                                 {showOverlay ? (
-                                    <span className="text-xl font-black italic text-white">+{remainingCount}</span>
+                                    <span className="text-xl font-bold text-white">+{remainingCount}</span>
                                 ) : (
                                     <Maximize2 className="text-white drop-shadow-md scale-75" />
                                 )}
@@ -154,7 +154,7 @@ export function EventGallery({ images, eventName }: EventGalleryProps) {
                 </button>
 
                 {/* Counter */}
-                <div className="absolute top-6 left-6 z-50 px-3 py-1 bg-black/50 rounded-full border border-white/10 text-xs font-bold text-white tracking-widest">
+                <div className="absolute top-6 left-6 z-50 px-3 py-1 bg-black/50 rounded-full border border-white/10 text-xs font-bold text-white tracking-wider">
                     {currentIndex + 1} / {images.length}
                 </div>
 

@@ -204,7 +204,7 @@ function EventFormContent({ initialData, isEditing, draftId, setDraftId, loading
                                     {isAccomplished ? "✓" : i + 1}
                                 </div>
                                 <span className={cn(
-                                    "text-[10px] uppercase font-black italic tracking-widest transition-colors",
+                                    "text-xs uppercase font-semibold tracking-wider transition-colors",
                                     isActive ? "text-white block" : "block text-text-muted opacity-40",
                                     isAccomplished && !isActive && "text-cta opacity-70",
                                     isClickable && !isActive && "group-hover:text-white"
@@ -251,7 +251,7 @@ function EventFormContent({ initialData, isEditing, draftId, setDraftId, loading
                                 variant="outline"
                                 onClick={handleSubmit(onSubmit)}
                                 disabled={loading}
-                                className="hidden md:flex gap-2 px-8 border-primary/20 hover:bg-primary/5 text-primary italic font-black uppercase text-[10px] tracking-widest"
+                                className="hidden md:flex gap-2 px-8 border-primary/20 hover:bg-primary/5 text-primary font-semibold uppercase text-xs tracking-wider"
                             >
                                 <Send size={18} /> Save & Publish
                             </Button>

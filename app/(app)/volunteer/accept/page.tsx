@@ -105,8 +105,8 @@ export default function VolunteerAcceptPage() {
             <PageWrapper className="max-w-xl mx-auto py-20">
                 <Card className="p-12 text-center space-y-6">
                     <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
-                    <h1 className="text-3xl font-black italic uppercase text-white tracking-tight">Invitation Error</h1>
-                    <p className="text-text-muted italic">{error}</p>
+                    <h1 className="text-3xl font-bold uppercase text-white tracking-tight">Invitation Error</h1>
+                    <p className="text-text-muted">{error}</p>
                     <Button asChild variant="primary">
                         <a href="/">Go to Homepage</a>
                     </Button>
@@ -127,10 +127,10 @@ export default function VolunteerAcceptPage() {
                     <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-6">
                         <ShieldCheck size={48} />
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
                         Volunteer Invitation
                     </h1>
-                    <p className="text-text-muted font-medium italic">
+                    <p className="text-text-muted font-medium">
                         You&apos;ve been invited to help with an event on RaceDay.
                     </p>
                 </div>
@@ -147,12 +147,12 @@ export default function VolunteerAcceptPage() {
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <div className="text-white/20 italic font-black text-xs uppercase tracking-widest text-center px-2">No Event Image</div>
+                                <div className="text-white/20 font-semibold text-xs uppercase tracking-wider text-center px-2">No Event Image</div>
                             )}
                         </div>
                         <div className="text-center md:text-left">
-                            <h2 className="text-2xl font-black italic uppercase text-white tracking-tight">{invitation?.eventName}</h2>
-                            <p className="text-sm text-text-muted font-medium italic mt-1 uppercase tracking-widest">
+                            <h2 className="text-2xl font-bold uppercase text-white tracking-tight">{invitation?.eventName}</h2>
+                            <p className="text-sm text-text-muted font-medium mt-1 uppercase tracking-wider">
                                 By {invitation?.organizerName || "Event Organizer"}
                             </p>
                         </div>
@@ -160,7 +160,7 @@ export default function VolunteerAcceptPage() {
 
                     <div className="relative z-10 space-y-4">
                         <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-text-muted italic mb-3">Permissions you will receive:</h3>
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-3">Permissions you will receive:</h3>
                             <div className="grid gap-3">
                                 {invitation?.permissions?.includes("participants") && (
                                     <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function VolunteerAcceptPage() {
                         {emailMismatch && (
                             <div className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex gap-3">
                                 <AlertCircle className="text-red-500 shrink-0" size={20} />
-                                <div className="text-xs text-red-500 leading-relaxed font-bold italic">
+                                <div className="text-xs text-red-500 leading-relaxed font-bold">
                                     This invitation was sent to <span className="underline">{invitation?.email}</span>,
                                     but you are logged in as <span className="underline">{currentUserEmail}</span>.
                                     Please switch accounts to accept.
@@ -205,7 +205,7 @@ export default function VolunteerAcceptPage() {
                                 onClick={handleAccept}
                                 disabled={isAccepting || emailMismatch || !clerkUser}
                                 variant="primary"
-                                className="w-full h-14 text-lg font-black italic uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
+                                className="w-full h-14 text-lg font-bold uppercase tracking-wider shadow-xl shadow-primary/20 transition-all active:scale-[0.98]"
                             >
                                 {isAccepting ? (
                                     <span className="flex items-center gap-3"><Loader2 className="animate-spin" /> Accepting...</span>
@@ -213,14 +213,14 @@ export default function VolunteerAcceptPage() {
                                     <span className="flex items-center gap-3">Accept Invitation <ArrowRight size={20} /></span>
                                 )}
                             </Button>
-                            <Button asChild variant="ghost" className="text-text-muted font-black italic uppercase text-xs">
+                            <Button asChild variant="ghost" className="text-text-muted font-semibold uppercase text-xs">
                                 <a href="/">Decline & Exit</a>
                             </Button>
                         </div>
                     </div>
                 </Card>
 
-                <p className="text-center text-[10px] text-text-muted italic max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
+                <p className="text-center text-xs text-text-muted max-w-sm mx-auto uppercase tracking-wider leading-relaxed">
                     By accepting, you agree to handle participant data responsibly according to our Privacy Policy.
                 </p>
             </div>

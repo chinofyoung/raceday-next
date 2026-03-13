@@ -132,7 +132,7 @@ export function RouteMapViewer({
                             })}
                         >
                             <Popup>
-                                <div className="text-xs font-black italic uppercase tracking-tight">Race Start</div>
+                                <div className="text-xs font-semibold uppercase tracking-wider">Race Start</div>
                             </Popup>
                         </Marker>
                         <Marker
@@ -150,7 +150,7 @@ export function RouteMapViewer({
                             })}
                         >
                             <Popup>
-                                <div className="text-xs font-black italic uppercase tracking-tight">Race Finish</div>
+                                <div className="text-xs font-semibold uppercase tracking-wider">Race Finish</div>
                             </Popup>
                         </Marker>
                         <MapUpdater center={routePoints[Math.floor(routePoints.length / 2)]} zoom={zoom} />
@@ -175,7 +175,7 @@ export function RouteMapViewer({
                     return (
                         <Marker key={station.id} position={[station.coordinates.lat, station.coordinates.lng]} icon={icon}>
                             <Popup>
-                                <div className="text-xs font-black italic uppercase tracking-tight">
+                                <div className="text-xs font-semibold uppercase tracking-wider">
                                     {station.label}
                                 </div>
                             </Popup>

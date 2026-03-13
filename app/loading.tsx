@@ -8,8 +8,8 @@ export default function RootLoading() {
                 <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute top-0 left-0" />
             </div>
             <div className="space-y-1 text-center">
-                <p className="text-xl font-black italic uppercase tracking-tighter text-white">RaceDay</p>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-pulse italic">Loading Experience</p>
+                <p className="text-xl font-bold uppercase tracking-tight text-white">RaceDay</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary animate-pulse">Loading Experience</p>
             </div>
         </div>
     );

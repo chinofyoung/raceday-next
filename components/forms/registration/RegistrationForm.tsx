@@ -234,7 +234,7 @@ function RegistrationFormContent({
                 {STEPS.map((step, i) => (
                     <div key={step} className="relative z-10 flex flex-col items-center gap-3">
                         <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center font-black italic transition-all duration-300 border-2",
+                            "w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 border-2",
                             i < currentStep
                                 ? "bg-cta border-cta text-white"
                                 : i === currentStep
@@ -244,7 +244,7 @@ function RegistrationFormContent({
                             {i < currentStep ? <CheckCircle2 size={18} /> : i + 1}
                         </div>
                         <span className={cn(
-                            "text-[10px] font-black uppercase tracking-widest italic transition-colors",
+                            "text-xs font-semibold uppercase tracking-wider transition-colors",
                             i <= currentStep ? "text-white" : "text-text-muted"
                         )}>
                             {step}
@@ -277,7 +277,7 @@ function RegistrationFormContent({
                         <Button
                             type="submit"
                             variant="primary"
-                            className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 italic font-black"
+                            className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 font-bold"
                             disabled={loading}
                         >
                             {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
@@ -287,7 +287,7 @@ function RegistrationFormContent({
                             type="button"
                             variant="primary"
                             onClick={nextStep}
-                            className="px-12 italic font-black group"
+                            className="px-12 font-bold group"
                             disabled={loading}
                         >
                             Next Step <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />

@@ -21,8 +21,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <div className="flex flex-col items-center gap-4 text-center">
                     <Loader2 className="animate-spin text-primary" size={48} />
                     <div className="space-y-1">
-                        <p className="text-xl font-black italic uppercase tracking-tighter text-white">Verifying Admin Access</p>
-                        <p className="text-text-muted font-medium italic">Scanning credentials...</p>
+                        <p className="text-xl font-bold uppercase tracking-tight text-white">Verifying Admin Access</p>
+                        <p className="text-text-muted font-medium">Scanning credentials...</p>
                     </div>
                 </div>
             </div>

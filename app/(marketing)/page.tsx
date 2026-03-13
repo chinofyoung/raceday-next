@@ -284,7 +284,7 @@ export default async function HomePage() {
                             <div className="w-4 h-4 rounded-full bg-green-500 border-2 border-white shadow-[0_0_14px_rgba(34,197,94,0.6)]" />
                             {/* Name popup */}
                             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/[0.08] shadow-lg whitespace-nowrap">
-                                <span className="text-[10px] font-semibold text-white">Jane Doe <span className="text-green-400">(You)</span></span>
+                                <span className="text-xs font-semibold text-white">Jane Doe <span className="text-green-400">(You)</span></span>
                             </div>
                         </div>
 
@@ -314,23 +314,23 @@ export default async function HomePage() {
                             <div className="flex items-center gap-2.5">
                                 <div className="flex -space-x-1.5">
                                     <div className="w-6 h-6 rounded-full border-2 border-black bg-surface flex items-center justify-center z-30 relative">
-                                        <span className="text-[9px] font-bold text-white">C</span>
+                                        <span className="text-xs font-bold text-white">C</span>
                                         <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-black bg-green-500" />
                                     </div>
                                     <div className="w-6 h-6 rounded-full border-2 border-black bg-surface flex items-center justify-center z-20 relative">
-                                        <span className="text-[9px] font-bold text-white">M</span>
+                                        <span className="text-xs font-bold text-white">M</span>
                                         <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-black bg-blue-500" />
                                     </div>
                                     <div className="w-6 h-6 rounded-full border-2 border-black bg-surface flex items-center justify-center z-10 relative">
-                                        <span className="text-[9px] font-bold text-white">A</span>
+                                        <span className="text-xs font-bold text-white">A</span>
                                         <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full border border-black bg-blue-500" />
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-semibold text-text-muted"><span className="text-white">1,024</span> Active</span>
+                                <span className="text-xs font-semibold text-text-muted"><span className="text-white">1,024</span> Active</span>
                             </div>
                             <div className="flex items-center gap-1.5 px-2 py-1 bg-white/[0.05] rounded-md">
                                 <Activity size={10} className="text-green-400 animate-pulse" />
-                                <span className="text-[10px] font-semibold uppercase tracking-wider text-white">Live</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-white">Live</span>
                             </div>
                         </div>
                     </div>

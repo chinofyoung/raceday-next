@@ -17,8 +17,8 @@ interface Step4ReviewProps {
 export function Step4Review({ event }: Step4ReviewProps) {
     const { watch, register, formState: { errors } } = useFormContext<RegistrationFormValues>();
     const data = watch();
-    const { user } = useAuth(); // Need user to show "Registered by [Name]" if self, but wait. 
-    // If proxy, we are the one registering. 
+    const { user } = useAuth(); // Need user to show "Registered by [Name]" if self, but wait.
+    // If proxy, we are the one registering.
     // Plan says: "If proxy, show a highlighted info badge: "Proxy Registration — Registered by [Your Name]""
     // Since we are the current user, [Your Name] is us.
 
@@ -27,13 +27,13 @@ export function Step4Review({ event }: Step4ReviewProps) {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-1">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Review & <span className="text-primary">Confirm</span></h2>
-                <p className="text-text-muted font-medium italic">Please ensure all details are correct before completing your registration.</p>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Review & <span className="text-primary">Confirm</span></h2>
+                <p className="text-text-muted font-medium">Please ensure all details are correct before completing your registration.</p>
 
                 {data.registrationType === "proxy" && (
                     <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/20 text-indigo-400 rounded-full border border-indigo-500/30">
                         <User size={14} />
-                        <span className="text-xs font-bold italic uppercase tracking-wide">
+                        <span className="text-xs font-bold tracking-wide">
                             Proxy Registration — Registered by {user?.displayName || "You"}
                         </span>
                     </div>
@@ -48,37 +48,37 @@ export function Step4Review({ event }: Step4ReviewProps) {
 
                         <div className="space-y-6 relative z-10">
                             <div className="flex items-center gap-3">
-                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black italic text-xl">
+                                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
                                     {selectedCategory ? formatDistance(selectedCategory.distance, selectedCategory.distanceUnit) : ""}
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-black italic uppercase text-white leading-tight">{selectedCategory?.name}</h3>
-                                    <p className="text-[10px] font-bold text-text-muted italic uppercase tracking-widest">{event.name}</p>
+                                    <h3 className="text-xl font-bold text-white leading-tight">{selectedCategory?.name}</h3>
+                                    <p className="text-xs font-bold text-text-muted uppercase tracking-wider">{event.name}</p>
                                 </div>
                             </div>
 
                             <div className="space-y-4 pt-6 border-t border-white/5">
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Runner Name</span>
-                                    <span className="text-sm font-bold text-white uppercase italic">{data.participantInfo.name}</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Runner Name</span>
+                                    <span className="text-sm font-bold text-white uppercase">{data.participantInfo.name}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Apparel Sizes</span>
-                                    <span className="text-sm font-bold text-white uppercase italic">T: {data.participantInfo.tShirtSize} | S: {data.participantInfo.singletSize}</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Apparel Sizes</span>
+                                    <span className="text-sm font-bold text-white uppercase">T: {data.participantInfo.tShirtSize} | S: {data.participantInfo.singletSize}</span>
                                 </div>
                                 {data.vanityNumber && (
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">Vanity Bib #</span>
-                                        <span className="text-sm font-black text-primary uppercase italic">#{data.vanityNumber}</span>
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">Vanity Bib #</span>
+                                        <span className="text-sm font-bold text-primary uppercase">#{data.vanityNumber}</span>
                                     </div>
                                 )}
                             </div>
 
-                            <div className="pt-6 border-t border-white/5 space-y-3 font-black italic uppercase">
+                            <div className="pt-6 border-t border-white/5 space-y-3 font-bold uppercase">
                                 <div className="flex items-center justify-between text-xs text-text-muted">
                                     <span>Registration Fee</span>
                                     <span>
-                                        {data.basePrice < (Number(selectedCategory.price) || 0) && <span className="text-green-400 font-bold italic mr-2">(Early Bird)</span>}
+                                        {data.basePrice < (Number(selectedCategory.price) || 0) && <span className="text-green-400 font-bold mr-2">(Early Bird)</span>}
                                         ₱{data.basePrice}
                                     </span>
                                 </div>
@@ -89,8 +89,8 @@ export function Step4Review({ event }: Step4ReviewProps) {
                                     </div>
                                 )}
                                 <div className="flex items-center justify-between text-2xl text-white pt-2">
-                                    <span className="tracking-tighter">Total Price</span>
-                                    <span className="tracking-tighter">₱{data.totalPrice}</span>
+                                    <span className="tracking-tight">Total Price</span>
+                                    <span className="tracking-tight">₱{data.totalPrice}</span>
                                 </div>
                             </div>
                         </div>
@@ -101,28 +101,28 @@ export function Step4Review({ event }: Step4ReviewProps) {
                             <HeartPulse size={20} />
                         </div>
                         <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Emergency Contact</p>
-                            <p className="text-sm font-bold text-white uppercase italic">{data.participantInfo.emergencyContact.name}</p>
-                            <p className="text-xs text-text-muted italic">{data.participantInfo.emergencyContact.phone} ({data.participantInfo.emergencyContact.relationship})</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Emergency Contact</p>
+                            <p className="text-sm font-bold text-white uppercase">{data.participantInfo.emergencyContact.name}</p>
+                            <p className="text-xs text-text-muted">{data.participantInfo.emergencyContact.phone} ({data.participantInfo.emergencyContact.relationship})</p>
                         </div>
                     </Card>
                 </div>
 
                 {/* Waiver Section */}
                 <div className="space-y-6">
-                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white italic">
+                    <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white">
                         <FileText size={14} className="text-primary" /> Waiver & Terms
                     </div>
                     <Card className="p-6 bg-surface/30 border-white/5 space-y-6 max-h-[400px] overflow-y-auto custom-scrollbar">
                         <div className="prose prose-invert prose-sm">
-                            <h4 className="text-white uppercase italic font-black">Release of Liability</h4>
-                            <p className="text-text-muted leading-relaxed italic text-xs">
+                            <h4 className="text-white uppercase font-bold">Release of Liability</h4>
+                            <p className="text-text-muted leading-relaxed text-xs">
                                 In consideration of my participation in <span className="text-white font-bold">{event.name}</span>, I hereby for myself, my heirs, executors, and administrators, waive and release any and all rights and claims for damages I may have against the event organizers, sponsors, and their representatives for any and all injuries suffered by me at said event.
                             </p>
-                            <p className="text-text-muted leading-relaxed italic text-xs">
+                            <p className="text-text-muted leading-relaxed text-xs">
                                 I attest and verify that I am physically fit and have sufficiently trained for the completion of this event and my physical condition has been verified by a licensed medical doctor.
                             </p>
-                            <p className="text-text-muted leading-relaxed italic text-xs">
+                            <p className="text-text-muted leading-relaxed text-xs">
                                 Further, I grant full permission to any and all of the foregoing to use any photographs, motion pictures, recordings, or any other record of this event for any legitimate purpose.
                             </p>
                         </div>
@@ -136,20 +136,20 @@ export function Step4Review({ event }: Step4ReviewProps) {
                                 className="mt-1 w-5 h-5 rounded border-white/10 bg-surface/50 text-primary focus:ring-primary focus:ring-offset-0 transition-all cursor-pointer"
                             />
                             <div className="space-y-1">
-                                <span className="text-xs font-bold text-white italic transition-colors group-hover:text-primary">
+                                <span className="text-xs font-bold text-white transition-colors group-hover:text-primary">
                                     I have read and agree to the waiver and terms of service.
                                 </span>
-                                <p className="text-[10px] text-text-muted italic">By checking this, you provide a digital signature for your legal agreement.</p>
+                                <p className="text-xs text-text-muted">By checking this, you provide a digital signature for your legal agreement.</p>
                             </div>
                         </label>
                         {errors.termsAccepted && (
-                            <p className="text-xs text-red-500 font-bold italic uppercase tracking-widest text-center">{errors.termsAccepted.message}</p>
+                            <p className="text-xs text-red-500 font-bold uppercase tracking-wider text-center">{errors.termsAccepted.message}</p>
                         )}
                     </div>
 
                     <div className="p-4 bg-yellow-500/10 rounded-2xl border border-yellow-500/20 flex gap-3">
                         <AlertTriangle className="text-yellow-500 shrink-0" size={18} />
-                        <p className="text-[10px] text-text-muted leading-relaxed font-bold italic uppercase tracking-wider">
+                        <p className="text-xs text-text-muted leading-relaxed font-bold uppercase tracking-wider">
                             Double check your T-Shirt and Singlet sizes. Changes may not be accommodated after registration is completed.
                         </p>
                     </div>

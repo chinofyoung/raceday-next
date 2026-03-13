@@ -20,7 +20,7 @@ const RouteMapViewer = dynamic(
             <div className="w-full h-full flex items-center justify-center bg-black/20 rounded-3xl">
                 <div className="text-center space-y-2 opacity-40">
                     <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted">Loading map...</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Loading map...</p>
                 </div>
             </div>
         ),
@@ -60,7 +60,7 @@ export function Step3Categories() {
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-6">
                 <div className="space-y-2">
-                    <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Distance <span className="text-primary">Categories</span></h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-white">Distance <span className="text-primary">Categories</span></h2>
                     <p className="text-text-muted font-medium">Define the race distances and their specific logistics.</p>
                 </div>
                 <Button onClick={addCategory} variant="primary" className="gap-2 self-start md:self-center bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20">
@@ -78,7 +78,7 @@ export function Step3Categories() {
                                 {...register("earlyBird.enabled")}
                                 className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
                             />
-                            <span className="text-sm font-black italic uppercase tracking-wide text-white">Enable Early Bird Promo</span>
+                            <span className="text-sm font-semibold tracking-wide text-white">Enable Early Bird Promo</span>
                         </label>
                         <p className="text-xs text-text-muted ml-8">Offer discounted rates for early registrants.</p>
                     </div>
@@ -87,22 +87,22 @@ export function Step3Categories() {
                 {isEarlyBirdEnabled && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in slide-in-from-top-2 pt-4 border-t border-white/5">
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo Start Date</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-text-muted">Promo Start Date</label>
                             <input
                                 type="date"
                                 {...register("earlyBird.startDate")}
                                 className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
-                            {errors.earlyBird?.startDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.startDate.message}</p>}
+                            {errors.earlyBird?.startDate?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.earlyBird.startDate.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <label className="text-xs font-bold uppercase tracking-widest text-text-muted">Promo End Date</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-text-muted">Promo End Date</label>
                             <input
                                 type="date"
                                 {...register("earlyBird.endDate")}
                                 className="w-full h-10 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all [color-scheme:dark]"
                             />
-                            {errors.earlyBird?.endDate?.message && <p className="text-xs text-red-500 font-bold uppercase italic tracking-wide">{errors.earlyBird.endDate.message}</p>}
+                            {errors.earlyBird?.endDate?.message && <p className="text-xs text-red-500 font-bold uppercase tracking-wide">{errors.earlyBird.endDate.message}</p>}
                         </div>
                     </div>
                 )}
@@ -110,12 +110,12 @@ export function Step3Categories() {
 
             <div className="space-y-8">
                 {fields.length === 0 && (
-                    <div className="py-24 text-center space-y-6 bg-white/[0.02] rounded-[2rem] border-2 border-dashed border-white/5">
+                    <div className="py-24 text-center space-y-6 bg-white/[0.02] rounded-2xl border-2 border-dashed border-white/5">
                         <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-text-muted/30">
                             <Ruler size={40} />
                         </div>
                         <div className="space-y-2">
-                            <p className="text-lg font-bold uppercase italic text-white/50">Ready to start?</p>
+                            <p className="text-lg font-bold text-white/50">Ready to start?</p>
                             <p className="text-sm text-text-muted max-w-xs mx-auto">Add your first race category (e.g., 5K Fun Run or 42K Marathon) to begin.</p>
                         </div>
                         <Button onClick={addCategory} variant="outline" className="border-white/10 text-white hover:bg-white/5">
@@ -136,7 +136,7 @@ export function Step3Categories() {
 
             {
                 errors.categories?.message && (
-                    <div className="flex items-center justify-center gap-2 p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-red-500 text-sm font-bold uppercase italic tracking-wide">
+                    <div className="flex items-center justify-center gap-2 p-4 bg-red-500/10 rounded-2xl border border-red-500/20 text-red-500 text-sm font-bold uppercase tracking-wide">
                         <Info size={16} />
                         {errors.categories.message}
                     </div>
@@ -160,12 +160,12 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
             {/* Header */}
             <div className="flex items-center justify-between p-6 bg-white/[0.03] border-b border-white/5">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary font-black italic text-xl shadow-inner">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary font-bold text-xl shadow-inner">
                         {index + 1}
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold uppercase italic tracking-tight text-white leading-tight">Category Details</h3>
-                        <p className="text-[10px] font-black uppercase text-primary tracking-widest italic opacity-70">Distance Configuration</p>
+                        <h3 className="text-lg font-bold tracking-tight text-white leading-tight">Category Details</h3>
+                        <p className="text-xs font-semibold uppercase text-primary tracking-wider opacity-70">Distance Configuration</p>
                     </div>
                 </div>
                 <button
@@ -186,15 +186,15 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                     {/* Basic Fields */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="md:col-span-3 space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Category Name</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Category Name</Label>
                             <Input
                                 {...register(`categories.${index}.name`)}
                                 placeholder="e.g. 21K Half Marathon"
                             />
-                            {errors.categories?.[index]?.name?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].name.message}</p>}
+                            {errors.categories?.[index]?.name?.message && <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].name.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Distance</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-50 ml-1">Distance</label>
                             <div className="flex gap-2">
                                 <div className="flex-1 relative">
                                     <Ruler size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
@@ -204,7 +204,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                         placeholder="e.g. 21"
                                         className="pl-9"
                                     />
-                                    {errors.categories?.[index]?.distance?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic mt-1">{errors.categories[index].distance.message}</p>}
+                                    {errors.categories?.[index]?.distance?.message && <p className="text-xs text-red-500 font-bold uppercase mt-1">{errors.categories[index].distance.message}</p>}
                                 </div>
                                 <select
                                     {...register(`categories.${index}.distanceUnit`)}
@@ -216,7 +216,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Registration Price (PHP)</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Registration Price (PHP)</Label>
                             <div className="relative">
                                 <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                 <Input
@@ -225,12 +225,12 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                     className="pl-9"
                                 />
                             </div>
-                            {errors.categories?.[index]?.price?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].price.message}</p>}
+                            {errors.categories?.[index]?.price?.message && <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].price.message}</p>}
                         </div>
 
                         {watch("earlyBird.enabled") && (
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Early Bird Price</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Early Bird Price</Label>
                                 <div className="relative">
                                     <DollarSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                     <Input
@@ -239,24 +239,24 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                         className="pl-9 border-primary/50 bg-primary/5 text-primary"
                                     />
                                 </div>
-                                {errors.categories?.[index]?.earlyBirdPrice?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].earlyBirdPrice.message}</p>}
+                                {errors.categories?.[index]?.earlyBirdPrice?.message && <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].earlyBirdPrice.message}</p>}
                             </div>
                         )}
 
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Race Number Format</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Race Number Format</Label>
                             <Input
                                 {...register(`categories.${index}.raceNumberFormat`)}
                                 placeholder="e.g. 21K-{number}"
                             />
-                            {errors.categories?.[index]?.raceNumberFormat?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].raceNumberFormat.message}</p>}
-                            <p className="text-[10px] text-text-muted ml-1 italic opacity-50">Use {"{number}"} as placeholder.</p>
+                            {errors.categories?.[index]?.raceNumberFormat?.message && <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].raceNumberFormat.message}</p>}
+                            <p className="text-xs text-text-muted ml-1 opacity-50">Use {"{number}"} as placeholder.</p>
                         </div>
 
                         <div className="space-y-4 md:col-span-3 pt-4 border-t border-white/5">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Max Participants</Label>
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Max Participants</Label>
                                     <div className="relative">
                                         <Users size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
                                         <Input
@@ -266,8 +266,8 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                             className="pl-9"
                                         />
                                     </div>
-                                    {errors.categories?.[index]?.maxParticipants?.message && <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].maxParticipants.message}</p>}
-                                    <p className="text-[10px] text-text-muted ml-1 italic opacity-50">Maximum number of registrants allowed for this category.</p>
+                                    {errors.categories?.[index]?.maxParticipants?.message && <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].maxParticipants.message}</p>}
+                                    <p className="text-xs text-text-muted ml-1 opacity-50">Maximum number of registrants allowed for this category.</p>
                                 </div>
                                 <div className="pb-4">
                                     <label className="flex items-center gap-3 cursor-pointer group">
@@ -277,8 +277,8 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                             className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
                                         />
                                         <div className="space-y-0.5">
-                                            <span className="text-sm font-black italic uppercase tracking-wide text-white group-hover:text-primary transition-colors">Show Slots Remaining</span>
-                                            <p className="text-[10px] text-text-muted font-medium italic">Display remaining slots to the public.</p>
+                                            <span className="text-sm font-semibold tracking-wide text-white group-hover:text-primary transition-colors">Show Slots Remaining</span>
+                                            <p className="text-xs text-text-muted font-medium">Display remaining slots to the public.</p>
                                         </div>
                                     </label>
                                 </div>
@@ -290,8 +290,8 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                             className="w-5 h-5 accent-primary rounded bg-white/10 border-white/20"
                                         />
                                         <div className="space-y-0.5">
-                                            <span className="text-sm font-black italic uppercase tracking-wide text-white group-hover:text-primary transition-colors">Show Participant Count</span>
-                                            <p className="text-[10px] text-text-muted font-medium italic">Display total registered count to the public.</p>
+                                            <span className="text-sm font-semibold tracking-wide text-white group-hover:text-primary transition-colors">Show Participant Count</span>
+                                            <p className="text-xs text-text-muted font-medium">Display total registered count to the public.</p>
                                         </div>
                                     </label>
                                 </div>
@@ -301,30 +301,30 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
 
                     {/* Timing Fields */}
                     <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-text-muted italic bg-white/5 w-fit px-3 py-1 rounded-full">
+                        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-text-muted bg-white/5 w-fit px-3 py-1 rounded-full">
                             <Clock size={12} className="text-primary" />
                             Event Timeline
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Assembly Time</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-50 ml-1">Assembly Time</label>
                                 <input type="time" {...register(`categories.${index}.assemblyTime`)} aria-invalid={!!errors.categories?.[index]?.assemblyTime} className={`w-full h-10 px-4 py-2 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.assemblyTime ? "border-red-500/50" : "border-white/10"}`} />
                                 {errors.categories?.[index]?.assemblyTime?.message && (
-                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].assemblyTime.message}</p>
+                                    <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].assemblyTime.message}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Gun Start</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-50 ml-1">Gun Start</label>
                                 <input type="time" {...register(`categories.${index}.gunStartTime`)} aria-invalid={!!errors.categories?.[index]?.gunStartTime} className={`w-full h-10 px-4 py-2 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.gunStartTime ? "border-red-500/50" : "border-white/10"}`} />
                                 {errors.categories?.[index]?.gunStartTime?.message && (
-                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].gunStartTime.message}</p>
+                                    <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].gunStartTime.message}</p>
                                 )}
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-50 ml-1">Cut-off Time</label>
+                                <label className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-50 ml-1">Cut-off Time</label>
                                 <input type="time" {...register(`categories.${index}.cutOffTime`)} aria-invalid={!!errors.categories?.[index]?.cutOffTime} className={`w-full h-10 px-4 py-2 bg-white/5 border rounded-xl text-sm [color-scheme:dark] focus:border-primary/50 focus:outline-none transition-all ${errors.categories?.[index]?.cutOffTime ? "border-red-500/50" : "border-white/10"}`} />
                                 {errors.categories?.[index]?.cutOffTime?.message && (
-                                    <p className="text-[10px] text-red-500 font-bold uppercase italic">{errors.categories[index].cutOffTime.message}</p>
+                                    <p className="text-xs text-red-500 font-bold uppercase">{errors.categories[index].cutOffTime.message}</p>
                                 )}
                             </div>
                         </div>
@@ -338,7 +338,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                             <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
                                 <Shirt size={16} />
                             </div>
-                            <label className="text-xs font-black uppercase tracking-widest text-text-muted italic">Category Inclusions</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Category Inclusions</label>
                         </div>
                         <Button
                             type="button"
@@ -370,7 +370,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                         ))}
                     </div>
 
-                    <p className="text-[10px] text-text-muted italic font-medium opacity-50 ml-1">
+                    <p className="text-xs text-text-muted font-medium opacity-50 ml-1">
                         Define items included in this specific distance category.
                     </p>
                 </div>
@@ -382,7 +382,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                             <div className="w-8 h-8 rounded-lg bg-cta/10 flex items-center justify-center text-cta">
                                 <Map size={16} />
                             </div>
-                            <label className="text-xs font-black uppercase tracking-widest text-text-muted italic">Route Configuration</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Route Configuration</label>
                         </div>
                         <div className="w-auto">
                             <ImageUpload
@@ -406,7 +406,7 @@ function CategoryItem({ index, remove, field }: { index: number, remove: (index:
                                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto">
                                     <Map size={32} />
                                 </div>
-                                <p className="text-[10px] font-bold uppercase tracking-widest text-text-muted italic max-w-sm mx-auto leading-relaxed">
+                                <p className="text-xs font-bold uppercase tracking-wider text-text-muted max-w-sm mx-auto leading-relaxed">
                                     No GPX route uploaded. Uploading a GPX file will generate an interactive map for participants.
                                 </p>
                             </div>

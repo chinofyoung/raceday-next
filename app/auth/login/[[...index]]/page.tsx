@@ -47,13 +47,13 @@ export default function LoginPage() {
                     {/* Section Header: Line + SIGN IN */}
                     <div className="flex items-center gap-4 mb-10">
                         <div className="w-12 h-[3px] bg-[#f97316] rounded-full" />
-                        <span className="text-[#f97316] text-[14px] font-black tracking-[0.3em] uppercase">
+                        <span className="text-[#f97316] text-sm font-bold tracking-[0.3em] uppercase">
                             Sign In
                         </span>
                     </div>
 
                     {/* Title */}
-                    <h1 className="text-white text-2xl md:text-4xl font-black italic uppercase tracking-tight mb-4 leading-[0.85] font-heading">
+                    <h1 className="text-white text-2xl md:text-4xl font-bold tracking-tight mb-4 leading-[0.85] font-heading">
                         Welcome Back!
                     </h1>
 
@@ -70,7 +70,7 @@ export default function LoginPage() {
                     >
                         <div className="flex items-center gap-5">
                             <LogIn className="text-white w-8 h-8" strokeWidth={2.5} />
-                            <span className="text-white text-lg md:text-2xl font-black italic uppercase tracking-tight font-heading">
+                            <span className="text-white text-lg md:text-2xl font-bold tracking-tight font-heading">
                                 Continue with Google
                             </span>
                         </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Built for Speed Tagline */}
-                <div className="mt-16 text-slate-700 text-[13px] font-black tracking-[0.5em] uppercase pointer-events-none font-body">
+                <div className="mt-16 text-slate-700 text-xs font-bold tracking-[0.5em] uppercase pointer-events-none font-body">
                     Built for Speed
                 </div>
             </div>

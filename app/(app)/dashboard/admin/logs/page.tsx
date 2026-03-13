@@ -117,7 +117,7 @@ export default function AuditLogsPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-xs text-text-muted/30 font-mono tracking-tighter self-end lg:self-center">
+                                <div className="text-xs text-text-muted/30 font-mono tracking-tight self-end lg:self-center">
                                     ID: {log._id}
                                 </div>
                             </div>

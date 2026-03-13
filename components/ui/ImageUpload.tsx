@@ -150,7 +150,7 @@ export function ImageUpload({
                             variant="primary"
                             size="sm"
                             onClick={triggerUpload}
-                            className="h-9 gap-2 text-[10px] font-black uppercase italic"
+                            className="h-9 gap-2 text-xs font-semibold uppercase"
                         >
                             <CloudUpload size={14} /> Replace
                         </Button>
@@ -172,7 +172,7 @@ export function ImageUpload({
                         variant="primary"
                         size="sm"
                         onClick={triggerUpload}
-                        className="h-9 gap-2 text-[10px] font-black uppercase italic shadow-lg shadow-primary/20"
+                        className="h-9 gap-2 text-xs font-semibold uppercase shadow-lg shadow-primary/20"
                     >
                         <CloudUpload size={14} /> Upload GPX
                     </Button>
@@ -185,7 +185,7 @@ export function ImageUpload({
         <div className={cn("space-y-4", className)}>
             {(label || description) && (
                 <div className="space-y-1">
-                    {label && <h3 className="text-xs font-black uppercase tracking-widest text-text-muted italic">{label}</h3>}
+                    {label && <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted">{label}</h3>}
                     {description && <p className="text-xs text-text-muted">{description}</p>}
                 </div>
             )}
@@ -211,7 +211,7 @@ export function ImageUpload({
                 {loading ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 z-20">
                         <Loader2 className="animate-spin text-primary mb-2" size={32} />
-                        <span className="text-xs font-bold uppercase tracking-widest text-white">Uploading...</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-white">Uploading...</span>
                     </div>
                 ) : value ? (
                     <>
@@ -265,8 +265,8 @@ export function ImageUpload({
                             <CloudUpload size={32} />
                         </div>
                         <div className="text-center px-4">
-                            <span className="block font-bold uppercase italic tracking-wider text-sm">Click to upload</span>
-                            <span className="text-[10px] font-medium opacity-50 uppercase mt-1">
+                            <span className="block font-bold uppercase tracking-wider text-sm">Click to upload</span>
+                            <span className="text-xs font-medium opacity-50 uppercase mt-1">
                                 {resourceType === "raw" ? "Any File (Max 5MB)" : "JPG, PNG, WEBP (Max 5MB)"}
                             </span>
                         </div>

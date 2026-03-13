@@ -158,7 +158,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                     <MapPin size={32} />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-white uppercase italic tracking-tight">GPX Route Required</h3>
+                    <h3 className="text-xl font-bold text-white tracking-tight">GPX Route Required</h3>
                     <p className="text-text-muted text-sm max-w-sm mx-auto mt-1">
                         Please upload a GPX route for this category first to start placing stations on the map.
                     </p>
@@ -174,7 +174,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                 <div className="space-y-6">
                     <div className="bg-surface/30 p-6 rounded-3xl border border-white/5 space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-lg font-bold uppercase italic tracking-tight text-white">
+                            <h3 className="text-lg font-bold tracking-tight text-white">
                                 {editingId ? 'Edit Station' : 'Add New Station'}
                             </h3>
                             {editingId && (
@@ -201,7 +201,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                         {type === 'water' && <Droplets size={20} className="text-blue-500" />}
                                         {type === 'aid' && <HeartPulse size={20} className="text-amber-500" />}
                                         {type === 'first_aid' && <Plus size={20} className="text-red-500" />}
-                                        <span className="text-[10px] font-black uppercase tracking-widest">
+                                        <span className="text-xs font-semibold uppercase tracking-wider">
                                             {type.replace('_', ' ')}
                                         </span>
                                     </button>
@@ -210,7 +210,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
 
                             <div className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Label</Label>
+                                    <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Label</Label>
                                     <Input
                                         placeholder="e.g. KM 5 Water Station"
                                         value={tempStation.label}
@@ -221,7 +221,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Latitude</Label>
+                                        <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Latitude</Label>
                                         <Input
                                             type="number"
                                             step="any"
@@ -234,7 +234,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic opacity-70">Longitude</Label>
+                                        <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Longitude</Label>
                                         <Input
                                             type="number"
                                             step="any"
@@ -252,7 +252,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                             {!editingId ? (
                                 <Button
                                     type="button"
-                                    className="w-full h-12 text-sm font-black uppercase tracking-widest italic"
+                                    className="w-full h-12 text-sm font-semibold uppercase tracking-wider"
                                     onClick={handleAddStation}
                                     disabled={!tempStation.label || !tempStation.coordinates?.lat}
                                 >
@@ -263,14 +263,14 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                     <Button
                                         type="button"
                                         variant="outline"
-                                        className="h-12 text-xs font-black uppercase tracking-widest"
+                                        className="h-12 text-xs font-semibold uppercase tracking-wider"
                                         onClick={handleCancelEdit}
                                     >
                                         Cancel
                                     </Button>
                                     <Button
                                         type="button"
-                                        className="h-12 text-xs font-black uppercase tracking-widest italic"
+                                        className="h-12 text-xs font-semibold uppercase tracking-wider"
                                         onClick={handleSaveEdit}
                                     >
                                         Save Changes
@@ -278,7 +278,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                 </div>
                             )}
 
-                            <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest text-center">
+                            <p className="text-xs text-text-muted font-bold uppercase tracking-wider text-center">
                                 Tip: Click on the map to set coordinates
                             </p>
                         </div>
@@ -305,7 +305,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-white text-sm">{field.label}</h4>
-                                        <p className="text-[10px] text-text-muted font-medium uppercase tracking-tight">
+                                        <p className="text-xs text-text-muted font-medium uppercase tracking-tight">
                                             {field.type.replace('_', ' ')} • {field.coordinates.lat.toFixed(4)}, {field.coordinates.lng.toFixed(4)}
                                         </p>
                                     </div>
@@ -363,12 +363,12 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                 icon={createStationIcon(field.type, STATION_COLORS[field.type])}
                             >
                                 <Popup>
-                                    <div className="text-xs font-black italic uppercase tracking-tight">
+                                    <div className="text-xs font-bold uppercase tracking-tight">
                                         {field.label}
                                     </div>
                                 </Popup>
                                 <Tooltip permanent direction="top" offset={[0, -15]} className="custom-tooltip">
-                                    <span className="text-[10px] font-black uppercase italic tracking-widest">{field.label}</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider">{field.label}</span>
                                 </Tooltip>
                             </Marker>
                         ))}
@@ -380,7 +380,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                                 icon={createStationIcon(tempStation.type as StationType, '#ffffff')}
                             >
                                 <Tooltip permanent direction="top" offset={[0, -15]}>
-                                    <span className="text-[10px] font-black uppercase italic tracking-widest">New Position</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider">New Position</span>
                                 </Tooltip>
                             </Marker>
                         )}
@@ -390,7 +390,7 @@ export function StationManager({ categoryIndex }: StationManagerProps) {
                     </MapContainer>
 
                     <div className="absolute bottom-4 left-4 right-4 z-[1000] p-4 bg-gray-900/80 backdrop-blur-md rounded-2xl border border-white/10 text-center">
-                        <p className="text-[10px] text-white/60 font-black uppercase tracking-widest italic">
+                        <p className="text-xs text-white/60 font-semibold uppercase tracking-wider">
                             Click anywhere on the route to set station location
                         </p>
                     </div>

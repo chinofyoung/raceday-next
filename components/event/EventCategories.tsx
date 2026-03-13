@@ -34,7 +34,7 @@ export function EventCategories({ event, formatTimeAMPM }: EventCategoriesProps)
                                 <div className="text-right">
                                     {isEarlyBirdActive(event) && cat.earlyBirdPrice != null && Number(cat.earlyBirdPrice) < Number(cat.price) ? (
                                         <div className="flex flex-col items-end">
-                                            <span className="text-[10px] font-medium text-text-muted line-through">₱{cat.price}</span>
+                                            <span className="text-xs font-medium text-text-muted line-through">₱{cat.price}</span>
                                             <span className="text-2xl font-bold text-green-400">₱{cat.earlyBirdPrice}</span>
                                         </div>
                                     ) : (

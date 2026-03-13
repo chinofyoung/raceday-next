@@ -79,8 +79,8 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                     <Hash size={32} />
                 </div>
                 <div className="space-y-1">
-                    <h2 className="text-2xl font-black italic uppercase text-white">Vanity Numbers Not Available</h2>
-                    <p className="text-text-muted font-medium italic">The organizer has not enabled custom race numbers for this event.</p>
+                    <h2 className="text-2xl font-bold text-white">Vanity Numbers Not Available</h2>
+                    <p className="text-text-muted font-medium">The organizer has not enabled custom race numbers for this event.</p>
                 </div>
             </div>
         );
@@ -93,9 +93,9 @@ export function Step3Vanity({ event }: Step3VanityProps) {
             <div className="space-y-1">
                 <div className="flex items-center gap-2 text-primary">
                     <Sparkles size={20} className="animate-pulse" />
-                    <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Vanity <span className="text-primary">Race Number</span></h2>
+                    <h2 className="text-3xl font-bold tracking-tight text-white">Vanity <span className="text-primary">Race Number</span></h2>
                 </div>
-                <p className="text-text-muted font-medium italic">Make your race bib unique! Pick a custom <span className="text-white font-bold">{maxDigits}-digit</span> number for a <span className="text-white font-bold">₱{premiumPrice}</span> premium.</p>
+                <p className="text-text-muted font-medium">Make your race bib unique! Pick a custom <span className="text-white font-bold">{maxDigits}-digit</span> number for a <span className="text-white font-bold">₱{premiumPrice}</span> premium.</p>
             </div>
 
             <Card className="p-8 bg-surface/40 border-white/5 space-y-8 overflow-hidden relative">
@@ -110,7 +110,7 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                                 <div
                                     key={i}
                                     className={cn(
-                                        "w-12 h-16 md:w-16 md:h-24 rounded-2xl border-2 flex items-center justify-center text-3xl md:text-5xl font-black italic transition-all duration-300 shadow-xl",
+                                        "w-12 h-16 md:w-16 md:h-24 rounded-2xl border-2 flex items-center justify-center text-3xl md:text-5xl font-bold transition-all duration-300 shadow-xl",
                                         char
                                             ? "bg-primary border-primary text-white shadow-primary/20 scale-105"
                                             : "bg-background border-white/10 text-white/10"
@@ -123,7 +123,7 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                     </div>
 
                     <div className="space-y-4">
-                        <label className="text-xs font-black uppercase tracking-widest text-text-muted italic">Type your number</label>
+                        <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Type your number</label>
                         <div className="flex gap-2 max-w-md mx-auto">
                             <input
                                 {...register("vanityNumber", {
@@ -136,19 +136,19 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                                 })}
                                 type="text"
                                 placeholder={`Enter ${maxDigits} digits`}
-                                className="flex-1 px-6 py-4 bg-background border w-full border-white/10 rounded-2xl text-2xl font-black text-center italic tracking-widest focus:outline-none focus:border-primary transition-all"
+                                className="flex-1 px-6 py-4 bg-background border w-full border-white/10 rounded-2xl text-2xl font-bold text-center tracking-wider focus:outline-none focus:border-primary transition-all"
                             />
                             <button
                                 type="button"
                                 onClick={checkAvailability}
                                 disabled={isChecking || !vanityNumber || vanityNumber.length !== maxDigits}
-                                className="px-6 bg-primary text-white rounded-2xl font-black italic uppercase tracking-widest hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg shadow-primary/20"
+                                className="px-6 bg-primary text-white rounded-2xl font-bold uppercase tracking-wider hover:bg-primary/90 disabled:opacity-50 transition-all shadow-lg shadow-primary/20"
                             >
                                 {isChecking ? <Loader2 className="animate-spin" size={24} /> : "Check"}
                             </button>
                         </div>
                         {vanityNumber && vanityNumber.length !== maxDigits && (
-                            <p className="text-[10px] text-amber-500 font-bold italic uppercase tracking-widest animate-pulse">
+                            <p className="text-xs text-amber-500 font-bold uppercase tracking-wider animate-pulse">
                                 Requires exactly {maxDigits} digits
                             </p>
                         )}
@@ -158,13 +158,13 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                         {isAvailable === true && lastChecked === vanityNumber && (
                             <div className="flex items-center gap-2 text-cta bg-cta/10 px-4 py-2 rounded-full border border-cta/20 animate-in zoom-in duration-300">
                                 <CheckCircle2 size={18} />
-                                <span className="text-xs font-black uppercase tracking-widest italic">Number is Available!</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider">Number is Available!</span>
                             </div>
                         )}
                         {isAvailable === false && lastChecked === vanityNumber && (
                             <div className="flex items-center gap-2 text-red-500 bg-red-500/10 px-4 py-2 rounded-full border border-red-500/20 animate-in zoom-in duration-300">
                                 <AlertCircle size={18} />
-                                <span className="text-xs font-black uppercase tracking-widest italic">Already Taken</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider">Already Taken</span>
                             </div>
                         )}
                     </div>
@@ -173,13 +173,13 @@ export function Step3Vanity({ event }: Step3VanityProps) {
                 {/* Pricing Breakdown Preview */}
                 <div className="pt-8 border-t border-white/5 grid grid-cols-2 gap-8 text-center">
                     <div className="space-y-1">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Base Fee</p>
-                        <p className="text-2xl font-black italic text-white tracking-widest">₱{watch("basePrice")}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Base Fee</p>
+                        <p className="text-2xl font-bold text-white tracking-wider">₱{watch("basePrice")}</p>
                     </div>
                     <div className="space-y-1">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Vanity Fee</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Vanity Fee</p>
                         <p className={cn(
-                            "text-2xl font-black italic tracking-widest",
+                            "text-2xl font-bold tracking-wider",
                             isAvailable ? "text-primary" : "text-white/20"
                         )}>
                             +₱{isAvailable ? premiumPrice : 0}
@@ -190,7 +190,7 @@ export function Step3Vanity({ event }: Step3VanityProps) {
 
             <div className="p-6 bg-white/5 rounded-2xl border border-white/10 flex gap-4">
                 <ShieldAlert className="text-cta shrink-0" size={24} />
-                <p className="text-[10px] text-text-muted leading-relaxed font-bold italic uppercase tracking-wider">
+                <p className="text-xs text-text-muted leading-relaxed font-bold uppercase tracking-wider">
                     Vanity numbers are subject to availability and will only be officially reserved once payment is confirmed. If multiple users attempt to pay for the same number, the first confirmed payment will be assigned the number.
                 </p>
             </div>
