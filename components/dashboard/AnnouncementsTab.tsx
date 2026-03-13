@@ -184,12 +184,12 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold uppercase italic tracking-tight text-white">Announcements</h3>
+                <h3 className="text-xl font-bold tracking-tight text-white">Announcements</h3>
                 {!isCreating && (
                     <Button
                         variant="primary"
                         onClick={() => setIsCreating(true)}
-                        className="gap-2 font-black italic uppercase bg-cta hover:bg-cta-hover border-none"
+                        className="gap-2 font-bold bg-cta hover:bg-cta-hover border-none"
                     >
                         <Plus size={16} /> New Announcement
                     </Button>
@@ -199,14 +199,14 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
             {isCreating && (
                 <Card className="p-6 md:p-8 bg-surface/30 backdrop-blur-sm border border-white/5 shadow-2xl space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="space-y-2 border-b border-white/5 pb-4">
-                        <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">Draft Announcement</h2>
+                        <h2 className="text-2xl font-bold tracking-tight text-white">Draft Announcement</h2>
                         <p className="text-text-muted font-medium text-sm">Notify your runners about important updates, changes, or news.</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Announcement Title</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Announcement Title</Label>
                                 <Input
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
@@ -227,13 +227,13 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
 
                         <div className="space-y-6 relative group">
                             <div className="flex items-center justify-between">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Message & Details</label>
+                                <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Message & Details</label>
                                 <div className="relative">
                                     <button
                                         type="button"
                                         onClick={() => setShowAiMenu(!showAiMenu)}
                                         disabled={isAiLoading || submitting}
-                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-colors disabled:opacity-50"
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 text-primary border border-white/5 transition-colors disabled:opacity-50"
                                     >
                                         {isAiLoading ? <Loader2 size={10} className="animate-spin" /> : <Wand2 size={10} />}
                                         AI Assist
@@ -242,12 +242,12 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                     {showAiMenu && (
                                         <div className="absolute right-0 top-10 w-48 bg-surface border border-white/10 rounded-xl shadow-2xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
                                             <div className="px-3 py-2 border-b border-white/5 bg-white/5">
-                                                <span className="text-[9px] uppercase font-black text-text-muted italic tracking-widest flex items-center gap-1.5"><Sparkles size={10} className="text-primary" /> AI tools</span>
+                                                <span className="text-xs uppercase font-semibold text-text-muted tracking-wider flex items-center gap-1.5"><Sparkles size={10} className="text-primary" /> AI tools</span>
                                             </div>
-                                            <button type="button" onClick={() => handleAiAction("draft")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 italic font-medium">Draft from Title</button>
-                                            <button type="button" onClick={() => handleAiAction("improve")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 italic font-medium">✨ Improve Quality</button>
-                                            <button type="button" onClick={() => handleAiAction("make-exciting")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 italic font-medium">🔥 Make it Exciting</button>
-                                            <button type="button" onClick={() => handleAiAction("make-formal")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors italic font-medium">👔 Make it Formal</button>
+                                            <button type="button" onClick={() => handleAiAction("draft")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 font-medium">Draft from Title</button>
+                                            <button type="button" onClick={() => handleAiAction("improve")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 font-medium">✨ Improve Quality</button>
+                                            <button type="button" onClick={() => handleAiAction("make-exciting")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors border-b border-white/5 font-medium">🔥 Make it Exciting</button>
+                                            <button type="button" onClick={() => handleAiAction("make-formal")} className="w-full text-left px-3 py-2.5 text-xs text-text hover:bg-white/5 hover:text-white transition-colors font-medium">👔 Make it Formal</button>
                                         </div>
                                     )}
                                 </div>
@@ -279,7 +279,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 {sendEmail && <div className="w-2.5 h-2.5 bg-white rounded-[2px]" />}
                             </div>
                             <div className="space-y-0.5">
-                                <span className={cn("text-sm font-bold italic transition-colors", sendEmail ? "text-primary" : "text-white")}>Email Blast</span>
+                                <span className={cn("text-sm font-bold transition-colors", sendEmail ? "text-primary" : "text-white")}>Email Blast</span>
                                 <p className="text-xs text-text-muted">Simultaneously send this announcement as an email to all registered participants.</p>
                             </div>
                         </div>
@@ -298,7 +298,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 type="submit"
                                 variant="primary"
                                 disabled={submitting || !title.trim() || !message.trim()}
-                                className="px-8 bg-cta hover:bg-cta-hover border-none font-black italic uppercase tracking-widest shadow-lg shadow-cta/20"
+                                className="px-8 bg-cta hover:bg-cta-hover border-none font-bold shadow-lg shadow-cta/20"
                             >
                                 {submitting ? (
                                     <><Loader2 className="animate-spin mr-2" size={16} /> Publishing...</>
@@ -315,7 +315,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                 <Card className="p-6 md:p-8 bg-surface/30 backdrop-blur-sm border border-primary/20 shadow-2xl space-y-8 animate-in fade-in slide-in-from-top-4 duration-500">
                     <div className="flex justify-between items-start border-b border-white/5 pb-4">
                         <div className="space-y-1">
-                            <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">Edit Announcement</h2>
+                            <h2 className="text-2xl font-bold tracking-tight text-white">Edit Announcement</h2>
                             <p className="text-text-muted font-medium text-sm">Update the details of your announcement.</p>
                         </div>
                         <button
@@ -329,7 +329,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Announcement Title</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Announcement Title</Label>
                                 <Input
                                     value={editingAnnouncement.title}
                                     onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, title: e.target.value })}
@@ -349,7 +349,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                         />
 
                         <div className="space-y-6">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Message & Details</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Message & Details</label>
                             <textarea
                                 value={editingAnnouncement.message}
                                 onChange={(e) => setEditingAnnouncement({ ...editingAnnouncement, message: e.target.value })}
@@ -374,7 +374,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                                 type="submit"
                                 variant="primary"
                                 disabled={submitting || !editingAnnouncement.title.trim() || !editingAnnouncement.message.trim()}
-                                className="px-8 bg-primary hover:bg-primary-hover border-none font-black italic uppercase tracking-widest shadow-lg shadow-primary/20"
+                                className="px-8 bg-primary hover:bg-primary-hover border-none font-bold shadow-lg shadow-primary/20"
                             >
                                 {submitting ? (
                                     <><Loader2 className="animate-spin mr-2" size={16} /> Updating...</>
@@ -394,7 +394,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                             <Megaphone size={24} />
                         </div>
                         <div>
-                            <p className="text-white font-bold italic uppercase">No Announcements Yet</p>
+                            <p className="text-white font-bold">No Announcements Yet</p>
                             <p className="text-text-muted text-sm max-w-sm mx-auto">
                                 Keep your participants informed. Create an announcement to notify them about important updates.
                             </p>
@@ -405,7 +405,7 @@ export function AnnouncementsTab({ eventId }: AnnouncementsTabProps) {
                         <Card key={announcement._id} className="p-6 bg-surface border-white/5 space-y-4">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h4 className="text-lg font-bold text-white uppercase italic">{announcement.title}</h4>
+                                    <h4 className="text-lg font-bold text-white">{announcement.title}</h4>
                                     <div className="flex items-center gap-3 text-xs text-text-muted font-medium mt-1">
                                         <span className="flex items-center gap-1.5"><Clock size={12} /> {format(new Date(announcement.createdAt), "MMM d, yyyy h:mm a")}</span>
                                         {announcement.sendEmail && (

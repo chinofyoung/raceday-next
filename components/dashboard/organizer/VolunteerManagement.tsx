@@ -112,13 +112,13 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case "accepted":
-                return <Badge variant="success" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Active</Badge>;
+                return <Badge variant="success" className="text-xs font-semibold uppercase px-2.5 py-0.5">Active</Badge>;
             case "pending":
-                return <Badge variant="warning" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Pending</Badge>;
+                return <Badge variant="warning" className="text-xs font-semibold uppercase px-2.5 py-0.5">Pending</Badge>;
             case "revoked":
-                return <Badge variant="destructive" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">Revoked</Badge>;
+                return <Badge variant="destructive" className="text-xs font-semibold uppercase px-2.5 py-0.5">Revoked</Badge>;
             default:
-                return <Badge variant="secondary" className="text-[10px] font-black italic uppercase px-2.5 py-0.5">{status}</Badge>;
+                return <Badge variant="secondary" className="text-xs font-semibold uppercase px-2.5 py-0.5">{status}</Badge>;
         }
     };
 
@@ -145,7 +145,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-black italic uppercase tracking-tight text-text flex items-center gap-3">
+                    <h2 className="text-2xl font-bold tracking-tight text-text flex items-center gap-3">
                         <Users className="w-6 h-6 text-primary" />
                         Volunteer Team
                     </h2>
@@ -165,7 +165,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 <button
                     onClick={() => setActiveTab("active")}
                     className={cn(
-                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-colors relative",
+                        "px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors relative",
                         activeTab === "active" ? "text-primary" : "text-text-muted hover:text-white"
                     )}
                 >
@@ -177,7 +177,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                 <button
                     onClick={() => setActiveTab("revoked")}
                     className={cn(
-                        "px-4 py-2 text-xs font-black uppercase tracking-widest italic transition-colors relative",
+                        "px-4 py-2 text-xs font-bold uppercase tracking-wider transition-colors relative",
                         activeTab === "revoked" ? "text-red-500" : "text-text-muted hover:text-white"
                     )}
                 >
@@ -204,7 +204,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
             ) : (
                 <div className="grid gap-3">
                     {filteredVolunteers.length === 0 ? (
-                        <div className="p-12 text-center text-text-muted italic text-sm">
+                        <div className="p-12 text-center text-text-muted text-sm">
                             No {activeTab} volunteers found.
                         </div>
                     ) : (
@@ -247,7 +247,7 @@ export function VolunteerManagement({ eventId }: VolunteerManagementProps) {
                                     <div className="mt-4 sm:mt-0 flex items-center justify-between sm:justify-end gap-6">
                                         <div className="flex flex-wrap gap-1.5">
                                             {volunteer.permissions.map((p: string) => (
-                                                <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] font-black italic uppercase px-2.5 py-0.5">
+                                                <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-xs font-semibold uppercase px-2.5 py-0.5">
                                                     {getPermissionLabel(p)}
                                                 </Badge>
                                             ))}

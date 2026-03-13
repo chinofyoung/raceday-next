@@ -104,7 +104,7 @@ export default function OrganizerRegistrationsPage() {
                         <div className="w-16 h-16 border-4 border-primary/20 rounded-full" />
                         <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-primary rounded-full animate-spin" />
                     </div>
-                    <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic animate-pulse">Loading Registrations...</p>
+                    <p className="text-text-muted text-xs font-bold uppercase tracking-wider animate-pulse">Loading Registrations...</p>
                 </div>
             </div>
         );
@@ -119,8 +119,8 @@ export default function OrganizerRegistrationsPage() {
         <div className="space-y-8 text-white">
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">All <span className="text-primary">Sign-Ups</span></h1>
-                    <p className="text-text-muted font-medium italic">Manage and view all runner registrations.</p>
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">All <span className="text-primary">Sign-Ups</span></h1>
+                    <p className="text-text-muted font-medium">Manage and view all runner registrations.</p>
                 </div>
             </div>
 
@@ -151,7 +151,7 @@ export default function OrganizerRegistrationsPage() {
                 <div className="overflow-x-auto">
                     <div className="min-w-[800px]">
                         {/* Table Header */}
-                        <div className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-text-muted italic">
+                        <div className="grid grid-cols-12 gap-4 px-4 py-3 border-b border-white/5 text-xs font-semibold uppercase tracking-wider text-text-muted">
                             <div className="col-span-3">Runner Info</div>
                             <div className="col-span-3">Event & Category</div>
                             <div className="col-span-2">Contact</div>
@@ -165,25 +165,25 @@ export default function OrganizerRegistrationsPage() {
                                 paginatedRegistrations.map((reg: any) => (
                                     <div key={reg.id} className="grid grid-cols-12 gap-4 px-4 py-4 items-center hover:bg-white/5 transition-colors">
                                         <div className="col-span-3 flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black italic text-sm uppercase shrink-0">
+                                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm uppercase shrink-0">
                                                 {reg.participantInfo?.name?.charAt(0) || "?"}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-sm font-bold text-white uppercase italic truncate">
+                                                <p className="text-sm font-bold text-white uppercase truncate">
                                                     {reg.participantInfo?.name || "Unknown"}
                                                 </p>
                                                 {reg.isProxy && (
-                                                    <p className="text-[10px] text-text-muted italic truncate">Registered by {reg.registeredByName}</p>
+                                                    <p className="text-xs text-text-muted truncate">Registered by {reg.registeredByName}</p>
                                                 )}
                                             </div>
                                         </div>
                                         <div className="col-span-3 min-w-0">
-                                            <p className="text-xs font-bold text-white italic truncate">{reg.eventName}</p>
-                                            <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest italic truncate">{reg.categoryName}</p>
+                                            <p className="text-xs font-bold text-white truncate">{reg.eventName}</p>
+                                            <p className="text-xs text-text-muted font-bold uppercase tracking-wider truncate">{reg.categoryName}</p>
                                         </div>
                                         <div className="col-span-2 min-w-0">
                                             <p className="text-xs text-text-muted truncate">{reg.participantInfo?.email}</p>
-                                            <p className="text-[10px] text-text-muted truncate">{reg.participantInfo?.phone}</p>
+                                            <p className="text-xs text-text-muted truncate">{reg.participantInfo?.phone}</p>
                                         </div>
                                         <div className="col-span-2 text-xs text-text-muted">
                                             {reg.createdAt
@@ -193,15 +193,15 @@ export default function OrganizerRegistrationsPage() {
                                         <div className="col-span-2 flex flex-col items-end gap-1 shrink-0">
                                             <div className="flex gap-1.5">
                                                 {reg.status === "paid" ? (
-                                                    <Badge variant="success" className="bg-green-500/20 text-green-400 border-none text-[9px] font-black italic uppercase px-2 py-0.5">Paid</Badge>
+                                                    <Badge variant="success" className="bg-green-500/20 text-green-400 border-none text-xs font-semibold uppercase px-2 py-0.5">Paid</Badge>
                                                 ) : (
-                                                    <Badge variant="outline" className="text-yellow-400 border-yellow-400/30 text-[9px] font-black italic uppercase px-2 py-0.5">{reg.status}</Badge>
+                                                    <Badge variant="outline" className="text-yellow-400 border-yellow-400/30 text-xs font-semibold uppercase px-2 py-0.5">{reg.status}</Badge>
                                                 )}
                                             </div>
                                             {reg.raceKitClaimed ? (
-                                                <Badge variant="success" className="bg-cta/20 text-cta border-none text-[9px] font-black italic uppercase px-2 py-0.5 mt-1">Kit Claimed</Badge>
+                                                <Badge variant="success" className="bg-cta/20 text-cta border-none text-xs font-semibold uppercase px-2 py-0.5 mt-1">Kit Claimed</Badge>
                                             ) : (
-                                                <Badge variant="outline" className="border-white/10 text-text-muted text-[9px] font-black italic uppercase px-2 py-0.5 mt-1">Pending Kit</Badge>
+                                                <Badge variant="outline" className="border-white/10 text-text-muted text-xs font-semibold uppercase px-2 py-0.5 mt-1">Pending Kit</Badge>
                                             )}
                                         </div>
                                     </div>
@@ -209,7 +209,7 @@ export default function OrganizerRegistrationsPage() {
                             ) : (
                                 <div className="py-20 text-center flex flex-col items-center justify-center">
                                     <Users className="text-text-muted opacity-10 mb-4" size={48} />
-                                    <p className="text-text-muted text-sm font-medium italic">No registrations found matching your filters.</p>
+                                    <p className="text-text-muted text-sm font-medium">No registrations found matching your filters.</p>
                                 </div>
                             )}
                         </div>
@@ -218,7 +218,7 @@ export default function OrganizerRegistrationsPage() {
 
                 {totalPages > 1 && (
                     <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                        <p className="text-xs text-text-muted italic">
+                        <p className="text-xs text-text-muted">
                             Showing <span className="font-bold text-white">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to <span className="font-bold text-white">{Math.min(currentPage * ITEMS_PER_PAGE, filteredRegistrations.length)}</span> of <span className="font-bold text-white">{filteredRegistrations.length}</span> sign-ups
                         </p>
                         <div className="flex gap-2">

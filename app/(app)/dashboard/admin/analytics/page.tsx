@@ -139,16 +139,16 @@ export default function AnalyticsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
-                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-[10px] font-black uppercase italic tracking-widest">
+                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Platform <span className="text-primary">Analytics</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Deep dive into platform growth and revenue performance.</p>
+                    <p className="text-text-muted font-medium">Deep dive into platform growth and revenue performance.</p>
                 </div>
-                <Button variant="outline" className="font-black italic uppercase tracking-widest">
+                <Button variant="outline" className="font-bold uppercase tracking-wider">
                     <Download size={18} className="mr-2" /> Export JSON
                 </Button>
             </div>
@@ -157,10 +157,10 @@ export default function AnalyticsPage() {
                 {/* Revenue Chart */}
                 <Card className="p-8 bg-surface border-white/5">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
+                        <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                             <DollarSign className="text-green-500" size={20} /> Revenue Growth
                         </h3>
-                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Monthly Gross Revenue (PHP)</p>
+                        <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Monthly Gross Revenue (PHP)</p>
                     </div>
                     <div className="h-[300px]">
                         <RevenueBarChart data={revenueData} />
@@ -170,10 +170,10 @@ export default function AnalyticsPage() {
                 {/* User Distribution */}
                 <Card className="p-8 bg-surface border-white/5">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
+                        <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                             <Users className="text-blue-500" size={20} /> User Distribution
                         </h3>
-                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Active Users by Role</p>
+                        <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Active Users by Role</p>
                     </div>
                     <div className="h-[300px] flex items-center justify-center">
                         <UsersPieChart data={userDistribution} />
@@ -181,8 +181,8 @@ export default function AnalyticsPage() {
                             {userDistribution.map((entry, index) => (
                                 <div key={entry.name} className="flex items-center gap-3">
                                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                                    <span className="text-[10px] font-black uppercase italic text-text-muted">{entry.name}</span>
-                                    <span className="text-sm font-black italic ml-auto">{entry.value}</span>
+                                    <span className="text-xs font-semibold uppercase text-text-muted">{entry.name}</span>
+                                    <span className="text-sm font-bold ml-auto">{entry.value}</span>
                                 </div>
                             ))}
                         </div>
@@ -192,10 +192,10 @@ export default function AnalyticsPage() {
                 {/* Event Performance */}
                 <Card className="p-8 bg-surface border-white/5">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
+                        <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                             <TrendingUp className="text-cta" size={20} /> Registration Volume
                         </h3>
-                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Signups over time</p>
+                        <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Signups over time</p>
                     </div>
                     <div className="h-[300px]">
                         <RegistrationsLineChart data={revenueData} />
@@ -205,17 +205,17 @@ export default function AnalyticsPage() {
                 {/* Popular Distances */}
                 <Card className="p-8 bg-surface border-white/5">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
+                        <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                             <BarChart3 className="text-primary" size={20} /> Popular Categories
                         </h3>
-                        <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">% of Total Registrations</p>
+                        <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">% of Total Registrations</p>
                     </div>
                     <div className="space-y-6">
                         {eventCategories.map((cat) => (
                             <div key={cat.name} className="space-y-2">
                                 <div className="flex justify-between items-end">
-                                    <span className="text-sm font-black italic uppercase text-white">{cat.name} RUN</span>
-                                    <span className="text-xs font-black italic text-primary">{cat.value}%</span>
+                                    <span className="text-sm font-bold uppercase text-white">{cat.name} RUN</span>
+                                    <span className="text-xs font-bold text-primary">{cat.value}%</span>
                                 </div>
                                 <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                                     <div

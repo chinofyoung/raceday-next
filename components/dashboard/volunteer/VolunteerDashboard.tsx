@@ -39,11 +39,11 @@ export function VolunteerDashboard() {
             {pendingEvents.length > 0 && (
                 <div className="space-y-6">
                     <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
+                        <h2 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
                             <MailCheck className="w-8 h-8 text-primary" />
                             Pending Invitations
                         </h2>
-                        <p className="text-sm text-text-muted mt-1 font-medium italic">
+                        <p className="text-sm text-text-muted mt-1 font-medium">
                             You have been invited to help manage these events.
                         </p>
                     </div>
@@ -54,13 +54,13 @@ export function VolunteerDashboard() {
                                 {/* Event Info */}
                                 <div className="space-y-3 flex-1">
                                     <div>
-                                        <Badge variant="outline" className="text-primary border-primary/30 uppercase text-[10px] font-black italic mb-2">
+                                        <Badge variant="outline" className="text-primary border-primary/30 uppercase text-xs font-semibold mb-2">
                                             Pending Volunteer Invite
                                         </Badge>
-                                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white truncate">
+                                        <h3 className="text-xl font-bold tracking-tight text-white truncate">
                                             {event.name}
                                         </h3>
-                                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 text-xs text-text-muted font-medium italic">
+                                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 text-xs text-text-muted font-medium">
                                             <div className="flex items-center gap-1.5">
                                                 <Calendar size={12} className="text-primary" />
                                                 {event.date ? format(toDate(event.date), "MMMM d, yyyy") : "TBA"}
@@ -74,7 +74,7 @@ export function VolunteerDashboard() {
 
                                     <div className="flex flex-wrap gap-1.5">
                                         {event.permissions.map((p: string) => (
-                                            <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase text-text-muted">
+                                            <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-xs lowercase text-text-muted">
                                                 {p}
                                             </Badge>
                                         ))}
@@ -83,7 +83,7 @@ export function VolunteerDashboard() {
 
                                 {/* Actions */}
                                 <div className="w-full md:w-auto shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-white/[0.05]">
-                                    <Button asChild variant="primary" className="w-full md:w-auto font-black italic uppercase">
+                                    <Button asChild variant="primary" className="w-full md:w-auto font-bold">
                                         <Link href={`/volunteer/accept?eventId=${event.id}&volunteerId=${event.volunteerId}`}>
                                             Review Invitation <ArrowRight className="w-4 h-4 ml-2 shrink-0" />
                                         </Link>
@@ -98,11 +98,11 @@ export function VolunteerDashboard() {
             {activeEvents.length > 0 && (
                 <div className="space-y-6">
                     <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tight text-white flex items-center gap-3">
+                        <h2 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
                             <ShieldCheck className="w-8 h-8 text-primary" />
                             Volunteer Access
                         </h2>
-                        <p className="text-sm text-text-muted mt-1 font-medium italic">
+                        <p className="text-sm text-text-muted mt-1 font-medium">
                             You have been granted access to help manage these events.
                         </p>
                     </div>
@@ -119,7 +119,7 @@ export function VolunteerDashboard() {
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                                     <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                                        <Badge variant="primary" className="bg-primary text-white border-none uppercase text-[10px] font-black italic">
+                                        <Badge variant="primary" className="bg-primary text-white border-none uppercase text-xs font-semibold">
                                             Volunteer
                                         </Badge>
                                     </div>
@@ -128,10 +128,10 @@ export function VolunteerDashboard() {
                                 {/* Event Info */}
                                 <div className="p-6 space-y-4">
                                     <div>
-                                        <h3 className="text-xl font-black italic uppercase tracking-tight text-white truncate">
+                                        <h3 className="text-xl font-bold tracking-tight text-white truncate">
                                             {event.name}
                                         </h3>
-                                        <div className="flex flex-col gap-1 mt-2 text-xs text-text-muted font-medium italic">
+                                        <div className="flex flex-col gap-1 mt-2 text-xs text-text-muted font-medium">
                                             <div className="flex items-center gap-1.5">
                                                 <Calendar size={12} className="text-primary" />
                                                 {event.date ? format(toDate(event.date), "MMMM d, yyyy") : "TBA"}
@@ -145,7 +145,7 @@ export function VolunteerDashboard() {
 
                                     <div className="flex flex-wrap gap-1.5">
                                         {event.permissions.map((p: string) => (
-                                            <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-[10px] lowercase text-white">
+                                            <Badge key={p} variant="secondary" className="bg-white/[0.05] border-white/[0.05] text-xs lowercase text-white">
                                                 {p}
                                             </Badge>
                                         ))}
@@ -154,14 +154,14 @@ export function VolunteerDashboard() {
                                     {/* Actions */}
                                     <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/[0.05]">
                                         {event.permissions.includes("kiosk") && (
-                                            <Button asChild variant="primary" size="sm" className="font-black italic uppercase text-[10px]">
+                                            <Button asChild variant="primary" size="sm" className="font-bold text-xs">
                                                 <Link href={`/dashboard/organizer/events/${event.id}/kiosk`}>
                                                     <Monitor className="w-3 h-3 mr-1.5" /> Kiosk
                                                 </Link>
                                             </Button>
                                         )}
                                         {event.permissions.includes("participants") && (
-                                            <Button asChild variant="secondary" size="sm" className="font-black italic uppercase text-[10px]">
+                                            <Button asChild variant="secondary" size="sm" className="font-bold text-xs">
                                                 <Link href={`/dashboard/organizer/events/${event.id}`}>
                                                     <Users className="w-3 h-3 mr-1.5" /> Users
                                                 </Link>

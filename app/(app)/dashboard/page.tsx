@@ -46,7 +46,7 @@ export default function DashboardPage() {
         return (
             <div className="space-y-4 sm:space-y-8">
                 {/* Header Skeleton */}
-                <div className="flex justify-between items-center bg-surface/50 p-6 rounded-[2rem] border border-white/5">
+                <div className="flex justify-between items-center bg-surface/50 p-6 rounded-2xl border border-white/5">
                     <div className="space-y-3">
                         <Skeleton className="h-10 w-48" />
                         <Skeleton className="h-4 w-64" />
@@ -115,10 +115,10 @@ export default function DashboardPage() {
     return (
         <div className="space-y-4 sm:space-y-8 text-white">
             <div className="space-y-1">
-                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                     Hello, <span className="text-primary">{user?.displayName?.split(' ')[0] || "there"}</span>
                 </h1>
-                <p className="text-text-muted font-medium italic">Welcome back to your race command center.</p>
+                <p className="text-text-muted font-medium">Welcome back to your race command center.</p>
             </div>
 
             <RunnerView

@@ -22,10 +22,10 @@ export default function ScannerSelectPage() {
     return (
         <div className="space-y-8 text-white">
             <div className="space-y-1">
-                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                     Race Kit <span className="text-primary">Scanner</span>
                 </h1>
-                <p className="text-text-muted font-medium italic">Select an event to start scanning race kits.</p>
+                <p className="text-text-muted font-medium">Select an event to start scanning race kits.</p>
             </div>
 
             {loading ? (
@@ -37,7 +37,7 @@ export default function ScannerSelectPage() {
             ) : events.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/10 rounded-2xl space-y-4">
                     <ScanLine className="text-text-muted" size={48} />
-                    <p className="text-text-muted font-medium italic">No published events available.</p>
+                    <p className="text-text-muted font-medium">No published events available.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -55,7 +55,7 @@ export default function ScannerSelectPage() {
                             </div>
                             <div className="space-y-1">
                                 <h3 className="font-bold text-white truncate">{event.name}</h3>
-                                <p className="text-xs text-text-muted italic">{event.location?.name || "No location"}</p>
+                                <p className="text-xs text-text-muted">{event.location?.name || "No location"}</p>
                             </div>
                         </Link>
                     ))}

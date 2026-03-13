@@ -23,12 +23,12 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                             <Calendar size={24} />
                         </div>
                         <div className="px-2 py-1 bg-primary/10 rounded-full border border-primary/20">
-                            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">{publishedEventsCount} live</span>
+                            <span className="text-xs font-semibold text-primary uppercase tracking-wider">{publishedEventsCount} live</span>
                         </div>
                     </div>
                     <div>
-                        <p className="text-4xl font-black italic tracking-tight text-white">{stats.total}</p>
-                        <p className="text-xs font-bold uppercase tracking-widest text-text-muted italic mt-1">Total Events</p>
+                        <p className="text-4xl font-bold tracking-tight text-white">{stats.total}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mt-1">Total Events</p>
                     </div>
                 </div>
             </Card>
@@ -43,8 +43,8 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                         </div>
                     </div>
                     <div>
-                        <p className="text-4xl font-black italic tracking-tight text-white">{stats.secondary}</p>
-                        <p className="text-xs font-bold uppercase tracking-widest text-text-muted italic mt-1">Total Runners</p>
+                        <p className="text-4xl font-bold tracking-tight text-white">{stats.secondary}</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mt-1">Total Runners</p>
                     </div>
                 </div>
             </Card>
@@ -58,11 +58,11 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                         </div>
                     </div>
                     <div>
-                        <p className="text-4xl font-black italic tracking-tight text-green-400">
+                        <p className="text-4xl font-bold tracking-tight text-green-400">
                             <span className="text-2xl mr-1">₱</span>
                             {stats.revenue.toLocaleString()}
                         </p>
-                        <p className="text-xs font-bold uppercase tracking-widest text-text-muted italic mt-1">Total Revenue</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mt-1">Total Revenue</p>
                     </div>
                 </div>
             </Card>
@@ -75,15 +75,15 @@ export function OrganizerStats({ stats, publishedEventsCount, claimPercentage, c
                             <Package size={24} />
                         </div>
                         <div className="px-2 py-1 bg-amber-500/10 rounded-full border border-amber-500/20">
-                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">{claimPercentage}%</span>
+                            <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider">{claimPercentage}%</span>
                         </div>
                     </div>
                     <div>
                         <div className="flex items-baseline gap-1">
-                            <p className="text-4xl font-black italic tracking-tight text-white">{claimedKits}</p>
+                            <p className="text-4xl font-bold tracking-tight text-white">{claimedKits}</p>
                             <span className="text-xl text-text-muted font-bold opacity-50">/{stats.secondary}</span>
                         </div>
-                        <p className="text-xs font-bold uppercase tracking-widest text-text-muted italic mt-1">Kits Claimed</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mt-1">Kits Claimed</p>
                     </div>
                 </div>
                 <div className="absolute bottom-0 left-0 w-full h-1 bg-white/5">

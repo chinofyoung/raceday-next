@@ -209,8 +209,8 @@ export default function KioskModePage() {
         return (
             <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center space-y-4">
                 <ShieldAlert className="text-red-500" size={64} />
-                <h1 className="text-2xl font-black italic uppercase text-white">Access Denied</h1>
-                <p className="text-text-muted italic">You do not have permission to access Kiosk Mode for this event.</p>
+                <h1 className="text-2xl font-bold text-white">Access Denied</h1>
+                <p className="text-text-muted">You do not have permission to access Kiosk Mode for this event.</p>
                 <Button onClick={() => router.push("/")} variant="primary">Return Home</Button>
             </div>
         );
@@ -228,10 +228,10 @@ export default function KioskModePage() {
                         <Monitor size={18} />
                     </div>
                     <div className="flex items-center gap-2">
-                        <h1 className="text-sm font-black italic uppercase tracking-tight text-white truncate max-w-[300px]">
+                        <h1 className="text-sm font-bold tracking-tight text-white truncate max-w-[300px]">
                             {event?.name || "Event"}
                         </h1>
-                        <Badge variant="secondary" className="bg-cta/10 text-cta border-cta/20 text-[8px] font-black italic uppercase px-2 py-0">
+                        <Badge variant="secondary" className="bg-cta/10 text-cta border-cta/20 text-xs font-semibold uppercase px-2 py-0">
                             Kiosk Mode
                         </Badge>
                     </div>
@@ -240,7 +240,7 @@ export default function KioskModePage() {
                     <button
                         onClick={() => setSearchMode(!searchMode)}
                         className={cn(
-                            "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase italic tracking-wider transition-all cursor-pointer",
+                            "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all cursor-pointer",
                             searchMode
                                 ? "bg-primary/20 text-primary border border-primary/30"
                                 : "bg-white/5 text-text-muted hover:text-white border border-white/10 hover:border-white/20"
@@ -250,7 +250,7 @@ export default function KioskModePage() {
                     </button>
                     <button
                         onClick={() => router.push(`/dashboard/organizer/events/${eventId}`)}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-[10px] font-black uppercase italic tracking-wider text-text-muted hover:text-white hover:border-white/20 transition-all cursor-pointer"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-bold uppercase tracking-wider text-text-muted hover:text-white hover:border-white/20 transition-all cursor-pointer"
                     >
                         <X size={12} /> Exit Kiosk
                     </button>
@@ -273,7 +273,7 @@ export default function KioskModePage() {
                             )}
                             {!scanResult && showScanner && permissionStatus === "granted" && (
                                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                    <div className="w-52 h-52 border-2 border-primary/40 rounded-[2rem] animate-pulse flex items-center justify-center">
+                                    <div className="w-52 h-52 border-2 border-primary/40 rounded-2xl animate-pulse flex items-center justify-center">
                                         <Scan className="text-primary/20" size={80} />
                                     </div>
                                 </div>
@@ -281,17 +281,17 @@ export default function KioskModePage() {
                             {permissionStatus === "denied" && (
                                 <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 p-8 text-center bg-black/80 z-20">
                                     <XCircle className="text-red-500" size={48} />
-                                    <p className="text-sm font-black italic uppercase text-white">Camera Denied</p>
-                                    <p className="text-[10px] text-text-muted italic leading-relaxed">
+                                    <p className="text-sm font-bold text-white">Camera Denied</p>
+                                    <p className="text-xs text-text-muted leading-relaxed">
                                         Enable camera in browser settings and refresh.
                                     </p>
-                                    <Button onClick={() => window.location.reload()} variant="outline" className="border-white/10 text-white text-[10px] font-black italic uppercase">
+                                    <Button onClick={() => window.location.reload()} variant="outline" className="border-white/10 text-white text-xs font-bold uppercase">
                                         Refresh
                                     </Button>
                                 </div>
                             )}
                         </div>
-                        <p className="text-center text-[10px] text-text-muted italic font-medium mt-3">
+                        <p className="text-center text-xs text-text-muted font-medium mt-3">
                             Position QR code within the frame.
                         </p>
                     </div>
@@ -307,8 +307,8 @@ export default function KioskModePage() {
                                 <div className="w-9 h-9 rounded-xl bg-cta/10 flex items-center justify-center text-cta mx-auto mb-2">
                                     <Users size={18} />
                                 </div>
-                                <p className="text-3xl font-black italic tracking-tighter text-white">{stats.total}</p>
-                                <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Total Runners</p>
+                                <p className="text-3xl font-bold text-white">{stats.total}</p>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Total Runners</p>
                             </div>
                         </div>
                         <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
@@ -317,8 +317,8 @@ export default function KioskModePage() {
                                 <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 mx-auto mb-2">
                                     <CheckCircle2 size={18} />
                                 </div>
-                                <p className="text-3xl font-black italic tracking-tighter text-white">{stats.claimed}</p>
-                                <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Kits Claimed</p>
+                                <p className="text-3xl font-bold text-white">{stats.claimed}</p>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Kits Claimed</p>
                             </div>
                         </div>
                         <div className="p-4 bg-surface/50 rounded-2xl border border-white/5 text-center relative overflow-hidden group">
@@ -327,8 +327,8 @@ export default function KioskModePage() {
                                 <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 mx-auto mb-2">
                                     <Package size={18} />
                                 </div>
-                                <p className="text-3xl font-black italic tracking-tighter text-white">{remaining}</p>
-                                <p className="text-[8px] font-black uppercase tracking-widest text-text-muted italic">Remaining</p>
+                                <p className="text-3xl font-bold text-white">{remaining}</p>
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Remaining</p>
                             </div>
                         </div>
                     </div>
@@ -354,17 +354,17 @@ export default function KioskModePage() {
                                             onClick={() => selectSearchResult(r)}
                                             className="w-full flex items-center gap-3 p-3 bg-white/5 hover:bg-primary/10 rounded-xl transition-all text-left cursor-pointer"
                                         >
-                                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-black italic text-[10px] shrink-0">
+                                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                                                 {r.registrationData?.participantInfo?.name?.charAt(0) || "?"}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-xs font-bold text-white uppercase italic truncate">{r.registrationData?.participantInfo?.name}</p>
-                                                <p className="text-[9px] text-text-muted font-bold italic">
+                                                <p className="text-xs font-bold text-white uppercase truncate">{r.registrationData?.participantInfo?.name}</p>
+                                                <p className="text-xs text-text-muted font-bold">
                                                     {r.raceNumber && `#${r.raceNumber}`} · {r.categoryId}
                                                 </p>
                                             </div>
                                             {r.raceKitClaimed ? (
-                                                <Badge variant="secondary" className="bg-cta/20 text-cta border-none text-[7px] font-black italic uppercase px-1.5 py-0 shrink-0">Claimed</Badge>
+                                                <Badge variant="secondary" className="bg-cta/20 text-cta border-none text-xs font-semibold uppercase px-1.5 py-0 shrink-0">Claimed</Badge>
                                             ) : (
                                                 <ArrowRight size={14} className="text-text-muted shrink-0" />
                                             )}
@@ -382,8 +382,8 @@ export default function KioskModePage() {
                                 <div className="w-28 h-28 bg-surface/50 rounded-full flex items-center justify-center text-text-muted mb-6 border border-white/5">
                                     <Scan size={56} className="opacity-20" />
                                 </div>
-                                <h3 className="text-2xl font-black italic uppercase text-white tracking-tight">Ready to Scan</h3>
-                                <p className="text-text-muted text-sm max-w-sm mx-auto italic font-medium mt-2">
+                                <h3 className="text-2xl font-bold text-white">Ready to Scan</h3>
+                                <p className="text-text-muted text-sm max-w-sm mx-auto font-medium mt-2">
                                     Point a runner&apos;s QR code at the camera, or use manual search to find a participant.
                                 </p>
                             </div>
@@ -399,18 +399,18 @@ export default function KioskModePage() {
                                     <div className="flex items-start justify-between relative z-10">
                                         <div className="space-y-3">
                                             <div>
-                                                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Participant</p>
-                                                <h2 className="text-3xl lg:text-4xl font-black italic text-white uppercase tracking-tighter leading-none mt-1">
+                                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Participant</p>
+                                                <h2 className="text-3xl lg:text-4xl font-bold text-white leading-none mt-1">
                                                     {registration.registrationData?.participantInfo?.name}
                                                 </h2>
                                             </div>
                                             <div className="flex flex-wrap gap-3">
                                                 {registration.raceNumber && (
-                                                    <div className="flex items-center gap-2 text-sm font-bold text-text-muted uppercase italic px-3 py-1.5 bg-surface rounded-xl">
+                                                    <div className="flex items-center gap-2 text-sm font-bold text-text-muted uppercase px-3 py-1.5 bg-surface rounded-xl">
                                                         <Hash size={16} className="text-primary" /> {registration.raceNumber}
                                                     </div>
                                                 )}
-                                                <div className="flex items-center gap-2 text-sm font-bold text-text-muted uppercase italic px-3 py-1.5 bg-surface rounded-xl">
+                                                <div className="flex items-center gap-2 text-sm font-bold text-text-muted uppercase px-3 py-1.5 bg-surface rounded-xl">
                                                     <User size={16} className="text-cta" /> {registration.categoryId}
                                                 </div>
                                             </div>
@@ -418,35 +418,35 @@ export default function KioskModePage() {
                                         {registration.raceKitClaimed ? (
                                             <div className="text-emerald-500 flex flex-col items-center gap-1 animate-in zoom-in duration-300">
                                                 <CheckCircle2 size={48} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest italic">Claimed</span>
+                                                <span className="text-xs font-semibold uppercase tracking-wider">Claimed</span>
                                             </div>
                                         ) : (
                                             <div className="text-primary flex flex-col items-center gap-1">
                                                 <AlertTriangle size={48} className="animate-pulse" />
-                                                <span className="text-[10px] font-black uppercase tracking-widest italic">Unclaimed</span>
+                                                <span className="text-xs font-semibold uppercase tracking-wider">Unclaimed</span>
                                             </div>
                                         )}
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/10 relative z-10">
                                         <div className="p-4 bg-surface/40 rounded-2xl border border-white/5">
-                                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary italic mb-1">
+                                            <div className="flex items-center gap-2 text-xs font-semibold uppercase text-primary mb-1">
                                                 <Shirt size={14} /> T-Shirt Size
                                             </div>
-                                            <p className="text-2xl font-black italic text-white">{registration.registrationData?.participantInfo?.tShirtSize || "N/A"}</p>
+                                            <p className="text-2xl font-bold text-white">{registration.registrationData?.participantInfo?.tShirtSize || "N/A"}</p>
                                         </div>
                                         <div className="p-4 bg-surface/40 rounded-2xl border border-white/5">
-                                            <div className="flex items-center gap-2 text-[10px] font-black uppercase text-cta italic mb-1">
+                                            <div className="flex items-center gap-2 text-xs font-semibold uppercase text-cta mb-1">
                                                 <Shirt size={14} /> Singlet Size
                                             </div>
-                                            <p className="text-2xl font-black italic text-white">{registration.registrationData?.participantInfo?.singletSize || "N/A"}</p>
+                                            <p className="text-2xl font-bold text-white">{registration.registrationData?.participantInfo?.singletSize || "N/A"}</p>
                                         </div>
                                     </div>
 
                                     <div className="mt-6 space-y-3 relative z-10">
                                         {!registration.raceKitClaimed ? (
                                             <Button
-                                                className="w-full h-16 bg-cta hover:bg-cta-hover border-none text-xl font-black italic uppercase tracking-widest shadow-2xl shadow-cta/30 transition-all active:scale-[0.98]"
+                                                className="w-full h-16 bg-cta hover:bg-cta-hover border-none text-xl font-bold shadow-2xl shadow-cta/30 transition-all active:scale-[0.98]"
                                                 onClick={markAsClaimed}
                                                 disabled={isUpdating}
                                             >
@@ -462,20 +462,20 @@ export default function KioskModePage() {
                                             </Button>
                                         ) : (
                                             <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center animate-in fade-in zoom-in duration-300">
-                                                <p className="text-sm font-black italic text-emerald-500 uppercase flex items-center justify-center gap-2">
+                                                <p className="text-sm font-bold text-emerald-500 flex items-center justify-center gap-2">
                                                     <CheckCircle2 size={18} /> Kit Collected Successfully
                                                 </p>
                                                 {registration.raceKitClaimedAt && (
-                                                    <p className="text-[10px] text-emerald-500/70 italic font-bold mt-1">
+                                                    <p className="text-xs text-emerald-500/70 font-bold mt-1">
                                                         Claimed: {new Date(registration.raceKitClaimedAt).toLocaleTimeString()}
                                                     </p>
                                                 )}
-                                                <p className="text-[10px] text-text-muted italic mt-2 flex items-center justify-center gap-1">
+                                                <p className="text-xs text-text-muted mt-2 flex items-center justify-center gap-1">
                                                     <Clock size={10} /> Auto-resetting to scanner...
                                                 </p>
                                             </div>
                                         )}
-                                        <Button variant="ghost" className="w-full text-text-muted font-black italic uppercase text-xs" onClick={resetScanner}>
+                                        <Button variant="ghost" className="w-full text-text-muted font-bold uppercase text-xs" onClick={resetScanner}>
                                             <Scan size={16} className="mr-2" /> Scan Next Participant
                                         </Button>
                                     </div>
@@ -485,7 +485,7 @@ export default function KioskModePage() {
                             <div className="h-full flex items-center justify-center">
                                 <div className="flex flex-col items-center gap-3">
                                     <Scan className="animate-spin text-primary" size={48} />
-                                    <p className="text-[10px] text-text-muted font-black italic uppercase tracking-widest">Looking up participant...</p>
+                                    <p className="text-xs text-text-muted font-bold uppercase tracking-wider">Looking up participant...</p>
                                 </div>
                             </div>
                         )}
@@ -494,7 +494,7 @@ export default function KioskModePage() {
                             <div className="mt-6 pt-4 border-t border-white/5">
                                 <div className="flex items-center gap-2 mb-3">
                                     <Clock size={12} className="text-cta" />
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-text-muted italic">Recent Claims</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Recent Claims</span>
                                 </div>
                                 <div className="space-y-1.5">
                                     {recentClaims.map((claim, i) => (
@@ -507,13 +507,13 @@ export default function KioskModePage() {
                                                 <CheckCircle2 size={12} />
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="text-[11px] font-bold text-white italic truncate">{claim.name}</p>
+                                                <p className="text-xs font-bold text-white truncate">{claim.name}</p>
                                             </div>
-                                            <span className="text-[9px] text-text-muted font-bold italic shrink-0">{claim.category}</span>
+                                            <span className="text-xs text-text-muted font-bold shrink-0">{claim.category}</span>
                                             {claim.bib && (
-                                                <span className="text-[9px] text-text-muted font-bold italic shrink-0">#{claim.bib}</span>
+                                                <span className="text-xs text-text-muted font-bold shrink-0">#{claim.bib}</span>
                                             )}
-                                            <span className="text-[8px] text-text-muted italic shrink-0">
+                                            <span className="text-xs text-text-muted shrink-0">
                                                 {formatDistanceToNow(claim.timestamp, { addSuffix: true })}
                                             </span>
                                         </div>
@@ -528,10 +528,10 @@ export default function KioskModePage() {
             {/* ── Progress Footer ───────────────────────────── */}
             <div className="shrink-0 px-6 py-3 bg-surface/60 backdrop-blur-sm border-t border-white/5">
                 <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                         <ShieldCheck size={10} className="text-cta" /> Kit Fulfillment Progress
                     </span>
-                    <span className="text-xs font-black italic text-white">
+                    <span className="text-xs font-bold text-white">
                         {stats.claimed}/{stats.total}
                         <span className="text-text-muted ml-2">({claimPct}%)</span>
                     </span>

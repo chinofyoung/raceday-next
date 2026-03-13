@@ -114,10 +114,10 @@ export default function EventScannerPage() {
         <div className="max-w-7xl mx-auto space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Race Kit <span className="text-primary">Scanner</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Scan runner QR codes to fulfill race kits.</p>
+                    <p className="text-text-muted font-medium">Scan runner QR codes to fulfill race kits.</p>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="p-4 bg-surface/50 border border-white/5 rounded-2xl flex items-center gap-4">
@@ -125,8 +125,8 @@ export default function EventScannerPage() {
                             <ShieldCheck size={20} />
                         </div>
                         <div className="space-y-0.5">
-                            <p className="text-[10px] font-black uppercase text-text-muted italic">Total Claimed</p>
-                            <p className="text-xl font-black italic text-white leading-none tracking-tighter">
+                            <p className="text-xs font-semibold uppercase text-text-muted">Total Claimed</p>
+                            <p className="text-xl font-bold text-white leading-none">
                                 {stats.claimed.toLocaleString()} / {stats.total.toLocaleString()}
                             </p>
                         </div>
@@ -151,14 +151,14 @@ export default function EventScannerPage() {
                                     <Camera size={32} />
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-black italic uppercase text-white">Camera Access Required</p>
-                                    <p className="text-[10px] text-text-muted italic leading-relaxed max-w-[200px]">
+                                    <p className="text-sm font-bold text-white">Camera Access Required</p>
+                                    <p className="text-xs text-text-muted leading-relaxed max-w-[200px]">
                                         Scanner needs webcam access to process QR codes.
                                     </p>
                                 </div>
                                 <Button
                                     onClick={() => setShowScanner(true)}
-                                    className="bg-primary hover:bg-primary/80 border-none text-[10px] font-black italic uppercase tracking-widest px-6"
+                                    className="bg-primary hover:bg-primary/80 border-none text-xs font-bold uppercase tracking-wider px-6"
                                 >
                                     Enable Camera
                                 </Button>
@@ -166,7 +166,7 @@ export default function EventScannerPage() {
                         )}
                         {showScanner && !scanResult && permissionStatus === "granted" && (
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                                <div className="w-48 h-48 border-2 border-primary/40 rounded-[2rem] animate-pulse flex items-center justify-center">
+                                <div className="w-48 h-48 border-2 border-primary/40 rounded-2xl animate-pulse flex items-center justify-center">
                                     <Scan className="text-primary/20" size={80} />
                                 </div>
                             </div>
@@ -175,15 +175,15 @@ export default function EventScannerPage() {
                             <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 p-8 text-center bg-black/80 z-20">
                                 <XCircle className="text-red-500" size={48} />
                                 <div className="space-y-1">
-                                    <p className="text-sm font-black italic uppercase text-white">Access Denied</p>
-                                    <p className="text-[10px] text-text-muted italic leading-relaxed">
+                                    <p className="text-sm font-bold text-white">Access Denied</p>
+                                    <p className="text-xs text-text-muted leading-relaxed">
                                         Please enable camera access in your browser settings and refresh the page.
                                     </p>
                                 </div>
                                 <Button
                                     onClick={() => window.location.reload()}
                                     variant="outline"
-                                    className="border-white/10 text-white text-[10px] font-black italic uppercase"
+                                    className="border-white/10 text-white text-xs font-bold uppercase"
                                 >
                                     Refresh Page
                                 </Button>
@@ -191,7 +191,7 @@ export default function EventScannerPage() {
                         )}
                     </Card>
                     <div className="p-6 bg-surface/30 border border-dashed border-white/10 rounded-2xl text-center space-y-2">
-                        <p className="text-xs text-text-muted italic font-medium">Position the runner&apos;s QR code within the frame to automatically scan.</p>
+                        <p className="text-xs text-text-muted font-medium">Position the runner&apos;s QR code within the frame to automatically scan.</p>
                     </div>
                 </div>
 
@@ -212,16 +212,16 @@ export default function EventScannerPage() {
                                 <div className="flex items-start justify-between relative z-10">
                                     <div className="space-y-4">
                                         <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Participant</p>
-                                            <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">
+                                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Participant</p>
+                                            <h2 className="text-3xl font-bold text-white">
                                                 {registration.registrationData?.participantInfo?.name || "Participant"}
                                             </h2>
                                         </div>
                                         <div className="flex flex-wrap gap-4">
-                                            <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase italic px-3 py-1 bg-surface rounded-lg">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase px-3 py-1 bg-surface rounded-lg">
                                                 <Hash size={14} className="text-primary" /> {registration.raceNumber}
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase italic px-3 py-1 bg-surface rounded-lg">
+                                            <div className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase px-3 py-1 bg-surface rounded-lg">
                                                 <User size={14} className="text-cta" /> {registration.categoryId}
                                             </div>
                                         </div>
@@ -229,30 +229,30 @@ export default function EventScannerPage() {
                                     {registration.raceKitClaimed ? (
                                         <div className="text-cta flex flex-col items-center gap-1">
                                             <CheckCircle2 size={40} />
-                                            <span className="text-[10px] font-black uppercase tracking-widest italic">Claimed</span>
+                                            <span className="text-xs font-semibold uppercase tracking-wider">Claimed</span>
                                         </div>
                                     ) : (
                                         <div className="text-primary flex flex-col items-center gap-1">
                                             <AlertTriangle size={40} className="animate-pulse" />
-                                            <span className="text-[10px] font-black uppercase tracking-widest italic">Unclaimed</span>
+                                            <span className="text-xs font-semibold uppercase tracking-wider">Unclaimed</span>
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/10 relative z-10">
                                     <div className="space-y-3 p-4 bg-surface/40 rounded-2xl border border-white/5">
-                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary italic">
+                                        <div className="flex items-center gap-2 text-xs font-semibold uppercase text-primary">
                                             <Shirt size={14} /> T-Shirt Size
                                         </div>
-                                        <p className="text-2xl font-black italic text-white">
+                                        <p className="text-2xl font-bold text-white">
                                             {registration.registrationData?.participantInfo?.tShirtSize || "N/A"}
                                         </p>
                                     </div>
                                     <div className="space-y-3 p-4 bg-surface/40 rounded-2xl border border-white/5">
-                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase text-cta italic">
+                                        <div className="flex items-center gap-2 text-xs font-semibold uppercase text-cta">
                                             <Shirt size={14} /> Singlet Size
                                         </div>
-                                        <p className="text-2xl font-black italic text-white">
+                                        <p className="text-2xl font-bold text-white">
                                             {registration.registrationData?.participantInfo?.singletSize || "N/A"}
                                         </p>
                                     </div>
@@ -261,7 +261,7 @@ export default function EventScannerPage() {
                                 <div className="mt-8 space-y-4 relative z-10">
                                     {!registration.raceKitClaimed ? (
                                         <Button
-                                            className="w-full h-16 bg-cta hover:bg-cta-hover border-none text-xl font-black italic uppercase tracking-widest shadow-2xl shadow-cta/20"
+                                            className="w-full h-16 bg-cta hover:bg-cta-hover border-none text-xl font-bold shadow-2xl shadow-cta/20"
                                             onClick={markAsClaimed}
                                             disabled={isUpdating}
                                         >
@@ -269,26 +269,26 @@ export default function EventScannerPage() {
                                         </Button>
                                     ) : (
                                         <div className="p-4 bg-cta/10 border border-cta/20 rounded-2xl text-center">
-                                            <p className="text-sm font-black italic text-cta uppercase">Success — Already Collected</p>
-                                            <p className="text-[10px] text-cta/70 italic font-bold">
+                                            <p className="text-sm font-bold text-cta">Success — Already Collected</p>
+                                            <p className="text-xs text-cta/70 font-bold">
                                                 Claimed on: {registration.raceKitClaimedAt ? new Date(registration.raceKitClaimedAt).toLocaleString() : "Recently"}
                                             </p>
                                         </div>
                                     )}
-                                    <Button variant="ghost" className="w-full text-text-muted font-black italic uppercase" onClick={resetScanner}>
+                                    <Button variant="ghost" className="w-full text-text-muted font-bold uppercase" onClick={resetScanner}>
                                         <Scan size={18} className="mr-2" /> Scan Next Participant
                                     </Button>
                                 </div>
                             </Card>
                         </div>
                     ) : (
-                        <div className="h-full flex flex-col items-center justify-center space-y-6 text-center py-20 border-4 border-dashed border-white/5 rounded-[3rem]">
+                        <div className="h-full flex flex-col items-center justify-center space-y-6 text-center py-20 border-4 border-dashed border-white/5 rounded-2xl">
                             <div className="w-24 h-24 bg-surface rounded-full flex items-center justify-center text-text-muted">
                                 <Scan size={48} className="opacity-20" />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-black italic uppercase text-white">Ready to Scan</h3>
-                                <p className="text-text-muted text-sm max-w-xs mx-auto italic font-medium px-4">
+                                <h3 className="text-2xl font-bold text-white">Ready to Scan</h3>
+                                <p className="text-text-muted text-sm max-w-xs mx-auto font-medium px-4">
                                     Awaiting runner identity. Scanned details will appear here instantly.
                                 </p>
                             </div>

@@ -20,7 +20,7 @@ export default function ProfilePage() {
         <div className="min-h-[60vh] flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic">Loading profile...</p>
+                <p className="text-text-muted text-xs font-semibold uppercase tracking-wider">Loading profile...</p>
             </div>
         </div>
     );
@@ -71,7 +71,7 @@ export default function ProfilePage() {
         <div className="space-y-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
-                    <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
+                    <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4">
                         <ArrowLeft size={12} /> Back to Dashboard
                     </Link>
                     <div className="flex items-center gap-6">
@@ -85,7 +85,7 @@ export default function ProfilePage() {
                             )}
                         </div>
                         <div className="space-y-1">
-                            <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white leading-none">{user.displayName}</h1>
+                            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white leading-none">{user.displayName}</h1>
                             <Badge variant="outline" className="border-primary text-primary px-3 py-0.5">{user.role}</Badge>
                         </div>
                     </div>
@@ -103,12 +103,12 @@ export default function ProfilePage() {
                             <Card key={i} className="p-8 space-y-6 bg-surface/50 border border-white/5 hover:border-white/10 transition-colors">
                                 <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                                     {group.icon}
-                                    <h3 className="font-bold uppercase italic tracking-wider text-sm text-text">{group.title}</h3>
+                                    <h3 className="font-bold tracking-wider text-sm text-text">{group.title}</h3>
                                 </div>
                                 <div className="space-y-4">
                                     {group.fields.map((field, j) => (
                                         <div key={j} className="space-y-1">
-                                            <p className="text-[10px] uppercase font-bold text-text-muted tracking-widest leading-none">{field.label}</p>
+                                            <p className="text-xs uppercase font-semibold text-text-muted tracking-wider leading-none">{field.label}</p>
                                             <p className="text-base font-semibold text-text">{field.value}</p>
                                         </div>
                                     ))}
@@ -121,7 +121,7 @@ export default function ProfilePage() {
                 {/* Right Col: Completion & Tools */}
                 <div className="space-y-8">
                     <Card className="p-8 text-center space-y-6 bg-primary/5 border border-primary/10 shadow-xl">
-                        <h3 className="font-bold uppercase italic tracking-wider text-text">Profile Strength</h3>
+                        <h3 className="font-bold tracking-wider text-text">Profile Strength</h3>
                         <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
                             <svg className="w-full h-full transform -rotate-90">
                                 <circle
@@ -146,7 +146,7 @@ export default function ProfilePage() {
                                 />
                             </svg>
                             <div className="absolute flex flex-col items-center">
-                                <span className="font-black italic text-3xl text-white">{completion}%</span>
+                                <span className="font-bold text-3xl text-white">{completion}%</span>
                             </div>
                         </div>
                         <p className="text-sm text-text-muted leading-relaxed px-2">
@@ -155,19 +155,19 @@ export default function ProfilePage() {
                                 : "Complete your profile to unlock faster event registrations and ensure accurate kit sizing."}
                         </p>
                         {completion < 100 && (
-                            <Button variant="outline" size="lg" className="w-full font-black italic uppercase tracking-wider" asChild>
+                            <Button variant="outline" size="lg" className="w-full font-bold tracking-wider" asChild>
                                 <Link href="/dashboard/settings">Finish Profile</Link>
                             </Button>
                         )}
                     </Card>
 
                     <div className="space-y-4">
-                        <h3 className="font-bold uppercase italic tracking-wider text-sm flex items-center gap-2 text-text">
+                        <h3 className="font-bold tracking-wider text-sm flex items-center gap-2 text-text">
                             <CheckCircle2 size={16} className="text-cta" /> Verified Status
                         </h3>
                         <div className="p-5 bg-cta/10 border border-cta/20 rounded-2xl space-y-2">
-                            <p className="text-xs font-bold uppercase text-cta tracking-widest">Identity Verified</p>
-                            <p className="text-[11px] text-text-muted leading-relaxed font-medium">Your account is securely linked with {user.email}.</p>
+                            <p className="text-xs font-semibold uppercase text-cta tracking-wider">Identity Verified</p>
+                            <p className="text-xs text-text-muted leading-relaxed font-medium">Your account is securely linked with {user.email}.</p>
                         </div>
                     </div>
                 </div>

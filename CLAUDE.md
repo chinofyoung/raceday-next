@@ -10,7 +10,7 @@
 
 ## Design Language — "Clean & Confident"
 
-All marketing/public-facing pages follow this design system. Dashboard/app pages may differ.
+All pages follow this design system — marketing, dashboard, and app pages alike.
 
 ### Typography Rules
 - **Headings:** Sentence case, `font-bold` (700 weight). Never use `font-black`, `italic`, or `uppercase` on headings.

@@ -37,7 +37,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                     />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-surface to-surface-muted flex flex-col items-center justify-center opacity-80 group-hover:opacity-100 transition-all duration-500">
-                        <span className="text-4xl font-black italic text-white/10 group-hover:scale-110 transition-transform uppercase">
+                        <span className="text-4xl font-bold text-white/10 group-hover:scale-110 transition-transform">
                             {reg.event?.name?.[0] || "?"}
                         </span>
                     </div>
@@ -48,7 +48,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
             <div className="flex flex-col flex-1 gap-3 p-4 z-10 pointer-events-none">
 
                 {/* Title */}
-                <h4 className="text-lg font-black italic uppercase text-white leading-tight tracking-tight line-clamp-2">
+                <h4 className="text-lg font-bold text-white leading-tight tracking-tight line-clamp-2">
                     {reg.event?.name}
                 </h4>
 
@@ -56,7 +56,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                 <div className="flex flex-wrap gap-2">
                     <Badge
                         variant={reg.status === "paid" ? "success" : "secondary"}
-                        className="text-[10px] font-black italic uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20"
+                        className="text-xs font-semibold uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20"
                     >
                         {reg.status}
                     </Badge>
@@ -64,7 +64,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                         <Badge
                             variant={reg.raceKitClaimed ? "cta" : "outline"}
                             className={cn(
-                                "text-[10px] font-black italic uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20",
+                                "text-xs font-semibold uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20",
                                 !reg.raceKitClaimed && "bg-white/5 text-text-muted opacity-80"
                             )}
                         >
@@ -78,14 +78,14 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                 {reg.isProxy && (
                     <div className="flex items-center gap-2 text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-lg w-fit border border-indigo-500/20 shadow-inner">
                         <User size={13} />
-                        <span className="text-[10px] font-bold italic uppercase tracking-wider">
+                        <span className="text-xs font-semibold uppercase tracking-wider">
                             Proxy: <span className="text-white truncate">{reg.participantInfo?.name || "Self"}</span>
                         </span>
                     </div>
                 )}
 
                 {/* Detail pills */}
-                <div className="flex flex-wrap gap-1.5 text-[10px] font-bold text-text-muted uppercase italic tracking-wider">
+                <div className="flex flex-wrap gap-1.5 text-xs font-semibold text-text-muted uppercase tracking-wider">
                     <span className="flex items-center gap-1 bg-background/50 backdrop-blur-sm px-2 py-1 rounded-md border border-white/5 shadow-sm">
                         <MapPin size={11} className="text-cta shrink-0" />
                         <span className="text-white/90 truncate max-w-[120px]">{reg.event?.location?.name || "Location TBD"}</span>
@@ -96,7 +96,7 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                     </span>
                     {reg.raceNumber && (
                         <span className="flex items-center gap-1 bg-primary/10 backdrop-blur-sm px-2 py-1 rounded-md border border-primary/20 text-white shadow-sm">
-                            <span className="text-primary font-black shrink-0">#</span>
+                            <span className="text-primary font-bold shrink-0">#</span>
                             {reg.raceNumber}
                         </span>
                     )}

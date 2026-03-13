@@ -75,7 +75,7 @@ export function InviteVolunteerDialog({
                 </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                         Gmail Address
                     </Label>
                     <div className="relative">
@@ -86,14 +86,14 @@ export function InviteVolunteerDialog({
                             className="pl-10 bg-white/5 border-white/10 rounded-xl"
                         />
                     </div>
-                    {errors.email && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.email.message}</p>}
+                    {errors.email && <p className="text-xs text-destructive font-bold uppercase">{errors.email.message}</p>}
                     <p className="text-xs text-muted-foreground">
                         Volunteer must have a Google/Gmail account to accept the invitation.
                     </p>
                 </div>
 
                 <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                         Permissions
                     </label>
 
@@ -133,7 +133,7 @@ export function InviteVolunteerDialog({
                             />
                             <div className="space-y-1">
                                 <span className="text-sm font-bold text-text flex items-center gap-2">
-                                    Send Announcements <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded uppercase tracking-widest leading-none">Soon</span>
+                                    Send Announcements <span className="text-xs bg-white/10 px-1.5 py-0.5 rounded uppercase tracking-wider leading-none">Soon</span>
                                 </span>
                                 <p className="text-xs text-text-muted">Allow volunteer to send updates and notifications to participants.</p>
                             </div>

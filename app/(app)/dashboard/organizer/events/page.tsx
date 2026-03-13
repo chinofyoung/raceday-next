@@ -102,8 +102,8 @@ export default function EventsManagementPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-4">
                     <div className="space-y-1">
-                        <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">Event <span className="text-primary">Management</span></h1>
-                        <p className="text-text-muted font-medium italic">Track registrations, manage categories, and update event details.</p>
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">Event <span className="text-primary">Management</span></h1>
+                        <p className="text-text-muted font-medium">Track registrations, manage categories, and update event details.</p>
                     </div>
                 </div>
             </div>
@@ -115,7 +115,7 @@ export default function EventsManagementPage() {
                             key={s}
                             onClick={() => setFilter(s)}
                             className={cn(
-                                "px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all shrink-0",
+                                "px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shrink-0",
                                 filter === s ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-text-muted hover:bg-white/10"
                             )}
                         >
@@ -143,7 +143,7 @@ export default function EventsManagementPage() {
                         <Calendar size={48} />
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-xl font-bold uppercase italic text-white">No events found</h3>
+                        <h3 className="text-xl font-bold text-white">No events found</h3>
                         <p className="text-text-muted font-medium max-w-md mx-auto">
                             {filter === "all"
                                 ? "You haven't created any events yet. Click the button above to get started!"

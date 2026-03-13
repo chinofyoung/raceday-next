@@ -43,14 +43,14 @@ export function RevenueBarChart({ data }: { data: any[] }) {
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                    tick={{ fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
                 />
                 <YAxis
                     stroke="rgba(255,255,255,0.3)"
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                    tick={{ fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
                 />
                 <Tooltip
                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -106,14 +106,14 @@ export function RegistrationsLineChart({ data }: { data: any[] }) {
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                    tick={{ fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
                 />
                 <YAxis
                     stroke="rgba(255,255,255,0.3)"
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
+                    tick={{ fontWeight: 'bold', fill: 'rgba(255,255,255,0.5)' }}
                 />
                 <Tooltip
                     contentStyle={tooltipContentStyleXs}

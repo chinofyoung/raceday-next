@@ -11,7 +11,6 @@ const tooltipContentStyle = {
 const tooltipItemStyle = {
     color: 'var(--color-primary)',
     fontWeight: 'bold',
-    fontStyle: 'italic',
     textTransform: 'uppercase',
     fontSize: '10px'
 } as const;
@@ -33,14 +32,14 @@ export default function AdminOverviewChart({ data }: { data: any[] }) {
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
+                    tick={{ fontWeight: 'bold' }}
                 />
                 <YAxis
                     stroke="rgba(255,255,255,0.3)"
                     fontSize={10}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontStyle: 'italic', fontWeight: 'bold' }}
+                    tick={{ fontWeight: 'bold' }}
                 />
                 <Tooltip
                     contentStyle={tooltipContentStyle}

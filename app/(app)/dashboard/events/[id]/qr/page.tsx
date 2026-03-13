@@ -38,11 +38,11 @@ export default function RacePassPage() {
     if (!event || !registration) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <h1 className="text-2xl font-black uppercase italic text-white">Pass Not Found</h1>
-                <p className="text-text-muted italic">We couldn&apos;t find the entry pass you were looking for.</p>
+                <h1 className="text-2xl font-bold text-white">Pass Not Found</h1>
+                <p className="text-text-muted">We couldn&apos;t find the entry pass you were looking for.</p>
                 <Link
                     href="/dashboard"
-                    className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4"
+                    className="md:hidden text-text-muted hover:text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4"
                 >
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
@@ -56,10 +56,10 @@ export default function RacePassPage() {
     return (
         <div className="w-full max-w-xl mx-auto space-y-10">
             <div className="text-center space-y-3">
-                <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white leading-none">
+                <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-none">
                     Race <span className="text-cta">Pass</span>
                 </h1>
-                <p className="text-text-muted italic font-medium">Show this QR code at the event for kit collection.</p>
+                <p className="text-text-muted font-medium">Show this QR code at the event for kit collection.</p>
             </div>
 
             <div className="relative group overflow-hidden sm:overflow-visible">
@@ -67,21 +67,21 @@ export default function RacePassPage() {
                 <div className="absolute -top-12 -left-12 w-64 h-64 bg-cta/10 rounded-full blur-[100px] -z-10" />
                 <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -z-10" />
 
-                <div className="bg-[#0A0D10]/80 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <div className="bg-[#0A0D10]/80 backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
                     {/* Header */}
                     <div className="p-8 pb-6 space-y-6">
                         <div className="flex justify-between items-start gap-4">
                             <div className="space-y-2">
-                                <h2 className="text-2xl font-black italic text-white uppercase tracking-tight leading-none">
+                                <h2 className="text-2xl font-bold text-white tracking-tight leading-none">
                                     {event.name}
                                 </h2>
-                                <Badge variant="success" className="font-black italic uppercase px-3 text-[10px]">
+                                <Badge variant="success" className="font-semibold uppercase px-3 text-xs">
                                     Confirmed Entry
                                 </Badge>
                             </div>
                             <div className="text-right">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic mb-1">Race Number</p>
-                                <h3 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">Race Number</p>
+                                <h3 className="text-4xl font-bold text-white leading-none">
                                     {registration.raceNumber || "---"}
                                 </h3>
                             </div>
@@ -89,32 +89,32 @@ export default function RacePassPage() {
 
                         <div className="grid grid-cols-2 gap-6 pt-4">
                             <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                                     <Calendar size={10} className="text-cta" /> Date
                                 </p>
-                                <p className="text-sm font-bold text-white uppercase italic truncate">
+                                <p className="text-sm font-bold text-white uppercase truncate">
                                     {format(event.date, "MMM dd, yyyy")}
                                 </p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                                     <MapPin size={10} className="text-cta" /> Location
                                 </p>
-                                <p className="text-sm font-bold text-white uppercase italic truncate">
+                                <p className="text-sm font-bold text-white uppercase truncate">
                                     {event.location?.name || "TBD"}
                                 </p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                                     <QrCode size={10} className="text-cta" /> Category
                                 </p>
-                                <p className="text-sm font-bold text-white uppercase italic truncate">{category?.name || registration.categoryId}</p>
+                                <p className="text-sm font-bold text-white uppercase truncate">{category?.name || registration.categoryId}</p>
                             </div>
                             <div className="space-y-1">
-                                <p className="text-[9px] font-black uppercase tracking-widest text-text-muted italic flex items-center gap-1.5">
+                                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
                                     <Package size={10} className="text-cta" /> Gun Time
                                 </p>
-                                <p className="text-sm font-bold text-white uppercase italic truncate">
+                                <p className="text-sm font-bold text-white uppercase truncate">
                                     {category?.gunStartTime || "TBD"}
                                 </p>
                             </div>
@@ -131,8 +131,8 @@ export default function RacePassPage() {
                     {/* QR Section */}
                     <div className="p-8 md:p-12 flex flex-col items-center gap-8">
                         <div className="relative group shrink-0">
-                            <div className="absolute inset-0 bg-white/10 rounded-[2.5rem] blur-2xl group-hover:bg-white/20 transition-all duration-500 scale-90" />
-                            <div className="relative p-6 bg-white rounded-[2.5rem] shadow-xl transition-all duration-500 group-hover:scale-105">
+                            <div className="absolute inset-0 bg-white/10 rounded-2xl blur-2xl group-hover:bg-white/20 transition-all duration-500 scale-90" />
+                            <div className="relative p-6 bg-white rounded-2xl shadow-xl transition-all duration-500 group-hover:scale-105">
                                 {registration.qrCodeUrl ? (
                                     <div className="relative overflow-hidden rounded-2xl">
                                         <Image
@@ -147,7 +147,7 @@ export default function RacePassPage() {
                                 ) : (
                                     <div className="w-[220px] h-[220px] bg-white flex flex-col items-center justify-center text-cta gap-3">
                                         <QrCode size={64} className="animate-pulse" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest italic text-center px-4 leading-normal">
+                                        <p className="text-xs font-bold uppercase tracking-wider text-center px-4 leading-normal">
                                             Loading Pass...
                                         </p>
                                     </div>
@@ -156,9 +156,9 @@ export default function RacePassPage() {
                         </div>
 
                         <div className="text-center space-y-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Athlete Info</p>
-                            <h4 className="text-2xl font-black italic text-white uppercase tracking-tight">{participantInfo?.name}</h4>
-                            <p className="text-xs text-text-muted font-bold italic opacity-70">{participantInfo?.email}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Athlete Info</p>
+                            <h4 className="text-2xl font-bold text-white tracking-tight">{participantInfo?.name}</h4>
+                            <p className="text-xs text-text-muted font-bold opacity-70">{participantInfo?.email}</p>
                         </div>
                     </div>
 
@@ -166,7 +166,7 @@ export default function RacePassPage() {
                     <div className="p-8 bg-white/[0.02] border-t border-white/5 space-y-4">
                         <Button
                             variant="outline"
-                            className="w-full h-14 gap-3 font-black italic uppercase text-white hover:bg-white/5 border-white/10 rounded-2xl group transition-all"
+                            className="w-full h-14 gap-3 font-bold text-white hover:bg-white/5 border-white/10 rounded-2xl group transition-all"
                             onClick={() => window.print()}
                         >
                             <Download size={20} className="group-hover:translate-y-0.5 transition-transform" />
@@ -178,7 +178,7 @@ export default function RacePassPage() {
 
             <div className="p-6 bg-cta/5 border border-cta/20 rounded-2xl flex gap-4">
                 <QrCode className="text-cta shrink-0" size={24} />
-                <p className="text-[10px] text-text-muted leading-relaxed font-bold italic uppercase tracking-wider">
+                <p className="text-xs text-text-muted leading-relaxed font-bold uppercase tracking-wider">
                     IMPORTANT: Do not share your QR code. This is your official entry pass and can only be scanned once for kit collection.
                 </p>
             </div>

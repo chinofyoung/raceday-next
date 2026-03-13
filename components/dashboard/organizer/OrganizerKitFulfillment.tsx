@@ -19,7 +19,7 @@ function OrganizerKitFulfillmentComponent({ claimPercentage, claimedKits, totalP
                 <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500 border border-amber-500/20">
                     <ShieldCheck size={16} />
                 </div>
-                <h3 className="text-base font-black uppercase italic tracking-tight text-white">Kit Fulfillment</h3>
+                <h3 className="text-base font-bold tracking-tight text-white">Kit Fulfillment</h3>
             </div>
             <div className="relative z-10 flex-1 flex flex-col justify-center">
                 <div className="flex items-center justify-center mb-6">
@@ -36,18 +36,18 @@ function OrganizerKitFulfillmentComponent({ claimPercentage, claimedKits, totalP
                             />
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
-                            <span className="text-3xl font-black italic text-white">{validPercentage}%</span>
+                            <span className="text-3xl font-bold text-white">{validPercentage}%</span>
                         </div>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-auto">
                     <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
-                        <div className="text-2xl font-black italic text-amber-500 mb-1">{claimedKits}</div>
-                        <div className="text-[10px] uppercase font-bold text-text-muted italic tracking-widest">Claimed</div>
+                        <div className="text-2xl font-bold text-amber-500 mb-1">{claimedKits}</div>
+                        <div className="text-xs uppercase font-semibold text-text-muted tracking-wider">Claimed</div>
                     </div>
                     <div className="text-center p-4 bg-black/20 rounded-2xl border border-white/5 hover:bg-white/5 transition-colors">
-                        <div className="text-2xl font-black italic text-white mb-1">{Math.max(0, totalParticipants - claimedKits)}</div>
-                        <div className="text-[10px] uppercase font-bold text-text-muted italic tracking-widest">Remaining</div>
+                        <div className="text-2xl font-bold text-white mb-1">{Math.max(0, totalParticipants - claimedKits)}</div>
+                        <div className="text-xs uppercase font-semibold text-text-muted tracking-wider">Remaining</div>
                     </div>
                 </div>
             </div>

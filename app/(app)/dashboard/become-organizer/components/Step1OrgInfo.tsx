@@ -54,13 +54,13 @@ export function Step1OrgInfo() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2 border-b border-white/5 pb-4">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Organization Profile</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Organization Profile</h2>
                 <p className="text-text-muted font-medium">Define your organization type and basic details.</p>
             </div>
 
             <div className="space-y-6">
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground opacity-70">
                         Organization / Name
                     </Label>
                     <Input
@@ -69,13 +69,13 @@ export function Step1OrgInfo() {
                         {...register("organizerName")}
                     />
                     {errors.organizerName && (
-                        <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.organizerName.message as string}</p>
+                        <p className="text-xs text-destructive font-bold uppercase">{errors.organizerName.message as string}</p>
                     )}
-                    <p className="text-[10px] text-muted-foreground italic opacity-50">This is the name runners will see as the host of your events.</p>
+                    <p className="text-xs text-muted-foreground opacity-50">This is the name runners will see as the host of your events.</p>
                 </div>
 
                 <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 italic opacity-70">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-text-muted ml-1 opacity-70">
                         Organization Type
                     </label>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
@@ -99,12 +99,12 @@ export function Step1OrgInfo() {
                                 </div>
                                 <div className="space-y-0.5">
                                     <span className={cn(
-                                        "block text-xs font-black uppercase italic tracking-wider leading-none",
+                                        "block text-xs font-bold uppercase tracking-wider leading-none",
                                         selectedType === type.value ? "text-primary" : "text-white"
                                     )}>
                                         {type.label}
                                     </span>
-                                    <span className="block text-[8px] font-bold opacity-50 uppercase tracking-widest mt-1">
+                                    <span className="block text-xs font-semibold opacity-50 uppercase tracking-wider mt-1">
                                         {type.description}
                                     </span>
                                 </div>
@@ -112,14 +112,14 @@ export function Step1OrgInfo() {
                         ))}
                     </div>
                     {errors.organizerType && (
-                        <p className="text-[10px] text-red-500 ml-1 font-bold uppercase italic tracking-wide">
+                        <p className="text-xs text-red-500 ml-1 font-bold uppercase tracking-wide">
                             {errors.organizerType.message as string}
                         </p>
                     )}
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic opacity-70">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground opacity-70">
                         Description
                     </Label>
                     <Textarea
@@ -128,9 +128,9 @@ export function Step1OrgInfo() {
                         {...register("description")}
                     />
                     {errors.description && (
-                        <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.description.message as string}</p>
+                        <p className="text-xs text-destructive font-bold uppercase">{errors.description.message as string}</p>
                     )}
-                    <p className="text-[10px] text-muted-foreground italic opacity-50">Give us more context about your experience and focus.</p>
+                    <p className="text-xs text-muted-foreground opacity-50">Give us more context about your experience and focus.</p>
                 </div>
             </div>
         </div>

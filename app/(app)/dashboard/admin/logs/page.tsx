@@ -68,14 +68,14 @@ export default function AuditLogsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
-                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-[10px] font-black uppercase italic tracking-widest">
+                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Audit <span className="text-primary">Logs</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Monitor all administrative actions and system overrides.</p>
+                    <p className="text-text-muted font-medium">Monitor all administrative actions and system overrides.</p>
                 </div>
             </div>
 
@@ -84,7 +84,7 @@ export default function AuditLogsPage() {
                 {!logs || logs.length === 0 ? (
                     <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5">
                         <Shield className="mx-auto text-text-muted opacity-20 mb-4" size={48} />
-                        <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No admin actions recorded yet.</p>
+                        <p className="text-text-muted font-medium uppercase tracking-wider text-xs">No admin actions recorded yet.</p>
                     </Card>
                 ) : (
                     logs.map((log) => (
@@ -93,7 +93,7 @@ export default function AuditLogsPage() {
                                 <div className="flex flex-col md:flex-row gap-6 md:items-center">
                                     <div className="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-white/5 shrink-0">
                                         <Clock size={20} className="text-text-muted group-hover:text-primary transition-colors" />
-                                        <span className="text-[8px] font-black italic uppercase text-text-muted mt-1">
+                                        <span className="text-xs font-semibold uppercase text-text-muted mt-1">
                                             {log.timestamp ? formatDate(log.timestamp) : "Just now"}
                                         </span>
                                     </div>
@@ -101,23 +101,23 @@ export default function AuditLogsPage() {
                                     <div className="space-y-3">
                                         <div className="flex items-center gap-3 flex-wrap">
                                             {getActionBadge(log.action)}
-                                            <div className="flex items-center gap-1.5 text-white font-bold italic uppercase text-xs">
+                                            <div className="flex items-center gap-1.5 text-white font-bold uppercase text-xs">
                                                 <User size={14} className="text-primary" /> {log.adminName}
                                             </div>
                                         </div>
                                         <div className="flex flex-col sm:flex-row gap-4">
-                                            <div className="flex items-center gap-2 text-[10px] text-text-muted font-bold uppercase italic tracking-widest bg-white/5 py-1 px-3 rounded-lg border border-white/5">
+                                            <div className="flex items-center gap-2 text-xs text-text-muted font-semibold uppercase tracking-wider bg-white/5 py-1 px-3 rounded-lg border border-white/5">
                                                 <Target size={12} className="text-cta" /> Target: <span className="text-white">{log.targetName}</span>
                                             </div>
                                             {log.details && (
-                                                <div className="flex items-center gap-2 text-[10px] text-text-muted font-bold uppercase italic tracking-widest bg-white/5 py-1 px-3 rounded-lg border border-white/5 max-w-md truncate">
+                                                <div className="flex items-center gap-2 text-xs text-text-muted font-semibold uppercase tracking-wider bg-white/5 py-1 px-3 rounded-lg border border-white/5 max-w-md truncate">
                                                     <Info size={12} className="text-blue-500" /> Detail: <span className="text-white">{log.details}</span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
                                 </div>
-                                <div className="text-[10px] text-text-muted/30 font-mono tracking-tighter self-end lg:self-center">
+                                <div className="text-xs text-text-muted/30 font-mono tracking-tighter self-end lg:self-center">
                                     ID: {log._id}
                                 </div>
                             </div>

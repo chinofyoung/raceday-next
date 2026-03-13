@@ -85,7 +85,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                     <Users size={24} />
                 </div>
                 <div>
-                    <p className="text-white font-bold italic uppercase">No Data Available</p>
+                    <p className="text-white font-bold">No Data Available</p>
                     <p className="text-text-muted text-sm max-w-sm mx-auto">
                         Demographic stats will appear here once participants start registering for your event.
                     </p>
@@ -102,8 +102,8 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
                         <Users size={48} className="text-primary" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Paid Entries</p>
-                    <h3 className="text-3xl font-black italic text-white">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Paid Entries</p>
+                    <h3 className="text-3xl font-bold text-white">
                         {paidRegistrations.length}
                     </h3>
                 </Card>
@@ -111,8 +111,8 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
                         <User size={48} className="text-cta" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Top Category</p>
-                    <h3 className="text-2xl font-black italic text-white uppercase truncate">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Top Category</p>
+                    <h3 className="text-2xl font-bold text-white truncate">
                         {stats.categories.sort((a, b) => b.value - a.value)[0]?.name || "N/A"}
                     </h3>
                 </Card>
@@ -120,8 +120,8 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
                         <Shirt size={48} className="text-amber-500" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Common Shirt</p>
-                    <h3 className="text-3xl font-black italic text-white">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Common Shirt</p>
+                    <h3 className="text-3xl font-bold text-white">
                         {stats.tshirt.sort((a, b) => b.value - a.value)[0]?.name || "N/A"}
                     </h3>
                 </Card>
@@ -129,8 +129,8 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                     <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
                         <UserPlus size={48} className="text-green-500" />
                     </div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Male/Female Ratio</p>
-                    <h3 className="text-2xl font-black italic text-white">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Male/Female Ratio</p>
+                    <h3 className="text-2xl font-bold text-white">
                         {stats.gender.find(g => g.name === "Male")?.value || 0} : {stats.gender.find(g => g.name === "Female")?.value || 0}
                     </h3>
                 </Card>
@@ -141,7 +141,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                 <Card className="p-8 bg-surface border-white/5 space-y-6">
                     <div className="flex items-center gap-2">
                         <User className="text-primary" size={20} />
-                        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Gender Distribution</h3>
+                        <h3 className="text-xl font-bold tracking-tight text-white">Gender Distribution</h3>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -173,7 +173,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                 <Card className="p-8 bg-surface border-white/5 space-y-6">
                     <div className="flex items-center gap-2">
                         <Milestone className="text-cta" size={20} />
-                        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Age Demographics</h3>
+                        <h3 className="text-xl font-bold tracking-tight text-white">Age Demographics</h3>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -206,7 +206,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                 <Card className="p-8 bg-surface border-white/5 space-y-6">
                     <div className="flex items-center gap-2">
                         <Milestone className="text-green-500" size={20} />
-                        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Category Split</h3>
+                        <h3 className="text-xl font-bold tracking-tight text-white">Category Split</h3>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -236,7 +236,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                 <Card className="p-8 bg-surface border-white/5 space-y-6">
                     <div className="flex items-center gap-2">
                         <Shirt className="text-amber-500" size={20} />
-                        <h3 className="text-xl font-black uppercase italic tracking-tight text-white">Apparel Requirements</h3>
+                        <h3 className="text-xl font-bold tracking-tight text-white">Apparel Requirements</h3>
                     </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -263,7 +263,7 @@ export function DemographicsTab({ event, registrations }: DemographicsTabProps) 
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                    <p className="text-[10px] text-text-muted font-bold italic uppercase text-center">T-Shirt size distributions for fulfillment planning</p>
+                    <p className="text-xs text-text-muted font-bold text-center">T-Shirt size distributions for fulfillment planning</p>
                 </Card>
             </div>
         </div>

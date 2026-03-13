@@ -16,7 +16,7 @@ export default function SettingsPage() {
                         <div className="w-16 h-16 border-4 border-primary/20 rounded-full" />
                         <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-primary rounded-full animate-spin" />
                     </div>
-                    <p className="text-text-muted text-xs font-bold uppercase tracking-widest italic animate-pulse">Loading Settings...</p>
+                    <p className="text-text-muted text-xs font-semibold uppercase tracking-wider animate-pulse">Loading Settings...</p>
                 </div>
             </div>
         );
@@ -28,14 +28,14 @@ export default function SettingsPage() {
             <div className="space-y-1">
                 <Link
                     href="/dashboard"
-                    className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4"
+                    className="md:hidden text-text-muted hover:text-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4"
                 >
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
-                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                     Settings
                 </h1>
-                <p className="text-text-muted font-medium italic">
+                <p className="text-text-muted font-medium">
                     Manage your profile and account preferences.
                 </p>
             </div>

@@ -46,13 +46,13 @@ export function OrganizerFormStepper({ steps, currentStep, highestStep = 1, onSt
                             </div>
                             <div className="flex flex-col">
                                 <span className={cn(
-                                    "text-[10px] uppercase font-black italic tracking-widest transition-colors",
+                                    "text-xs uppercase font-semibold tracking-wider transition-colors",
                                     isActive ? "text-white block" : isCompleted ? "text-cta" : "hidden md:block text-text-muted opacity-50"
                                 )}>
                                     {step.title}
                                 </span>
                                 {isActive && (
-                                    <span className="text-[8px] uppercase font-bold text-primary/70 italic leading-none md:hidden">
+                                    <span className="text-xs uppercase font-semibold text-primary/70 leading-none md:hidden">
                                         Current Step
                                     </span>
                                 )}

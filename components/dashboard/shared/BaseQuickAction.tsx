@@ -38,7 +38,7 @@ export function BaseQuickAction({ href, onClick, icon: Icon, label, variant = "s
     const content = (
         <>
             <Icon size={16} className={cn("shrink-0", styles.icon)} />
-            <span className="text-[10px] font-black uppercase tracking-widest italic text-white transition-all group-hover:scale-105 origin-left truncate">
+            <span className="text-xs font-bold uppercase tracking-wider text-white transition-all group-hover:scale-105 origin-left truncate">
                 {label}
             </span>
         </>

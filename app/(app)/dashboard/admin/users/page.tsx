@@ -97,14 +97,14 @@ export default function UserManagementPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
-                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-[10px] font-black uppercase italic tracking-widest">
+                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         User <span className="text-primary">Management</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Track and moderate all platform participants.</p>
+                    <p className="text-text-muted font-medium">Track and moderate all platform participants.</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
                     <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0">
@@ -121,7 +121,7 @@ export default function UserManagementPage() {
                             key={s}
                             onClick={() => setRoleFilter(s)}
                             className={cn(
-                                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
+                                "px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all shrink-0",
                                 roleFilter === s ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-text-muted hover:bg-white/10"
                             )}
                         >
@@ -136,7 +136,7 @@ export default function UserManagementPage() {
                         placeholder="Search by name or email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-background border border-white/5 rounded-xl text-sm italic font-medium focus:outline-none focus:border-primary transition-all text-white placeholder:text-text-muted/50"
+                        className="w-full pl-10 pr-4 py-2.5 bg-background border border-white/5 rounded-xl text-sm font-medium focus:outline-none focus:border-primary transition-all text-white placeholder:text-text-muted/50"
                     />
                 </div>
             </div>
@@ -144,7 +144,7 @@ export default function UserManagementPage() {
             {/* User List */}
             <div className="grid grid-cols-1 gap-2">
                 {/* Header Row (Desktop) */}
-                <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 text-[10px] font-black uppercase italic tracking-widest text-text-muted">
+                <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 text-xs font-semibold uppercase tracking-wider text-text-muted">
                     <div className="col-span-4">User Details</div>
                     <div className="col-span-2">Role</div>
                     <div className="col-span-2">Joined Date</div>
@@ -155,7 +155,7 @@ export default function UserManagementPage() {
                 {filteredUsers.length === 0 ? (
                     <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-4">
                         <Users className="mx-auto text-text-muted opacity-20" size={48} />
-                        <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No users found matching your search.</p>
+                        <p className="text-text-muted font-medium uppercase tracking-wider text-xs">No users found matching your search.</p>
                     </Card>
                 ) : (
                     filteredUsers.map((user: any) => (
@@ -167,14 +167,14 @@ export default function UserManagementPage() {
                                         {user.photoURL ? (
                                             <img src={user.photoURL} className="w-full h-full object-cover" />
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10 italic font-bold">
+                                            <div className="w-full h-full flex items-center justify-center text-primary bg-primary/10 font-bold">
                                                 {user.displayName ? user.displayName[0] : "?"}
                                             </div>
                                         )}
                                     </div>
                                     <div className="min-w-0">
-                                        <h4 className="font-bold italic uppercase text-white truncate leading-tight">{user.displayName}</h4>
-                                        <div className="flex items-center gap-1.5 text-text-muted text-[10px] font-bold italic truncate">
+                                        <h4 className="font-bold text-white truncate leading-tight">{user.displayName}</h4>
+                                        <div className="flex items-center gap-1.5 text-text-muted text-xs font-medium truncate">
                                             <Mail size={12} className="text-primary/60" /> {user.email}
                                         </div>
                                     </div>
@@ -184,14 +184,14 @@ export default function UserManagementPage() {
                                 <div className="col-span-2">
                                     <Badge
                                         variant={user.role === "admin" ? "destructive" : user.role === "organizer" ? "cta" : "secondary"}
-                                        className="text-[8px] font-black uppercase italic tracking-widest px-3"
+                                        className="text-xs font-semibold uppercase tracking-wider px-3"
                                     >
                                         {user.role}
                                     </Badge>
                                 </div>
 
                                 {/* Joined */}
-                                <div className="col-span-2 text-[10px] font-bold italic text-text-muted flex items-center gap-2">
+                                <div className="col-span-2 text-xs font-medium text-text-muted flex items-center gap-2">
                                     <Calendar size={14} className="text-blue-500/60" />
                                     {formatDate(user.createdAt)}
                                 </div>
@@ -205,7 +205,7 @@ export default function UserManagementPage() {
                                                 style={{ width: `${user.profileCompletion}%` }}
                                             />
                                         </div>
-                                        <span className="text-[10px] font-black italic text-white shrink-0">{user.profileCompletion}%</span>
+                                        <span className="text-xs font-bold text-white shrink-0">{user.profileCompletion}%</span>
                                     </div>
                                 </div>
 
@@ -213,7 +213,7 @@ export default function UserManagementPage() {
                                 <div className="col-span-2 flex justify-end items-center">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger render={
-                                            <Button size="sm" variant="outline" className="h-8 w-8 p-0 font-black italic uppercase border-white/10">
+                                            <Button size="sm" variant="outline" className="h-8 w-8 p-0 font-bold border-white/10">
                                                 <MoreVertical size={14} />
                                             </Button>
                                         } />
@@ -249,7 +249,7 @@ export default function UserManagementPage() {
                     <Button
                         variant="outline"
                         size="lg"
-                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        className="min-w-48 gap-2 font-bold tracking-wider text-xs"
                         onClick={() => loadMore()}
                         disabled={loading}
                     >

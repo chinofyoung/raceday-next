@@ -17,7 +17,7 @@ export function OrganizerFormSummary() {
         <div className="space-y-4 p-6 bg-white/5 rounded-3xl border border-white/5">
             <div className="flex items-center gap-2 border-b border-white/5 pb-3">
                 <div className="text-primary">{icon}</div>
-                <h4 className="text-[10px] font-black uppercase italic tracking-widest text-white">{title}</h4>
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-white">{title}</h4>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
                 {children}
@@ -27,15 +27,15 @@ export function OrganizerFormSummary() {
 
     const DetailItem = ({ label, value, fullWidth }: { label: string, value: string | number | undefined, fullWidth?: boolean }) => (
         <div className={fullWidth ? "md:col-span-2 space-y-1" : "space-y-1"}>
-            <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">{label}</span>
-            <span className="block text-sm font-bold text-white uppercase italic tracking-tight">{value || "—"}</span>
+            <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">{label}</span>
+            <span className="block text-sm font-bold text-white tracking-tight">{value || "—"}</span>
         </div>
     );
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2 border-b border-white/5 pb-4">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">Review Application</h2>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Review Application</h2>
                 <p className="text-text-muted font-medium">Verify your information before submitting.</p>
             </div>
 
@@ -70,14 +70,14 @@ export function OrganizerFormSummary() {
                     <DetailItem label="ID Number" value={data.governmentId?.idNumber} />
                     <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                         <div className="space-y-2">
-                            <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Front</span>
+                            <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">ID Front</span>
                             <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
                                 <img src={data.governmentId?.frontImageUrl} alt="ID Front" className="w-full h-full object-cover" />
                             </div>
                         </div>
                         {data.governmentId.backImageUrl && (
                             <div className="space-y-2">
-                                <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Back</span>
+                                <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">ID Back</span>
                                 <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
                                     <img src={data.governmentId.backImageUrl} alt="ID Back" className="w-full h-full object-cover" />
                                 </div>
@@ -85,7 +85,7 @@ export function OrganizerFormSummary() {
                         )}
                         {data.businessPermitUrl && (
                             <div className="space-y-2">
-                                <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">Business Permit</span>
+                                <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">Business Permit</span>
                                 <div className="aspect-video rounded-xl overflow-hidden border border-white/10">
                                     <img src={data.businessPermitUrl} alt="Permit" className="w-full h-full object-cover" />
                                 </div>

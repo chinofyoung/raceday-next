@@ -126,13 +126,13 @@ export default function AdminDashboardPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Admin <span className="text-primary">Command Center</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Platform-wide oversight and management.</p>
+                    <p className="text-text-muted font-medium">Platform-wide oversight and management.</p>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="outline" size="sm" asChild className="font-black italic uppercase">
+                    <Button variant="outline" size="sm" asChild className="font-bold">
                         <Link href="/dashboard/admin/analytics">Detailed Reports</Link>
                     </Button>
                 </div>
@@ -147,8 +147,8 @@ export default function AdminDashboardPage() {
                             <Users size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Users</p>
-                            <p className="text-2xl font-black italic">{stats?.totalUsers.toLocaleString() || 0}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Total Users</p>
+                            <p className="text-2xl font-bold">{stats?.totalUsers.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -159,8 +159,8 @@ export default function AdminDashboardPage() {
                             <Calendar size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Events</p>
-                            <p className="text-2xl font-black italic">{stats?.totalEvents.toLocaleString() || 0}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Total Events</p>
+                            <p className="text-2xl font-bold">{stats?.totalEvents.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -171,8 +171,8 @@ export default function AdminDashboardPage() {
                             <DollarSign size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Total Revenue</p>
-                            <p className="text-2xl font-black italic">₱{stats?.totalRevenue.toLocaleString() || 0}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Total Revenue</p>
+                            <p className="text-2xl font-bold">₱{stats?.totalRevenue.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -183,8 +183,8 @@ export default function AdminDashboardPage() {
                             <Clock size={24} />
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Pending Apps</p>
-                            <p className="text-2xl font-black italic">{stats?.pendingApplications.toLocaleString() || 0}</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Pending Apps</p>
+                            <p className="text-2xl font-bold">{stats?.pendingApplications.toLocaleString() || 0}</p>
                         </div>
                     </div>
                 </Card>
@@ -198,10 +198,10 @@ export default function AdminDashboardPage() {
                     <Card className="p-8 bg-surface border-white/5">
                         <div className="flex items-center justify-between mb-8">
                             <div>
-                                <h3 className="text-xl font-black italic uppercase tracking-tight text-white flex items-center gap-2">
+                                <h3 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
                                     <TrendingUp className="text-primary" size={20} /> Platform Activity
                                 </h3>
-                                <p className="text-[10px] text-text-muted font-bold uppercase italic tracking-widest">Last 7 Days Growth</p>
+                                <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Last 7 Days Growth</p>
                             </div>
                         </div>
                         <div className="h-[300px] w-full">
@@ -212,8 +212,8 @@ export default function AdminDashboardPage() {
                     {/* Pending Applications List */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-black italic uppercase tracking-tight">Pending Applications</h2>
-                            <Link href="/dashboard/admin/applications" className="text-[10px] font-black uppercase text-primary hover:underline italic tracking-widest">View All</Link>
+                            <h2 className="text-2xl font-bold tracking-tight">Pending Applications</h2>
+                            <Link href="/dashboard/admin/applications" className="text-xs font-semibold uppercase text-primary hover:underline tracking-wider">View All</Link>
                         </div>
                         {recentApps.length > 0 ? (
                             <div className="grid grid-cols-1 gap-4">
@@ -225,11 +225,11 @@ export default function AdminDashboardPage() {
                                                     <UserCheck size={24} />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold italic uppercase text-white leading-tight">{app.organizerName}</h4>
-                                                    <p className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest">{app.contactEmail}</p>
+                                                    <h4 className="font-bold text-white leading-tight">{app.organizerName}</h4>
+                                                    <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">{app.contactEmail}</p>
                                                 </div>
                                             </div>
-                                            <Button size="sm" variant="ghost" asChild className="text-primary font-black italic uppercase tracking-widest">
+                                            <Button size="sm" variant="ghost" asChild className="text-primary font-bold tracking-wider">
                                                 <Link href={`/dashboard/admin/applications`}>Review <ArrowRight size={14} className="ml-1" /></Link>
                                             </Button>
                                         </div>
@@ -239,7 +239,7 @@ export default function AdminDashboardPage() {
                         ) : (
                             <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-4">
                                 <UserCheck className="mx-auto text-text-muted opacity-20" size={48} />
-                                <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No pending applications.</p>
+                                <p className="text-text-muted font-medium uppercase tracking-wider text-xs">No pending applications.</p>
                             </Card>
                         )}
                     </div>
@@ -248,13 +248,13 @@ export default function AdminDashboardPage() {
                 {/* Right: Quick Actions & Recent Events */}
                 <div className="space-y-8">
                     <div className="space-y-4">
-                        <h2 className="text-xl font-black italic uppercase tracking-tight">Quick Actions</h2>
+                        <h2 className="text-xl font-bold tracking-tight">Quick Actions</h2>
                         <div className="grid grid-cols-1 gap-3">
                             <Link href="/dashboard/admin/users" className="block p-4 bg-primary rounded-xl border border-primary hover:scale-[1.02] transition-all group shadow-lg">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Users size={18} className="text-white" />
-                                        <span className="font-bold uppercase italic text-sm text-white">Manage Users</span>
+                                        <span className="font-bold text-sm text-white">Manage Users</span>
                                     </div>
                                     <ArrowRight size={14} className="text-white opacity-0 group-hover:opacity-100 transition-all" />
                                 </div>
@@ -263,7 +263,7 @@ export default function AdminDashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <BarChart3 size={18} className="text-cta" />
-                                        <span className="font-bold uppercase italic text-sm">Review Events</span>
+                                        <span className="font-bold text-sm">Review Events</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-cta" />
                                 </div>
@@ -272,7 +272,7 @@ export default function AdminDashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <FileText size={18} className="text-green-500" />
-                                        <span className="font-bold uppercase italic text-sm">Platform Reports</span>
+                                        <span className="font-bold text-sm">Platform Reports</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-green-500" />
                                 </div>
@@ -281,7 +281,7 @@ export default function AdminDashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Shield size={18} className="text-blue-500" />
-                                        <span className="font-bold uppercase italic text-sm">Audit Logs</span>
+                                        <span className="font-bold text-sm">Audit Logs</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-blue-500" />
                                 </div>
@@ -290,7 +290,7 @@ export default function AdminDashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Trophy size={18} className="text-primary" />
-                                        <span className="font-bold uppercase italic text-sm">Find Races</span>
+                                        <span className="font-bold text-sm">Find Races</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-primary" />
                                 </div>
@@ -299,7 +299,7 @@ export default function AdminDashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <Globe size={18} className="text-text-muted transition-colors group-hover:text-white" />
-                                        <span className="font-bold uppercase italic text-sm">View Site</span>
+                                        <span className="font-bold text-sm">View Site</span>
                                     </div>
                                     <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-all text-white" />
                                 </div>
@@ -309,7 +309,7 @@ export default function AdminDashboardPage() {
 
                     {/* Recent Events List */}
                     <div className="space-y-4">
-                        <h2 className="text-xl font-black italic uppercase tracking-tight">Newest Events</h2>
+                        <h2 className="text-xl font-bold tracking-tight">Newest Events</h2>
                         <div className="space-y-4">
                             {recentEvents.map((event) => (
                                 <Card key={event.id} className="p-4 bg-surface/30 border-white/5 hover:bg-surface/50 transition-all group text-sm">
@@ -324,12 +324,12 @@ export default function AdminDashboardPage() {
                                             )}
                                         </div>
                                         <div className="space-y-1">
-                                            <h4 className="font-black italic uppercase text-white line-clamp-1">{event.name}</h4>
+                                            <h4 className="font-bold text-white line-clamp-1">{event.name}</h4>
                                             <div className="flex items-center gap-2">
-                                                <Badge className="text-[8px] font-black uppercase px-2 py-0">
+                                                <Badge className="text-xs font-semibold uppercase px-2 py-0">
                                                     {event.status}
                                                 </Badge>
-                                                <span className="text-[10px] text-text-muted font-bold italic uppercase tracking-widest whitespace-nowrap">
+                                                <span className="text-xs text-text-muted font-semibold uppercase tracking-wider whitespace-nowrap">
                                                     {event.location.name}
                                                 </span>
                                             </div>
@@ -343,19 +343,19 @@ export default function AdminDashboardPage() {
                     {/* System Info */}
                     <Card className="p-6 bg-surface/50 border border-white/5 relative overflow-hidden group">
                         <div className="absolute top-0 left-0 p-12 bg-primary/5 rounded-full blur-3xl -ml-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
-                        <h3 className="font-bold uppercase italic text-[10px] text-primary mb-6 tracking-widest text-center relative z-10">SYSTEM STATUS</h3>
+                        <h3 className="font-semibold uppercase text-xs text-primary mb-6 tracking-wider text-center relative z-10">System Status</h3>
                         <div className="space-y-4 relative z-10">
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-text-muted uppercase italic">Convex Backend</span>
-                                <Badge variant="success" className="text-[8px] px-2 py-0 border-none">Online</Badge>
+                                <span className="text-xs font-semibold text-text-muted uppercase">Convex Backend</span>
+                                <Badge variant="success" className="text-xs px-2 py-0 border-none">Online</Badge>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-text-muted uppercase italic">Cloudinary API</span>
-                                <Badge variant="success" className="text-[8px] px-2 py-0 border-none">Online</Badge>
+                                <span className="text-xs font-semibold text-text-muted uppercase">Cloudinary API</span>
+                                <Badge variant="success" className="text-xs px-2 py-0 border-none">Online</Badge>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-text-muted uppercase italic">Xendit Gateway</span>
-                                <Badge variant="success" className="text-[8px] px-2 py-0 border-none">Online</Badge>
+                                <span className="text-xs font-semibold text-text-muted uppercase">Xendit Gateway</span>
+                                <Badge variant="success" className="text-xs px-2 py-0 border-none">Online</Badge>
                             </div>
                         </div>
                     </Card>

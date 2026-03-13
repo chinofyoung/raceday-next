@@ -148,14 +148,14 @@ export default function AdminEventManagementPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
-                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-[10px] font-black uppercase italic tracking-widest">
+                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Global <span className="text-primary">Event Oversight</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Manage, feature, and audit all platform events.</p>
+                    <p className="text-text-muted font-medium">Manage, feature, and audit all platform events.</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
                     <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0">
@@ -172,7 +172,7 @@ export default function AdminEventManagementPage() {
                             key={s}
                             onClick={() => setStatusFilter(s)}
                             className={cn(
-                                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
+                                "px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all shrink-0",
                                 statusFilter === s ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-text-muted hover:bg-white/10"
                             )}
                         >
@@ -187,7 +187,7 @@ export default function AdminEventManagementPage() {
                         placeholder="Search events by name..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-background border border-white/5 rounded-xl text-sm italic font-medium focus:outline-none focus:border-primary transition-all placeholder:text-text-muted/50"
+                        className="w-full pl-10 pr-4 py-2.5 bg-background border border-white/5 rounded-xl text-sm font-medium focus:outline-none focus:border-primary transition-all placeholder:text-text-muted/50"
                     />
                 </div>
             </div>
@@ -197,7 +197,7 @@ export default function AdminEventManagementPage() {
                 {filteredEvents.length === 0 ? (
                     <Card className="p-12 text-center bg-surface/30 border-dashed border-2 border-white/5 space-y-4">
                         <Calendar className="mx-auto text-text-muted opacity-20" size={48} />
-                        <p className="text-text-muted italic font-medium uppercase tracking-widest text-xs">No events found.</p>
+                        <p className="text-text-muted font-medium uppercase tracking-wider text-xs">No events found.</p>
                     </Card>
                 ) : (
                     filteredEvents.map((event) => (
@@ -210,7 +210,7 @@ export default function AdminEventManagementPage() {
                                     {event.featuredImage ? (
                                         <img src={event.featuredImage} className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full bg-white/5 flex items-center justify-center text-text-muted italic font-black uppercase text-[10px]">No Image</div>
+                                        <div className="w-full h-full bg-white/5 flex items-center justify-center text-text-muted font-bold uppercase text-xs">No Image</div>
                                     )}
                                     {event.featured && (
                                         <div className="absolute top-2 right-2 bg-primary text-white p-1 rounded-lg">
@@ -224,12 +224,12 @@ export default function AdminEventManagementPage() {
                                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                         <div className="space-y-1">
                                             <div className="flex items-center gap-3 flex-wrap">
-                                                <h3 className="text-xl font-black italic uppercase text-white leading-tight">{event.name}</h3>
-                                                <Badge className="text-[8px] font-black uppercase italic tracking-widest">
+                                                <h3 className="text-xl font-bold text-white leading-tight">{event.name}</h3>
+                                                <Badge className="text-xs font-semibold uppercase tracking-wider">
                                                     {event.status}
                                                 </Badge>
                                             </div>
-                                            <div className="flex flex-wrap gap-4 text-[10px] font-bold text-text-muted uppercase italic tracking-widest">
+                                            <div className="flex flex-wrap gap-4 text-xs font-medium text-text-muted uppercase tracking-wider">
                                                 <span className="flex items-center gap-1.5"><MapPin size={12} className="text-cta" /> {event.location?.name || "TBD"}</span>
                                                 <span className="flex items-center gap-1.5"><Calendar size={12} className="text-primary" /> {formatDate(event.date)}</span>
                                                 <span className="flex items-center gap-1.5"><Trophy size={12} className="text-blue-500" /> {event.categories?.length || 0} Categories</span>
@@ -274,10 +274,10 @@ export default function AdminEventManagementPage() {
                                     </div>
 
                                     <div className="flex gap-2 pt-2">
-                                        <Button variant="outline" size="sm" asChild className="font-black italic uppercase text-[10px] tracking-widest">
+                                        <Button variant="outline" size="sm" asChild className="font-bold uppercase text-xs tracking-wider">
                                             <Link href={`/events/${event.id}`} target="_blank"><ExternalLink size={12} className="mr-2" /> View Public Page</Link>
                                         </Button>
-                                        <Button variant="outline" size="sm" asChild className="font-black italic uppercase text-[10px] tracking-widest">
+                                        <Button variant="outline" size="sm" asChild className="font-bold uppercase text-xs tracking-wider">
                                             <Link href={`/dashboard/events/${event.id}`}><Eye size={12} className="mr-2" /> View Dashboard</Link>
                                         </Button>
                                     </div>
@@ -294,7 +294,7 @@ export default function AdminEventManagementPage() {
                     <Button
                         variant="outline"
                         size="lg"
-                        className="min-w-48 gap-2 font-black italic uppercase italic tracking-widest text-xs"
+                        className="min-w-48 gap-2 font-bold uppercase tracking-wider text-xs"
                         onClick={() => loadMore()}
                         disabled={loading}
                     >

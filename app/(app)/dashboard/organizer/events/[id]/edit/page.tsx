@@ -111,7 +111,7 @@ export default function EditEventPage() {
                         <ShieldAlert size={32} />
                     </div>
                     <div className="space-y-2">
-                        <h1 className="text-2xl font-black italic uppercase text-white">Event Not Found</h1>
+                        <h1 className="text-2xl font-bold text-white">Event Not Found</h1>
                         <p className="text-text-muted font-medium">
                             The event you are trying to edit does not exist or you don't have permission to manage it.
                         </p>
@@ -127,14 +127,14 @@ export default function EditEventPage() {
     return (
         <div className="space-y-10">
             <div className="flex flex-col gap-4 mx-auto">
-                <Link href="/dashboard/events" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-widest italic">
+                <Link href="/dashboard/events" className="text-text-muted text-xs font-bold flex items-center gap-1 hover:text-primary transition-colors uppercase tracking-wider">
                     <ArrowLeft size={14} /> Back to Events
                 </Link>
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
-                        Edit <span className="text-primary">Event</span>.
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                        Edit <span className="text-primary">event</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic">Make changes to your race details, categories, or timeline.</p>
+                    <p className="text-lg text-text-muted font-medium">Make changes to your race details, categories, or timeline.</p>
                 </div>
             </div>
 

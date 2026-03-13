@@ -30,10 +30,10 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
     const DetailItem = ({ label, value, icon, fullWidth }: { label: string, value: string | number | undefined, icon?: React.ReactNode, fullWidth?: boolean }) => (
         <div className={cn("space-y-1", fullWidth ? "col-span-full" : "")}>
-            <p className="text-[10px] font-black uppercase text-text-muted tracking-widest italic flex items-center gap-1">
+            <p className="text-xs font-semibold uppercase text-text-muted tracking-wider flex items-center gap-1">
                 {icon} {label}
             </p>
-            <p className="text-sm font-bold text-white uppercase italic tracking-tight truncate">
+            <p className="text-sm font-bold text-white uppercase tracking-tight truncate">
                 {value || "—"}
             </p>
         </div>
@@ -63,16 +63,16 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                     </div>
                     <div className="space-y-1 min-w-0 overflow-hidden">
                         <div className="flex items-center gap-3">
-                            <h3 className="text-2xl font-black italic uppercase text-white leading-tight truncate">{app.organizerName}</h3>
+                            <h3 className="text-2xl font-bold text-white leading-tight truncate">{app.organizerName}</h3>
                             <Badge variant={
                                 app.status === "pending" ? "cta" :
                                     app.status === "approved" ? "success" :
                                         app.status === "needs_info" ? "warning" : "destructive"
-                            } className="text-[9px] font-black uppercase italic tracking-widest px-2 py-0.5">
+                            } className="text-xs font-semibold uppercase tracking-wider px-2 py-0.5">
                                 {app.status.replace('_', ' ')}
                             </Badge>
                         </div>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-muted text-[10px] font-bold uppercase italic">
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-text-muted text-xs font-medium uppercase">
                             <span className="flex items-center gap-1.5"><Mail size={12} className="text-primary" /> {app.contactEmail}</span>
                             <span className="flex items-center gap-1.5"><Phone size={12} className="text-cta" /> {app.phone}</span>
                             <span className="flex items-center gap-1.5"><Calendar size={12} className="text-blue-500" /> {formatDate(app.createdAt)}</span>
@@ -85,7 +85,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                         variant="ghost"
                         size="sm"
                         onClick={() => setExpanded(!expanded)}
-                        className="gap-2 text-xs font-black italic uppercase bg-white/5 transition-colors"
+                        className="gap-2 text-xs font-bold uppercase bg-white/5 transition-colors"
                     >
                         {expanded ? (
                             <><ChevronUp size={16} /> Hide Details</>
@@ -101,13 +101,13 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                 size="sm"
                                 onClick={() => onApprove(app)}
                                 disabled={processing}
-                                className="bg-success hover:bg-success/80 border-none h-10 px-6 font-black italic uppercase"
+                                className="bg-success hover:bg-success/80 border-none h-10 px-6 font-bold uppercase"
                             >
                                 {processing ? <Loader2 className="animate-spin" size={16} /> : "Approve"}
                             </Button>
                         </div>
                     ) : (
-                        <div className="text-[9px] font-black uppercase italic text-text-muted">
+                        <div className="text-xs font-semibold uppercase text-text-muted">
                             Reviewed {app.reviewedAt ? formatDate(app.reviewedAt) : 'N/A'}
                         </div>
                     )}
@@ -122,7 +122,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         {/* Checkbox Summary */}
                         <div className="lg:col-span-1 space-y-4">
-                            <h4 className="text-[11px] font-black uppercase italic tracking-widest text-primary">Verification Checklist</h4>
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-primary">Verification Checklist</h4>
                             <div className="space-y-3">
                                 {checklist.map((item, i) => (
                                     <div key={i} className="flex items-center gap-2 opacity-80">
@@ -132,7 +132,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                             <div className={cn("w-4 h-4 rounded-full border-2", item.optional ? "border-white/10" : "border-destructive/40")} />
                                         )}
                                         <span className={cn(
-                                            "text-[10px] font-bold uppercase italic",
+                                            "text-xs font-medium uppercase",
                                             item.checked ? "text-white" : "text-text-muted"
                                         )}>
                                             {item.label} {item.optional && "(Opt)"}
@@ -143,8 +143,8 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
                             {app.adminNotes && (
                                 <div className="mt-6 p-4 bg-primary/5 border border-primary/20 rounded-xl space-y-1">
-                                    <p className="text-[9px] font-black uppercase text-primary italic">Admin Notes</p>
-                                    <p className="text-xs text-text-muted italic">{app.adminNotes}</p>
+                                    <p className="text-xs font-semibold uppercase text-primary">Admin Notes</p>
+                                    <p className="text-xs text-text-muted">{app.adminNotes}</p>
                                 </div>
                             )}
                         </div>
@@ -153,7 +153,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                         <div className="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Organization */}
                             <div className="space-y-4">
-                                <h4 className="text-[11px] font-black uppercase italic tracking-widest text-white flex items-center gap-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-2">
                                     <Building2 size={14} className="text-primary" /> Organization
                                 </h4>
                                 <div className="space-y-4 px-2">
@@ -164,7 +164,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
                             {/* Contact & Address */}
                             <div className="space-y-4">
-                                <h4 className="text-[11px] font-black uppercase italic tracking-widest text-white flex items-center gap-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-2">
                                     <MapPin size={14} className="text-cta" /> Address & Contact
                                 </h4>
                                 <div className="space-y-4 px-2">
@@ -178,7 +178,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
                             {/* Official Verification */}
                             <div className="space-y-4">
-                                <h4 className="text-[11px] font-black uppercase italic tracking-widest text-white flex items-center gap-2">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-white flex items-center gap-2">
                                     <ShieldCheck size={14} className="text-blue-500" /> Verification
                                 </h4>
                                 <div className="space-y-4 px-2">
@@ -193,11 +193,11 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
 
                     {/* Documents */}
                     <div className="space-y-4">
-                        <h4 className="text-[11px] font-black uppercase italic tracking-widest text-white">Verification Documents</h4>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-white">Verification Documents</h4>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                             {app.governmentId?.frontImageUrl && (
                                 <div className="space-y-2">
-                                    <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Front</span>
+                                    <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">ID Front</span>
                                     <a href={app.governmentId.frontImageUrl} target="_blank" rel="noreferrer" className="block group/img aspect-video rounded-xl overflow-hidden border border-white/10 relative">
                                         <img src={app.governmentId.frontImageUrl} alt="ID Front" className="w-full h-full object-cover group-hover/img:scale-105 transition-transform" />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
@@ -208,7 +208,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                             )}
                             {app.governmentId?.backImageUrl && (
                                 <div className="space-y-2">
-                                    <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">ID Back</span>
+                                    <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">ID Back</span>
                                     <a href={app.governmentId.backImageUrl} target="_blank" rel="noreferrer" className="block group/img aspect-video rounded-xl overflow-hidden border border-white/10 relative">
                                         <img src={app.governmentId.backImageUrl} alt="ID Back" className="w-full h-full object-cover group-hover/img:scale-105 transition-transform" />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
@@ -219,7 +219,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                             )}
                             {app.businessPermitUrl && (
                                 <div className="space-y-2">
-                                    <span className="block text-[9px] font-black uppercase text-text-muted italic opacity-50">Business Permit</span>
+                                    <span className="block text-xs font-semibold uppercase text-text-muted opacity-50">Business Permit</span>
                                     <a href={app.businessPermitUrl} target="_blank" rel="noreferrer" className="block group/img aspect-video rounded-xl overflow-hidden border border-white/10 relative">
                                         <img src={app.businessPermitUrl} alt="Permit" className="w-full h-full object-cover group-hover/img:scale-105 transition-transform" />
                                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity">
@@ -239,7 +239,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="outline"
                                     onClick={() => onNeedsInfo(app)}
                                     disabled={processing}
-                                    className="gap-2 text-xs font-black italic uppercase border-cta/30 text-cta hover:bg-cta/5 transition-colors"
+                                    className="gap-2 text-xs font-bold uppercase border-cta/30 text-cta hover:bg-cta/5 transition-colors"
                                 >
                                     <Info size={16} /> Request More Info
                                 </Button>
@@ -247,7 +247,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="outline"
                                     onClick={() => onReject(app)}
                                     disabled={processing}
-                                    className="gap-2 text-xs font-black italic uppercase border-red-500/30 text-red-500 hover:bg-red-500/5 transition-colors"
+                                    className="gap-2 text-xs font-bold uppercase border-red-500/30 text-red-500 hover:bg-red-500/5 transition-colors"
                                 >
                                     <XCircle size={16} /> Reject
                                 </Button>
@@ -255,7 +255,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                                     variant="primary"
                                     onClick={() => onApprove(app)}
                                     disabled={processing}
-                                    className="gap-2 text-xs font-black italic uppercase bg-success hover:bg-success/80 border-none transition-colors"
+                                    className="gap-2 text-xs font-bold uppercase bg-success hover:bg-success/80 border-none transition-colors"
                                 >
                                     {processing ? <Loader2 className="animate-spin" size={16} /> : <><CheckCircle2 size={16} /> Approve Organization</>}
                                 </Button>
@@ -265,7 +265,7 @@ export function ApplicationCard({ app, processing, onApprove, onReject, onNeedsI
                             <div className="w-full p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex gap-3 text-red-500">
                                 <Info size={20} className="shrink-0" />
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-black uppercase italic tracking-widest">Rejection Reason</p>
+                                    <p className="text-xs font-semibold uppercase tracking-wider">Rejection Reason</p>
                                     <p className="text-sm font-bold">{app.rejectionReason}</p>
                                 </div>
                             </div>

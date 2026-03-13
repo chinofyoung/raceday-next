@@ -17,7 +17,7 @@ export function EventRegistrationList({ title, events, isPast }: EventRegistrati
 
     return (
         <div className="space-y-4 lg:space-y-6">
-            <h2 className="text-2xl font-black italic uppercase tracking-tight text-white">{title}</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-white">{title}</h2>
 
             {events.length > 0 ? (
                 <div className={isPast ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 opacity-90" : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"}>
@@ -33,10 +33,10 @@ export function EventRegistrationList({ title, events, isPast }: EventRegistrati
                             <Calendar className="text-text-muted opacity-40 group-hover:text-cta group-hover:opacity-100 transition-colors duration-500" size={32} />
                         </div>
                         <div className="space-y-2">
-                            <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tight text-white drop-shadow-sm">No Upcoming Races</h3>
-                            <p className="text-sm md:text-base text-text-muted italic font-medium max-w-md mx-auto leading-relaxed">Your race calendar is currently empty. Find your next challenge and start training today!</p>
+                            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-white drop-shadow-sm">No Upcoming Races</h3>
+                            <p className="text-sm md:text-base text-text-muted font-medium max-w-md mx-auto leading-relaxed">Your race calendar is currently empty. Find your next challenge and start training today!</p>
                         </div>
-                        <Button variant="primary" asChild className="italic font-black uppercase text-white bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 h-12 px-8">
+                        <Button variant="primary" asChild className="font-bold text-white bg-cta hover:bg-cta-hover border-none shadow-lg shadow-cta/20 h-12 px-8">
                             <Link href="/events">Explore Races <ArrowRight size={18} className="ml-2" /></Link>
                         </Button>
                     </div>

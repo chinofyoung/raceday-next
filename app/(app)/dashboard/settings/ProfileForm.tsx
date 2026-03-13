@@ -108,7 +108,7 @@ export function ProfileForm() {
                             />
                         </div>
                         <div className="text-center md:text-left space-y-2">
-                            <h3 className="text-xl font-bold uppercase italic tracking-tight text-white leading-none">Profile Image</h3>
+                            <h3 className="text-xl font-bold tracking-tight text-white leading-none">Profile Image</h3>
                             <p className="text-sm text-text-muted leading-relaxed max-w-sm font-medium">
                                 Upload a clear headshot. This helps organizers identify you at race kit collection and finishers&apos; lines.
                             </p>
@@ -120,22 +120,22 @@ export function ProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <UserIcon size={20} className="text-primary" />
-                        <h3 className="font-black italic uppercase tracking-tight">Personal Information</h3>
+                        <h3 className="font-bold tracking-tight">Personal Information</h3>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Display Name</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Display Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("displayName")} />
-                            {errors.displayName && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.displayName.message}</p>}
+                            {errors.displayName && <p className="text-xs text-destructive font-bold uppercase">{errors.displayName.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Phone Number</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Phone Number</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09123456789" {...register("phone")} />
-                            {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
+                            {errors.phone && <p className="text-xs text-destructive font-bold uppercase">{errors.phone.message}</p>}
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1.5">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Gender</label>
+                                <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Gender</label>
                                 <select
                                     {...register("gender")}
                                     className="w-full bg-white/5 border border-white/10 rounded-xl text-sm focus:outline-none focus:border-primary/50 transition-colors px-4 py-2.5 appearance-none cursor-pointer"
@@ -145,16 +145,16 @@ export function ProfileForm() {
                                     <option value="female" className="bg-surface">Female</option>
                                     <option value="other" className="bg-surface">Other</option>
                                 </select>
-                                {errors.gender && <p className="text-[10px] text-red-500 font-bold italic">{errors.gender.message}</p>}
+                                {errors.gender && <p className="text-xs text-red-500 font-bold">{errors.gender.message}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Birth Date</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Birth Date</Label>
                                 <Input type="date" className="bg-white/5 border-white/10 rounded-xl" {...register("birthDate")} />
-                                {errors.birthDate && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.birthDate.message}</p>}
+                                {errors.birthDate && <p className="text-xs text-destructive font-bold uppercase">{errors.birthDate.message}</p>}
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Medical Conditions</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Medical Conditions</label>
                             <textarea
                                 {...register("medicalConditions")}
                                 className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-text focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors min-h-[120px]"
@@ -168,30 +168,30 @@ export function ProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <MapPin size={20} className="text-cta" />
-                        <h3 className="font-black italic uppercase tracking-tight">Residential Address</h3>
+                        <h3 className="font-bold tracking-tight">Residential Address</h3>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Street Address</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Street Address</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="Building, Street Name" {...register("address.street")} />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">City</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">City</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.city")} />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Province</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Province</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.province")} />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">ZIP Code</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">ZIP Code</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.zipCode")} />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Country</Label>
+                                <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Country</Label>
                                 <Input className="bg-white/5 border-white/10 rounded-xl" {...register("address.country")} />
                             </div>
                         </div>
@@ -202,21 +202,21 @@ export function ProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <ShieldAlert size={20} className="text-red-500" />
-                        <h3 className="font-black italic uppercase tracking-tight">Emergency Contact</h3>
+                        <h3 className="font-bold tracking-tight">Emergency Contact</h3>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Name</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Contact Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.name")} />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Relationship</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Relationship</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.relationship")} />
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Phone</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Contact Phone</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" {...register("emergencyContact.phone")} />
-                            {errors.emergencyContact?.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.emergencyContact.phone.message}</p>}
+                            {errors.emergencyContact?.phone && <p className="text-xs text-destructive font-bold uppercase">{errors.emergencyContact.phone.message}</p>}
                         </div>
                     </div>
                 </Card>
@@ -225,11 +225,11 @@ export function ProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <Shirt size={20} className="text-blue-500" />
-                        <h3 className="font-black italic uppercase tracking-tight">Race Apparel Sizes</h3>
+                        <h3 className="font-bold tracking-tight">Race Apparel Sizes</h3>
                     </div>
                     <div className="space-y-6">
                         <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">T-Shirt Size</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">T-Shirt Size</label>
                             <div className="flex flex-wrap gap-2">
                                 {SIZES.map((size) => (
                                     <button
@@ -249,7 +249,7 @@ export function ProfileForm() {
                             </div>
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Singlet Size</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Singlet Size</label>
                             <div className="flex flex-wrap gap-2">
                                 {SIZES.map((size) => (
                                     <button
@@ -275,7 +275,7 @@ export function ProfileForm() {
             {/* Save Button */}
             <div className="flex items-center justify-end gap-4 pt-4">
                 {saveStatus === "saved" && (
-                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase italic tracking-widest animate-in fade-in duration-300">
+                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase tracking-wider animate-in fade-in duration-300">
                         <Check size={16} /> Changes Saved
                     </span>
                 )}
@@ -284,7 +284,7 @@ export function ProfileForm() {
                     variant="primary"
                     size="lg"
                     disabled={!isDirty || saveStatus === "saving"}
-                    className="font-black italic uppercase tracking-wider px-8"
+                    className="font-bold tracking-wider px-8"
                 >
                     {saveStatus === "saving" ? (
                         <><Loader2 size={18} className="animate-spin mr-2" /> Saving...</>

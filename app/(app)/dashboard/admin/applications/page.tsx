@@ -142,17 +142,17 @@ export default function ApplicationsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 mb-2">
-                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-[10px] font-black uppercase italic tracking-widest">
+                        <Link href="/dashboard/admin" className="text-primary hover:underline flex items-center gap-1 text-xs font-semibold uppercase tracking-wider">
                             <ArrowLeft size={12} /> Dashboard
                         </Link>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                         Organizer <span className="text-primary">Applications</span>
                     </h1>
-                    <p className="text-text-muted font-medium italic">Review and manage platform organizer requests.</p>
+                    <p className="text-text-muted font-medium">Review and manage platform organizer requests.</p>
                 </div>
                 <div className="flex flex-wrap gap-4">
-                    <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0 text-xs font-black uppercase italic">
+                    <Button variant="outline" onClick={handleExport} className="gap-2 shrink-0 text-xs font-bold uppercase">
                         <Download size={18} /> Export CSV
                     </Button>
                 </div>
@@ -166,7 +166,7 @@ export default function ApplicationsPage() {
                             key={s}
                             onClick={() => setFilter(s)}
                             className={cn(
-                                "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0",
+                                "px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all shrink-0",
                                 filter === s ? "bg-primary text-white shadow-lg shadow-primary/20" : "bg-white/5 text-text-muted hover:bg-white/10"
                             )}
                         >
@@ -183,8 +183,8 @@ export default function ApplicationsPage() {
                         <UserCheck size={48} />
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-xl font-bold uppercase italic text-white">No applications found</h3>
-                        <p className="text-text-muted font-medium italic">There are no {filter} applications at the moment.</p>
+                        <h3 className="text-xl font-bold text-white">No applications found</h3>
+                        <p className="text-text-muted font-medium">There are no {filter} applications at the moment.</p>
                     </div>
                 </div>
             ) : (
@@ -213,7 +213,7 @@ export default function ApplicationsPage() {
                     <Button
                         variant="outline"
                         size="lg"
-                        className="min-w-48 gap-2 font-black italic uppercase tracking-widest text-xs"
+                        className="min-w-48 gap-2 font-bold uppercase tracking-wider text-xs"
                         onClick={() => loadMore()}
                         disabled={loading}
                     >

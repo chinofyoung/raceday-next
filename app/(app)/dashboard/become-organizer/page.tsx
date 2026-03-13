@@ -181,7 +181,7 @@ export default function BecomeOrganizerPage() {
                         <ShieldCheck size={48} />
                     </div>
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-black italic uppercase text-white">Application {existingApp.status === 'pending' ? 'Pending' : existingApp.status === 'approved' ? 'Approved' : 'Needs Info'}</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-white">Application {existingApp.status === 'pending' ? 'Pending' : existingApp.status === 'approved' ? 'Approved' : 'Needs Info'}</h1>
                         <p className="text-text-muted font-medium">
                             {existingApp.status === 'pending'
                                 ? "You already have a pending application. We are currently reviewing it. Please wait for our update."
@@ -191,13 +191,13 @@ export default function BecomeOrganizerPage() {
                         </p>
                     </div>
                     <div className="flex flex-col gap-3">
-                        <Button variant="primary" className="w-full font-black italic uppercase" asChild>
+                        <Button variant="primary" className="w-full font-bold" asChild>
                             <Link href="/dashboard">Go to Dashboard</Link>
                         </Button>
                         {existingApp.status !== 'approved' && (
                             <Button
                                 variant="outline"
-                                className="w-full font-black italic uppercase border-white/10"
+                                className="w-full font-bold border-white/10"
                                 onClick={() => setIsModifying(true)}
                             >
                                 Edit My Application
@@ -218,7 +218,7 @@ export default function BecomeOrganizerPage() {
                         <CheckCircle2 size={48} />
                     </div>
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-black italic uppercase text-white">Application Sent!</h1>
+                        <h1 className="text-3xl font-bold tracking-tight text-white">Application Sent!</h1>
                         <p className="text-text-muted font-medium">
                             We&apos;ve received your comprehensive application. Our team will review your identity and organization documents. You will hear from us soon.
                         </p>
@@ -234,14 +234,14 @@ export default function BecomeOrganizerPage() {
     return (
         <div className="space-y-10 max-w-7xl mx-auto">
             <div className="flex flex-col gap-4">
-                <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
+                <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-xs font-semibold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4">
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
                 <div className="space-y-1">
-                    <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
                         Become an <span className="text-primary">Organizer</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic leading-none">Complete the verification process to start hosting races.</p>
+                    <p className="text-lg text-text-muted font-medium leading-none">Complete the verification process to start hosting races.</p>
                 </div>
             </div>
 
@@ -269,7 +269,7 @@ export default function BecomeOrganizerPage() {
                                 variant="outline"
                                 onClick={handleBack}
                                 disabled={currentStep === 1 || loading}
-                                className={cn("gap-2 uppercase italic font-bold", currentStep === 1 && "invisible")}
+                                className={cn("gap-2 font-bold", currentStep === 1 && "invisible")}
                             >
                                 <ArrowLeft size={18} /> Back
                             </Button>
@@ -279,7 +279,7 @@ export default function BecomeOrganizerPage() {
                                     type="button"
                                     variant="primary"
                                     onClick={handleSubmit(onSubmit as any)}
-                                    className="gap-2 px-10 h-14 uppercase italic font-black text-lg shadow-xl shadow-primary/30"
+                                    className="gap-2 px-10 h-14 font-bold text-lg shadow-xl shadow-primary/30"
                                     isLoading={loading}
                                 >
                                     Submit Application <CheckCircle2 size={20} />
@@ -289,7 +289,7 @@ export default function BecomeOrganizerPage() {
                                     type="button"
                                     variant="primary"
                                     onClick={handleNext}
-                                    className="gap-2 px-8 h-12 uppercase italic font-black shadow-lg shadow-primary/20"
+                                    className="gap-2 px-8 h-12 font-bold shadow-lg shadow-primary/20"
                                 >
                                     Continue <ArrowRight size={18} />
                                 </Button>
@@ -300,10 +300,10 @@ export default function BecomeOrganizerPage() {
             </div>
 
             <div className="text-center p-6 bg-surface/30 border border-white/5 rounded-3xl">
-                <p className="text-[10px] text-text-muted uppercase tracking-widest font-black italic">
+                <p className="text-xs text-text-muted uppercase tracking-wider font-semibold">
                     Platform Security & Quality Assurance
                 </p>
-                <p className="text-[11px] text-text-muted/60 mt-2 max-w-xl mx-auto leading-relaxed">
+                <p className="text-xs text-text-muted/60 mt-2 max-w-xl mx-auto leading-relaxed">
                     By submitting this application, you authorize RaceDay to verify the information provided.
                     Misrepresentation of identity or organization details may lead to permanent platform banning.
                 </p>

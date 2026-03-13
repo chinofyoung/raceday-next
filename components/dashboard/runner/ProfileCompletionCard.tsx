@@ -22,13 +22,13 @@ export function ProfileCompletionCard({ completion }: ProfileCompletionCardProps
                     <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" className="text-white/10" />
                     <circle cx="50%" cy="50%" r="40%" stroke="currentColor" strokeWidth="10%" fill="transparent" strokeDasharray={`${2 * Math.PI * 40}%`} strokeDashoffset={`${2 * Math.PI * 40 * (1 - completion / 100)}%`} className="text-primary transition-all duration-1000 ease-out" />
                 </svg>
-                <span className="absolute font-black italic text-xl sm:text-2xl text-white">{completion}%</span>
+                <span className="absolute font-bold text-xl sm:text-2xl text-white">{completion}%</span>
             </div>
             <div className="flex-1 text-center md:text-left space-y-2 md:space-y-3 relative z-10 w-full pointer-events-none">
-                <h3 className="text-xl sm:text-2xl font-black uppercase italic tracking-tight text-white drop-shadow-sm">Complete your profile</h3>
-                <p className="text-sm sm:text-base text-text-muted leading-relaxed font-medium italic">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white drop-shadow-sm">Complete your profile</h3>
+                <p className="text-sm sm:text-base text-text-muted leading-relaxed font-medium">Fill in your details to auto-fill your race registrations and get your race kit sizes right!</p>
             </div>
-            <Button variant="primary" asChild className="relative z-20 w-full md:w-auto font-black italic uppercase text-white shadow-lg shadow-primary/20 whitespace-nowrap pointer-events-auto">
+            <Button variant="primary" asChild className="relative z-20 w-full md:w-auto font-bold text-white shadow-lg shadow-primary/20 whitespace-nowrap pointer-events-auto">
                 <Link href="/dashboard/settings">Complete Now <ArrowRight className="ml-2 w-4 h-4" /></Link>
             </Button>
         </Card>

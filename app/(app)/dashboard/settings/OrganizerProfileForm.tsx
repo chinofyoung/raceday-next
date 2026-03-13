@@ -127,27 +127,27 @@ export function OrganizerProfileForm() {
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-bold italic text-white uppercase">
+                        <p className="text-sm font-bold text-white">
                             {organizer.approved ? "Verified Organizer" : "Pending Verification"}
                         </p>
                         <Badge
                             variant={organizer.approved ? "success" : "secondary"}
                             className={cn(
-                                "text-[8px] font-black italic uppercase px-2 py-0 border-none",
+                                "text-xs font-semibold uppercase px-2 py-0 border-none",
                                 organizer.approved ? "bg-cta/20 text-cta" : "bg-amber-500/20 text-amber-500"
                             )}
                         >
                             {organizer.approved ? "Approved" : "Pending"}
                         </Badge>
                     </div>
-                    <p className="text-[10px] text-text-muted font-medium italic mt-0.5">
+                    <p className="text-xs text-text-muted font-medium mt-0.5">
                         {organizer.approved
                             ? "Your organizer account is verified. You can create and manage events."
                             : "Your application is under review. You'll be notified once approved."}
                     </p>
                 </div>
                 {organizer.approvedAt && (
-                    <div className="flex items-center gap-1.5 text-[9px] text-text-muted font-bold italic uppercase tracking-wider shrink-0">
+                    <div className="flex items-center gap-1.5 text-xs text-text-muted font-bold uppercase tracking-wider shrink-0">
                         <CalendarCheck size={12} className="text-cta" />
                         Approved
                     </div>
@@ -159,16 +159,16 @@ export function OrganizerProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <Building2 size={20} className="text-primary" />
-                        <h3 className="font-black italic uppercase tracking-tight">Organization Info</h3>
+                        <h3 className="font-bold tracking-tight">Organization Info</h3>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Organization Name</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Organization Name</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. RunPH Events" {...register("name")} />
-                            {errors.name && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.name.message}</p>}
+                            {errors.name && <p className="text-xs text-destructive font-bold uppercase">{errors.name.message}</p>}
                         </div>
                         <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Organization Type</label>
+                            <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Organization Type</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {ORGANIZER_TYPES.map((type) => (
                                     <button
@@ -183,12 +183,12 @@ export function OrganizerProfileForm() {
                                         )}
                                     >
                                         <p className={cn(
-                                            "text-xs font-bold uppercase italic",
+                                            "text-xs font-bold uppercase",
                                             watchedFields.organizerType === type.value ? "text-primary" : "text-white"
                                         )}>
                                             {type.label}
                                         </p>
-                                        <p className="text-[9px] text-text-muted font-medium italic mt-0.5">
+                                        <p className="text-xs text-text-muted font-medium mt-0.5">
                                             {type.description}
                                         </p>
                                     </button>
@@ -202,18 +202,18 @@ export function OrganizerProfileForm() {
                 <Card className="p-8 space-y-6 bg-surface/50 border-white/5">
                     <div className="flex items-center gap-3 border-b border-white/5 pb-4">
                         <Mail size={20} className="text-cta" />
-                        <h3 className="font-black italic uppercase tracking-tight">Contact Details</h3>
+                        <h3 className="font-bold tracking-tight">Contact Details</h3>
                     </div>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Contact Email</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Contact Email</Label>
                             <Input type="email" className="bg-white/5 border-white/10 rounded-xl" placeholder="events@yourorg.com" {...register("contactEmail")} />
-                            {errors.contactEmail && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.contactEmail.message}</p>}
+                            {errors.contactEmail && <p className="text-xs text-destructive font-bold uppercase">{errors.contactEmail.message}</p>}
                         </div>
                         <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-text-muted italic">Phone Number</Label>
+                            <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted">Phone Number</Label>
                             <Input className="bg-white/5 border-white/10 rounded-xl" placeholder="e.g. 09171234567" {...register("phone")} />
-                            {errors.phone && <p className="text-[10px] text-destructive font-bold uppercase italic">{errors.phone.message}</p>}
+                            {errors.phone && <p className="text-xs text-destructive font-bold uppercase">{errors.phone.message}</p>}
                         </div>
                     </div>
                 </Card>
@@ -222,7 +222,7 @@ export function OrganizerProfileForm() {
             {/* Save Button */}
             <div className="flex items-center justify-end gap-4 pt-4">
                 {saveStatus === "saved" && (
-                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase italic tracking-widest animate-in fade-in duration-300">
+                    <span className="flex items-center gap-2 text-cta text-xs font-bold uppercase tracking-wider animate-in fade-in duration-300">
                         <Check size={16} /> Changes Saved
                     </span>
                 )}
@@ -231,7 +231,7 @@ export function OrganizerProfileForm() {
                     variant="primary"
                     size="lg"
                     disabled={!isDirty || saveStatus === "saving"}
-                    className="font-black italic uppercase tracking-wider px-8"
+                    className="font-bold tracking-wider px-8"
                 >
                     {saveStatus === "saving" ? (
                         <><Loader2 size={18} className="animate-spin mr-2" /> Saving...</>

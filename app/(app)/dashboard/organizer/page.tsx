@@ -158,10 +158,10 @@ export default function OrganizerDashboardPage() {
     return (
         <div className="space-y-8 text-white">
             <div className="space-y-1">
-                <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                     Hello, <span className="text-primary">{user?.displayName?.split(' ')[0] || "there"}</span>
                 </h1>
-                <p className="text-text-muted font-medium italic">Your race command center. Everything at a glance.</p>
+                <p className="text-text-muted font-medium">Your race command center. Everything at a glance.</p>
             </div>
 
             <OrganizerView

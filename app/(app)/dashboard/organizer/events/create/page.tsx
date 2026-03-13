@@ -23,7 +23,7 @@ export default function CreateEventPage() {
                         <ShieldAlert size={32} />
                     </div>
                     <div className="space-y-2">
-                        <h1 className="text-2xl font-black italic uppercase text-white">Access Denied</h1>
+                        <h1 className="text-2xl font-bold text-white">Access Denied</h1>
                         <p className="text-text-muted font-medium">
                             Only verified organizers can create and manage events. Please apply to become an organizer first.
                         </p>
@@ -39,14 +39,14 @@ export default function CreateEventPage() {
     return (
         <div className="space-y-10">
             <div className="flex flex-col gap-4 mx-auto">
-                <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-[10px] font-black uppercase tracking-widest italic flex items-center gap-1 transition-colors mb-4">
+                <Link href="/dashboard" className="md:hidden text-text-muted hover:text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4">
                     <ArrowLeft size={12} /> Back to Dashboard
                 </Link>
                 <div className="space-y-1">
-                    <h1 className="text-3xl md:text-4xl font-black italic uppercase tracking-tight text-white">
-                        Launch Your <span className="text-primary">Next Race</span>.
+                    <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+                        Launch your <span className="text-primary">next race</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic">Create, configure, and manage your marathon or race event.</p>
+                    <p className="text-lg text-text-muted font-medium">Create, configure, and manage your marathon or race event.</p>
                 </div>
             </div>
 
