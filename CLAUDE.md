@@ -12,6 +12,8 @@
 
 All pages follow this design system — marketing, dashboard, and app pages alike.
 
+**Live reference:** See `/branding` (`app/(marketing)/branding/page.tsx`) for a living style guide with rendered examples of every pattern below. Reference this page when building new pages or components.
+
 ### Typography Rules
 - **Headings:** Sentence case, `font-bold` (700 weight). Never use `font-black`, `italic`, or `uppercase` on headings.
 - **Hero headlines only:** May use `text-5xl md:text-7xl font-bold tracking-tight` with color accents on key words (e.g., `<span className="text-primary">word</span>`).

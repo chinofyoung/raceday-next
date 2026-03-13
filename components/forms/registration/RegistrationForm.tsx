@@ -254,15 +254,17 @@ function RegistrationFormContent({
             </div>
 
             {/* Form Steps */}
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
-                {currentStep === 0 && <Step0Who />}
-                {currentStep === 1 && <Step1Category event={event} />}
-                {currentStep === 2 && <Step2Details event={event} />}
-                {currentStep === 3 && <Step3Vanity event={event} />}
-                {currentStep === 4 && <Step4Review event={event} />}
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="space-y-12 pb-24">
+                    {currentStep === 0 && <Step0Who />}
+                    {currentStep === 1 && <Step1Category event={event} />}
+                    {currentStep === 2 && <Step2Details event={event} />}
+                    {currentStep === 3 && <Step3Vanity event={event} />}
+                    {currentStep === 4 && <Step4Review event={event} />}
+                </div>
 
-                {/* Navigation */}
-                <div className="flex items-center justify-between pt-8 border-t border-white/5">
+                {/* Navigation — sticky bottom bar */}
+                <div className="sticky bottom-0 z-50 -mx-4 px-4 md:-mx-0 md:px-0 py-4 bg-background/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-between">
                     <Button
                         type="button"
                         variant="outline"
