@@ -25,7 +25,11 @@
       "Bash(cd C:/Users/chino/code/raceday && rm -rf .next && npx next build 2>&1 | tail -15)",
       "Bash(grep -r \"registrations.getById\" /c/Users/chino/code/raceday --include=\"*.ts\" --include=\"*.tsx\" 2>/dev/null | grep -v node_modules)",
       "Bash(grep -B 5 \"registrations.getById\" /c/Users/chino/code/raceday/app/\\\\\\(app\\\\\\)/dashboard/events/\\\\[id\\\\]/qr/page.tsx | head -15)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(bash C:/Users/chino/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/brainstorming/scripts/start-server.sh --project-dir C:/Users/chino/code/raceday)",
+      "Bash(bash C:/Users/chino/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/brainstorming/scripts/start-server.sh --project-dir C:/Users/chino/code/raceday --foreground)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)"
     ]
   }
 }
