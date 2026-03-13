@@ -6,11 +6,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, Download, QrCode, ArrowRight, Share2, MapPin, Calendar } from "lucide-react";
+import { CheckCircle2, Download, QrCode, ArrowRight, MapPin, Calendar } from "lucide-react";
 
 function RegistrationSuccessSkeleton() {
     return (
@@ -123,7 +122,7 @@ export default function RegistrationSuccessPage() {
     return (
         <PageWrapper className="pt-12 pb-24 max-w-7xl mx-auto space-y-12">
             <div className="text-center space-y-6">
-                <div className="w-20 h-20 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta animate-bounce shadow-2xl shadow-cta/20">
+                <div className="w-20 h-20 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta animate-bounce">
                     <CheckCircle2 size={46} />
                 </div>
                 <div className="space-y-2">
@@ -140,10 +139,10 @@ export default function RegistrationSuccessPage() {
                 {/* ── MAIN TICKET CONTAINER ─────────────────────────── */}
                 <div className="w-full relative animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
                     {/* Decorative Blur Backgrounds */}
-                    <div className="absolute -top-12 -left-12 w-64 h-64 bg-cta/10 rounded-full blur-[100px] -z-10" />
-                    <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-[100px] -z-10" />
+                    <div className="absolute -top-12 -left-12 w-64 h-64 bg-cta/8 rounded-full blur-[100px] -z-10" />
+                    <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary/8 rounded-full blur-[100px] -z-10" />
 
-                    <div className="flex flex-col w-full bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
+                    <div className="flex flex-col w-full bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-2xl overflow-hidden shadow-2xl">
 
                         {/* 1. Header Section: Event & Status */}
                         <div className="p-8 md:p-10 space-y-6 relative overflow-hidden">
@@ -168,9 +167,7 @@ export default function RegistrationSuccessPage() {
                                             registration?.status === "paid" ? "bg-cta text-black" : "bg-amber-500 text-black"
                                         )}
                                     >
-                                        <span className="">
-                                            {registration?.status === "paid" ? "PAID" : "PENDING"}
-                                        </span>
+                                        {registration?.status === "paid" ? "PAID" : "PENDING"}
                                     </Badge>
                                 </div>
                             </div>
@@ -178,29 +175,29 @@ export default function RegistrationSuccessPage() {
                             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 relative z-10 pt-4">
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                                        <Calendar size={10} className="text-cta" /> Date
+                                        <Calendar size={14} className="text-cta" /> Date
                                     </p>
-                                    <p className="text-sm font-bold text-white uppercase truncate">
+                                    <p className="text-sm font-bold text-white truncate">
                                         {event?.date ? format(event.date, "MMM dd, yyyy") : "TBD"}
                                     </p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                                        <MapPin size={10} className="text-cta" /> Location
+                                        <MapPin size={14} className="text-cta" /> Location
                                     </p>
-                                    <p className="text-sm font-bold text-white uppercase truncate">
+                                    <p className="text-sm font-bold text-white truncate">
                                         {event?.location?.name || "TBD"}
                                     </p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
-                                        <QrCode size={10} className="text-cta" /> Category
+                                        <QrCode size={14} className="text-cta" /> Category
                                     </p>
-                                    <p className="text-sm font-bold text-white uppercase truncate">{categoryName}</p>
+                                    <p className="text-sm font-bold text-white truncate">{categoryName}</p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">Gun Time</p>
-                                    <p className="text-sm font-bold text-white uppercase truncate">
+                                    <p className="text-sm font-bold text-white truncate">
                                         {(event?.categories as any[])?.find(c => c.id === registration?.categoryId)?.gunStartTime || "TBD"}
                                     </p>
                                 </div>
@@ -219,8 +216,8 @@ export default function RegistrationSuccessPage() {
 
                             {/* QR CODE Visual */}
                             <div className="relative group shrink-0">
-                                <div className="absolute inset-0 bg-white/10 rounded-2xl blur-2xl group-hover:bg-white/20 transition-all duration-500 scale-90" />
-                                <div className="relative p-6 bg-white rounded-2xl shadow-[0_0_50px_-10px_rgba(255,255,255,0.2)] transition-all duration-500 group-hover:scale-105 ring-1 ring-white/10">
+                                <div className="absolute inset-0 bg-white/8 rounded-2xl blur-2xl transition-all duration-500 scale-90" />
+                                <div className="relative p-6 bg-white rounded-2xl shadow-lg transition-all duration-500 ring-1 ring-white/10 group-hover:ring-white/20">
                                     {registration?.status === "paid" && registration?.qrCodeUrl ? (
                                         <div className="relative overflow-hidden rounded-2xl">
                                             <Image
@@ -231,7 +228,7 @@ export default function RegistrationSuccessPage() {
                                                 className="rounded-2xl"
                                             />
                                             {/* Scanning Line Animation */}
-                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cta to-transparent animate-[scan_3s_ease-in-out_infinite] opacity-50 shadow-[0_0_10px_#00E5FF]" />
+                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cta to-transparent animate-[scan_3s_ease-in-out_infinite] opacity-50 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
                                         </div>
                                     ) : (
                                         <div className="w-[220px] h-[220px] bg-white flex flex-col items-center justify-center text-cta gap-3">
@@ -247,8 +244,8 @@ export default function RegistrationSuccessPage() {
                             {/* Bib & Participant Info */}
                             <div className="flex-1 space-y-8 w-full">
                                 <div className="space-y-3">
-                                    <div className="inline-block px-4 py-1.5 bg-primary/20 border border-primary/30 rounded-xl skew-x-[-12deg]">
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-primary skew-x-[12deg] block">RACE NUMBER</span>
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-primary/8 border border-primary/12 rounded-full">
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-primary">Race number</span>
                                     </div>
                                     <h3 className="text-6xl md:text-6xl font-bold text-white tracking-tight leading-none">
                                         {registration?.status === "paid" ? registration?.raceNumber : "---"}
@@ -259,7 +256,7 @@ export default function RegistrationSuccessPage() {
                                     <div>
                                         <p className="text-xs font-semibold uppercase tracking-wider text-text-muted mb-1">Athlete</p>
                                         <h4 className="text-2xl font-bold text-white tracking-tight">{registration?.registrationData?.participantInfo?.name}</h4>
-                                        <p className="text-xs text-text-muted font-bold opacity-70">{registration?.registrationData?.participantInfo?.email}</p>
+                                        <p className="text-xs text-text-muted font-medium">{registration?.registrationData?.participantInfo?.email}</p>
                                     </div>
                                 </div>
                             </div>
@@ -269,7 +266,7 @@ export default function RegistrationSuccessPage() {
                         <div className="p-8 md:p-10 bg-white/[0.02] border-t border-white/5 space-y-4 text-center">
                             <Button
                                 variant="outline"
-                                className="w-full h-14 gap-3 font-semibold text-white hover:bg-white/3 border border-white/12 rounded-lg group relative overflow-hidden active:scale-[0.98] transition-all"
+                                className="w-full h-14 gap-3 font-semibold text-text hover:bg-white/3 border border-white/12 rounded-lg group relative overflow-hidden active:scale-[0.98] transition-all"
                                 onClick={() => window.print()}
                                 disabled={registration?.status !== "paid"}
                             >
@@ -288,21 +285,6 @@ export default function RegistrationSuccessPage() {
                     </div>
                 </div>
 
-                {/* ── Bragging Rights Card ─────────────────────────── */}
-                <Card className="w-full p-6 bg-gradient-to-r from-primary/10 to-transparent border-primary/20 flex items-center justify-between group hover:border-primary/40 transition-all cursor-pointer rounded-3xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-                    <div className="flex items-center gap-5">
-                        <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:rotate-6 transition-all ring-1 ring-primary/20">
-                            <Share2 size={24} />
-                        </div>
-                        <div>
-                            <h4 className="text-sm font-bold text-white tracking-tight">Athlete shoutout</h4>
-                            <p className="text-xs text-text-muted font-semibold uppercase tracking-wider">Broadcast your entry to the community</p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="sm" className="text-primary font-semibold hover:bg-primary/10 rounded-xl">
-                        Share <ArrowRight size={14} className="ml-1 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                </Card>
             </div>
 
             {/* ── FOOTER NAVIGATION ───────────────────────────── */}
