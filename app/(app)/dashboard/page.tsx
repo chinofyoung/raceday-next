@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
     if (loading) {
         return (
-            <div className="space-y-4 sm:space-y-8 max-w-5xl mx-auto">
+            <div className="space-y-4 sm:space-y-8">
                 {/* Header Skeleton */}
                 <div className="space-y-3">
                     <Skeleton className="h-10 w-48" />
@@ -98,7 +98,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="space-y-4 sm:space-y-8 text-white max-w-5xl mx-auto">
+        <div className="space-y-4 sm:space-y-8 text-white">
             <div className="space-y-1">
                 <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
                     Hello, <span className="text-primary">{user?.displayName?.split(' ')[0] || "there"}</span>
