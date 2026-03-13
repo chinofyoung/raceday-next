@@ -73,7 +73,7 @@ export function Step2Details({ event }: Step2DetailsProps) {
                             </div>
                             <div className="space-y-1.5">
                                 <Label className="text-xs font-semibold uppercase tracking-wider text-text-muted opacity-70">Birth Date</Label>
-                                <Input type="date" {...register("participantInfo.birthDate")} />
+                                <Input type="date" {...register("participantInfo.birthDate")} className="appearance-none h-[46px]" />
                                 {errors.participantInfo?.birthDate?.message && <p className="text-xs text-red-500 font-bold">{errors.participantInfo.birthDate.message}</p>}
                             </div>
                         </div>
