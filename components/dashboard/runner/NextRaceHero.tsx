@@ -73,7 +73,7 @@ export function NextRaceHero({ registration }: NextRaceHeroProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2">
                 {/* Image */}
-                <div className="aspect-[16/9] md:aspect-auto md:min-h-[280px] bg-black/40 relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
+                <div className="aspect-[16/9] md:aspect-auto md:h-full bg-black/40 relative overflow-hidden border-b md:border-b-0 md:border-r border-white/5">
                     {event.featuredImage ? (
                         <Image
                             src={event.featuredImage}
