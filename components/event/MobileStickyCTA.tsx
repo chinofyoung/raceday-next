@@ -28,7 +28,7 @@ export function MobileStickyCTA({ event, isRegistered, loadingAuth }: MobileStic
             <Button
                 asChild
                 variant="primary"
-                className="w-full h-14 text-lg font-black italic uppercase tracking-wider bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20 group flex-1"
+                className="w-full h-14 text-base font-semibold bg-cta hover:bg-cta/90 border-none shadow-lg group flex-1"
             >
                 <Link href={`/events/${event.id}/register`}>
                     Register Now <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />

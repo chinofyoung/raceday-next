@@ -36,15 +36,15 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
             <div className="absolute inset-0 bg-black/20" />
 
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 max-w-7xl mx-auto space-y-4">
+            <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 md:pb-12 md:px-0 max-w-7xl mx-auto space-y-4">
                 <div className="flex items-center justify-between gap-4 mb-4">
-                    <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                    <Link href="/events" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-xs font-semibold tracking-wider transition-colors">
                         <ArrowLeft size={16} /> Back to Search
                     </Link>
                     {isOrganizer && (
                         <Link
                             href={`/dashboard/organizer/events/${event.id}/edit`}
-                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-bold uppercase tracking-widest transition-all shadow-xl group"
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-xl border border-white/10 text-white text-xs font-semibold tracking-wider transition-all shadow-xl group"
                         >
                             <Edit2 size={14} className="group-hover:text-primary transition-colors" />
                             Edit <span className="hidden sm:inline">Event</span>
@@ -72,11 +72,11 @@ export function EventHero({ event, userRegistration, loadingAuth, isOrganizer }:
                             </Badge>
                         )}
                     </div>
-                    <h1 className="text-4xl md:text-7xl lg:text-8xl font-black italic uppercase leading-none tracking-tighter text-white">
+                    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight text-white">
                         {event.name}
                     </h1>
                 </div>
-                <div className="flex flex-wrap gap-6 text-white/90 font-semibold uppercase tracking-wide text-xs">
+                <div className="flex flex-wrap gap-6 text-white/90 font-medium text-sm">
                     <div className="flex items-center gap-2"><Calendar size={20} className="text-primary" /> {isValidDate ? format(eventDate, "MMMM d, yyyy") : "TBD"}</div>
                     <div className="flex items-center gap-2"><MapPin size={20} className="text-cta" /> {event.location?.name || "Multiple Locations"}</div>
                 </div>

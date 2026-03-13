@@ -13,8 +13,8 @@ export function EventInfo({ event }: EventInfoProps) {
     return (
         <div id="info" className="space-y-10 px-4 md:px-0">
             <div className="space-y-4">
-                <h2 className="text-3xl font-black italic uppercase tracking-tight text-white">About the <span className="text-primary">Race</span></h2>
-                <p className="text-lg text-text-muted leading-relaxed font-medium">
+                <h2 className="text-3xl font-bold tracking-tight text-white">About the <span className="text-primary">Race</span></h2>
+                <p className="text-lg text-text-muted leading-relaxed font-normal">
                     {event.description}
                 </p>
             </div>
@@ -24,8 +24,8 @@ export function EventInfo({ event }: EventInfoProps) {
                         <Trophy size={24} />
                     </div>
                     <div>
-                        <h4 className="font-black italic uppercase text-white">Medals & Loot</h4>
-                        <p className="text-xs text-text-muted mt-1 font-medium italic leading-relaxed">Exclusive finisher medals and race kits for all valid participants.</p>
+                        <h4 className="font-bold text-white">Medals & Loot</h4>
+                        <p className="text-xs text-text-muted mt-1 font-normal leading-relaxed">Exclusive finisher medals and race kits for all valid participants.</p>
                     </div>
                 </Card>
                 <Card className="p-6 bg-surface/30 border-white/5 flex gap-4">
@@ -33,8 +33,8 @@ export function EventInfo({ event }: EventInfoProps) {
                         <Users size={24} />
                     </div>
                     <div>
-                        <h4 className="font-black italic uppercase text-white">Community</h4>
-                        <p className="text-xs text-text-muted mt-1 font-medium italic leading-relaxed">Join thousands of runners in an unforgettable shared experience.</p>
+                        <h4 className="font-bold text-white">Community</h4>
+                        <p className="text-xs text-text-muted mt-1 font-normal leading-relaxed">Join thousands of runners in an unforgettable shared experience.</p>
                     </div>
                 </Card>
             </div>

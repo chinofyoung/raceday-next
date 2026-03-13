@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function EventCardSkeleton() {
     return (
-        <div className="rounded-[2rem] bg-surface/30 border border-white/5 overflow-hidden">
+        <div className="rounded-xl bg-surface/30 border border-white/5 overflow-hidden">
             <Skeleton className="aspect-video w-full rounded-none" />
             <div className="p-6 space-y-4">
                 <div className="space-y-2">
@@ -96,10 +96,10 @@ export default function EventsDirectoryPage() {
             {/* Header & Search */}
             <div className="space-y-8 max-w-5xl">
                 <div className="space-y-2">
-                    <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter">
-                        Find Your <span className="text-primary">Next Race</span>.
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+                        Find your <span className="text-primary">next race</span>.
                     </h1>
-                    <p className="text-lg text-text-muted font-medium italic">
+                    <p className="text-lg text-text-muted font-normal">
                         Discover the best running events across the country. Filter by distance, location, or date.
                     </p>
                 </div>
@@ -114,7 +114,7 @@ export default function EventsDirectoryPage() {
                             placeholder="Search events by name or location..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-12 pr-12 py-4 bg-surface/50 border border-white/5 rounded-2xl text-text focus:outline-none focus:border-primary transition-all shadow-xl"
+                            className="w-full pl-12 pr-12 py-4 bg-surface/50 border border-white/5 rounded-xl text-text focus:outline-none focus:border-primary transition-all shadow-xl"
                         />
                         {searchTerm.length > 0 && (
                             <button
@@ -131,16 +131,16 @@ export default function EventsDirectoryPage() {
                 <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 [mask-image:linear-gradient(to_right,black_85%,transparent_100%)] sm:[mask-image:none]">
                     <div className="flex items-center gap-2 mr-2 text-text-muted shrink-0">
                         <SlidersHorizontal size={16} />
-                        <span className="text-[10px] font-black uppercase tracking-widest italic">Distance:</span>
+                        <span className="text-xs font-semibold uppercase tracking-wider">Distance:</span>
                     </div>
                     {DISTANCE_FILTERS.map((filter) => (
                         <button
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={cn(
-                                "px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all italic border shrink-0",
+                                "px-6 py-2 rounded-full text-xs font-semibold uppercase tracking-wider transition-all border shrink-0",
                                 activeFilter === filter
-                                    ? "bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105"
+                                    ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
                                     : "bg-surface/50 border-white/5 text-text-muted hover:border-white/20"
                             )}
                         >
@@ -161,7 +161,7 @@ export default function EventsDirectoryPage() {
                 <div className="space-y-16">
                     {upcomingEvents.length > 0 && (
                         <div className="space-y-8">
-                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">Upcoming <span className="text-primary">Races</span></h2>
+                            <h2 className="text-3xl font-bold tracking-tight text-white">Upcoming <span className="text-primary">races</span></h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {upcomingEvents.map((event) => (
                                     <EventCard
@@ -177,7 +177,7 @@ export default function EventsDirectoryPage() {
 
                     {pastEvents.length > 0 && (
                         <div className="space-y-8 border-t border-white/5 pt-12">
-                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-text-muted">Past <span className="opacity-50">Events</span></h2>
+                            <h2 className="text-3xl font-bold tracking-tight text-text-muted">Past events</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 opacity-75 grayscale-[20%]">
                                 {pastEvents.map((event) => (
                                     <EventCard
@@ -192,13 +192,13 @@ export default function EventsDirectoryPage() {
                     )}
                 </div>
             ) : (
-                <div className="py-32 text-center space-y-6 bg-surface/20 rounded-[3rem] border border-dashed border-white/10">
+                <div className="py-32 text-center space-y-6 bg-surface/20 rounded-2xl border border-dashed border-white/10">
                     <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto text-text-muted">
                         <Search size={40} />
                     </div>
                     <div className="space-y-2">
-                        <h3 className="text-2xl font-black italic uppercase text-white">No races found</h3>
-                        <p className="text-text-muted font-medium max-w-md mx-auto italic px-6">
+                        <h3 className="text-2xl font-bold text-white">No races found</h3>
+                        <p className="text-text-muted font-normal max-w-md mx-auto px-6">
                             We couldn&apos;t find any events matching your search criteria. Try different filters or search terms.
                         </p>
                     </div>

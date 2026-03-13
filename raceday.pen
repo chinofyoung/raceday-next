@@ -1,0 +1,3300 @@
+{
+  "version": "2.8",
+  "children": [
+    {
+      "type": "frame",
+      "id": "Pqcdw",
+      "x": 0,
+      "y": 0,
+      "name": "RaceDay Landing Page",
+      "clip": true,
+      "width": 1440,
+      "fill": "$bg-primary",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "jXubx",
+          "name": "Header + Hero",
+          "metadata": {
+            "type": "unsplash",
+            "username": "ukt_jr",
+            "link": "https://unsplash.com/@ukt_jr",
+            "author": "Gowrinandan Unnakkattu"
+          },
+          "clip": true,
+          "width": "fill_container",
+          "height": "fit_content(900)",
+          "fill": {
+            "type": "image",
+            "enabled": true,
+            "url": "https://images.unsplash.com/photo-1683802635057-3034103e751c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzMjE1NjZ8&ixlib=rb-4.1.0&q=80&w=1080",
+            "mode": "fill"
+          },
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "WGkbG",
+              "name": "Overlay",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 180,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#0A0E14E8",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0A0E1470",
+                    "position": 0.4
+                  },
+                  {
+                    "color": "#0A0E14C0",
+                    "position": 1
+                  }
+                ]
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ilERo",
+                  "name": "Header",
+                  "width": "fill_container",
+                  "padding": [
+                    16,
+                    48
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ktQ6B",
+                      "name": "Logo",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "NSyWF",
+                          "name": "runIcon",
+                          "width": 22,
+                          "height": 22,
+                          "iconFontName": "timer",
+                          "iconFontFamily": "lucide",
+                          "fill": "$accent-orange"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lEPJF",
+                          "name": "logoText",
+                          "fill": "$text-primary",
+                          "content": "RACEDAY",
+                          "fontFamily": "Sora",
+                          "fontSize": 20,
+                          "fontWeight": "700",
+                          "letterSpacing": 2
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8slbT",
+                      "name": "Nav",
+                      "gap": 32,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "OkBD0",
+                          "name": "n1",
+                          "fill": "$text-primary",
+                          "content": "Events",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "9Jjgj",
+                          "name": "n2",
+                          "fill": "$text-secondary",
+                          "content": "For Organizers",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "9jFrw",
+                          "name": "n3",
+                          "fill": "$text-secondary",
+                          "content": "About",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "X3hKC",
+                          "name": "n4",
+                          "fill": "$text-secondary",
+                          "content": "Manage Events",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "7Ub6J",
+                          "name": "n5",
+                          "fill": "$text-secondary",
+                          "content": "Dashboard",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wKEAK",
+                      "name": "Sign In",
+                      "fill": "$accent-orange",
+                      "cornerRadius": 6,
+                      "padding": [
+                        10,
+                        24
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yGtvw",
+                          "name": "signInText",
+                          "fill": "$text-primary",
+                          "content": "Sign In",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "0Nvjt",
+                  "name": "Hero Content",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 32,
+                  "padding": [
+                    0,
+                    120
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "TVyXQ",
+                      "name": "Headline",
+                      "layout": "vertical",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "2oUQ8",
+                          "name": "row1",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ffNPJ",
+                              "name": "t1",
+                              "fill": "$text-primary",
+                              "content": "CHASE THE ",
+                              "lineHeight": 1.1,
+                              "fontFamily": "Sora",
+                              "fontSize": 64,
+                              "fontWeight": "700",
+                              "letterSpacing": -2
+                            },
+                            {
+                              "type": "text",
+                              "id": "yIaXt",
+                              "name": "t2",
+                              "fill": "$accent-orange",
+                              "content": "HIGH,",
+                              "lineHeight": 1.1,
+                              "fontFamily": "Sora",
+                              "fontSize": 64,
+                              "fontWeight": "700",
+                              "letterSpacing": -2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "ZHMcV",
+                          "name": "row2",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "0xL1B",
+                              "name": "t3",
+                              "fill": "$text-primary",
+                              "content": "DEFINE THE ",
+                              "lineHeight": 1.1,
+                              "fontFamily": "Sora",
+                              "fontSize": 64,
+                              "fontWeight": "700",
+                              "letterSpacing": -2
+                            },
+                            {
+                              "type": "text",
+                              "id": "jXYw7",
+                              "name": "t4",
+                              "fill": "$accent-green",
+                              "content": "LINE.",
+                              "lineHeight": 1.1,
+                              "fontFamily": "Sora",
+                              "fontSize": 64,
+                              "fontWeight": "700",
+                              "letterSpacing": -2
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "s4dzv",
+                      "name": "sub",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": 700,
+                      "content": "From fun runs to ultra marathons — discover events, register in seconds, and join thousands of runners pushing their limits every weekend.",
+                      "lineHeight": 1.6,
+                      "textAlign": "center",
+                      "fontFamily": "Inter",
+                      "fontSize": 18
+                    },
+                    {
+                      "type": "frame",
+                      "id": "1kyGG",
+                      "name": "CTA Row",
+                      "gap": 16,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "nj8Db",
+                          "name": "Browse Events",
+                          "fill": "$accent-orange",
+                          "cornerRadius": 8,
+                          "padding": [
+                            16,
+                            36
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "xUXnn",
+                              "name": "browseText",
+                              "fill": "$text-primary",
+                              "content": "Browse Events",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "NOBay",
+                          "name": "Host An Event",
+                          "cornerRadius": 8,
+                          "stroke": {
+                            "thickness": 2,
+                            "fill": "$accent-orange"
+                          },
+                          "padding": [
+                            16,
+                            36
+                          ],
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "meCWX",
+                              "name": "hostText",
+                              "fill": "$text-primary",
+                              "content": "Host An Event",
+                              "fontFamily": "Inter",
+                              "fontSize": 16,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "0Nlv6",
+                      "name": "Stats Row",
+                      "gap": 48,
+                      "padding": [
+                        24,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "DC31w",
+                          "name": "s1",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "EE0GD",
+                              "name": "i1",
+                              "width": 20,
+                              "height": 20,
+                              "iconFontName": "map-pin",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            },
+                            {
+                              "type": "text",
+                              "id": "uj99L",
+                              "name": "t1",
+                              "fill": "$text-primary",
+                              "content": "50+ Cities",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "pXzia",
+                          "name": "s2",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "7BK6P",
+                              "name": "i2",
+                              "width": 20,
+                              "height": 20,
+                              "iconFontName": "users",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            },
+                            {
+                              "type": "text",
+                              "id": "9accd",
+                              "name": "t2",
+                              "fill": "$text-primary",
+                              "content": "10K+ Runners",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "67RSZ",
+                          "name": "s3",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "En9yq",
+                              "name": "i3",
+                              "width": 20,
+                              "height": 20,
+                              "iconFontName": "trophy",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            },
+                            {
+                              "type": "text",
+                              "id": "atfRt",
+                              "name": "t3",
+                              "fill": "$text-primary",
+                              "content": "200+ Races",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qROnH",
+                          "name": "s4",
+                          "gap": 10,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "y7k3y",
+                              "name": "i4",
+                              "width": 20,
+                              "height": 20,
+                              "iconFontName": "zap",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            },
+                            {
+                              "type": "text",
+                              "id": "PfSkH",
+                              "name": "t4",
+                              "fill": "$text-primary",
+                              "content": "30s Registration",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "vaQby",
+          "name": "Races + HowItWorks",
+          "width": "fill_container",
+          "fill": "$bg-primary",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "6OhDl",
+              "name": "Upcoming Races Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 40,
+              "padding": [
+                80,
+                120
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "IVWaa",
+                  "name": "Header Row",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "e1LPH",
+                      "name": "Title Group",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bW7Bj",
+                          "name": "Title Line",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KnYrS",
+                              "name": "titleUpcoming",
+                              "fill": "$text-primary",
+                              "content": "UPCOMING",
+                              "lineHeight": 1,
+                              "fontFamily": "Sora",
+                              "fontSize": 38,
+                              "fontWeight": "700",
+                              "letterSpacing": -1.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "EbhUg",
+                              "name": "titleRaces",
+                              "fill": "$accent-orange",
+                              "content": "RACES",
+                              "lineHeight": 1,
+                              "fontFamily": "Sora",
+                              "fontSize": 38,
+                              "fontWeight": "700",
+                              "letterSpacing": -1.5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "lv0uM",
+                          "name": "subtitle",
+                          "fill": "$text-secondary",
+                          "content": "Don't miss out on the biggest events of the season.",
+                          "fontFamily": "Inter",
+                          "fontSize": 14
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "mReDL",
+                      "name": "viewAll",
+                      "fill": "$accent-orange",
+                      "content": "View All Events →",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yIU8s",
+                  "name": "Cards Row",
+                  "width": "fill_container",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "PUuCu",
+                      "name": "Card - Grand City Marathon",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "y8uwh",
+                          "name": "Image 1",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "matoovisato",
+                            "link": "https://unsplash.com/@matoovisato",
+                            "author": "Mathieu Improvisato"
+                          },
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1757147517535-d0d9f4cd5b28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzMjE1MTR8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "TvTWB",
+                              "x": 16,
+                              "y": 16,
+                              "name": "Date Badge",
+                              "fill": "$accent-orange",
+                              "cornerRadius": 6,
+                              "layout": "vertical",
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Qet47",
+                                  "name": "badgeMonth1",
+                                  "fill": "#FFFFFF",
+                                  "content": "MAR",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 9,
+                                  "fontWeight": "700",
+                                  "letterSpacing": 1
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "lwIft",
+                                  "name": "badgeDay1",
+                                  "fill": "#FFFFFF",
+                                  "content": "28",
+                                  "lineHeight": 1.1,
+                                  "fontFamily": "Sora",
+                                  "fontSize": 20,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "lAiZT",
+                          "name": "Card Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "ZS3uk",
+                              "name": "name1",
+                              "fill": "$text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Grand City Marathon: Trifecta LCG",
+                              "fontFamily": "Sora",
+                              "fontSize": 18,
+                              "fontWeight": "700",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "frame",
+                              "id": "jPKUz",
+                              "name": "locRow1",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "6iJey",
+                                  "name": "locIcon1",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "map-pin",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "kOjWH",
+                                  "name": "locText1",
+                                  "fill": "$text-secondary",
+                                  "content": "Chicago, IL",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "fILVA",
+                              "name": "bottomRow1",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "2Pi87",
+                                  "name": "tag1",
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 4,
+                                  "padding": [
+                                    4,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "vheIr",
+                                      "name": "tagText1",
+                                      "fill": "$accent-orange",
+                                      "content": "ADVANCED",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "700",
+                                      "letterSpacing": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "AKn1w",
+                                  "name": "price1",
+                                  "fill": "$text-primary",
+                                  "content": "$85",
+                                  "fontFamily": "Sora",
+                                  "fontSize": 22,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yIEl9",
+                      "name": "Card - Gap Fun Run",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "uFOhf",
+                          "name": "Image 2",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "cajeo",
+                            "link": "https://unsplash.com/@cajeo",
+                            "author": "Quan-You Zhang"
+                          },
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1758684050596-15a238d24202?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzMjE1MjZ8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "gg8ee",
+                              "x": 16,
+                              "y": 16,
+                              "name": "Date Badge",
+                              "fill": "$accent-orange",
+                              "cornerRadius": 6,
+                              "layout": "vertical",
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Dx1Vj",
+                                  "name": "badgeMonth2",
+                                  "fill": "#FFFFFF",
+                                  "content": "APR",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 9,
+                                  "fontWeight": "700",
+                                  "letterSpacing": 1
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "hhbSV",
+                                  "name": "badgeDay2",
+                                  "fill": "#FFFFFF",
+                                  "content": "12",
+                                  "lineHeight": 1.1,
+                                  "fontFamily": "Sora",
+                                  "fontSize": 20,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "xZ6Qx",
+                          "name": "Card Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "dAW3I",
+                              "name": "name2",
+                              "fill": "$text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Gap Fun Run",
+                              "fontFamily": "Sora",
+                              "fontSize": 18,
+                              "fontWeight": "700",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Tvknr",
+                              "name": "locRow2",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "iRtYx",
+                                  "name": "locIcon2",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "map-pin",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "nujge",
+                                  "name": "locText2",
+                                  "fill": "$text-secondary",
+                                  "content": "Brighton, UK",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DA0Ma",
+                              "name": "bottomRow2",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "2UZax",
+                                  "name": "tag2",
+                                  "fill": "#2ECC4020",
+                                  "cornerRadius": 4,
+                                  "padding": [
+                                    4,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "84JWl",
+                                      "name": "tagText2",
+                                      "fill": "$accent-green",
+                                      "content": "BEGINNER",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "700",
+                                      "letterSpacing": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "kU6sR",
+                                  "name": "price2",
+                                  "fill": "$text-primary",
+                                  "content": "$35",
+                                  "fontFamily": "Sora",
+                                  "fontSize": 22,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "JcCmI",
+                      "name": "Card - Palo Half Marathon",
+                      "clip": true,
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "F2kFS",
+                          "name": "Image 3",
+                          "metadata": {
+                            "type": "unsplash",
+                            "username": "davotibarna",
+                            "link": "https://unsplash.com/@davotibarna",
+                            "author": "Barnabas Davoti"
+                          },
+                          "width": "fill_container",
+                          "height": 220,
+                          "fill": {
+                            "type": "image",
+                            "enabled": true,
+                            "url": "https://images.unsplash.com/photo-1763568300007-633fedaf232d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzMjE1MzR8&ixlib=rb-4.1.0&q=80&w=1080",
+                            "mode": "fill"
+                          },
+                          "layout": "none",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "McXRG",
+                              "x": 16,
+                              "y": 16,
+                              "name": "Date Badge",
+                              "fill": "$accent-orange",
+                              "cornerRadius": 6,
+                              "layout": "vertical",
+                              "padding": [
+                                8,
+                                12
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "GZ45v",
+                                  "name": "badgeMonth3",
+                                  "fill": "#FFFFFF",
+                                  "content": "MAY",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 9,
+                                  "fontWeight": "700",
+                                  "letterSpacing": 1
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "Z4EZt",
+                                  "name": "badgeDay3",
+                                  "fill": "#FFFFFF",
+                                  "content": "05",
+                                  "lineHeight": 1.1,
+                                  "fontFamily": "Sora",
+                                  "fontSize": 20,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "8FBIS",
+                          "name": "Card Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": 20,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Guuel",
+                              "name": "name3",
+                              "fill": "$text-primary",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "Palo Half Marathon",
+                              "fontFamily": "Sora",
+                              "fontSize": 18,
+                              "fontWeight": "700",
+                              "letterSpacing": -0.5
+                            },
+                            {
+                              "type": "frame",
+                              "id": "q73GR",
+                              "name": "locRow3",
+                              "gap": 6,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "saX2z",
+                                  "name": "locIcon3",
+                                  "width": 14,
+                                  "height": 14,
+                                  "iconFontName": "map-pin",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-secondary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "cn40f",
+                                  "name": "locText3",
+                                  "fill": "$text-secondary",
+                                  "content": "Boulder, CO",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 13
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "Chd3b",
+                              "name": "bottomRow3",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "Xbt81",
+                                  "name": "tag3",
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 4,
+                                  "padding": [
+                                    4,
+                                    10
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "H61km",
+                                      "name": "tagText3",
+                                      "fill": "$accent-orange",
+                                      "content": "INTERMEDIATE",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 9,
+                                      "fontWeight": "700",
+                                      "letterSpacing": 1
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "JuWJd",
+                                  "name": "price3",
+                                  "fill": "$text-primary",
+                                  "content": "$55",
+                                  "fontFamily": "Sora",
+                                  "fontSize": 22,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "VvBGU",
+              "name": "How It Works Section",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 48,
+              "padding": [
+                80,
+                120
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "rectangle",
+                  "id": "qaNNt",
+                  "name": "accentLine",
+                  "fill": "$accent-orange",
+                  "width": 24,
+                  "height": 2
+                },
+                {
+                  "type": "text",
+                  "id": "1TcgA",
+                  "name": "sectionLabel",
+                  "fill": "$text-secondary",
+                  "content": "HOW IT WORKS",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "700",
+                  "letterSpacing": 2
+                },
+                {
+                  "type": "text",
+                  "id": "7Vaxh",
+                  "name": "sectionTitle",
+                  "fill": "$text-primary",
+                  "content": "Your Race in 3 Simple Steps",
+                  "lineHeight": 1,
+                  "fontFamily": "Sora",
+                  "fontSize": 38,
+                  "fontWeight": "700",
+                  "letterSpacing": -1.5
+                },
+                {
+                  "type": "frame",
+                  "id": "vygYy",
+                  "name": "Steps Row",
+                  "width": "fill_container",
+                  "gap": 32,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "CsUdH",
+                      "name": "Step 1",
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 20,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "DVr9z",
+                          "name": "numBg1",
+                          "width": 56,
+                          "height": 56,
+                          "fill": "$accent-orange",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "bHqkS",
+                              "name": "num1",
+                              "fill": "#FFFFFF",
+                              "content": "1",
+                              "fontFamily": "Sora",
+                              "fontSize": 24,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "DoFdJ",
+                          "name": "stepTitle1",
+                          "fill": "$text-primary",
+                          "content": "Find Event",
+                          "fontFamily": "Sora",
+                          "fontSize": 22,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "sEVpU",
+                          "name": "stepDesc1",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Browse through hundreds of upcoming races and find your next challenge.",
+                          "lineHeight": 1.5,
+                          "textAlign": "center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "QFErk",
+                      "name": "Step 2",
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 20,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GWdNQ",
+                          "name": "numBg2",
+                          "width": 56,
+                          "height": 56,
+                          "fill": "$accent-orange",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "2Eu7M",
+                              "name": "num2",
+                              "fill": "#FFFFFF",
+                              "content": "2",
+                              "fontFamily": "Sora",
+                              "fontSize": 24,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "42Fcz",
+                          "name": "stepTitle2",
+                          "fill": "$text-primary",
+                          "content": "Quick Register",
+                          "fontFamily": "Sora",
+                          "fontSize": 22,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "g7FVZ",
+                          "name": "stepDesc2",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Sign up in under 30 seconds with our streamlined registration process.",
+                          "lineHeight": 1.5,
+                          "textAlign": "center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TKevB",
+                      "name": "Step 3",
+                      "width": "fill_container",
+                      "fill": "$bg-card",
+                      "cornerRadius": 12,
+                      "layout": "vertical",
+                      "gap": 20,
+                      "padding": [
+                        32,
+                        28
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "WVXX8",
+                          "name": "numBg3",
+                          "width": 56,
+                          "height": 56,
+                          "fill": "$accent-orange",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "1Djab",
+                              "name": "num3",
+                              "fill": "#FFFFFF",
+                              "content": "3",
+                              "fontFamily": "Sora",
+                              "fontSize": 24,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "f84ht",
+                          "name": "stepTitle3",
+                          "fill": "$text-primary",
+                          "content": "Run & Track",
+                          "fontFamily": "Sora",
+                          "fontSize": 22,
+                          "fontWeight": "700",
+                          "letterSpacing": -0.5
+                        },
+                        {
+                          "type": "text",
+                          "id": "Hw3PH",
+                          "name": "stepDesc3",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Use real-time GPS tracking to monitor your pace and share with friends.",
+                          "lineHeight": 1.5,
+                          "textAlign": "center",
+                          "fontFamily": "Inter",
+                          "fontSize": 14
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "jwgwv",
+          "name": "Feature + CTA + Footer",
+          "width": "fill_container",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "y0tCN",
+              "name": "Feature Section",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 90,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#0D1A1F",
+                    "position": 0
+                  },
+                  {
+                    "color": "#0F2027",
+                    "position": 0.5
+                  },
+                  {
+                    "color": "#0A1520",
+                    "position": 1
+                  }
+                ]
+              },
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "0nCJ4",
+                  "name": "App Hero",
+                  "width": "fill_container",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 135,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#0D1A1F",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0F2027",
+                        "position": 0.5
+                      },
+                      {
+                        "color": "#0A1520",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "gap": 64,
+                  "padding": [
+                    80,
+                    120
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FlTIU",
+                      "name": "Phone Showcase",
+                      "width": 300,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "radial",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#1A223010",
+                            "position": 0
+                          },
+                          {
+                            "color": "#00000000",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "layout": "vertical",
+                      "padding": 10,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "0C9jV",
+                          "name": "iPhone",
+                          "clip": true,
+                          "width": 280,
+                          "height": 560,
+                          "fill": "#000000",
+                          "cornerRadius": 44,
+                          "stroke": {
+                            "align": "outside",
+                            "thickness": 2,
+                            "fill": {
+                              "type": "gradient",
+                              "gradientType": "linear",
+                              "enabled": true,
+                              "rotation": 180,
+                              "size": {
+                                "height": 1
+                              },
+                              "colors": [
+                                {
+                                  "color": "#3A3A3C",
+                                  "position": 0
+                                },
+                                {
+                                  "color": "#1C1C1E",
+                                  "position": 0.5
+                                },
+                                {
+                                  "color": "#3A3A3C",
+                                  "position": 1
+                                }
+                              ]
+                            }
+                          },
+                          "effect": [
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#00000060",
+                              "offset": {
+                                "x": 0,
+                                "y": 8
+                              },
+                              "blur": 40
+                            },
+                            {
+                              "type": "shadow",
+                              "shadowType": "outer",
+                              "color": "#FF572215",
+                              "offset": {
+                                "x": 0,
+                                "y": 2
+                              },
+                              "blur": 8
+                            }
+                          ],
+                          "layout": "vertical",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "SUPaI",
+                              "name": "iPhone Screen",
+                              "clip": true,
+                              "width": "fill_container",
+                              "height": "fill_container",
+                              "fill": "$bg-primary",
+                              "layout": "vertical",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "3J735",
+                                  "name": "Status Bar",
+                                  "width": "fill_container",
+                                  "height": 44,
+                                  "fill": "$bg-surface",
+                                  "padding": [
+                                    0,
+                                    16
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Ho2ju",
+                                      "name": "timeText",
+                                      "fill": "$text-primary",
+                                      "content": "9:41",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "rectangle",
+                                      "cornerRadius": 14,
+                                      "id": "tapWY",
+                                      "name": "dynamicIsland",
+                                      "fill": "#000000",
+                                      "width": 120,
+                                      "height": 28
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "BxPA8",
+                                      "name": "batteryRow",
+                                      "gap": 4,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "trlHW",
+                                          "name": "batteryText",
+                                          "fill": "$text-secondary",
+                                          "content": "87%",
+                                          "fontFamily": "Inter",
+                                          "fontSize": 12,
+                                          "fontWeight": "500"
+                                        },
+                                        {
+                                          "type": "rectangle",
+                                          "cornerRadius": 2,
+                                          "id": "BtZIo",
+                                          "name": "batteryIcon",
+                                          "fill": "$accent-green",
+                                          "width": 22,
+                                          "height": 11,
+                                          "stroke": {
+                                            "thickness": 1,
+                                            "fill": "$text-secondary"
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "HBhy6",
+                                  "name": "App Header",
+                                  "width": "fill_container",
+                                  "height": 36,
+                                  "fill": "$bg-surface",
+                                  "padding": [
+                                    0,
+                                    16
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "efcG5",
+                                      "name": "appTitle",
+                                      "fill": "$text-primary",
+                                      "content": "RaceDay",
+                                      "fontFamily": "Sora",
+                                      "fontSize": 16,
+                                      "fontWeight": "700"
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "OnMdu",
+                                      "name": "liveBadge",
+                                      "fill": "#FF3B30",
+                                      "cornerRadius": 4,
+                                      "gap": 6,
+                                      "padding": [
+                                        4,
+                                        10
+                                      ],
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "ellipse",
+                                          "id": "H0XI5",
+                                          "name": "liveDot",
+                                          "fill": "#FFFFFF",
+                                          "width": 6,
+                                          "height": 6
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "wMgxw",
+                                          "name": "liveText",
+                                          "fill": "#FFFFFF",
+                                          "content": "LIVE",
+                                          "fontFamily": "Inter",
+                                          "fontSize": 9,
+                                          "fontWeight": "700",
+                                          "letterSpacing": 1
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "UsjDQ",
+                                  "name": "Map Area",
+                                  "metadata": {
+                                    "type": "unsplash",
+                                    "username": "abdulkayum97",
+                                    "link": "https://unsplash.com/@abdulkayum97",
+                                    "author": "Abdul Kayum"
+                                  },
+                                  "clip": true,
+                                  "width": "fill_container",
+                                  "height": "fill_container",
+                                  "fill": {
+                                    "type": "image",
+                                    "enabled": true,
+                                    "url": "https://images.unsplash.com/photo-1717344205506-1b790a1117ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzMzMjI1NTB8&ixlib=rb-4.1.0&q=80&w=1080",
+                                    "mode": "fill"
+                                  },
+                                  "layout": "none",
+                                  "children": [
+                                    {
+                                      "type": "path",
+                                      "id": "nYDoT",
+                                      "x": 0,
+                                      "y": 0,
+                                      "name": "Route Path",
+                                      "geometry": "M120 430c-40-30-100-80-90-150 10-70 90-90 130-130 40-40 90-90 40-120-50-30-140 0-150 60-10 60 50 90 90 130 40 40 100 90 80 150-20 40-80 70-100 60z",
+                                      "fill": "#00000000",
+                                      "width": 280,
+                                      "height": 452,
+                                      "stroke": {
+                                        "thickness": 4,
+                                        "join": "round",
+                                        "cap": "round",
+                                        "fill": "$accent-orange"
+                                      }
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "Hl09r",
+                                      "x": 148,
+                                      "y": 125,
+                                      "name": "Runner Pulse",
+                                      "fill": "$accent-orange-soft",
+                                      "width": 28,
+                                      "height": 28
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "QCTc4",
+                                      "x": 154,
+                                      "y": 131,
+                                      "name": "Runner Position",
+                                      "fill": "$accent-orange",
+                                      "width": 16,
+                                      "height": 16,
+                                      "stroke": {
+                                        "thickness": 3,
+                                        "fill": "#FFFFFF"
+                                      }
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "S4xjB",
+                                      "x": 60,
+                                      "y": 390,
+                                      "name": "Start Marker",
+                                      "opacity": 0.9,
+                                      "fill": "#2ECC40",
+                                      "cornerRadius": 4,
+                                      "padding": [
+                                        3,
+                                        8
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "aGc4P",
+                                          "name": "startText",
+                                          "fill": "#FFFFFF",
+                                          "content": "START",
+                                          "fontFamily": "Inter",
+                                          "fontSize": 9,
+                                          "fontWeight": "bold"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "IMsL1",
+                                      "x": 70,
+                                      "y": 290,
+                                      "name": "KM 1",
+                                      "fill": "#FFFFFF80",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "YREMT",
+                                      "x": 180,
+                                      "y": 160,
+                                      "name": "KM 2",
+                                      "fill": "#FFFFFF80",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "PAOOK",
+                                      "x": 75,
+                                      "y": 80,
+                                      "name": "KM 3",
+                                      "fill": "#FFFFFF80",
+                                      "width": 6,
+                                      "height": 6
+                                    },
+                                    {
+                                      "type": "ellipse",
+                                      "id": "P5vAA",
+                                      "x": 110,
+                                      "y": 340,
+                                      "name": "KM 4",
+                                      "fill": "#FFFFFF80",
+                                      "width": 6,
+                                      "height": 6
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Ek4zF",
+                                  "name": "Stats Bar",
+                                  "width": "fill_container",
+                                  "fill": "$bg-surface",
+                                  "padding": [
+                                    14,
+                                    20
+                                  ],
+                                  "justifyContent": "space_around",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "g7MHu",
+                                      "name": "distCol",
+                                      "width": "fill_container",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "E8iTH",
+                                          "name": "distLabel",
+                                          "fill": "$text-muted",
+                                          "content": "DISTANCE",
+                                          "fontFamily": "Inter",
+                                          "fontSize": 9,
+                                          "fontWeight": "700",
+                                          "letterSpacing": 2
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "OU7DP",
+                                          "name": "distVal",
+                                          "fill": "$text-primary",
+                                          "content": "4.2 km",
+                                          "fontFamily": "Sora",
+                                          "fontSize": 24,
+                                          "fontWeight": "700",
+                                          "letterSpacing": -0.5
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "rectangle",
+                                      "id": "jonAW",
+                                      "name": "sep",
+                                      "fill": "$border-default",
+                                      "width": 1,
+                                      "height": 36
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "do98L",
+                                      "name": "timeCol",
+                                      "width": "fill_container",
+                                      "layout": "vertical",
+                                      "gap": 2,
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "Zfgji",
+                                          "name": "timeLabel",
+                                          "fill": "$text-muted",
+                                          "content": "TIME",
+                                          "fontFamily": "Inter",
+                                          "fontSize": 9,
+                                          "fontWeight": "700",
+                                          "letterSpacing": 2
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "UxIID",
+                                          "name": "timeVal",
+                                          "fill": "$text-primary",
+                                          "content": "23:54",
+                                          "fontFamily": "Sora",
+                                          "fontSize": 24,
+                                          "fontWeight": "700",
+                                          "letterSpacing": -0.5
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "Ss0qF",
+                                  "name": "Home Indicator",
+                                  "width": "fill_container",
+                                  "height": 28,
+                                  "fill": "$bg-primary",
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "rectangle",
+                                      "cornerRadius": 2,
+                                      "id": "D9HFY",
+                                      "name": "homePill",
+                                      "fill": "$text-muted",
+                                      "width": 100,
+                                      "height": 4
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xLx3y",
+                      "name": "App Text Content",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 28,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "7ww1x",
+                          "name": "badgeWrap",
+                          "fill": "$accent-orange-soft",
+                          "cornerRadius": 100,
+                          "padding": [
+                            6,
+                            14
+                          ],
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "5iYRk",
+                              "name": "badgeText",
+                              "fill": "$accent-orange",
+                              "content": "COMPANION APP",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "700",
+                              "letterSpacing": 2
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "tqtxA",
+                          "name": "headlineWrap",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "WDzZi",
+                              "name": "headLine1",
+                              "fill": "$text-primary",
+                              "content": "YOUR RACE,",
+                              "lineHeight": 1.05,
+                              "fontFamily": "Sora",
+                              "fontSize": 44,
+                              "fontWeight": "700",
+                              "letterSpacing": -1.5
+                            },
+                            {
+                              "type": "text",
+                              "id": "1WuD8",
+                              "name": "headLine2",
+                              "fill": "$text-primary",
+                              "content": "IN YOUR POCKET.",
+                              "lineHeight": 1.05,
+                              "fontFamily": "Sora",
+                              "fontSize": 44,
+                              "fontWeight": "700",
+                              "letterSpacing": -1.5
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "PsHOE",
+                          "name": "subtitle",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Available on Android and iOS — with real-time GPS tracking, live leaderboards, pace alerts, and full course navigation right from your phone.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 15
+                        },
+                        {
+                          "type": "frame",
+                          "id": "jUHYZ",
+                          "name": "featList",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 16,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "qpLEB",
+                              "name": "row1",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "VFktv",
+                                  "name": "ico1",
+                                  "width": 44,
+                                  "height": 44,
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 10,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "wHUdz",
+                                      "name": "ic1",
+                                      "width": 22,
+                                      "height": 22,
+                                      "iconFontName": "map-pin",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$accent-orange"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "pd3Es",
+                                  "name": "txt1",
+                                  "width": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "P5x4v",
+                                      "name": "t1t",
+                                      "fill": "$text-primary",
+                                      "content": "Live GPS Tracking",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "tNItn",
+                                      "name": "t1d",
+                                      "fill": "$text-secondary",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "Real-time position on interactive course map, updated every 5 seconds.",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 13
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "iqpYZ",
+                              "name": "row2",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "1OPcp",
+                                  "name": "ico2",
+                                  "width": 44,
+                                  "height": 44,
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 10,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "iHPfL",
+                                      "name": "ic2",
+                                      "width": 22,
+                                      "height": 22,
+                                      "iconFontName": "gauge",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$accent-orange"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "eahqk",
+                                  "name": "txt2",
+                                  "width": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Y0ftM",
+                                      "name": "t2t",
+                                      "fill": "$text-primary",
+                                      "content": "Pace Alerts",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "0zvDU",
+                                      "name": "t2d",
+                                      "fill": "$text-secondary",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "Custom audio alerts for pace targets and split times.",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 13
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "0dVHI",
+                              "name": "row3",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "x4anL",
+                                  "name": "ico3",
+                                  "width": 44,
+                                  "height": 44,
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 10,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "2rdnF",
+                                      "name": "ic3",
+                                      "width": 22,
+                                      "height": 22,
+                                      "iconFontName": "trophy",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$accent-orange"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "e0bsQ",
+                                  "name": "txt3",
+                                  "width": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "FFzxn",
+                                      "name": "t3t",
+                                      "fill": "$text-primary",
+                                      "content": "Live Leaderboard",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "l0YqI",
+                                      "name": "t3d",
+                                      "fill": "$text-secondary",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "See your position among all runners in real time.",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 13
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "SPSot",
+                              "name": "row4",
+                              "width": "fill_container",
+                              "gap": 16,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "HpgSQ",
+                                  "name": "ico4",
+                                  "width": 44,
+                                  "height": 44,
+                                  "fill": "$accent-orange-soft",
+                                  "cornerRadius": 10,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon_font",
+                                      "id": "KxSUG",
+                                      "name": "ic4",
+                                      "width": 22,
+                                      "height": 22,
+                                      "iconFontName": "users",
+                                      "iconFontFamily": "lucide",
+                                      "fill": "$accent-orange"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "odsyl",
+                                  "name": "txt4",
+                                  "width": "fill_container",
+                                  "layout": "vertical",
+                                  "gap": 2,
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "nk0r0",
+                                      "name": "t4t",
+                                      "fill": "$text-primary",
+                                      "content": "Friends & Family",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 14,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "8k8rU",
+                                      "name": "t4d",
+                                      "fill": "$text-secondary",
+                                      "textGrowth": "fixed-width",
+                                      "width": "fill_container",
+                                      "content": "Let spectators track you live from their phones.",
+                                      "fontFamily": "Inter",
+                                      "fontSize": 13
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "dp0sy",
+                          "name": "btnRow",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "HIVUp",
+                              "name": "appBtn",
+                              "fill": "$text-primary",
+                              "cornerRadius": 8,
+                              "gap": 8,
+                              "padding": [
+                                12,
+                                24
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "TjJO1",
+                                  "name": "apIc",
+                                  "width": 18,
+                                  "height": 18,
+                                  "iconFontName": "apple",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$bg-primary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "z7BLw",
+                                  "name": "apTx",
+                                  "fill": "$bg-primary",
+                                  "content": "App Store",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "j8AYO",
+                              "name": "gpBtn",
+                              "cornerRadius": 8,
+                              "stroke": {
+                                "thickness": 1.5,
+                                "fill": "$border-strong"
+                              },
+                              "gap": 8,
+                              "padding": [
+                                12,
+                                24
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon_font",
+                                  "id": "oXMUJ",
+                                  "name": "gpIc",
+                                  "width": 18,
+                                  "height": 18,
+                                  "iconFontName": "play",
+                                  "iconFontFamily": "lucide",
+                                  "fill": "$text-primary"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "GQMu5",
+                                  "name": "gpTx",
+                                  "fill": "$text-primary",
+                                  "content": "Google Play",
+                                  "fontFamily": "Inter",
+                                  "fontSize": 14,
+                                  "fontWeight": "600"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9Dcb8",
+                  "name": "Feature Strip",
+                  "width": "fill_container",
+                  "fill": "$bg-surface",
+                  "gap": 32,
+                  "padding": [
+                    40,
+                    120
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "wWqZ2",
+                      "name": "f1",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "ri5bc",
+                          "name": "f1icon",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "$accent-orange-soft",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "65LOQ",
+                              "name": "f1i",
+                              "width": 22,
+                              "height": 22,
+                              "iconFontName": "download",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "0z1n6",
+                          "name": "f1stat",
+                          "fill": "$text-primary",
+                          "content": "250K+",
+                          "fontFamily": "Sora",
+                          "fontSize": 28,
+                          "fontWeight": "700",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "eYcPO",
+                          "name": "f1label",
+                          "fill": "$text-secondary",
+                          "content": "App Downloads",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "81k3N",
+                      "name": "sep1",
+                      "fill": "$border-default",
+                      "width": 1,
+                      "height": 60
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8oOQ5",
+                      "name": "f2",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "oP1Mk",
+                          "name": "f2icon",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "$accent-orange-soft",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "42z3e",
+                              "name": "f2i",
+                              "width": 22,
+                              "height": 22,
+                              "iconFontName": "star",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "CTMdW",
+                          "name": "f2stat",
+                          "fill": "$text-primary",
+                          "content": "4.8",
+                          "fontFamily": "Sora",
+                          "fontSize": 28,
+                          "fontWeight": "700",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "l9SwS",
+                          "name": "f2label",
+                          "fill": "$text-secondary",
+                          "content": "App Store Rating",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "cdxpr",
+                      "name": "sep2",
+                      "fill": "$border-default",
+                      "width": 1,
+                      "height": 60
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d3Z3e",
+                      "name": "f3",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "Qw1v5",
+                          "name": "f3icon",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "$accent-orange-soft",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "Phr5c",
+                              "name": "f3i",
+                              "width": 22,
+                              "height": 22,
+                              "iconFontName": "map",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "jKQ4E",
+                          "name": "f3stat",
+                          "fill": "$text-primary",
+                          "content": "5s",
+                          "fontFamily": "Sora",
+                          "fontSize": 28,
+                          "fontWeight": "700",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "fKmuc",
+                          "name": "f3label",
+                          "fill": "$text-secondary",
+                          "content": "GPS Refresh Rate",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "rectangle",
+                      "id": "2NoF7",
+                      "name": "sep3",
+                      "fill": "$border-default",
+                      "width": 1,
+                      "height": 60
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uzQpS",
+                      "name": "f4",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "NU1n9",
+                          "name": "f4icon",
+                          "width": 44,
+                          "height": 44,
+                          "fill": "$accent-orange-soft",
+                          "cornerRadius": 10,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "dSVil",
+                              "name": "f4i",
+                              "width": 22,
+                              "height": 22,
+                              "iconFontName": "users",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "lL0Ef",
+                          "name": "f4stat",
+                          "fill": "$text-primary",
+                          "content": "50K+",
+                          "fontFamily": "Sora",
+                          "fontSize": 28,
+                          "fontWeight": "700",
+                          "letterSpacing": -1
+                        },
+                        {
+                          "type": "text",
+                          "id": "SMYfA",
+                          "name": "f4label",
+                          "fill": "$text-secondary",
+                          "content": "Active Trackers Monthly",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZUK1V",
+                  "name": "Platform Bar",
+                  "width": "fill_container",
+                  "fill": {
+                    "type": "gradient",
+                    "gradientType": "linear",
+                    "enabled": true,
+                    "rotation": 180,
+                    "size": {
+                      "height": 1
+                    },
+                    "colors": [
+                      {
+                        "color": "#131920",
+                        "position": 0
+                      },
+                      {
+                        "color": "#0F161E",
+                        "position": 1
+                      }
+                    ]
+                  },
+                  "gap": 32,
+                  "padding": [
+                    20,
+                    120
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0GXna",
+                      "name": "avail",
+                      "fill": "$text-secondary",
+                      "content": "AVAILABLE ON",
+                      "fontFamily": "Inter",
+                      "fontSize": 10,
+                      "fontWeight": "700",
+                      "letterSpacing": 3
+                    },
+                    {
+                      "type": "frame",
+                      "id": "vEQ6d",
+                      "name": "p1",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-strong"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "h0Bf0",
+                          "name": "p1i",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "smartphone",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-primary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "JSl3R",
+                          "name": "p1t",
+                          "fill": "$text-primary",
+                          "content": "iOS 15+",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "acAEn",
+                      "name": "p2",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-strong"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "FSKAY",
+                          "name": "p2i",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "smartphone",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-primary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PGbyz",
+                          "name": "p2t",
+                          "fill": "$text-primary",
+                          "content": "Android 12+",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8JThX",
+                      "name": "p3",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 1,
+                        "fill": "$border-strong"
+                      },
+                      "gap": 8,
+                      "padding": [
+                        8,
+                        16
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "NvyFp",
+                          "name": "p3i",
+                          "width": 16,
+                          "height": 16,
+                          "iconFontName": "watch",
+                          "iconFontFamily": "lucide",
+                          "fill": "$text-primary"
+                        },
+                        {
+                          "type": "text",
+                          "id": "6vCCP",
+                          "name": "p3t",
+                          "fill": "$text-primary",
+                          "content": "Apple Watch & Wear OS",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "QV1BJ",
+              "name": "CTA Section",
+              "width": "fill_container",
+              "fill": {
+                "type": "gradient",
+                "gradientType": "linear",
+                "enabled": true,
+                "rotation": 135,
+                "size": {
+                  "height": 1
+                },
+                "colors": [
+                  {
+                    "color": "#1A0A00",
+                    "position": 0
+                  },
+                  {
+                    "color": "#331200",
+                    "position": 0.3
+                  },
+                  {
+                    "color": "#1A0A00",
+                    "position": 1
+                  }
+                ]
+              },
+              "layout": "vertical",
+              "gap": 32,
+              "padding": [
+                100,
+                120
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Rz5em",
+                  "name": "ctaDecor",
+                  "width": 200,
+                  "height": 4,
+                  "fill": "$accent-orange",
+                  "cornerRadius": 2,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "jVlpq",
+                  "name": "ctaHeadWrap",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "wg3DR",
+                      "name": "ctaH1",
+                      "fill": "$text-primary",
+                      "content": "EMPOWERING ORGANIZERS,",
+                      "lineHeight": 1.1,
+                      "textAlign": "center",
+                      "fontFamily": "Sora",
+                      "fontSize": 44,
+                      "fontWeight": "800",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "N4Dld",
+                      "name": "ctaH2",
+                      "fill": "$accent-orange",
+                      "content": "IGNITING COMMUNITIES.",
+                      "lineHeight": 1.1,
+                      "textAlign": "center",
+                      "fontFamily": "Sora",
+                      "fontSize": 44,
+                      "fontWeight": "800",
+                      "letterSpacing": -1
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "kgplr",
+                  "name": "ctaSub",
+                  "fill": "$text-secondary",
+                  "textGrowth": "fixed-width",
+                  "width": 680,
+                  "content": "Scale your race with smart registration and participant management. Our platform is built specifically for professional race directors and community running clubs.",
+                  "lineHeight": 1.6,
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 17
+                },
+                {
+                  "type": "frame",
+                  "id": "kWKAy",
+                  "name": "ctaBtnRow",
+                  "gap": 16,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "6jJzs",
+                      "name": "ctaBtn1",
+                      "fill": "$accent-orange",
+                      "cornerRadius": 8,
+                      "gap": 8,
+                      "padding": [
+                        16,
+                        32
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "okuNl",
+                          "name": "ctaBtn1Txt",
+                          "fill": "#FFFFFF",
+                          "content": "Launch Your Event",
+                          "fontFamily": "Inter",
+                          "fontSize": 16,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "icon_font",
+                          "id": "WH8kR",
+                          "name": "ctaBtn1Icon",
+                          "width": 18,
+                          "height": 18,
+                          "iconFontName": "arrow-right",
+                          "iconFontFamily": "lucide",
+                          "fill": "#FFFFFF"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Odp90",
+                      "name": "ctaBtn2",
+                      "fill": "$text-secondary",
+                      "content": "Explore Features",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eid6A",
+              "name": "Footer",
+              "width": "fill_container",
+              "fill": "$bg-surface",
+              "layout": "vertical",
+              "gap": 48,
+              "padding": [
+                60,
+                120,
+                40,
+                120
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "S4fg4",
+                  "name": "Footer Top",
+                  "width": "fill_container",
+                  "gap": 40,
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9iV9C",
+                      "name": "footerBrand",
+                      "width": 320,
+                      "layout": "vertical",
+                      "gap": 16,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "TquiO",
+                          "name": "logoRow",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "7041P",
+                              "name": "logoIcon",
+                              "width": 22,
+                              "height": 22,
+                              "iconFontName": "timer",
+                              "iconFontFamily": "lucide",
+                              "fill": "$accent-orange"
+                            },
+                            {
+                              "type": "text",
+                              "id": "tzD9c",
+                              "name": "logoText",
+                              "fill": "$text-primary",
+                              "content": "RACEDAY",
+                              "fontFamily": "Sora",
+                              "fontSize": 20,
+                              "fontWeight": "700",
+                              "letterSpacing": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "eHJhU",
+                          "name": "brandDesc",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": 300,
+                          "content": "The modern race management platform. We help organizers create world-class events and give runners the tools to track, compete, and connect.",
+                          "lineHeight": 1.6,
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "6KDvL",
+                          "name": "socials",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "XTqEi",
+                              "name": "s1",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "twitter",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-secondary"
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "Hl9fZ",
+                              "name": "s2",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "instagram",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-secondary"
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "9sP5q",
+                              "name": "s3",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "facebook",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-secondary"
+                            },
+                            {
+                              "type": "icon_font",
+                              "id": "j79RF",
+                              "name": "s4",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "youtube",
+                              "iconFontFamily": "lucide",
+                              "fill": "$text-secondary"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yy9QD",
+                      "name": "linksWrap",
+                      "gap": 64,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "PxpAW",
+                          "name": "col1",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "3tXmo",
+                              "name": "col1h",
+                              "fill": "$text-secondary",
+                              "content": "EXPLORE",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "700",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "bleRk",
+                              "name": "col1a",
+                              "fill": "$text-secondary",
+                              "content": "Upcoming Races",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "7YDgh",
+                              "name": "col1b",
+                              "fill": "$text-secondary",
+                              "content": "Race Categories",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "MQ3Id",
+                              "name": "col1c",
+                              "fill": "$text-secondary",
+                              "content": "City Directory",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "A3GAH",
+                              "name": "col1d",
+                              "fill": "$text-secondary",
+                              "content": "Results & Leaderboards",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "qSVBP",
+                          "name": "col2",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "Lxxua",
+                              "name": "col2h",
+                              "fill": "$text-secondary",
+                              "content": "ORGANIZERS",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "700",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "t3UcY",
+                              "name": "col2a",
+                              "fill": "$text-secondary",
+                              "content": "Host an Event",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "PZmd3",
+                              "name": "col2b",
+                              "fill": "$text-secondary",
+                              "content": "Pricing Plans",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "aNtd5",
+                              "name": "col2c",
+                              "fill": "$text-secondary",
+                              "content": "Timing Integration",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "A1qW4",
+                              "name": "col2d",
+                              "fill": "$text-secondary",
+                              "content": "Success Stories",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "wNc98",
+                          "name": "col3",
+                          "layout": "vertical",
+                          "gap": 14,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "uK0U6",
+                              "name": "col3h",
+                              "fill": "$text-secondary",
+                              "content": "LEGAL",
+                              "fontFamily": "Inter",
+                              "fontSize": 11,
+                              "fontWeight": "700",
+                              "letterSpacing": 2
+                            },
+                            {
+                              "type": "text",
+                              "id": "Mysfz",
+                              "name": "col3a",
+                              "fill": "$text-secondary",
+                              "content": "Privacy Policy",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "uH7RH",
+                              "name": "col3b",
+                              "fill": "$text-secondary",
+                              "content": "Terms of Service",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "text",
+                              "id": "ucq8O",
+                              "name": "col3c",
+                              "fill": "$text-secondary",
+                              "content": "Cookie Settings",
+                              "fontFamily": "Inter",
+                              "fontSize": 14,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "rectangle",
+                  "id": "1N3fc",
+                  "name": "divider",
+                  "fill": "$border-default",
+                  "width": "fill_container",
+                  "height": 1
+                },
+                {
+                  "type": "frame",
+                  "id": "eOjqw",
+                  "name": "footerBottom",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "eJ8IV",
+                      "name": "copyright",
+                      "fill": "$text-secondary",
+                      "content": "© 2026 RaceDay. All rights reserved.",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "NwdFy",
+                      "name": "builtWith",
+                      "fill": "$text-secondary",
+                      "content": "Built for runners, by runners.",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal",
+                      "fontStyle": "italic"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent-green": {
+      "type": "color",
+      "value": "#2ECC40"
+    },
+    "accent-orange": {
+      "type": "color",
+      "value": "#FF5722"
+    },
+    "accent-orange-soft": {
+      "type": "color",
+      "value": "#FF572230"
+    },
+    "bg-card": {
+      "type": "color",
+      "value": "#161E2A"
+    },
+    "bg-elevated": {
+      "type": "color",
+      "value": "#1A2230"
+    },
+    "bg-primary": {
+      "type": "color",
+      "value": "#0A0E14"
+    },
+    "bg-surface": {
+      "type": "color",
+      "value": "#131920"
+    },
+    "border-default": {
+      "type": "color",
+      "value": "#1E2A3A"
+    },
+    "border-strong": {
+      "type": "color",
+      "value": "#2A3A4A"
+    },
+    "text-muted": {
+      "type": "color",
+      "value": "#4A5568"
+    },
+    "text-primary": {
+      "type": "color",
+      "value": "#FFFFFF"
+    },
+    "text-secondary": {
+      "type": "color",
+      "value": "#8A95A5"
+    }
+  }
+}
