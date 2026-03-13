@@ -57,10 +57,11 @@ export function Step1Category({ event }: Step1CategoryProps) {
                                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                                     <div className="flex items-center gap-4">
                                         <div className={cn(
-                                            "w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-xl transition-all",
+                                            "w-14 h-14 rounded-2xl flex flex-col items-center justify-center font-bold transition-all shrink-0",
                                             isSelected ? "bg-primary text-white scale-110" : "bg-white/5 text-text-muted"
                                         )}>
-                                            {formatDistance(cat.distance, cat.distanceUnit)}
+                                            <span className="text-lg leading-none">{cat.distance}</span>
+                                            <span className="text-[10px] uppercase leading-none mt-0.5">{cat.distanceUnit || "km"}</span>
                                         </div>
                                         <div className="space-y-1">
                                             <h3 className="text-xl font-bold text-white leading-tight">{cat.name}</h3>
@@ -89,16 +90,18 @@ export function Step1Category({ event }: Step1CategoryProps) {
                                 </div>
 
                                 {/* Inclusions Preview */}
-                                <div className="mt-4 pt-4 border-t border-white/5 flex flex-wrap gap-2">
-                                    {cat.inclusions.slice(0, 3).map((inc, j) => (
-                                        <span key={j} className="text-xs font-bold text-text-muted flex items-center gap-1">
-                                            <Trophy size={10} className="text-primary/40" /> {inc}
-                                        </span>
-                                    ))}
-                                    {cat.inclusions.length > 3 && (
-                                        <span className="text-xs font-bold text-text-muted">+{cat.inclusions.length - 3} more</span>
-                                    )}
-                                </div>
+                                {cat.inclusions?.filter(Boolean).length > 0 && (
+                                    <div className="mt-4 pt-4 border-t border-white/5 flex flex-wrap gap-1.5">
+                                        {cat.inclusions.filter(Boolean).slice(0, 3).map((inc, j) => (
+                                            <span key={j} className="px-2 py-0.5 bg-white/5 rounded text-xs font-medium text-white/90 border border-white/5 whitespace-nowrap">
+                                                {inc}
+                                            </span>
+                                        ))}
+                                        {cat.inclusions.filter(Boolean).length > 3 && (
+                                            <span className="px-2 py-0.5 bg-white/5 rounded text-xs font-medium text-text-muted border border-white/5">+{cat.inclusions.filter(Boolean).length - 3} more</span>
+                                        )}
+                                    </div>
+                                )}
                             </Card>
                         </button>
                     )
