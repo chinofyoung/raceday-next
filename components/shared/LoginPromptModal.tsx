@@ -10,23 +10,39 @@ interface LoginPromptModalProps {
     isOpen: boolean;
     onClose: () => void;
     onLoginSuccess: (userId: string) => void;
+    pendingData?: Record<string, any> | null;
 }
 
-export function LoginPromptModal({ isOpen, onClose, onLoginSuccess }: LoginPromptModalProps) {
+export function LoginPromptModal({ isOpen, onClose, onLoginSuccess, pendingData }: LoginPromptModalProps) {
     const { openSignIn } = useClerk();
     const pathname = usePathname();
 
     if (!isOpen) return null;
 
     const handleLogin = () => {
-        // Since we are migrating to Clerk, we'll use their managed sign-in modal
-        // or redirect. openSignIn() is the easiest way to show the modal.
-        // After success, it will redirect back to the current page.
+        // Persist pending registration data so it survives the OAuth redirect.
+        if (pendingData) {
+            try {
+                sessionStorage.setItem(
+                    "raceday_pending_registration",
+                    JSON.stringify({
+                        data: pendingData,
+                        eventId: pendingData.eventId,
+                        timestamp: Date.now(),
+                    })
+                );
+            } catch {
+                // sessionStorage may be unavailable (private browsing, quota exceeded, etc.)
+            }
+        }
+
+        // Do NOT call onClose() here — the OAuth redirect will navigate away from
+        // the page and calling onClose() would clear the parent's pending state
+        // before the redirect completes, losing the registration data.
         openSignIn({
             afterSignInUrl: pathname,
             afterSignUpUrl: pathname,
         });
-        onClose();
     };
 
     return (

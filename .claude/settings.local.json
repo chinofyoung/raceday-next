@@ -25,7 +25,9 @@
       "Bash(cd C:/Users/chino/code/raceday && rm -rf .next && npx next build 2>&1 | tail -15)",
       "Bash(grep -r \"registrations.getById\" /c/Users/chino/code/raceday --include=\"*.ts\" --include=\"*.tsx\" 2>/dev/null | grep -v node_modules)",
       "Bash(grep -B 5 \"registrations.getById\" /c/Users/chino/code/raceday/app/\\\\\\(app\\\\\\)/dashboard/events/\\\\[id\\\\]/qr/page.tsx | head -15)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(ls -la /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\\\)/register/)",
+      "Bash(ls -la \"/Users/chinoyoung/Code/raceday-next/app/\\(marketing\\)/events/\" | head -20)"
     ]
   }
 }

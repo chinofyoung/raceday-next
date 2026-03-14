@@ -78,9 +78,32 @@ function RegistrationFormContent({
 
     const registrationType = watch("registrationType");
 
+    // Restore pending registration data that was saved before an OAuth redirect.
+    // This effect runs exactly once on mount and must execute before the profile-
+    // prefill effect below so that restored data is never overwritten.
+    useEffect(() => {
+        const STORAGE_KEY = "raceday_pending_registration";
+        try {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            sessionStorage.removeItem(STORAGE_KEY);
+            if (!raw) return;
+
+            const parsed = JSON.parse(raw) as { data: RegistrationFormValues; eventId: string; timestamp: number };
+            const isValidEvent = parsed.eventId === event.id;
+            const isRecent = Date.now() - parsed.timestamp < 30 * 60 * 1000;
+
+            if (isValidEvent && isRecent) {
+                setPendingSubmitData(parsed.data);
+                setLoading(true);
+            }
+        } catch {
+            // sessionStorage may be unavailable or the payload malformed — fail silently
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     // Update form when user data loads or registration type changes
     useEffect(() => {
-        if (!user) return;
+        if (!user || pendingSubmitData) return;
 
         const currentValues = getValues();
 
@@ -104,7 +127,7 @@ function RegistrationFormContent({
                 }
             });
         }
-    }, [user, registrationType, reset, getValues]);
+    }, [user, pendingSubmitData, registrationType, reset, getValues]);
 
     const nextStep = async () => {
         await baseNextStep();
@@ -226,6 +249,18 @@ function RegistrationFormContent({
         }
     }, [user, pendingSubmitData, syncProfileFromRegistration, submitRegistration]);
 
+    if (loading && pendingSubmitData) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                <div className="text-center space-y-2">
+                    <h3 className="text-xl font-bold text-white">Completing your registration...</h3>
+                    <p className="text-text-muted">Please wait while we process your submission.</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-10">
             {/* Progress Tracks */}
@@ -306,6 +341,7 @@ function RegistrationFormContent({
                     setPendingSubmitData(null);
                 }}
                 onLoginSuccess={handleLoginSuccess}
+                pendingData={pendingSubmitData}
             />
         </div>
     );
