@@ -16,10 +16,8 @@ import { Step3Vanity } from "./Step3Vanity";
 import { Step4Review } from "./Step4Review";
 import { Step0Who } from "./Step0Who";
 import { cn } from "@/lib/utils";
-import { LoginPromptModal } from "@/components/shared/LoginPromptModal";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
-import { Id } from "@/convex/_generated/dataModel";
 import { calculateCompletion } from "@/lib/validations/profile";
 import { useFormSteps } from "@/lib/hooks/useFormSteps";
 
@@ -48,28 +46,16 @@ interface RegistrationFormProps {
     initialCategoryId?: string | null;
 }
 
-interface RegistrationFormContentProps extends RegistrationFormProps {
-    loading: boolean;
-    setLoading: (v: boolean) => void;
-    showLoginModal: boolean;
-    setShowLoginModal: (v: boolean) => void;
-    pendingSubmitData: RegistrationFormValues | null;
-    setPendingSubmitData: (v: RegistrationFormValues | null) => void;
-}
-
 function RegistrationFormContent({
     event,
-    loading,
-    setLoading,
-    showLoginModal,
-    setShowLoginModal,
-    pendingSubmitData,
-    setPendingSubmitData,
-}: RegistrationFormContentProps) {
-    const { user, refreshUser } = useAuth();
+}: {
+    event: RaceEvent;
+}) {
+    const { user } = useAuth();
     const router = useRouter();
     const updateProfileMutation = useMutation(api.users.updateProfile);
     const { handleSubmit, watch, reset, getValues } = useFormContext<RegistrationFormValues>();
+    const [loading, setLoading] = useState(false);
 
     const { currentStep, nextStep: baseNextStep, prevStep: basePrevStep } = useFormSteps<RegistrationFormValues>(
         STEPS.length,
@@ -78,32 +64,9 @@ function RegistrationFormContent({
 
     const registrationType = watch("registrationType");
 
-    // Restore pending registration data that was saved before an OAuth redirect.
-    // This effect runs exactly once on mount and must execute before the profile-
-    // prefill effect below so that restored data is never overwritten.
-    useEffect(() => {
-        const STORAGE_KEY = "raceday_pending_registration";
-        try {
-            const raw = sessionStorage.getItem(STORAGE_KEY);
-            sessionStorage.removeItem(STORAGE_KEY);
-            if (!raw) return;
-
-            const parsed = JSON.parse(raw) as { data: RegistrationFormValues; eventId: string; timestamp: number };
-            const isValidEvent = parsed.eventId === event.id;
-            const isRecent = Date.now() - parsed.timestamp < 30 * 60 * 1000;
-
-            if (isValidEvent && isRecent) {
-                setPendingSubmitData(parsed.data);
-                setLoading(true);
-            }
-        } catch {
-            // sessionStorage may be unavailable or the payload malformed — fail silently
-        }
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
     // Update form when user data loads or registration type changes
     useEffect(() => {
-        if (!user || pendingSubmitData) return;
+        if (!user) return;
 
         const currentValues = getValues();
 
@@ -127,7 +90,7 @@ function RegistrationFormContent({
                 }
             });
         }
-    }, [user, pendingSubmitData, registrationType, reset, getValues]);
+    }, [user, registrationType, reset, getValues]);
 
     const nextStep = async () => {
         await baseNextStep();
@@ -214,52 +177,11 @@ function RegistrationFormContent({
     }, [event, router]);
 
     const onSubmit = async (data: RegistrationFormValues) => {
-        if (!user) {
-            // Not logged in — save data and show login modal
-            setPendingSubmitData(data);
-            setShowLoginModal(true);
-            return;
-        }
+        if (!user) return;
 
-        // Logged in — sync profile and proceed
         await syncProfileFromRegistration(data);
         await submitRegistration(data, user._id as string, user.displayName || "Unknown");
     };
-
-    const handleLoginSuccess = async (userId: string) => {
-        setShowLoginModal(false);
-
-        // Refresh user data in context
-        await refreshUser();
-
-        // Note: The userId passed here is likely the Clerk UID or Convex ID depending on LoginPromptModal implementation.
-        // But since we refreshUser(), we can just use the updated 'user' object if it becomes available.
-        // To be safe, let's wait a bit or use the refreshed user.
-    };
-
-    // Use effect to handle pending submit after login
-    useEffect(() => {
-        if (user && pendingSubmitData) {
-            const processPending = async () => {
-                await syncProfileFromRegistration(pendingSubmitData);
-                await submitRegistration(pendingSubmitData, user._id as string, user.displayName || "Unknown");
-                setPendingSubmitData(null);
-            };
-            processPending();
-        }
-    }, [user, pendingSubmitData, syncProfileFromRegistration, submitRegistration]);
-
-    if (loading && pendingSubmitData) {
-        return (
-            <div className="flex flex-col items-center justify-center py-32 space-y-6">
-                <Loader2 className="w-12 h-12 animate-spin text-primary" />
-                <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-white">Completing your registration...</h3>
-                    <p className="text-text-muted">Please wait while we process your submission.</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-10">
@@ -332,26 +254,12 @@ function RegistrationFormContent({
                     )}
                 </div>
             </form>
-
-            {/* Login Prompt Modal for non-logged-in users */}
-            <LoginPromptModal
-                isOpen={showLoginModal}
-                onClose={() => {
-                    setShowLoginModal(false);
-                    setPendingSubmitData(null);
-                }}
-                onLoginSuccess={handleLoginSuccess}
-                pendingData={pendingSubmitData}
-            />
         </div>
     );
 }
 
 export function RegistrationForm({ event, initialCategoryId }: RegistrationFormProps) {
     const { user } = useAuth();
-    const [loading, setLoading] = useState(false);
-    const [showLoginModal, setShowLoginModal] = useState(false);
-    const [pendingSubmitData, setPendingSubmitData] = useState<RegistrationFormValues | null>(null);
 
     const initialCategory = initialCategoryId
         ? event.categories.find(c => (c.id || "0") === initialCategoryId)
@@ -390,16 +298,7 @@ export function RegistrationForm({ event, initialCategoryId }: RegistrationFormP
 
     return (
         <FormProvider {...methods}>
-            <RegistrationFormContent
-                event={event}
-                initialCategoryId={initialCategoryId}
-                loading={loading}
-                setLoading={setLoading}
-                showLoginModal={showLoginModal}
-                setShowLoginModal={setShowLoginModal}
-                pendingSubmitData={pendingSubmitData}
-                setPendingSubmitData={setPendingSubmitData}
-            />
+            <RegistrationFormContent event={event} />
         </FormProvider>
     );
 }

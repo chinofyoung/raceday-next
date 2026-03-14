@@ -130,6 +130,31 @@ export const checkExisting = query({
     },
 });
 
+export const checkPending = query({
+    args: {
+        userId: v.id("users"),
+        eventId: v.id("events"),
+        categoryId: v.string(),
+    },
+    handler: async (ctx: QueryCtx, args) => {
+        // Block if a pending registration was created in the last 60 seconds
+        // to prevent rapid duplicate submissions from useEffect re-fires.
+        const cutoff = Date.now() - 60_000;
+        const pending = await ctx.db
+            .query("registrations")
+            .withIndex("by_user", (q) => q.eq("userId", args.userId))
+            .filter((q) => q.and(
+                q.eq(q.field("eventId"), args.eventId),
+                q.eq(q.field("categoryId"), args.categoryId),
+                q.eq(q.field("status"), "pending"),
+                q.eq(q.field("isProxy"), false),
+                q.gte(q.field("createdAt"), cutoff)
+            ))
+            .first();
+        return !!pending;
+    },
+});
+
 export const create = mutation({
     args: {
         eventId: v.id("events"),

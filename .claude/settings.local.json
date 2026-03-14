@@ -27,7 +27,8 @@
       "Bash(grep -B 5 \"registrations.getById\" /c/Users/chino/code/raceday/app/\\\\\\(app\\\\\\)/dashboard/events/\\\\[id\\\\]/qr/page.tsx | head -15)",
       "Bash(npx tsc:*)",
       "Bash(ls -la /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\\\)/register/)",
-      "Bash(ls -la \"/Users/chinoyoung/Code/raceday-next/app/\\(marketing\\)/events/\" | head -20)"
+      "Bash(ls -la \"/Users/chinoyoung/Code/raceday-next/app/\\(marketing\\)/events/\" | head -20)",
+      "Bash(find /c/Users/chino/code/raceday/lib -type f -name \"*.ts\" -o -name \"*.tsx\" | xargs grep -l \"Clerk\\\\|useClerk\" | head -10)"
     ]
   }
 }

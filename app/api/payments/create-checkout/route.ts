@@ -27,7 +27,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Event not found" }, { status: 404 });
         }
 
-        // 0. Check for duplicate "myself" registration
+        // 0. Check for duplicate "myself" registration (paid or recent pending)
         if (!registrationData.isProxy && userId) {
             const exists = await fetchQuery(api.registrations.checkExisting, {
                 userId: userId as Id<"users">,
@@ -38,6 +38,18 @@ export async function POST(req: Request) {
                 return NextResponse.json({
                     error: "You are already registered for this category in this event."
                 }, { status: 400 });
+            }
+
+            // Block rapid duplicate pending registrations (e.g. from useEffect re-fires)
+            const existingPending = await fetchQuery(api.registrations.checkPending, {
+                userId: userId as Id<"users">,
+                eventId: registrationData.eventId as Id<"events">,
+                categoryId: registrationData.categoryId,
+            });
+            if (existingPending) {
+                return NextResponse.json({
+                    error: "A registration is already being processed. Please wait."
+                }, { status: 409 });
             }
         }
 

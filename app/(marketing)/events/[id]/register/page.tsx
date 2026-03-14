@@ -7,10 +7,14 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RaceEvent } from "@/types/event";
 import { RegistrationForm } from "@/components/forms/registration/RegistrationForm";
-import { ArrowLeft, Info } from "lucide-react";
+import { ArrowLeft, Info, LogIn, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { useClerk } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 function RegistrationFormSkeleton() {
     return (
@@ -39,17 +43,64 @@ function RegistrationFormSkeleton() {
 }
 import { isRegistrationClosed } from "@/lib/earlyBirdUtils";
 
+function LoginGate({ eventName }: { eventName: string }) {
+    const { openSignIn } = useClerk();
+    const pathname = usePathname();
+
+    const handleLogin = () => {
+        openSignIn({
+            afterSignInUrl: pathname,
+            afterSignUpUrl: pathname,
+        });
+    };
+
+    return (
+        <div className="flex items-center justify-center py-16">
+            <Card className="max-w-md w-full p-10 space-y-8 bg-surface/50 border-white/10 shadow-2xl animate-in fade-in zoom-in-95 duration-500">
+                <div className="text-center space-y-4">
+                    <div className="flex justify-center mb-4">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                            <ShieldCheck size={32} className="text-primary" />
+                        </div>
+                    </div>
+                    <h2 className="text-3xl font-bold tracking-tight text-white">
+                        Sign in to <span className="text-primary">register</span>
+                    </h2>
+                    <p className="text-sm text-text-muted font-medium leading-relaxed">
+                        Please sign in or create an account to register for <span className="text-white font-semibold">{eventName}</span>. Your profile information will be used to pre-fill the registration form.
+                    </p>
+                </div>
+
+                <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full h-14 text-lg font-bold tracking-wider gap-3 bg-cta hover:bg-cta-hover border-none shadow-xl shadow-cta/20"
+                    onClick={handleLogin}
+                >
+                    <LogIn size={20} />
+                    Sign in to continue
+                </Button>
+
+                <p className="text-center text-xs text-text-muted font-semibold uppercase tracking-wider">
+                    New here? You can create an account during sign in
+                </p>
+            </Card>
+        </div>
+    );
+}
+
 export default function RegisterPage() {
     const { id } = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
     const initialCategoryId = searchParams.get("category");
+    const { user, loading: authLoading } = useAuth();
 
     const eventData = useQuery(api.events.getById, { id: id as Id<"events"> });
     const loading = eventData === undefined;
     const event = eventData ? { id: eventData._id, ...eventData } as any as RaceEvent : null;
 
-    if (loading) {
+    if (loading || authLoading) {
         return (
             <PageWrapper className="pt-8 pb-24 space-y-12">
                 <RegistrationFormSkeleton />
@@ -102,7 +153,11 @@ export default function RegisterPage() {
                 </div>
 
                 <div className="space-y-12">
-                    <RegistrationForm event={event} initialCategoryId={initialCategoryId} />
+                    {!user ? (
+                        <LoginGate eventName={event.name} />
+                    ) : (
+                        <RegistrationForm event={event} initialCategoryId={initialCategoryId} />
+                    )}
 
                     {/* Why Register Box Below */}
                     <Card className="p-8 bg-surface/30 border-white/5 space-y-8 backdrop-blur-sm">
