@@ -92,7 +92,7 @@ export default function EventsDirectoryPage() {
     }, [events, searchTerm, activeFilter]);
 
     return (
-        <PageWrapper className="pt-12 pb-24 space-y-12">
+        <PageWrapper className="pt-12 space-y-12">
             {/* Header & Search */}
             <div className="space-y-8 max-w-5xl">
                 <div className="space-y-2">

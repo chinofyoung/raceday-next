@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 import { VolunteerDashboard } from "@/components/dashboard/volunteer/VolunteerDashboard";
-import { RunnerQuickActions } from "@/components/dashboard/RunnerQuickActions";
-import { RunnerAnnouncements } from "@/components/dashboard/RunnerAnnouncements";
 import { toDate } from "@/lib/utils";
 import { ProfileCompletionCard } from "./runner/ProfileCompletionCard";
 import { EventRegistrationList } from "./runner/EventRegistrationList";
@@ -13,16 +11,12 @@ interface RunnerViewProps {
     completion: number;
     items: any[];
     stats: { total: number };
-    hasApplication: boolean;
-    userRole?: string;
 }
 
 export function RunnerView({
     completion,
     items,
     stats,
-    hasApplication,
-    userRole
 }: RunnerViewProps) {
     const { heroEvent, otherUpcoming, pastEvents } = useMemo(() => {
         const now = new Date();
@@ -64,17 +58,6 @@ export function RunnerView({
                 {heroEvent && heroEvent.event && (
                     <NextRaceHero registration={heroEvent} />
                 )}
-
-                {/* Quick Actions + Announcements Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-5">
-                        <h3 className="text-sm font-bold uppercase tracking-tight text-white mb-4">Quick Actions</h3>
-                        <RunnerQuickActions hasApplication={hasApplication} userRole={userRole} />
-                    </div>
-                    <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-5">
-                        <RunnerAnnouncements />
-                    </div>
-                </div>
 
                 {/* Volunteer Dashboard */}
                 <VolunteerDashboard />

@@ -113,14 +113,14 @@ export default function RegistrationSuccessPage() {
 
     if (loading) {
         return (
-            <PageWrapper className="pt-12 pb-24 max-w-7xl mx-auto space-y-12">
+            <PageWrapper className="pt-12 max-w-7xl mx-auto space-y-12">
                 <RegistrationSuccessSkeleton />
             </PageWrapper>
         );
     }
 
     return (
-        <PageWrapper className="pt-12 pb-24 max-w-7xl mx-auto space-y-12">
+        <PageWrapper className="pt-12 max-w-7xl mx-auto space-y-12">
             <div className="text-center space-y-6">
                 <div className="w-20 h-20 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta animate-bounce">
                     <CheckCircle2 size={46} />
