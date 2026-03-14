@@ -31,12 +31,27 @@ export function RunnerAnnouncements() {
 
     if (loading) return null; // Or a subtle skeleton if preferred
 
-    if (announcements.length === 0) return null;
+    if (announcements.length === 0) {
+        return (
+            <div className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-tight text-white flex items-center gap-2">
+                    <Megaphone size={16} className="text-cta" /> Announcements
+                </h3>
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 mb-3">
+                        <Megaphone size={20} className="text-text-muted opacity-40" />
+                    </div>
+                    <p className="text-sm text-text-muted font-medium">No announcements yet</p>
+                    <p className="text-xs text-text-muted/60 mt-1">Updates from event organizers will appear here</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-4 mb-8">
             <h3 className="text-sm font-bold uppercase tracking-tight text-white flex items-center gap-2">
-                <Megaphone size={16} className="text-cta" /> Important Notifications
+                <Megaphone size={16} className="text-cta" /> Announcements
             </h3>
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {announcements.map((announcement) => (

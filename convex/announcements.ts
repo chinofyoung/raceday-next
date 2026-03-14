@@ -18,6 +18,55 @@ export const listByEvent = query({
     },
 });
 
+export const listForParticipant = query({
+    args: {},
+    handler: async (ctx: QueryCtx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        // Get all registrations for this user
+        const registrations = await ctx.db
+            .query("registrations")
+            .withIndex("by_user", (q) => q.eq("userId", user._id))
+            .collect();
+
+        // Collect unique event IDs
+        const eventIds = [...new Set(registrations.map((r) => r.eventId))];
+        if (eventIds.length === 0) return [];
+
+        // Fetch announcements for all registered events
+        const allAnnouncements = await Promise.all(
+            eventIds.map((eventId) =>
+                ctx.db
+                    .query("announcements")
+                    .withIndex("by_event", (q) => q.eq("eventId", eventId))
+                    .order("desc")
+                    .collect()
+            )
+        );
+
+        // Flatten, enrich with event name, sort by creation time desc
+        const events = await Promise.all(eventIds.map((id) => ctx.db.get(id)));
+        const eventMap = new Map(events.filter(Boolean).map((e) => [e!._id, e!]));
+
+        return allAnnouncements
+            .flat()
+            .map((a) => ({
+                ...a,
+                id: a._id,
+                eventName: eventMap.get(a.eventId)?.name ?? "Unknown Event",
+            }))
+            .sort((a, b) => (b.createdAt ?? b._creationTime) - (a.createdAt ?? a._creationTime))
+            .slice(0, 20);
+    },
+});
+
 export const create = mutation({
     args: {
         eventId: v.id("events"),

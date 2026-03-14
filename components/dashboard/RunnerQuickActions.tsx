@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Settings, Trophy, Globe } from "lucide-react";
+import { Plus, Settings, Trophy, User } from "lucide-react";
 import { BaseQuickAction } from "./shared/BaseQuickAction";
 
 interface RunnerQuickActionsProps {
@@ -18,9 +18,15 @@ export function RunnerQuickActions({ hasApplication, userRole }: RunnerQuickActi
                 variant="primary"
             />
             <BaseQuickAction
-                href="/"
-                icon={Globe}
-                label="View Site"
+                href="/dashboard/profile"
+                icon={User}
+                label="View Profile"
+                variant="secondary"
+            />
+            <BaseQuickAction
+                href="/dashboard/settings"
+                icon={Settings}
+                label="Settings"
                 variant="secondary"
             />
             {userRole === "runner" && (
