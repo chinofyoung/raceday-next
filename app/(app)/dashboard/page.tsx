@@ -110,8 +110,6 @@ export default function DashboardPage() {
                 completion={completion}
                 items={items}
                 stats={stats}
-                hasApplication={false}
-                userRole={user?.role}
             />
         </div>
     );
