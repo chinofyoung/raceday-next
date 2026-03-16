@@ -34,7 +34,7 @@ export default function ForOrganizersPage() {
                 {/* Background hero image — full bleed */}
                 <div className="absolute inset-0 -mx-[50vw] left-1/2 right-1/2 w-screen overflow-hidden pointer-events-none" aria-hidden="true">
                     <Image
-                        src="/placeholder-running.jpg"
+                        src="/assets/run.png"
                         alt=""
                         fill
                         sizes="100vw"
