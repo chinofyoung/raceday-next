@@ -28,7 +28,17 @@
       "Bash(npx tsc:*)",
       "Bash(ls -la /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\\\)/register/)",
       "Bash(ls -la \"/Users/chinoyoung/Code/raceday-next/app/\\(marketing\\)/events/\" | head -20)",
-      "Bash(find /c/Users/chino/code/raceday/lib -type f -name \"*.ts\" -o -name \"*.tsx\" | xargs grep -l \"Clerk\\\\|useClerk\" | head -10)"
+      "Bash(find /c/Users/chino/code/raceday/lib -type f -name \"*.ts\" -o -name \"*.tsx\" | xargs grep -l \"Clerk\\\\|useClerk\" | head -10)",
+      "Bash(grep -n \"pb-\\\\|py-\\\\|mb-\\\\|mt-\" /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\]/register/page.tsx | head -20)",
+      "Bash(grep -n \"pb-\\\\|py-\\\\|mb-\\\\|mt-\" /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\]/register/summary/page.tsx)",
+      "Bash(grep -n \"pb-\\\\|py-\\\\|mb-\\\\|mt-\" /Users/chinoyoung/Code/raceday-next/app/\\\\\\(marketing\\\\\\)/events/\\\\[id\\\\]/register/success/page.tsx)",
+      "Bash(/tmp/spacing_summary.txt:*)",
+      "Read(//tmp/**)",
+      "Bash(/Users/chinoyoung/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/scripts/start-server.sh --project-dir /Users/chinoyoung/Code/raceday-next)",
+      "Bash(bash /Users/chinoyoung/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/brainstorming/scripts/start-server.sh --project-dir /Users/chinoyoung/Code/raceday-next)",
+      "Bash(git add:*)",
+      "Bash(bash /Users/chinoyoung/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/brainstorming/scripts/stop-server.sh /Users/chinoyoung/Code/raceday-next/.superpowers/brainstorm/36604-1773501221)",
+      "Bash(npx next:*)"
     ]
   }
 }

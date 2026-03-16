@@ -141,7 +141,7 @@ export function EventDetailClient({ event }: EventDetailClientProps) {
                 isRegistered={!!userRegistration || user?._id === event.organizerId}
             />
 
-            <PageWrapper className="pt-0 pb-36 lg:pb-24 max-w-7xl mx-auto flex flex-col gap-16 mt-8">
+            <PageWrapper className="pt-0 max-w-7xl mx-auto flex flex-col gap-16 mt-8">
                 <div className="w-full space-y-24">
 
                     <div className="space-y-32">

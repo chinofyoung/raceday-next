@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export function Footer() {
     return (
-        <footer className="bg-surface/50 border-t border-white/5 py-12 px-4 mt-20">
+        <footer className="bg-surface/50 border-t border-white/5 py-12 px-4 mt-24">
             <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
                 <div className="space-y-4 sm:col-span-2 lg:col-span-1">
                     <Link href="/" className="flex items-center opacity-80 hover:opacity-100 transition-opacity">
@@ -37,14 +37,6 @@ export function Footer() {
                     </ul>
                 </div>
 
-                <div>
-                    <h4 className="text-text font-bold uppercase mb-6 tracking-wide">Connect</h4>
-                    <ul className="space-y-3 text-text-muted text-sm">
-                        <li><a href="#" className="hover:text-primary transition-colors">Twitter</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Instagram</a></li>
-                        <li><a href="#" className="hover:text-primary transition-colors">Facebook</a></li>
-                    </ul>
-                </div>
             </div>
 
             <div className="max-w-7xl mx-auto border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-text-muted opacity-50">

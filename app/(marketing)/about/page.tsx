@@ -5,7 +5,7 @@ import { Mail, Github, Twitter, MapPin } from "lucide-react";
 
 export default function AboutPage() {
     return (
-        <PageWrapper className="pb-24 space-y-24">
+        <PageWrapper className="space-y-24">
             {/* Hero */}
             <section className="pt-12 text-center space-y-6 max-w-3xl mx-auto">
                 <h1 className="text-5xl md:text-7xl font-bold tracking-tight">

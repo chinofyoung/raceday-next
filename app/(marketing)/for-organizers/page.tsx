@@ -28,7 +28,7 @@ export default function ForOrganizersPage() {
     ];
 
     return (
-        <PageWrapper className="pb-24 space-y-24">
+        <PageWrapper className="space-y-24">
             {/* Hero */}
             <section className="relative pt-16 lg:pt-24 pb-8 lg:pb-12 text-center space-y-6 max-w-7xl mx-auto">
                 {/* Background hero image — full bleed */}

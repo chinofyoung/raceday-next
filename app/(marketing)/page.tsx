@@ -36,7 +36,7 @@ export default async function HomePage() {
     const upcomingEvents = await getUpcomingEvents();
 
     return (
-        <PageWrapper className="space-y-24 pb-20">
+        <PageWrapper className="space-y-24">
             {/* Hero Section */}
             <section className="relative pt-16 pb-8 lg:pt-28 lg:pb-16 overflow-visible">
                 {/* Background hero image — full bleed */}

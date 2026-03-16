@@ -102,7 +102,7 @@ export default function RegisterPage() {
 
     if (loading || authLoading) {
         return (
-            <PageWrapper className="pt-8 pb-24 space-y-12">
+            <PageWrapper className="pt-8 space-y-12">
                 <RegistrationFormSkeleton />
             </PageWrapper>
         );
@@ -138,7 +138,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <PageWrapper className="pt-8 pb-24 space-y-12">
+        <PageWrapper className="pt-8 space-y-12">
             <div className="w-full mx-auto space-y-8">
                 <div className="flex flex-col gap-4">
                     <Link href={`/events/${id}`} className="text-text-muted text-xs font-semibold uppercase tracking-wider flex items-center gap-1 hover:text-primary transition-colors">

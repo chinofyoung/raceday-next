@@ -49,11 +49,11 @@ export function RunnerAnnouncements() {
     }
 
     return (
-        <div className="space-y-4 mb-8">
+        <div className="space-y-4">
             <h3 className="text-sm font-bold uppercase tracking-tight text-white flex items-center gap-2">
                 <Megaphone size={16} className="text-cta" /> Announcements
             </h3>
-            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="space-y-3">
                 {announcements.map((announcement) => (
                     <Card key={announcement.id} className="relative p-5 bg-gradient-to-r from-cta/10 to-transparent border-cta/20 shadow-md">
                         <div className="pr-2">
