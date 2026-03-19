@@ -40,7 +40,9 @@
       "Bash(bash /Users/chinoyoung/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.2/skills/brainstorming/scripts/stop-server.sh /Users/chinoyoung/Code/raceday-next/.superpowers/brainstorm/36604-1773501221)",
       "Bash(npx next:*)",
       "Bash(head:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(find /Users/chinoyoung/Code/raceday-next -name .env* -o -name clerk* -type f)",
+      "Bash(find /Users/chinoyoung/Code/raceday-next -name *.png -type f)"
     ]
   }
 }

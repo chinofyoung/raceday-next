@@ -89,6 +89,25 @@ function RegistrationFormContent({
                     medicalConditions: user.medicalConditions || "",
                 }
             });
+        } else if (registrationType === "proxy") {
+            reset({
+                ...currentValues,
+                participantInfo: {
+                    name: "",
+                    email: "",
+                    phone: "",
+                    gender: "" as any,
+                    birthDate: "",
+                    tShirtSize: "",
+                    singletSize: "",
+                    emergencyContact: {
+                        name: "",
+                        phone: "",
+                        relationship: "",
+                    },
+                    medicalConditions: "",
+                }
+            });
         }
     }, [user, registrationType, reset, getValues]);
 

@@ -3,8 +3,9 @@
 import { useSignIn, useSignUp } from "@clerk/nextjs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { LogIn, ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginPage() {
     const { isLoaded: isSignInLoaded, signIn } = useSignIn();
@@ -13,16 +14,20 @@ export default function LoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const rawRedirect = searchParams.get("redirect") || "/dashboard";
-    // Prevent open redirect: only allow relative paths (starting with /), block protocol-relative URLs
-    const redirectTo = (rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") && !rawRedirect.includes("://"))
-        ? rawRedirect
-        : "/dashboard";
+
+    // Prevent open redirect: only allow relative paths starting with /,
+    // block protocol-relative URLs and absolute URLs
+    const redirectTo =
+        rawRedirect.startsWith("/") &&
+        !rawRedirect.startsWith("//") &&
+        !rawRedirect.includes("://")
+            ? rawRedirect
+            : "/dashboard";
 
     const handleGoogleLogin = async () => {
         if (!isSignInLoaded || !isSignUpLoaded) return;
         setIsLoading(true);
         try {
-            // Clerk's authenticateWithRedirect handles both sign-in and sign-up with the same strategy
             await signIn.authenticateWithRedirect({
                 strategy: "oauth_google",
                 redirectUrl: "/auth/sso-callback",
@@ -30,75 +35,118 @@ export default function LoginPage() {
             });
         } catch (err) {
             console.error("Error signing in:", err);
-            setIsLoading(true); // Keep it true or handle error UI
             setTimeout(() => setIsLoading(false), 3000);
         }
     };
 
     return (
-        <div className="min-h-screen bg-[#0f141a] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-            {/* Background Accent - subtle depth */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#0f141a]" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="relative min-h-screen flex items-center justify-center p-4 sm:p-6 overflow-hidden">
+            {/* Full-bleed background image */}
+            <Image
+                src="/assets/ultra.png"
+                alt="Ultra marathon runners on trail"
+                fill
+                className="object-cover"
+                priority
+                quality={85}
+            />
 
-            <div className="w-full max-w-[480px] relative z-10 flex flex-col items-center">
-                {/* Main Card */}
-                <div className="w-full bg-[#1e252e] rounded-[48px] p-10 sm:p-14 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] border border-white/5">
-                    {/* Section Header: Line + SIGN IN */}
-                    <div className="flex items-center gap-4 mb-10">
-                        <div className="w-12 h-[3px] bg-[#f97316] rounded-full" />
-                        <span className="text-[#f97316] text-sm font-bold tracking-[0.3em] uppercase">
-                            Sign In
-                        </span>
+            {/* Dark overlay (~70% opacity) */}
+            <div className="absolute inset-0 bg-[#111827]/70" aria-hidden="true" />
+
+            {/* Centered content column */}
+            <div className="relative z-10 w-full max-w-md flex flex-col items-center gap-6">
+
+                {/* Frosted glass card */}
+                <div className="w-full bg-white/[0.07] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-8 sm:p-10">
+
+                    {/* Logo */}
+                    <div className="mb-8 pb-6 border-b border-white/[0.06]">
+                        <Image
+                            src="/logo.png"
+                            alt="RaceDay"
+                            width={160}
+                            height={40}
+                            className="h-8 w-auto"
+                        />
                     </div>
 
-                    {/* Title */}
-                    <h1 className="text-white text-2xl md:text-4xl font-bold tracking-tight mb-4 leading-[0.85] font-heading">
-                        Welcome Back!
+                    {/* Section label */}
+                    <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-3">
+                        Sign in
+                    </p>
+
+                    {/* Heading */}
+                    <h1 className="text-3xl font-bold tracking-tight text-text mb-2 leading-tight">
+                        Welcome back
                     </h1>
 
                     {/* Subtitle */}
-                    <p className="text-slate-400 text-xl mb-14 font-medium leading-tight max-w-[320px]">
+                    <p className="text-text-muted leading-relaxed mb-8">
                         Sign in to manage your races and registrations.
                     </p>
 
-                    {/* Google Action Button */}
+                    {/* Google CTA button */}
                     <button
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
-                        className="w-full h-20 bg-[#22c55e] hover:bg-[#1eb054] active:scale-[0.98] transition-all duration-300 rounded-[20px] flex items-center justify-between px-8 group disabled:opacity-70 cursor-pointer shadow-[0_12px_40px_rgb(34,197,94,0.25)] hover:shadow-[0_16px_48px_rgb(34,197,94,0.35)]"
+                        className="w-full flex items-center justify-between gap-3 bg-cta hover:bg-cta/90 disabled:opacity-70 disabled:cursor-not-allowed transition-colors duration-150 text-white font-semibold px-5 py-3.5 rounded-lg cursor-pointer group"
                     >
-                        <div className="flex items-center gap-5">
-                            <LogIn className="text-white w-8 h-8" strokeWidth={2.5} />
-                            <span className="text-white text-lg md:text-2xl font-bold tracking-tight font-heading">
-                                Continue with Google
-                            </span>
+                        <div className="flex items-center gap-3">
+                            {/* Google multi-color "G" icon */}
+                            <svg
+                                width="18"
+                                height="18"
+                                viewBox="0 0 18 18"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                                className="shrink-0"
+                            >
+                                <path d="M17.64 9.205c0-.639-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4" />
+                                <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853" />
+                                <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05" />
+                                <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335" />
+                            </svg>
+                            <span>Continue with Google</span>
                         </div>
+
                         {isLoading ? (
-                            <Loader2 className="text-white/40 w-8 h-8 animate-spin" strokeWidth={3} />
+                            <Loader2 size={18} className="shrink-0 animate-spin opacity-70" />
                         ) : (
-                            <ChevronRight className="text-white/40 w-8 h-8 transition-transform group-hover:translate-x-1" strokeWidth={3} />
+                            <ChevronRight
+                                size={18}
+                                className="shrink-0 opacity-60 transition-transform duration-150 group-hover:translate-x-0.5"
+                            />
                         )}
                     </button>
 
-                    {/* Clerk Bot Protection CAPTCHA container */}
+                    {/* Clerk CAPTCHA container */}
                     <div id="clerk-captcha" className="mt-4" />
-                </div>
 
-                {/* Privacy Footer */}
-                <div className="mt-10 px-6 max-w-[400px]">
-                    <p className="text-center text-[#94a3b8]/50 text-[14px] leading-relaxed font-medium">
+                    {/* Terms / Privacy */}
+                    <p className="mt-6 text-center text-xs text-text-muted/60 leading-relaxed">
                         By continuing, you agree to our{" "}
-                        <Link href="/terms" className="text-slate-200 hover:text-white transition-colors font-bold">Terms of Service</Link>
-                        {" "}and{" "}
-                        <Link href="/privacy" className="text-slate-200 hover:text-white transition-colors font-bold">Privacy Policy</Link>.
+                        <Link
+                            href="/terms"
+                            className="text-text-muted hover:text-text transition-colors underline underline-offset-2"
+                        >
+                            Terms of Service
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                            href="/privacy"
+                            className="text-text-muted hover:text-text transition-colors underline underline-offset-2"
+                        >
+                            Privacy Policy
+                        </Link>
+                        .
                     </p>
                 </div>
 
-                {/* Built for Speed Tagline */}
-                <div className="mt-16 text-slate-700 text-xs font-bold tracking-[0.5em] uppercase pointer-events-none font-body">
-                    Built for Speed
-                </div>
+                {/* Below-card tagline */}
+                <p className="text-xs font-semibold uppercase tracking-wider text-text-muted/40 pointer-events-none select-none">
+                    Built for speed
+                </p>
             </div>
         </div>
     );
