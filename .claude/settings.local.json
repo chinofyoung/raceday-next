@@ -42,7 +42,8 @@
       "Bash(head:*)",
       "Bash(ls:*)",
       "Bash(find /Users/chinoyoung/Code/raceday-next -name .env* -o -name clerk* -type f)",
-      "Bash(find /Users/chinoyoung/Code/raceday-next -name *.png -type f)"
+      "Bash(find /Users/chinoyoung/Code/raceday-next -name *.png -type f)",
+      "Bash(grep -E \"\\(\\\\.ts$|\\\\.js$|\\\\.json$\\)\")"
     ]
   }
 }

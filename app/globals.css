@@ -11,8 +11,8 @@
   --color-primary: #f97316;
   --color-secondary: #fb923c;
   --color-cta: #22c55e;
-  --color-background: #1f2937;
-  --color-surface: #374151;
+  --color-background: #111827;
+  --color-surface: #1f2937;
   --color-text: #f8fafc;
   --color-text-muted: #94a3b8;
 
@@ -26,20 +26,20 @@
 
   /* NEW: shadcn semantic tokens */
   --color-foreground: #f8fafc;
-  --color-card: #374151;
+  --color-card: #1f2937;
   --color-card-foreground: #f8fafc;
   --color-primary-foreground: #ffffff;
   --color-secondary-foreground: #ffffff;
-  --color-muted: #374151;
+  --color-muted: #1f2937;
   --color-muted-foreground: #94a3b8;
-  --color-accent: #374151;
+  --color-accent: #1f2937;
   --color-accent-foreground: #f8fafc;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
   --color-border: rgba(255, 255, 255, 0.05);
   --color-input: rgba(255, 255, 255, 0.05);
   --color-ring: #f97316;
-  --color-popover: #374151;
+  --color-popover: #1f2937;
   --color-popover-foreground: #f8fafc;
   --color-chart-1: #f97316;
   --color-chart-2: #22c55e;
@@ -51,7 +51,7 @@
   --radius-lg: 0.5rem;
 
   /* NEW: sidebar tokens */
-  --color-sidebar: #111827;
+  --color-sidebar: #0a0f1a;
   --color-sidebar-foreground: #f8fafc;
   --color-sidebar-primary: #f97316;
   --color-sidebar-primary-foreground: #ffffff;
@@ -64,7 +64,7 @@
 :root {
   color-scheme: dark;
   --foreground-rgb: 248, 250, 252;
-  --background-rgb: 31, 41, 55;
+  --background-rgb: 17, 24, 39;
 }
 
 body {
@@ -121,3 +121,4 @@ h6 {
   0%, 100% { top: 0%; }
   50% { top: 100%; }
 }
+
