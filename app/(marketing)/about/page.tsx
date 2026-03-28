@@ -67,21 +67,18 @@ export default function AboutPage() {
                         <Card className="p-8 text-center space-y-4 hover:border-cta/50 hover:bg-cta/5 transition-all">
                             <Mail className="mx-auto text-cta group-hover:scale-110 transition-transform" size={24} />
                             <h4 className="font-bold">Email us</h4>
-                            <p className="text-xs text-text-muted">hello@raceday.io</p>
                         </Card>
                     </a>
                     <a href="#" className="group">
                         <Card className="p-8 text-center space-y-4 hover:border-primary/50 hover:bg-primary/5 transition-all">
                             <Twitter className="mx-auto text-primary group-hover:scale-110 transition-transform" size={24} />
                             <h4 className="font-bold">Follow us</h4>
-                            <p className="text-xs text-text-muted">@raceday_io</p>
                         </Card>
                     </a>
                     <div className="group">
                         <Card className="p-8 text-center space-y-4 hover:border-blue-500/50 hover:bg-blue-500/5 transition-all cursor-default">
                             <MapPin className="mx-auto text-blue-500 group-hover:scale-110 transition-transform" size={24} />
                             <h4 className="font-bold">Location</h4>
-                            <p className="text-xs text-text-muted">BGC, Taguig, PH</p>
                         </Card>
                     </div>
                 </div>
