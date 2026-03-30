@@ -2,10 +2,11 @@
 
 import { useFormContext } from "react-hook-form";
 import { EventFormValues } from "@/lib/validations/event";
-import { Calendar, MapPin, AlignLeft, Ruler, Clock, Sparkles, Image as ImageIcon } from "lucide-react";
+import { Calendar, MapPin, AlignLeft, Ruler, Clock, Sparkles, Image as ImageIcon, CreditCard, Upload } from "lucide-react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { formatDistance } from "@/lib/utils";
 
@@ -195,6 +196,32 @@ export function Step6Review() {
                                 </div>
                             </div>
                         )}
+                    </Card>
+
+                    <Card className="p-6 bg-surface border-white/5 space-y-4">
+                        {/* Payment Mode */}
+                        <div className="space-y-3">
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted">Payment Mode</h3>
+                            <div className="flex items-center gap-2">
+                                {data.paymentMode === "manual" ? (
+                                    <>
+                                        <Upload size={16} className="text-blue-500" />
+                                        <span className="text-sm font-semibold text-white">Manual Payment</span>
+                                        <Badge className="text-[10px] font-semibold uppercase border px-1.5 py-0 text-blue-500 bg-blue-500/10 border-blue-500/20">
+                                            Proof required
+                                        </Badge>
+                                    </>
+                                ) : (
+                                    <>
+                                        <CreditCard size={16} className="text-primary" />
+                                        <span className="text-sm font-semibold text-white">Payment Portal (Xendit)</span>
+                                        <Badge className="text-[10px] font-semibold uppercase border px-1.5 py-0 text-primary bg-primary/10 border-primary/20">
+                                            Auto-confirm
+                                        </Badge>
+                                    </>
+                                )}
+                            </div>
+                        </div>
                     </Card>
                 </div >
             </div >

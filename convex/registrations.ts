@@ -163,6 +163,7 @@ export const create = mutation({
         isProxy: v.boolean(),
         registrationData: v.any(),
         totalPrice: v.number(),
+        manualPaymentStatus: v.optional(v.union(v.literal("pending"), v.literal("submitted"), v.literal("approved"), v.literal("rejected"))),
     },
     handler: async (ctx: MutationCtx, args) => {
         // Auth is handled by the API route (Clerk) before calling this mutation
@@ -217,7 +218,7 @@ export const markAsPaid = mutation({
         // State guard: prevent marking as paid unless payment was properly initiated.
         // Free registrations (totalPrice=0) are allowed; paid registrations must have
         // a xenditInvoiceId set by updatePaymentInfo (which requires auth).
-        if (reg.totalPrice > 0 && !reg.xenditInvoiceId) {
+        if (reg.totalPrice > 0 && !reg.xenditInvoiceId && reg.manualPaymentStatus !== "approved") {
             throw new Error("Cannot mark as paid: no payment invoice found");
         }
         if (reg.status === "paid") {
@@ -526,5 +527,152 @@ export const getOrganizerDashboardStats = query({
             categoryStats,
             recentRegistrations: recent,
         };
+    },
+});
+
+export const uploadProofOfPayment = mutation({
+    args: {
+        id: v.id("registrations"),
+        storageId: v.string(),
+        url: v.string(),
+    },
+    handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const reg = await ctx.db.get(args.id);
+        if (!reg) throw new Error("Registration not found");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user || reg.userId !== user._id) throw new Error("Forbidden");
+
+        await ctx.db.patch(args.id, {
+            proofOfPayment: {
+                storageId: args.storageId,
+                uploadedAt: Date.now(),
+                url: args.url,
+            },
+            manualPaymentStatus: "submitted",
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const approveManualPayment = mutation({
+    args: { id: v.id("registrations") },
+    handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const reg = await ctx.db.get(args.id);
+        if (!reg) throw new Error("Registration not found");
+
+        const event = await ctx.db.get(reg.eventId);
+        if (!event) throw new Error("Event not found");
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
+        if (reg.manualPaymentStatus === "approved") return;
+
+        await ctx.db.patch(args.id, {
+            manualPaymentStatus: "approved",
+            status: "paid",
+            paymentStatus: "paid",
+            paidAt: Date.now(),
+            reviewedAt: Date.now(),
+            reviewedBy: user._id,
+            updatedAt: Date.now(),
+        });
+
+        if (event.categories) {
+            const catIndex = event.categories.findIndex(c => (c.id || "0") === reg.categoryId);
+            if (catIndex !== -1) {
+                const newCategories = [...event.categories];
+                newCategories[catIndex] = {
+                    ...newCategories[catIndex],
+                    registeredCount: (newCategories[catIndex].registeredCount || 0) + 1,
+                };
+                await ctx.db.patch(reg.eventId, {
+                    categories: newCategories,
+                    updatedAt: Date.now(),
+                });
+            }
+        }
+    },
+});
+
+export const rejectManualPayment = mutation({
+    args: { id: v.id("registrations") },
+    handler: async (ctx: MutationCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const reg = await ctx.db.get(args.id);
+        if (!reg) throw new Error("Registration not found");
+
+        const event = await ctx.db.get(reg.eventId);
+        if (!event) throw new Error("Event not found");
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
+        await ctx.db.patch(args.id, {
+            manualPaymentStatus: "rejected",
+            reviewedAt: Date.now(),
+            reviewedBy: user._id,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const listManualPayments = query({
+    args: {
+        eventId: v.id("events"),
+        statusFilter: v.optional(v.string()),
+    },
+    handler: async (ctx: QueryCtx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const event = await ctx.db.get(args.eventId);
+        if (!event) throw new Error("Event not found");
+        if (user._id !== event.organizerId && user.role !== "admin") {
+            throw new Error("Forbidden");
+        }
+
+        const registrations = await ctx.db
+            .query("registrations")
+            .withIndex("by_event", (q) => q.eq("eventId", args.eventId))
+            .collect();
+
+        let filtered = registrations.filter((r) => r.manualPaymentStatus !== undefined);
+
+        if (args.statusFilter && args.statusFilter !== "all") {
+            filtered = filtered.filter((r) => r.manualPaymentStatus === args.statusFilter);
+        }
+
+        return filtered.sort((a, b) => b.updatedAt - a.updatedAt);
     },
 });

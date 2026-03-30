@@ -15,31 +15,42 @@ import { Step2Details } from "./Step2Details";
 import { Step3Vanity } from "./Step3Vanity";
 import { Step4Review } from "./Step4Review";
 import { Step0Who } from "./Step0Who";
+import { Step5Payment } from "./Step5Payment";
 import { cn } from "@/lib/utils";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { calculateCompletion } from "@/lib/validations/profile";
 import { useFormSteps } from "@/lib/hooks/useFormSteps";
 
-const STEPS = ["Who", "Category", "Details", "Vanity", "Review"];
+const DETAILS_FIELDS: (keyof RegistrationFormValues | string)[] = [
+    "participantInfo.name",
+    "participantInfo.email",
+    "participantInfo.phone",
+    "participantInfo.gender",
+    "participantInfo.birthDate",
+    "participantInfo.tShirtSize",
+    "participantInfo.singletSize",
+    "participantInfo.emergencyContact.name",
+    "participantInfo.emergencyContact.phone",
+    "participantInfo.emergencyContact.relationship",
+];
 
-const STEP_FIELDS: Record<number, (keyof RegistrationFormValues | string)[]> = {
-    0: ["registrationType"],
-    1: ["categoryId"],
-    2: [
-        "participantInfo.name",
-        "participantInfo.email",
-        "participantInfo.phone",
-        "participantInfo.gender",
-        "participantInfo.birthDate",
-        "participantInfo.tShirtSize",
-        "participantInfo.singletSize",
-        "participantInfo.emergencyContact.name",
-        "participantInfo.emergencyContact.phone",
-        "participantInfo.emergencyContact.relationship",
-    ],
-    3: ["vanityNumber"],
-};
+function buildFormSteps(hasVanity: boolean) {
+    const steps = hasVanity
+        ? ["Who", "Category", "Details", "Vanity", "Review"]
+        : ["Who", "Category", "Details", "Review"];
+
+    const fields: Record<number, (keyof RegistrationFormValues | string)[]> = {
+        0: ["registrationType"],
+        1: ["categoryId"],
+        2: DETAILS_FIELDS,
+    };
+    if (hasVanity) {
+        fields[3] = ["vanityNumber"];
+    }
+
+    return { steps, fields };
+}
 
 interface RegistrationFormProps {
     event: RaceEvent;
@@ -56,9 +67,20 @@ function RegistrationFormContent({
     const updateProfileMutation = useMutation(api.users.updateProfile);
     const { handleSubmit, watch, reset, getValues } = useFormContext<RegistrationFormValues>();
     const [loading, setLoading] = useState(false);
+    const [registrationId, setRegistrationId] = useState<string | null>(null);
+    const [showPaymentStep, setShowPaymentStep] = useState(false);
+
+    const hasVanity = !!event.vanityRaceNumber?.enabled;
+    const isManualPayment = event.paymentMode === "manual";
+    const { steps: FORM_STEPS, fields: STEP_FIELDS } = buildFormSteps(hasVanity);
+    const DISPLAY_STEPS = isManualPayment
+        ? [...FORM_STEPS, "Payment"]
+        : FORM_STEPS;
+
+    const reviewStepIndex = FORM_STEPS.length - 1;
 
     const { currentStep, nextStep: baseNextStep, prevStep: basePrevStep } = useFormSteps<RegistrationFormValues>(
-        STEPS.length,
+        FORM_STEPS.length,
         STEP_FIELDS as any
     );
 
@@ -182,6 +204,10 @@ function RegistrationFormContent({
 
             if (result.free) {
                 router.push(`/events/${event.id}/register/success?id=${result.registrationId}`);
+            } else if (result.manualPayment) {
+                setRegistrationId(result.registrationId);
+                setShowPaymentStep(true);
+                window.scrollTo({ top: 0, behavior: "smooth" });
             } else if (result.checkoutUrl) {
                 window.location.href = result.checkoutUrl;
             } else {
@@ -207,71 +233,85 @@ function RegistrationFormContent({
             {/* Progress Tracks */}
             <div className="flex items-center justify-between relative">
                 <div className="absolute top-5 left-0 right-0 h-0.5 bg-white/5 -translate-y-1/2 z-0" />
-                {STEPS.map((step, i) => (
-                    <div key={step} className="relative z-10 flex flex-col items-center gap-3">
-                        <div className={cn(
-                            "w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 border-2",
-                            i < currentStep
-                                ? "bg-cta border-cta text-white"
-                                : i === currentStep
-                                    ? "bg-primary border-primary text-white scale-125 shadow-lg shadow-primary/20"
-                                    : "bg-surface border-white/10 text-text-muted"
-                        )}>
-                            {i < currentStep ? <CheckCircle2 size={18} /> : i + 1}
+                {(() => {
+                    const activeStep = showPaymentStep ? DISPLAY_STEPS.length - 1 : currentStep;
+                    return DISPLAY_STEPS.map((step, i) => (
+                        <div key={step} className="relative z-10 flex flex-col items-center gap-3">
+                            <div className={cn(
+                                "w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all duration-300 border-2",
+                                i < activeStep
+                                    ? "bg-cta border-cta text-white"
+                                    : i === activeStep
+                                        ? "bg-primary border-primary text-white scale-125 shadow-lg shadow-primary/20"
+                                        : "bg-surface border-white/10 text-text-muted"
+                            )}>
+                                {i < activeStep ? <CheckCircle2 size={18} /> : i + 1}
+                            </div>
+                            <span className={cn(
+                                "text-xs font-semibold uppercase tracking-wider transition-colors",
+                                i <= activeStep ? "text-white" : "text-text-muted"
+                            )}>
+                                {step}
+                            </span>
                         </div>
-                        <span className={cn(
-                            "text-xs font-semibold uppercase tracking-wider transition-colors",
-                            i <= currentStep ? "text-white" : "text-text-muted"
-                        )}>
-                            {step}
-                        </span>
-                    </div>
-                ))}
+                    ));
+                })()}
             </div>
 
             {/* Form Steps */}
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="space-y-12 pb-24">
-                    {currentStep === 0 && <Step0Who />}
-                    {currentStep === 1 && <Step1Category event={event} />}
-                    {currentStep === 2 && <Step2Details event={event} />}
-                    {currentStep === 3 && <Step3Vanity event={event} />}
-                    {currentStep === 4 && <Step4Review event={event} />}
+                    {!showPaymentStep && currentStep === 0 && <Step0Who />}
+                    {!showPaymentStep && currentStep === 1 && <Step1Category event={event} />}
+                    {!showPaymentStep && currentStep === 2 && <Step2Details event={event} />}
+                    {!showPaymentStep && hasVanity && currentStep === 3 && <Step3Vanity event={event} />}
+                    {!showPaymentStep && currentStep === reviewStepIndex && <Step4Review event={event} />}
+                    {showPaymentStep && registrationId && (
+                        <Step5Payment
+                            event={event}
+                            registrationId={registrationId}
+                            onComplete={() => {
+                                router.push(`/events/${event.id}/register/success?id=${registrationId}&manual=true`);
+                            }}
+                        />
+                    )}
                 </div>
 
                 {/* Navigation — sticky bottom bar */}
-                <div className="sticky bottom-0 z-50 -mx-4 px-4 md:-mx-0 md:px-0 py-4 bg-background/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-between">
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={prevStep}
-                        className={cn(currentStep === 0 && "invisible")}
-                        disabled={loading}
-                    >
-                        <ChevronLeft className="mr-2" size={18} /> Previous
-                    </Button>
-
-                    {currentStep === STEPS.length - 1 ? (
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 font-bold"
-                            disabled={loading}
-                        >
-                            {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
-                        </Button>
-                    ) : (
+                {!showPaymentStep && (
+                    <div className="sticky bottom-0 z-50 -mx-4 px-4 md:-mx-0 md:px-0 py-4 bg-background/95 backdrop-blur-xl border-t border-white/10 flex items-center justify-between">
                         <Button
                             type="button"
-                            variant="primary"
-                            onClick={nextStep}
-                            className="px-12 font-bold group"
+                            variant="outline"
+                            onClick={prevStep}
+                            className={cn(currentStep === 0 && "invisible")}
                             disabled={loading}
                         >
-                            Next Step <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                            <ChevronLeft className="mr-2" size={18} /> Previous
                         </Button>
-                    )}
-                </div>
+
+                        {currentStep === reviewStepIndex ? (
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="bg-cta hover:bg-cta-hover border-none px-12 shadow-xl shadow-cta/20 font-bold"
+                                disabled={loading}
+                            >
+                                {loading ? <Loader2 className="animate-spin mr-2" /> : "Submit"}
+                            </Button>
+                        ) : (
+                            <Button
+                                type="button"
+                                variant="primary"
+                                onClick={nextStep}
+                                className="px-12 font-bold group"
+                                disabled={loading}
+                            >
+                                Next Step <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
+                            </Button>
+                        )}
+                    </div>
+                )}
             </form>
         </div>
     );

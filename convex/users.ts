@@ -274,3 +274,103 @@ export const updateDashboardLayout = mutation({
         });
     },
 });
+
+export const addPaymentMethod = mutation({
+    args: {
+        type: v.union(v.literal("bank"), v.literal("ewallet"), v.literal("other")),
+        label: v.string(),
+        accountName: v.string(),
+        accountNumber: v.string(),
+        instructions: v.optional(v.string()),
+        qrCodeStorageId: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const newMethod = {
+            id: Math.random().toString(36).substring(2, 9),
+            ...args,
+        };
+
+        const existing = user.paymentMethods || [];
+        await ctx.db.patch(user._id, {
+            paymentMethods: [...existing, newMethod],
+            updatedAt: Date.now(),
+        });
+
+        return newMethod.id;
+    },
+});
+
+export const updatePaymentMethod = mutation({
+    args: {
+        methodId: v.string(),
+        type: v.union(v.literal("bank"), v.literal("ewallet"), v.literal("other")),
+        label: v.string(),
+        accountName: v.string(),
+        accountNumber: v.string(),
+        instructions: v.optional(v.string()),
+        qrCodeStorageId: v.optional(v.string()),
+    },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const methods = user.paymentMethods || [];
+        const index = methods.findIndex((m) => m.id === args.methodId);
+        if (index === -1) throw new Error("Payment method not found");
+
+        const { methodId, ...updates } = args;
+        const updatedMethods = [...methods];
+        updatedMethods[index] = { ...updatedMethods[index], ...updates };
+
+        await ctx.db.patch(user._id, {
+            paymentMethods: updatedMethods,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const deletePaymentMethod = mutation({
+    args: { methodId: v.string() },
+    handler: async (ctx, args) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) throw new Error("Unauthorized");
+
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_uid", (q) => q.eq("uid", identity.subject))
+            .unique();
+        if (!user) throw new Error("User not found");
+
+        const methods = user.paymentMethods || [];
+        const filtered = methods.filter((m) => m.id !== args.methodId);
+
+        await ctx.db.patch(user._id, {
+            paymentMethods: filtered,
+            updatedAt: Date.now(),
+        });
+    },
+});
+
+export const getPaymentMethods = query({
+    args: { userId: v.id("users") },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.get(args.userId);
+        if (!user) return [];
+        return user.paymentMethods || [];
+    },
+});

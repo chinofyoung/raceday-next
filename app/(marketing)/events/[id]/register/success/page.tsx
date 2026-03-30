@@ -72,11 +72,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { PaymentInstructions } from "@/components/forms/registration/PaymentInstructions";
 
 export default function RegistrationSuccessPage() {
     const { id: eventId } = useParams();
     const searchParams = useSearchParams();
     const registrationId = searchParams.get("id");
+    const isManualPayment = searchParams.get("manual") === "true";
 
     const registration = useQuery(api.registrations.getById, {
         id: registrationId as Id<"registrations">
@@ -88,12 +90,14 @@ export default function RegistrationSuccessPage() {
 
     const loading = registration === undefined || event === undefined;
 
+    const [proofJustUploaded, setProofJustUploaded] = useState(false);
+
     const [syncAttempts, setSyncAttempts] = useState(0);
     const MAX_SYNC_ATTEMPTS = 60; // 3 minutes at 3s intervals
     const SLOW_SYNC_THRESHOLD = 20; // ~60 seconds
 
     useEffect(() => {
-        if (!registrationId || registration?.status !== "pending") return;
+        if (!registrationId || registration?.status !== "pending" || isManualPayment) return;
 
         const interval = setInterval(async () => {
             setSyncAttempts((prev) => {
@@ -107,7 +111,7 @@ export default function RegistrationSuccessPage() {
         }, 3000);
 
         return () => clearInterval(interval);
-    }, [registrationId, registration?.status]);
+    }, [registrationId, registration?.status, isManualPayment]);
 
     const categoryName = (event?.categories as any[])?.find((c: any) => c.id === registration?.categoryId)?.name || registration?.categoryId;
 
@@ -119,19 +123,94 @@ export default function RegistrationSuccessPage() {
         );
     }
 
+    // Step 1: manual payment with pending proof upload
+    const isStep1 =
+        isManualPayment &&
+        registration?.status === "pending" &&
+        (!registration?.manualPaymentStatus || registration?.manualPaymentStatus === "pending") &&
+        !proofJustUploaded;
+
+    if (isStep1) {
+        return (
+            <PageWrapper className="pt-12 max-w-7xl mx-auto space-y-12">
+                <div className="text-center space-y-6">
+                    <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto bg-primary/10 text-primary">
+                        <CheckCircle2 size={46} />
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
+                            Registration <span className="text-primary">submitted</span>.
+                        </h1>
+                        <p className="text-lg text-text-muted font-medium">
+                            Complete your payment below to confirm your spot.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="max-w-2xl mx-auto w-full px-4">
+                    <PaymentInstructions
+                        organizerId={registration.organizerId!}
+                        totalPrice={registration.totalPrice}
+                        showUpload={true}
+                        registrationId={registrationId!}
+                        onProofUploaded={() => setProofJustUploaded(true)}
+                    />
+                </div>
+
+                <div className="flex flex-col md:flex-row gap-4 pt-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 max-w-2xl mx-auto w-full">
+                    <Button className="flex-1 h-14 bg-cta hover:bg-cta/90 border-none font-semibold px-8 py-3 rounded-lg group active:scale-[0.98] transition-all" asChild>
+                        <Link href="/dashboard">
+                            Go to athlete dashboard <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </Button>
+                    <Button variant="outline" className="flex-1 h-14 font-medium px-8 py-3 border border-white/12 text-text rounded-lg hover:bg-white/3 active:scale-[0.98] transition-all" asChild>
+                        <Link href={`/events/${eventId}`}>Event details page</Link>
+                    </Button>
+                </div>
+            </PageWrapper>
+        );
+    }
+
     return (
         <PageWrapper className="pt-12 max-w-7xl mx-auto space-y-12">
             <div className="text-center space-y-6">
-                <div className="w-20 h-20 bg-cta/10 rounded-full flex items-center justify-center mx-auto text-cta animate-bounce">
+                <div className={cn(
+                    "w-20 h-20 rounded-full flex items-center justify-center mx-auto",
+                    registration?.status === "paid"
+                        ? "bg-cta/10 text-cta animate-bounce"
+                        : "bg-amber-500/10 text-amber-500"
+                )}>
                     <CheckCircle2 size={46} />
                 </div>
                 <div className="space-y-2">
-                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
-                        Race <span className="text-cta">Confirmed</span>.
-                    </h1>
-                    <p className="text-lg text-text-muted font-medium">
-                        You&apos;re officially on the starting list! Check your details below.
-                    </p>
+                    {registration?.status === "paid" ? (
+                        <>
+                            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
+                                Race <span className="text-cta">Confirmed</span>.
+                            </h1>
+                            <p className="text-lg text-text-muted font-medium">
+                                You&apos;re officially on the starting list! Check your details below.
+                            </p>
+                        </>
+                    ) : isManualPayment ? (
+                        <>
+                            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
+                                Awaiting <span className="text-amber-500">confirmation</span>.
+                            </h1>
+                            <p className="text-lg text-text-muted font-medium">
+                                Your proof of payment has been submitted. The organizer will verify it shortly.
+                            </p>
+                        </>
+                    ) : (
+                        <>
+                            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white">
+                                Race <span className="text-cta">Confirmed</span>.
+                            </h1>
+                            <p className="text-lg text-text-muted font-medium">
+                                You&apos;re officially on the starting list! Check your details below.
+                            </p>
+                        </>
+                    )}
                 </div>
             </div>
 
@@ -148,11 +227,24 @@ export default function RegistrationSuccessPage() {
                         <div className="p-8 md:p-10 space-y-6 relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-20 bg-cta/5 rounded-full blur-3xl -mr-20 -mt-20" />
 
-                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-10">
+                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
                                 <div className="space-y-4">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-cta/10 border border-cta/20 rounded-full">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-cta animate-pulse" />
-                                        <span className="text-xs font-semibold uppercase tracking-wider text-cta">Official Entry confirmed</span>
+                                    <div className={cn(
+                                        "inline-flex items-center gap-2 px-3 py-1 rounded-full",
+                                        registration?.status === "paid"
+                                            ? "bg-cta/10 border border-cta/20"
+                                            : "bg-amber-500/10 border border-amber-500/20"
+                                    )}>
+                                        <div className={cn(
+                                            "w-1.5 h-1.5 rounded-full animate-pulse",
+                                            registration?.status === "paid" ? "bg-cta" : "bg-amber-500"
+                                        )} />
+                                        <span className={cn(
+                                            "text-xs font-semibold uppercase tracking-wider",
+                                            registration?.status === "paid" ? "text-cta" : "text-amber-500"
+                                        )}>
+                                            {registration?.status === "paid" ? "Official entry confirmed" : "Awaiting payment confirmation"}
+                                        </span>
                                     </div>
                                     <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight leading-[0.9] max-w-md">
                                         {event?.name}
@@ -169,6 +261,11 @@ export default function RegistrationSuccessPage() {
                                     >
                                         {registration?.status === "paid" ? "PAID" : "PENDING"}
                                     </Badge>
+                                    {registration?.manualPaymentStatus === "rejected" && (
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full">
+                                            <span className="text-xs font-semibold uppercase tracking-wider text-red-500">Payment not verified — please re-upload</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

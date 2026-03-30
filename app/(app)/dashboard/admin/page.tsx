@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { getEvents } from "@/lib/services/eventService";
-import { getOrganizerApplications } from "@/lib/services/applicationService";
+import { usePaginatedQuery } from "@/lib/hooks/usePaginatedQuery";
 import dynamic from "next/dynamic";
 
 const AdminOverviewChart = dynamic(
@@ -29,7 +29,13 @@ export default function AdminDashboardPage() {
     const [loading, setLoading] = useState(true);
     const [chartData, setChartData] = useState<any[]>([]);
     const [recentEvents, setRecentEvents] = useState<any[]>([]);
-    const [recentApps, setRecentApps] = useState<any[]>([]);
+
+    const { data: rawApplications, loading: appsLoading } = usePaginatedQuery<any>({
+        apiQuery: api.applications.list,
+        args: { status: "pending" },
+        pageSize: 3
+    });
+    const recentApps = rawApplications.map((d: any) => ({ id: d._id, ...d, ...d.data }));
 
     useEffect(() => {
         fetchAdminData();
@@ -38,14 +44,8 @@ export default function AdminDashboardPage() {
     const fetchAdminData = async () => {
         setLoading(true);
         try {
-            // Use Stage 3.1: Parallelize Independent Queries
-            const [eventsResult, appsResult] = await Promise.all([
-                getEvents({ limitCount: 3, status: "all" }),
-                getOrganizerApplications({ limitCount: 3, status: "pending" })
-            ]);
-
+            const eventsResult = await getEvents({ limitCount: 3, status: "all" });
             setRecentEvents(eventsResult.items);
-            setRecentApps(appsResult.items);
 
             // Mock Chart Data for now (Real data would aggregate regs by date - Stage 1.2 plan)
             const last7Days = Array.from({ length: 7 }).map((_, i) => {
@@ -65,7 +65,7 @@ export default function AdminDashboardPage() {
         }
     };
 
-    if (loading || stats === undefined) {
+    if (loading || appsLoading || stats === undefined) {
         return (
             <div className="space-y-10 text-white">
                 {/* Header */}

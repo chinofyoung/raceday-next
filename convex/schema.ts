@@ -40,6 +40,16 @@ export default defineSchema({
             approvedAt: v.optional(v.number()),
         })),
 
+        paymentMethods: v.optional(v.array(v.object({
+            id: v.string(),
+            type: v.union(v.literal("bank"), v.literal("ewallet"), v.literal("other")),
+            label: v.string(),
+            accountName: v.string(),
+            accountNumber: v.string(),
+            instructions: v.optional(v.string()),
+            qrCodeStorageId: v.optional(v.string()),
+        }))),
+
         // Metadata
         profileCompletion: v.number(),
         volunteerEvents: v.optional(v.array(v.id("events"))), // array of eventIds
@@ -135,6 +145,7 @@ export default defineSchema({
 
         status: v.union(v.literal("draft"), v.literal("published"), v.literal("cancelled"), v.literal("completed")),
         featured: v.boolean(),
+        paymentMode: v.optional(v.union(v.literal("portal"), v.literal("manual"))),
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_organizer", ["organizerId"]).index("by_status", ["status"]),
@@ -153,6 +164,19 @@ export default defineSchema({
         paymentStatus: v.optional(v.string()),
         xenditInvoiceId: v.optional(v.string()),
         xenditInvoiceUrl: v.optional(v.string()),
+        proofOfPayment: v.optional(v.object({
+            storageId: v.string(),
+            uploadedAt: v.number(),
+            url: v.string(),
+        })),
+        manualPaymentStatus: v.optional(v.union(
+            v.literal("pending"),
+            v.literal("submitted"),
+            v.literal("approved"),
+            v.literal("rejected"),
+        )),
+        reviewedAt: v.optional(v.number()),
+        reviewedBy: v.optional(v.id("users")),
         paidAt: v.optional(v.number()),
         raceKitClaimedAt: v.optional(v.number()),
         createdAt: v.number(),

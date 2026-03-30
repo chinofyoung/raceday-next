@@ -14,12 +14,15 @@ import {
 } from "@/components/ui/table";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface OrganizerRegistrationsFeedProps {
     recentRegistrations: any[];
 }
 
 function OrganizerRegistrationsFeedComponent({ recentRegistrations }: OrganizerRegistrationsFeedProps) {
+    const router = useRouter();
+
     return (
         <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden flex flex-col h-full">
             <div className="absolute top-0 right-0 p-12 bg-cta/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
@@ -49,7 +52,11 @@ function OrganizerRegistrationsFeedComponent({ recentRegistrations }: OrganizerR
                         </TableHeader>
                         <TableBody>
                             {recentRegistrations.map((reg) => (
-                                <TableRow key={reg.id} className="border-white/5 hover:bg-white/5 transition-colors group cursor-pointer">
+                                <TableRow
+                                    key={reg.id}
+                                    className="border-white/5 hover:bg-white/5 transition-colors group cursor-pointer"
+                                    onClick={() => router.push(`/dashboard/organizer/events/${reg.eventId}?tab=registrations`)}
+                                >
                                     <TableCell className="py-3">
                                         <div className="flex items-center gap-3">
                                             <div className="w-8 h-8 rounded-xl bg-primary/20 flex items-center justify-center text-primary font-bold text-xs uppercase shrink-0 border border-primary/20 group-hover:bg-primary/30 transition-colors">

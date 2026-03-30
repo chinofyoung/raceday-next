@@ -51,6 +51,17 @@ export interface User {
         approvedAt?: UniversalTimestamp;
     };
 
+    // Payment methods (for organizers using manual payment mode)
+    paymentMethods?: {
+        id: string;
+        type: "bank" | "ewallet" | "other";
+        label: string;
+        accountName: string;
+        accountNumber: string;
+        instructions?: string;
+        qrCodeStorageId?: string;
+    }[];
+
     // Metadata
     profileCompletion: number; // 0–100
     dashboardLayout?: string[];

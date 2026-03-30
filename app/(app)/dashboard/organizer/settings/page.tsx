@@ -1,6 +1,7 @@
 "use client";
 
 import { OrganizerProfileForm } from "../../settings/OrganizerProfileForm";
+import { PaymentMethodsManager } from "@/components/dashboard/PaymentMethodsManager";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -42,6 +43,11 @@ export default function OrganizerSettingsPage() {
 
             {/* Content */}
             <OrganizerProfileForm />
+
+            {/* Payment Methods */}
+            <div className="pt-4 border-t border-white/5">
+                <PaymentMethodsManager />
+            </div>
         </div>
     );
 }

@@ -149,6 +149,7 @@ export const create = mutation({
         })),
         status: v.union(v.literal("draft"), v.literal("published")),
         featured: v.boolean(),
+        paymentMode: v.optional(v.union(v.literal("portal"), v.literal("manual"))),
     },
     handler: async (ctx: MutationCtx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -246,6 +247,7 @@ export const update = mutation({
         }))),
         status: v.optional(v.union(v.literal("draft"), v.literal("published"), v.literal("cancelled"), v.literal("completed"))),
         featured: v.optional(v.boolean()),
+        paymentMode: v.optional(v.union(v.literal("portal"), v.literal("manual"))),
     },
     handler: async (ctx: MutationCtx, args) => {
         const { id, ...updates } = args;

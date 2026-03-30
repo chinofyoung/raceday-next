@@ -96,6 +96,9 @@ export interface RaceEvent {
     // Distance categories
     categories: EventCategory[];
 
+    // Payment
+    paymentMode?: "portal" | "manual";
+
     // Status & metadata
     status: EventStatus;
     featured: boolean;

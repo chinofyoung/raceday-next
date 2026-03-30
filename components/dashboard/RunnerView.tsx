@@ -6,6 +6,7 @@ import { toDate } from "@/lib/utils";
 import { ProfileCompletionCard } from "./runner/ProfileCompletionCard";
 import { EventRegistrationList } from "./runner/EventRegistrationList";
 import { NextRaceHero } from "./runner/NextRaceHero";
+import { PendingPaymentSection } from "./runner/PendingPaymentSection";
 
 interface RunnerViewProps {
     completion: number;
@@ -18,10 +19,17 @@ export function RunnerView({
     items,
     stats,
 }: RunnerViewProps) {
-    const { heroEvent, otherUpcoming, pastEvents } = useMemo(() => {
+    const { heroEvent, pendingPayment, otherUpcoming, pastEvents } = useMemo(() => {
         const now = new Date();
 
-        const upcoming = items.filter(reg => {
+        // Extract all pending-payment registrations first (show regardless of event date)
+        const pending = items.filter(reg => reg.status === "pending");
+        const pendingIds = new Set(pending.map(reg => reg.id));
+
+        // Non-pending registrations split into upcoming vs past
+        const nonPending = items.filter(reg => !pendingIds.has(reg.id));
+
+        const upcoming = nonPending.filter(reg => {
             if (!reg.event) return true;
             const eventDate = toDate(reg.event.date);
             return eventDate >= now && reg.event?.status !== "completed";
@@ -31,7 +39,7 @@ export function RunnerView({
             return dA - dB;
         });
 
-        const past = items.filter(reg => {
+        const past = nonPending.filter(reg => {
             if (!reg.event) return false;
             const eventDate = toDate(reg.event.date);
             return eventDate < now || reg.event?.status === "completed";
@@ -41,11 +49,11 @@ export function RunnerView({
             return dB - dA;
         });
 
-        // First upcoming with a valid event is the hero
+        // Hero is the first upcoming registration with a valid event
         const hero = upcoming.find(reg => reg.event) || null;
         const others = hero ? upcoming.filter(reg => reg.id !== hero.id) : upcoming;
 
-        return { heroEvent: hero, otherUpcoming: others, pastEvents: past };
+        return { heroEvent: hero, pendingPayment: pending, otherUpcoming: others, pastEvents: past };
     }, [items]);
 
     return (
@@ -59,6 +67,9 @@ export function RunnerView({
                     <NextRaceHero registration={heroEvent} />
                 )}
 
+                {/* Pending Payment Registrations */}
+                <PendingPaymentSection registrations={pendingPayment} />
+
                 {/* Volunteer Dashboard */}
                 <VolunteerDashboard />
 
@@ -71,7 +82,7 @@ export function RunnerView({
                 )}
 
                 {/* Empty state when no upcoming events at all */}
-                {!heroEvent && otherUpcoming.length === 0 && (
+                {!heroEvent && otherUpcoming.length === 0 && pendingPayment.length === 0 && (
                     <EventRegistrationList
                         title="My Registered Events"
                         events={[]}

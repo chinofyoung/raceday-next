@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Trophy, QrCode, Package, MapPin } from "lucide-react";
+import { User, Trophy, QrCode, Package, MapPin, Upload, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,36 @@ import { Badge } from "@/components/ui/badge";
 interface RunnerEventCardProps {
     reg: any;
     isPast?: boolean;
+    isPending?: boolean;
 }
 
-export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
+function getPendingBadgeConfig(manualPaymentStatus?: string): { label: string; className: string } {
+    switch (manualPaymentStatus) {
+        case "submitted":
+            return {
+                label: "Awaiting Verification",
+                className: "bg-blue-500/10 text-blue-300 border border-blue-500/20",
+            };
+        case "rejected":
+            return {
+                label: "Payment Rejected",
+                className: "bg-red-500/10 text-red-300 border border-red-500/20",
+            };
+        case "pending":
+            return {
+                label: "Payment Pending",
+                className: "bg-amber-500/10 text-amber-300 border border-amber-500/20",
+            };
+        default:
+            // Online payment pending (no manualPaymentStatus)
+            return {
+                label: "Pending Payment",
+                className: "bg-amber-500/10 text-amber-300 border border-amber-500/20",
+            };
+    }
+}
+
+export function RunnerEventCard({ reg, isPast, isPending }: RunnerEventCardProps) {
     const categoryName = reg.event?.categories?.find((c: any) => c.id === reg.categoryId)?.name || reg.categoryId;
 
     return (
@@ -54,12 +81,27 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
 
                 {/* Status Badges */}
                 <div className="flex flex-wrap gap-2">
-                    <Badge
-                        variant={reg.status === "paid" ? "success" : "secondary"}
-                        className="text-xs font-semibold uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20"
-                    >
-                        {reg.status}
-                    </Badge>
+                    {reg.status === "pending" ? (
+                        (() => {
+                            const { label, className: badgeCn } = getPendingBadgeConfig(reg.manualPaymentStatus);
+                            return (
+                                <span className={cn(
+                                    "inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-md shadow-sm shadow-black/20",
+                                    badgeCn
+                                )}>
+                                    <Clock size={11} />
+                                    {label}
+                                </span>
+                            );
+                        })()
+                    ) : (
+                        <Badge
+                            variant={reg.status === "paid" ? "success" : "secondary"}
+                            className="text-xs font-semibold uppercase px-2.5 py-0.5 border-none shadow-sm shadow-black/20"
+                        >
+                            {reg.status}
+                        </Badge>
+                    )}
                     {reg.status === "paid" && (
                         <Badge
                             variant={reg.raceKitClaimed ? "cta" : "outline"}
@@ -111,6 +153,13 @@ export function RunnerEventCard({ reg, isPast }: RunnerEventCardProps) {
                         <Button asChild className="flex-1 h-10">
                             <Link href={`/dashboard/events/${reg.eventId}/qr?regId=${reg.id}`}>
                                 <QrCode size={16} /> View Pass
+                            </Link>
+                        </Button>
+                    )}
+                    {(!isPast && reg.status === "pending" && reg.manualPaymentStatus !== undefined) && (
+                        <Button asChild className="flex-1 h-10 bg-primary hover:bg-primary/90">
+                            <Link href={`/dashboard/events/${reg.eventId}/qr?regId=${reg.id}`}>
+                                <Upload size={16} /> {reg.manualPaymentStatus === "submitted" ? "View Status" : "Upload Proof"}
                             </Link>
                         </Button>
                     )}

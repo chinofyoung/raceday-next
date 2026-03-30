@@ -120,6 +120,25 @@ export async function POST(req: Request) {
             });
         }
 
+        // Handle MANUAL PAYMENT events — skip Xendit, return instructions redirect
+        if (eventData.paymentMode === "manual") {
+            const regId = await fetchMutation(api.registrations.create, {
+                eventId: registrationData.eventId as Id<"events">,
+                categoryId: registrationData.categoryId,
+                userId: (userId || registrationData.userId) as Id<"users">,
+                isProxy: registrationData.isProxy || false,
+                registrationData: registrationData,
+                totalPrice: totalAmount,
+                manualPaymentStatus: "pending",
+            });
+
+            return NextResponse.json({
+                checkoutUrl: null,
+                registrationId: regId,
+                manualPayment: true,
+            });
+        }
+
         // 1. Create registration in Convex (pending)
         const regId = await fetchMutation(api.registrations.create, {
             eventId: registrationData.eventId as Id<"events">,

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronRight, ChevronLeft, Save, Send } from "lucide-react";
 import { Step1Basic } from "./Step1Basic";
+import { Step2PaymentMode } from "./Step2PaymentMode";
 import { Step2Images } from "./Step2Images";
 import { Step3Categories } from "./Step3Categories";
 import { Step4Timeline } from "./Step4Timeline";
@@ -25,6 +26,7 @@ import { useFormSteps } from "@/lib/hooks/useFormSteps";
 
 const STEPS = [
     "Basic Info",
+    "Payment",
     "Images",
     "Categories",
     "Timeline",
@@ -34,9 +36,10 @@ const STEPS = [
 
 const STEP_FIELDS: Record<number, (keyof EventFormInput | string)[]> = {
     0: ["name", "description", "date", "registrationEndDate", "location.name", "location.address"],
-    1: ["featuredImage", "galleryImages"],
-    2: ["categories", "earlyBird"],
-    3: ["timeline"],
+    1: ["paymentMode"],
+    2: ["featuredImage", "galleryImages"],
+    3: ["categories", "earlyBird"],
+    4: ["timeline"],
 };
 
 function prepareEventPayload(data: any) {
@@ -51,6 +54,7 @@ function prepareEventPayload(data: any) {
             endDate: data.earlyBird.endDate ? new Date(data.earlyBird.endDate).getTime() : 0,
         } : undefined,
         featured: data.featured ?? false,
+        paymentMode: data.paymentMode || "portal",
     };
 }
 
@@ -80,10 +84,10 @@ function EventFormContent({ initialData, isEditing, draftId, setDraftId, loading
         STEP_FIELDS as any
     );
 
-    const [watchName, watchDescription, watchDate, watchFeaturedImage, watchCategories, watchTimeline, watchVanity, watchLocationName, watchLocationAddress] =
+    const [watchName, watchDescription, watchDate, watchFeaturedImage, watchCategories, watchTimeline, watchVanity, watchLocationName, watchLocationAddress, watchPaymentMode] =
         useWatch({
             control,
-            name: ["name", "description", "date", "featuredImage", "categories", "timeline", "vanityRaceNumber", "location.name", "location.address"],
+            name: ["name", "description", "date", "featuredImage", "categories", "timeline", "vanityRaceNumber", "location.name", "location.address", "paymentMode"],
         });
 
     const saveDraft = useCallback(async () => {
@@ -176,10 +180,11 @@ function EventFormContent({ initialData, isEditing, draftId, setDraftId, loading
                     const isActive = currentStep === i;
                     const isAccomplished = (() => {
                         if (i === 0) return !!(watchName?.length >= 5 && watchDescription?.length >= 20 && watchDate && watchLocationName && watchLocationAddress);
-                        if (i === 1) return !!watchFeaturedImage;
-                        if (i === 2) return (watchCategories?.length || 0) > 0;
-                        if (i === 3) return (watchTimeline?.length || 0) > 0;
-                        if (i === 4) return i < currentStep || (isEditing && watchVanity);
+                        if (i === 1) return !!watchPaymentMode;
+                        if (i === 2) return !!watchFeaturedImage;
+                        if (i === 3) return (watchCategories?.length || 0) > 0;
+                        if (i === 4) return (watchTimeline?.length || 0) > 0;
+                        if (i === 5) return i < currentStep || (isEditing && watchVanity);
                         return false;
                     })();
 
@@ -225,11 +230,12 @@ function EventFormContent({ initialData, isEditing, draftId, setDraftId, loading
 
             <div className="bg-surface/30 backdrop-blur-sm border border-white/5 rounded-3xl p-8 shadow-2xl">
                 {currentStep === 0 && <Step1Basic />}
-                {currentStep === 1 && <Step2Images />}
-                {currentStep === 2 && <Step3Categories />}
-                {currentStep === 3 && <Step4Timeline />}
-                {currentStep === 4 && <Step5Features />}
-                {currentStep === 5 && <Step6Review />}
+                {currentStep === 1 && <Step2PaymentMode />}
+                {currentStep === 2 && <Step2Images />}
+                {currentStep === 3 && <Step3Categories />}
+                {currentStep === 4 && <Step4Timeline />}
+                {currentStep === 5 && <Step5Features />}
+                {currentStep === 6 && <Step6Review />}
 
                 <div className="flex items-center justify-between mt-12 pt-8 border-t border-white/5">
                     <Button
@@ -298,6 +304,7 @@ export function EventForm({ initialData, isEditing }: EventFormProps) {
             categories: [],
             status: "draft",
             featured: false,
+            paymentMode: "portal",
         },
         mode: "onChange"
     });

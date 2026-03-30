@@ -6,11 +6,12 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { QrCode, Calendar, MapPin, Download, Package, ArrowLeft } from "lucide-react";
+import { QrCode, Calendar, MapPin, Download, Package, ArrowLeft, Upload, Clock, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { PaymentInstructions } from "@/components/forms/registration/PaymentInstructions";
 
 export default function RacePassPage() {
     const { id } = useParams();
@@ -52,6 +53,69 @@ export default function RacePassPage() {
 
     const category = event.categories?.find(c => c.id === registration.categoryId);
     const participantInfo = registration.registrationData?.participantInfo || (registration as any).participantInfo;
+    const isManualPending = registration.status === "pending" && registration.manualPaymentStatus !== undefined;
+
+    // Manual payment pending — show payment instructions + upload
+    if (isManualPending) {
+        return (
+            <div className="w-full max-w-xl mx-auto space-y-10">
+                <div className="space-y-1">
+                    <Link
+                        href="/dashboard"
+                        className="text-text-muted hover:text-primary text-xs font-bold uppercase tracking-wider flex items-center gap-1 transition-colors mb-4"
+                    >
+                        <ArrowLeft size={12} /> Back to Dashboard
+                    </Link>
+                </div>
+
+                <div className="text-center space-y-3">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white leading-none">
+                        Complete <span className="text-primary">Payment</span>
+                    </h1>
+                    <p className="text-text-muted font-medium">{event.name} — {category?.name}</p>
+                </div>
+
+                {/* Status banner */}
+                {registration.manualPaymentStatus === "pending" && (
+                    <div className="flex items-start gap-3 p-4 bg-amber-500/8 border border-amber-500/20 rounded-xl">
+                        <Clock size={18} className="text-amber-500 shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-sm font-semibold text-amber-500">Payment pending</p>
+                            <p className="text-xs text-text-muted mt-1">Transfer the amount to one of the accounts below, then upload your proof of payment.</p>
+                        </div>
+                    </div>
+                )}
+                {registration.manualPaymentStatus === "submitted" && (
+                    <div className="flex items-start gap-3 p-4 bg-blue-500/8 border border-blue-500/20 rounded-xl">
+                        <Clock size={18} className="text-blue-500 shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-sm font-semibold text-blue-500">Proof submitted — awaiting verification</p>
+                            <p className="text-xs text-text-muted mt-1">The organizer will review your payment. You&apos;ll get your race pass once confirmed.</p>
+                        </div>
+                    </div>
+                )}
+                {registration.manualPaymentStatus === "rejected" && (
+                    <div className="flex items-start gap-3 p-4 bg-red-500/8 border border-red-500/20 rounded-xl">
+                        <AlertCircle size={18} className="text-red-500 shrink-0 mt-0.5" />
+                        <div>
+                            <p className="text-sm font-semibold text-red-500">Payment not verified</p>
+                            <p className="text-xs text-text-muted mt-1">Please re-upload a clear proof of payment below.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Payment instructions + upload */}
+                {registration.organizerId && (
+                    <PaymentInstructions
+                        organizerId={registration.organizerId}
+                        registrationId={registration._id}
+                        totalPrice={registration.totalPrice}
+                        showUpload={registration.manualPaymentStatus !== "submitted"}
+                    />
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-xl mx-auto space-y-10">

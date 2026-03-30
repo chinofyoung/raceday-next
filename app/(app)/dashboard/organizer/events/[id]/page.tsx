@@ -17,6 +17,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { AnnouncementsTab } from "@/components/dashboard/AnnouncementsTab";
+import { PendingPaymentsTable } from "@/components/dashboard/PendingPaymentsTable";
 import dynamic from "next/dynamic";
 import { BaseQuickAction } from "@/components/dashboard/shared/BaseQuickAction";
 import { VolunteerManagement } from "@/components/dashboard/organizer/VolunteerManagement";
@@ -85,7 +86,8 @@ export default function EventDetailPage() {
         return (volunteerRecord?.permissions as string[]) ?? [];
     }, [isOrganizer, volunteerRecord]);
 
-    const availableTabs = (["participants", "stats", "revenue", "announcements", "volunteers"] as const).filter(tab => {
+    const availableTabs = (["participants", "stats", "revenue", "payments", "announcements", "volunteers"] as const).filter(tab => {
+        if (tab === "payments") return isOrganizer && event?.paymentMode === "manual";
         if (isOrganizer) return true;
         if (tab === "participants") return permissions.includes("participants") || permissions.includes("kiosk");
         if (tab === "announcements") return permissions.includes("announcements");
@@ -456,6 +458,16 @@ export default function EventDetailPage() {
                     {activeTab === "volunteers" && isOrganizer && (
                         <div className="space-y-6">
                             <VolunteerManagement eventId={event.id} />
+                        </div>
+                    )}
+
+                    {activeTab === "payments" && isOrganizer && event?.paymentMode === "manual" && (
+                        <div className="space-y-6">
+                            <div>
+                                <h2 className="text-xl font-bold tracking-tight text-white">Pending Payments</h2>
+                                <p className="text-sm text-text-muted mt-1">Review and approve manual payment submissions from registered runners.</p>
+                            </div>
+                            <PendingPaymentsTable eventId={id} />
                         </div>
                     )}
                 </div>
