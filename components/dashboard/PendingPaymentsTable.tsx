@@ -142,11 +142,13 @@ export function PendingPaymentsTable({ eventId }: PendingPaymentsTableProps) {
                         return (
                             <div key={reg._id} className="border border-white/5 rounded-xl overflow-hidden">
                                 {/* Row */}
-                                <button
-                                    type="button"
+                                <div
+                                    role="button"
+                                    tabIndex={0}
                                     onClick={() => setExpandedId(isExpanded ? null : reg._id)}
+                                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpandedId(isExpanded ? null : reg._id); } }}
                                     className={cn(
-                                        "w-full grid grid-cols-[2fr_1fr_0.8fr_1fr_0.8fr_1.2fr] gap-4 px-4 py-3 items-center text-left hover:bg-white/2 transition-colors",
+                                        "w-full grid grid-cols-[2fr_1fr_0.8fr_1fr_0.8fr_1.2fr] gap-4 px-4 py-3 items-center text-left hover:bg-white/2 transition-colors cursor-pointer",
                                         isExpanded && "bg-white/2"
                                     )}
                                 >
@@ -197,7 +199,7 @@ export function PendingPaymentsTable({ eventId }: PendingPaymentsTableProps) {
                                         )}
                                         {isExpanded ? <ChevronUp size={14} className="text-text-muted" /> : <ChevronDown size={14} className="text-text-muted" />}
                                     </div>
-                                </button>
+                                </div>
 
                                 {/* Expanded Detail */}
                                 {isExpanded && (

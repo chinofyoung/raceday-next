@@ -24,9 +24,9 @@ function OrganizerRegistrationsFeedComponent({ recentRegistrations }: OrganizerR
     const router = useRouter();
 
     return (
-        <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden flex flex-col h-full">
+        <Card className="p-6 bg-white/5 border-white/10 relative flex flex-col h-full overflow-hidden">
             <div className="absolute top-0 right-0 p-12 bg-cta/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-            <div className="flex items-center justify-between mb-6 relative z-10 w-full">
+            <div className="flex items-center justify-between mb-6 relative z-10 w-full shrink-0">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-cta/20 flex items-center justify-center text-cta border border-cta/20">
                         <Activity size={16} />
@@ -38,7 +38,7 @@ function OrganizerRegistrationsFeedComponent({ recentRegistrations }: OrganizerR
                 </Link>
             </div>
 
-            <div className="relative z-10 flex-1 overflow-y-auto no-scrollbar">
+            <div className="relative z-10 flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
                 {recentRegistrations.length > 0 ? (
                     <Table>
                         <TableHeader>

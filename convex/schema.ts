@@ -55,6 +55,13 @@ export default defineSchema({
         volunteerEvents: v.optional(v.array(v.id("events"))), // array of eventIds
         expoPushToken: v.optional(v.string()),
         dashboardLayout: v.optional(v.array(v.string())),
+        widgetSizes: v.optional(v.array(v.object({
+            id: v.string(),
+            x: v.optional(v.number()),
+            y: v.optional(v.number()),
+            colSpan: v.number(),
+            rowSpan: v.number(),
+        }))),
         createdAt: v.number(),
         updatedAt: v.number(),
     }).index("by_uid", ["uid"]).index("by_email", ["email"]).index("by_role", ["role"]),

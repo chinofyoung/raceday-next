@@ -122,3 +122,92 @@ h6 {
   50% { top: 100%; }
 }
 
+/* react-grid-layout dark theme overrides */
+.rgl-editing {
+  .react-grid-layout {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+  }
+
+  .react-grid-item.react-grid-placeholder {
+    background: rgba(249, 115, 22, 0.15);
+    border: 2px dashed rgba(249, 115, 22, 0.4);
+    border-radius: 1rem;
+    opacity: 1;
+  }
+
+  .react-grid-item > .react-resizable-handle {
+    width: 24px;
+    height: 24px;
+    background: none;
+  }
+
+  .react-grid-item > .react-resizable-handle::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid rgba(249, 115, 22, 0.6);
+    border-bottom: 2px solid rgba(249, 115, 22, 0.6);
+    border-radius: 0 0 2px 0;
+  }
+
+  .react-grid-item:hover > .react-resizable-handle::after {
+    border-color: rgba(249, 115, 22, 0.9);
+  }
+
+  .react-grid-item.cssTransforms {
+    transition-property: transform;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+
+  .react-grid-item.resizing {
+    z-index: 50;
+    opacity: 0.85;
+  }
+
+  .react-grid-item.react-draggable-dragging {
+    z-index: 50;
+    opacity: 0.85;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    border-radius: 1rem;
+  }
+}
+
+.rgl-static {
+  .react-grid-item > .react-resizable-handle {
+    display: none;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.custom-scrollbar:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+

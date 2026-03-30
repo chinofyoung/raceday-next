@@ -249,6 +249,13 @@ export const getInternalBatch = internalQuery({
 export const updateDashboardLayout = mutation({
     args: {
         layout: v.array(v.string()),
+        widgetSizes: v.optional(v.array(v.object({
+            id: v.string(),
+            x: v.number(),
+            y: v.number(),
+            colSpan: v.number(),
+            rowSpan: v.number(),
+        }))),
     },
     handler: async (ctx, args) => {
         const identity = await ctx.auth.getUserIdentity();
@@ -268,8 +275,20 @@ export const updateDashboardLayout = mutation({
             args.layout.every((id) => VALID_WIDGET_IDS.includes(id));
         if (!isValid) throw new Error("Invalid layout");
 
+        if (args.widgetSizes) {
+            const sizesValid = args.widgetSizes.every(
+                (s) => VALID_WIDGET_IDS.includes(s.id) &&
+                    s.x >= 0 && s.x < 4 &&
+                    s.y >= 0 &&
+                    s.colSpan >= 1 && s.colSpan <= 4 &&
+                    s.rowSpan >= 1 && s.rowSpan <= 4
+            );
+            if (!sizesValid) throw new Error("Invalid widget sizes");
+        }
+
         await ctx.db.patch(user._id, {
             dashboardLayout: args.layout,
+            ...(args.widgetSizes && { widgetSizes: args.widgetSizes }),
             updatedAt: Date.now(),
         });
     },
