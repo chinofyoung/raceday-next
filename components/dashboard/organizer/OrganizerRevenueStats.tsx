@@ -1,54 +1,29 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo } from "react";
 import { TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface OrganizerRevenueStatsProps {
-    categoryRevenue: any[];
     eventRevenue: any[];
     totalRevenue: number;
 }
 
-function OrganizerRevenueStatsComponent({ categoryRevenue, eventRevenue, totalRevenue }: OrganizerRevenueStatsProps) {
-    const [view, setView] = useState<"category" | "event">("category");
+function OrganizerRevenueStatsComponent({ eventRevenue, totalRevenue }: OrganizerRevenueStatsProps) {
+    if (eventRevenue.length === 0) return null;
 
-    if (categoryRevenue.length === 0 && eventRevenue.length === 0) return null;
-
-    const data = view === "category" ? categoryRevenue : eventRevenue;
+    const data = eventRevenue;
 
     return (
-        <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden flex flex-col h-full">
+        <Card className="p-6 bg-white/5 border-white/10 relative flex flex-col h-full overflow-hidden">
             <div className="absolute bottom-0 right-0 p-12 bg-green-500/10 rounded-full blur-3xl -mr-16 -mb-16 pointer-events-none" />
-            <div className="flex items-center justify-between mb-6 relative z-10 w-full">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/20">
-                        <TrendingUp size={16} />
-                    </div>
-                    <h3 className="text-base font-bold tracking-tight text-white hidden sm:block">Revenue</h3>
+            <div className="flex items-center gap-2 mb-6 relative z-10 shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400 border border-green-500/20">
+                    <TrendingUp size={16} />
                 </div>
-                <div className="flex bg-black/40 p-1 rounded-xl border border-white/10 shrink-0">
-                    <button
-                        onClick={() => setView("category")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase transition-all ${view === "category"
-                            ? "bg-white/10 text-white shadow-sm"
-                            : "text-text-muted hover:text-white"
-                            }`}
-                    >
-                        Category
-                    </button>
-                    <button
-                        onClick={() => setView("event")}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase transition-all ${view === "event"
-                            ? "bg-white/10 text-white shadow-sm"
-                            : "text-text-muted hover:text-white"
-                            }`}
-                    >
-                        Event
-                    </button>
-                </div>
+                <h3 className="text-base font-bold tracking-tight text-white hidden sm:block">Revenue</h3>
             </div>
-            <div className="space-y-4 relative z-10 flex-1">
+            <div className="space-y-4 relative z-10 flex-1 overflow-y-auto min-h-0 custom-scrollbar pr-1">
                 {data.slice(0, 5).map((item) => (
                     <div key={item.id || item.name} className="space-y-2 group">
                         <div className="flex items-center justify-between">
@@ -72,7 +47,7 @@ function OrganizerRevenueStatsComponent({ categoryRevenue, eventRevenue, totalRe
                     </div>
                 ))}
             </div>
-            <div className="mt-6 pt-4 border-t border-white/10 relative z-10">
+            <div className="mt-6 pt-4 border-t border-white/10 relative z-10 shrink-0">
                 <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">Total Revenue</span>
                     <span className="text-xl font-bold text-white drop-shadow-md">₱{totalRevenue.toLocaleString()}</span>

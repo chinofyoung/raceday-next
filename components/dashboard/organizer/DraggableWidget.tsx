@@ -1,49 +1,26 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
 
 interface DraggableWidgetProps {
     id: string;
     isEditing: boolean;
-    className?: string;
     children: ReactNode;
 }
 
-export function DraggableWidget({ id, isEditing, className, children }: DraggableWidgetProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging,
-    } = useSortable({ id, disabled: !isEditing });
-
-    const style = {
-        transform: CSS.Transform.toString(transform),
-        transition,
-    };
-
+export function DraggableWidget({
+    id,
+    isEditing,
+    children,
+}: DraggableWidgetProps) {
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
-            className={`relative ${className || ""} ${
-                isDragging ? "z-50 opacity-75" : ""
-            } ${isEditing ? "ring-1 ring-white/10 rounded-2xl" : ""}`}
-        >
+        <div className={`h-full relative group ${isEditing ? "ring-1 ring-primary/30 rounded-2xl" : ""}`}>
             {isEditing && (
-                <button
-                    {...attributes}
-                    {...listeners}
-                    className="absolute -top-3 -right-3 z-10 p-1.5 rounded-full bg-surface border border-white/10 text-text-muted hover:text-white hover:bg-white/10 transition-colors cursor-grab active:cursor-grabbing"
-                    aria-label="Drag to reorder"
-                >
-                    <GripVertical size={16} />
-                </button>
+                <div className="drag-handle absolute -top-3 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 px-3 py-1 rounded-full bg-surface border border-white/10 text-text-muted hover:text-white hover:bg-white/10 hover:border-primary/30 transition-colors cursor-grab active:cursor-grabbing shadow-lg">
+                    <GripVertical size={14} />
+                    <span className="text-[10px] font-medium uppercase tracking-wider">Drag</span>
+                </div>
             )}
             {children}
         </div>

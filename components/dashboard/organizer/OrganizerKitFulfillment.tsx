@@ -13,15 +13,15 @@ interface OrganizerKitFulfillmentProps {
 function OrganizerKitFulfillmentComponent({ claimPercentage, claimedKits, totalParticipants }: OrganizerKitFulfillmentProps) {
     const validPercentage = isNaN(claimPercentage) ? 0 : claimPercentage;
     return (
-        <Card className="p-6 bg-white/5 border-white/10 relative overflow-hidden group flex flex-col h-full">
+        <Card className="p-6 bg-white/5 border-white/10 relative group flex flex-col h-full overflow-hidden">
             <div className="absolute top-0 right-0 p-12 bg-amber-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-amber-500/20 transition-colors duration-500 pointer-events-none" />
-            <div className="flex items-center gap-2 mb-6 relative z-10">
+            <div className="flex items-center gap-2 mb-6 relative z-10 shrink-0">
                 <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center text-amber-500 border border-amber-500/20">
                     <ShieldCheck size={16} />
                 </div>
                 <h3 className="text-base font-bold tracking-tight text-white">Kit Fulfillment</h3>
             </div>
-            <div className="relative z-10 flex-1 flex flex-col justify-center">
+            <div className="relative z-10 flex-1 flex flex-col justify-center overflow-y-auto min-h-0 custom-scrollbar pr-1">
                 <div className="flex items-center justify-center mb-6">
                     <div className="relative w-32 h-32">
                         <svg className="w-full h-full transform -rotate-90 drop-shadow-lg">
