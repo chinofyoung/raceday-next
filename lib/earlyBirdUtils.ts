@@ -1,10 +1,14 @@
-import { RaceEvent, EventCategory } from "@/types/event";
+import { EventCategory } from "@/types/event";
 import { toDate } from "@/lib/utils";
+
+type WithEarlyBird = { earlyBird?: { enabled: boolean; startDate: number; endDate: number } };
+type WithRegistrationEndDate = { registrationEndDate?: number };
+type WithDate = { date?: number };
 
 /**
  * Checks if the early bird promo is currently active for an event.
  */
-export function isEarlyBirdActive(event: RaceEvent): boolean {
+export function isEarlyBirdActive(event: WithEarlyBird): boolean {
     if (!event.earlyBird?.enabled || !event.earlyBird.startDate || !event.earlyBird.endDate) {
         return false;
     }
@@ -22,7 +26,7 @@ export function isEarlyBirdActive(event: RaceEvent): boolean {
 /**
  * Gets the effective price for a category based on current date and promo status.
  */
-export function getEffectivePrice(event: RaceEvent, category: EventCategory): number {
+export function getEffectivePrice(event: WithEarlyBird, category: EventCategory): number {
     if (isEarlyBirdActive(event) && category.earlyBirdPrice != null) {
         const eb = Number(category.earlyBirdPrice);
         const reg = Number(category.price);
@@ -38,7 +42,7 @@ export function getEffectivePrice(event: RaceEvent, category: EventCategory): nu
  * Returns the number of days remaining for the early bird promo.
  * Returns null if not active or expired.
  */
-export function getEarlyBirdDaysRemaining(event: RaceEvent): number | null {
+export function getEarlyBirdDaysRemaining(event: WithEarlyBird): number | null {
     if (!isEarlyBirdActive(event) || !event.earlyBird?.endDate) {
         return null;
     }
@@ -56,7 +60,7 @@ export function getEarlyBirdDaysRemaining(event: RaceEvent): number | null {
 /**
  * Checks if registration is closed based on registrationEndDate.
  */
-export function isRegistrationClosed(event: RaceEvent): boolean {
+export function isRegistrationClosed(event: WithRegistrationEndDate): boolean {
     if (!event.registrationEndDate) return false;
 
     const now = new Date();
@@ -69,7 +73,7 @@ export function isRegistrationClosed(event: RaceEvent): boolean {
 /**
  * Checks if the event date is in the past.
  */
-export function isEventOver(event: RaceEvent): boolean {
+export function isEventOver(event: WithDate): boolean {
     if (!event.date) return false;
 
     const now = new Date();

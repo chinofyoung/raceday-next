@@ -45,7 +45,7 @@ export async function getEventById(id: string): Promise<RaceEvent | null> {
         return { ...event, id: event._id } as RaceEvent;
     } catch (error) {
         console.error("Error fetching event by id:", error);
-        throw error;
+        return null;
     }
 }
 

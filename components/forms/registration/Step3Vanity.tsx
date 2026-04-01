@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,7 +10,7 @@ import { Search, CheckCircle2, AlertCircle, Loader2, Sparkles, Hash, ShieldAlert
 import { cn } from "@/lib/utils";
 
 interface Step3VanityProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
 }
 
 export function Step3Vanity({ event }: Step3VanityProps) {

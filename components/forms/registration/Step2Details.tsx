@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { User, Phone, Mail, Shirt, HeartPulse, ShieldAlert } from "lucide-react";
 
 interface Step2DetailsProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
 }
 
 const T_SHIRT_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];

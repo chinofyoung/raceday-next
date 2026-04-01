@@ -1,7 +1,7 @@
 "use client";
 
 import { PageWrapper } from "@/components/layout/PageWrapper";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { RegistrationForm } from "@/components/forms/registration/RegistrationForm";
 import { ArrowLeft, Info, LogIn, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -86,7 +86,7 @@ function LoginGate({ eventName }: { eventName: string }) {
 }
 
 interface RegisterClientProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
     initialCategoryId: string | null;
 }
 
@@ -147,7 +147,7 @@ export function RegisterClient({ event, initialCategoryId }: RegisterClientProps
                             <h3 className="text-xl font-bold tracking-wider text-white">Why register now?</h3>
                             <div className="p-3 bg-primary/5 rounded-xl border border-primary/10 flex gap-3 max-w-sm">
                                 <Info className="text-primary shrink-0" size={16} />
-                                <p className="text-xs text-text-muted font-bold leading-relaxed uppercase">
+                                <p className="text-xs text-text-muted font-semibold leading-relaxed uppercase tracking-wider">
                                     Your personal information is secured and will only be used for event-related communications.
                                 </p>
                             </div>

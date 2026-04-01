@@ -2,11 +2,11 @@
 
 import { useFormContext } from "react-hook-form";
 import { RegistrationFormValues } from "@/lib/validations/registration";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { PaymentInstructions } from "./PaymentInstructions";
 
 interface Step5PaymentProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
     registrationId: string;
     onComplete: () => void;
 }

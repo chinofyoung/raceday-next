@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getEventById } from "@/lib/services/eventService";
+import { RegistrationEvent } from "@/types/event";
 import { RegisterClient } from "./RegisterClient";
 
 interface RegisterPageProps {
@@ -17,8 +18,19 @@ export default async function RegisterPage(props: RegisterPageProps) {
         notFound();
     }
 
+    const registrationEvent: RegistrationEvent = {
+        id: event.id,
+        name: event.name,
+        categories: event.categories,
+        registrationEndDate: event.registrationEndDate,
+        earlyBird: event.earlyBird,
+        vanityRaceNumber: event.vanityRaceNumber,
+        paymentMode: event.paymentMode,
+        organizerId: event.organizerId,
+    };
+
     const categoryParam = searchParams.category;
     const initialCategoryId = typeof categoryParam === "string" ? categoryParam : null;
 
-    return <RegisterClient event={event} initialCategoryId={initialCategoryId} />;
+    return <RegisterClient event={registrationEvent} initialCategoryId={initialCategoryId} />;
 }
