@@ -74,9 +74,16 @@ export const generate = mutation({
         let nextCount = counter!.count;
         let finalBib = "";
 
+        const maxNumber = Math.pow(10, maxDigits) - 1;
+
         // Scan up to 100 candidates entirely in memory (no per-iteration DB round-trips)
         for (let i = 0; i < 100; i++) {
             nextCount++;
+            if (nextCount > maxNumber) {
+                throw new Error(
+                    `Bib number range exhausted for category ${args.categoryId} (max ${maxDigits}-digit number is ${maxNumber})`
+                );
+            }
             const padded = String(nextCount).padStart(maxDigits, "0");
             const formatted = formatBib(padded);
 
