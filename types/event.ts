@@ -105,3 +105,19 @@ export interface RaceEvent {
     createdAt: number;
     updatedAt: number;
 }
+
+/**
+ * Trimmed event shape used by the registration flow.
+ * Contains only the fields needed by RegisterClient, RegistrationForm, and their child steps.
+ */
+export type RegistrationEvent = Pick<
+    RaceEvent,
+    | "id"
+    | "name"
+    | "categories"
+    | "registrationEndDate"
+    | "earlyBird"
+    | "vanityRaceNumber"
+    | "paymentMode"
+    | "organizerId"
+>;

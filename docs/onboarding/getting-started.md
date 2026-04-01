@@ -91,7 +91,7 @@ cp .env.local.example .env.local   # if an example file exists, otherwise create
 
 | Variable | Required | Description |
 |---|---|---|
-| `NEXT_PUBLIC_BASE_URL` | Yes | The canonical base URL of the app, e.g. `http://localhost:5050` for local dev or `https://raceday.ph` in production. Used for sitemap, robots.txt, SEO metadata, and payment redirect URLs. |
+| `NEXT_PUBLIC_BASE_URL` | Yes | The canonical base URL of the app, e.g. `http://localhost:3000` for local dev or `https://raceday.ph` in production. Used for sitemap, robots.txt, SEO metadata, and payment redirect URLs. |
 
 ---
 
@@ -151,13 +151,13 @@ npm run dev
 
 This runs:
 - `convex dev` — watches and syncs Convex functions on every save
-- `next dev --port 5050` — starts the Next.js frontend
+- `next dev --port 3000` — starts the Next.js frontend
 
 To run each separately:
 
 ```bash
 npm run dev:backend    # Convex watcher only
-npm run dev:frontend   # Next.js on port 5050 only
+npm run dev:frontend   # Next.js on port 3000 only
 ```
 
 > Note: `npm run dev` also runs a `predev` hook (`convex dev --until-success`) before starting. This ensures your Convex deployment is live before the frontend boots. If your Convex credentials are missing or invalid, the predev step will fail and the frontend will not start.
@@ -168,7 +168,7 @@ npm run dev:frontend   # Next.js on port 5050 only
 
 After `npm run dev` starts with no errors, verify the following:
 
-- [ ] Homepage loads at [http://localhost:5050](http://localhost:5050)
+- [ ] Homepage loads at [http://localhost:3000](http://localhost:3000)
 - [ ] Google sign-in works — clicking **Sign in** launches the Clerk modal and Google OAuth completes successfully
 - [ ] Dashboard renders after login — you are redirected to `/dashboard` and content loads (no blank screens or Convex errors in the console)
 - [ ] Convex dashboard is accessible at [https://dashboard.convex.dev](https://dashboard.convex.dev) — your deployment shows as **Running** and function calls appear in the logs

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm, FormProvider, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, RegistrationFormValues } from "@/lib/validations/registration";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { getEffectivePrice } from "@/lib/earlyBirdUtils";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/hooks/useAuth";
@@ -53,14 +53,14 @@ function buildFormSteps(hasVanity: boolean) {
 }
 
 interface RegistrationFormProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
     initialCategoryId?: string | null;
 }
 
 function RegistrationFormContent({
     event,
 }: {
-    event: RaceEvent;
+    event: RegistrationEvent;
 }) {
     const { user } = useAuth();
     const router = useRouter();

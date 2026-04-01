@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { RaceEvent } from "@/types/event";
+import { RegistrationEvent } from "@/types/event";
 import { RegistrationFormValues } from "@/lib/validations/registration";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { formatDistance } from "@/lib/utils";
 import { useAuth } from "@/lib/hooks/useAuth";
 
 interface Step4ReviewProps {
-    event: RaceEvent;
+    event: RegistrationEvent;
 }
 
 export function Step4Review({ event }: Step4ReviewProps) {

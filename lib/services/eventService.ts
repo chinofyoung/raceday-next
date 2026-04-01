@@ -38,14 +38,19 @@ export async function getEvents(options: GetEventsOptions = {}) {
     }
 }
 
+function isValidConvexId(id: string): boolean {
+    return typeof id === "string" && id.length > 20;
+}
+
 export async function getEventById(id: string): Promise<RaceEvent | null> {
+    if (!isValidConvexId(id)) return null;
     try {
         const event = await fetchQuery(api.events.getById, { id: id as Id<"events"> });
         if (!event) return null;
         return { ...event, id: event._id } as RaceEvent;
     } catch (error) {
         console.error("Error fetching event by id:", error);
-        throw error;
+        return null;
     }
 }
 

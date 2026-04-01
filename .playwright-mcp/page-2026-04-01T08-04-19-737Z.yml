@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - img [ref=e6]
+      - heading "System Cramp!" [level=2] [ref=e8]
+      - paragraph [ref=e9]: Something went wrong while loading this page. Don't worry, even elite athletes have bad days.
+      - paragraph [ref=e10]: "Error: [Request ID: 8d85db2bab4eae71] Server Error ArgumentValidationError: Value does not match validator. Path: .id Value: \"invalid-id-12345\" Validator: v.id(\"events\")"
+    - generic [ref=e11]:
+      - button "Try Again" [ref=e12] [cursor=pointer]:
+        - img
+        - text: Try Again
+      - link "Back to Home" [ref=e13] [cursor=pointer]:
+        - /url: /
+  - region "Notifications alt+T"
+  - generic [ref=e18] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e19]:
+      - img [ref=e20]
+    - generic [ref=e23]:
+      - button "Open issues overlay" [ref=e24]:
+        - generic [ref=e25]:
+          - generic [ref=e26]: "1"
+          - generic [ref=e27]: "2"
+        - generic [ref=e28]:
+          - text: Issue
+          - generic [ref=e29]: s
+      - button "Collapse issues badge" [ref=e30]:
+        - img [ref=e31]
+  - alert [ref=e33]
