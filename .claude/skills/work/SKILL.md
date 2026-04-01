@@ -27,7 +27,7 @@ Fetch issue via gh CLI
 Announce: title + brief summary
        |
        v
-Create branch from main
+Create branch from dev
   Format: <type>/<number>-<short-description>
   Types: feat | fix | chore | refactor | docs
   Derive type from labels or title keywords
@@ -78,7 +78,7 @@ Derive `<type>` from labels first, then fall back to title keywords:
 Slugify the title: lowercase, replace spaces/punctuation with `-`, max 5 words.
 
 ```bash
-git checkout main && git pull origin main
+git checkout dev && git pull origin dev
 git checkout -b <type>/<number>-<short-description>
 ```
 
@@ -107,6 +107,7 @@ Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
 
 ```bash
 gh pr create \
+  --base dev \
   --title "<type>: <short description> (#<number>)" \
   --body "$(cat <<'EOF'
 ## Summary
@@ -129,5 +130,5 @@ Return the PR URL to the user.
 | Issue not found | Print error from `gh`, stop |
 | Issue is closed | Inform user, ask if they want to continue anyway |
 | Branch already exists | Checkout existing branch, inform user, continue |
-| Uncommitted changes on main | Warn user, do not proceed until clean |
+| Uncommitted changes on dev | Warn user, do not proceed until clean |
 | PR already exists for branch | Show existing PR URL, stop |
