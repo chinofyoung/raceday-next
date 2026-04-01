@@ -1,0 +1,96 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic:
+      - generic:
+        - img
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "RaceDay" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "RaceDay" [ref=e6]
+        - generic [ref=e7]:
+          - link "Events" [ref=e8] [cursor=pointer]:
+            - /url: /events
+          - link "For Organizers" [ref=e9] [cursor=pointer]:
+            - /url: /for-organizers
+          - link "About" [ref=e10] [cursor=pointer]:
+            - /url: /about
+          - link "Sign In" [ref=e12] [cursor=pointer]:
+            - /url: /auth/login
+    - main [ref=e13]:
+      - generic [ref=e15]:
+        - generic [ref=e16]:
+          - link "Back to Event Details" [ref=e17] [cursor=pointer]:
+            - /url: /events/k975vyy4n7t7s6g5381sb2k0n583x3sq
+            - img [ref=e18]
+            - text: Back to Event Details
+          - generic [ref=e20]:
+            - heading "Race Registration." [level=1] [ref=e21]
+            - paragraph [ref=e22]: "You are registering for: Baguio Ultra Marathon"
+        - generic [ref=e23]:
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - img [ref=e29]
+              - heading "Sign in to register" [level=2] [ref=e32]
+              - paragraph [ref=e33]: Please sign in or create an account to register for Baguio Ultra Marathon. Your profile information will be used to pre-fill the registration form.
+            - button "Sign in to continue" [ref=e34] [cursor=pointer]:
+              - img
+              - text: Sign in to continue
+            - paragraph [ref=e35]: New here? You can create an account during sign in
+          - generic [ref=e36]:
+            - generic [ref=e37]:
+              - heading "Why register now?" [level=3] [ref=e38]
+              - generic [ref=e39]:
+                - img [ref=e40]
+                - paragraph [ref=e42]: Your personal information is secured and will only be used for event-related communications.
+            - generic [ref=e43]:
+              - generic [ref=e44]:
+                - generic [ref=e45]: "01"
+                - generic [ref=e46]:
+                  - paragraph [ref=e47]: Limited Slots
+                  - paragraph [ref=e48]: Secure your preferred category before slots run out.
+              - generic [ref=e49]:
+                - generic [ref=e50]: "02"
+                - generic [ref=e51]:
+                  - paragraph [ref=e52]: Exclusives
+                  - paragraph [ref=e53]: Get exclusive race kits and finisher tokens.
+              - generic [ref=e54]:
+                - generic [ref=e55]: "03"
+                - generic [ref=e56]:
+                  - paragraph [ref=e57]: Leaderboards
+                  - paragraph [ref=e58]: Join the official leaderboard on race day.
+    - contentinfo [ref=e59]:
+      - generic [ref=e60]:
+        - generic [ref=e61]:
+          - link "RaceDay" [ref=e62] [cursor=pointer]:
+            - /url: /
+            - img "RaceDay" [ref=e63]
+          - paragraph [ref=e64]: The ultimate platform for running events. We make registration easy for runners and management seamless for organizers.
+        - generic [ref=e65]:
+          - heading "Explore" [level=4] [ref=e66]
+          - list [ref=e67]:
+            - listitem [ref=e68]:
+              - link "Events" [ref=e69] [cursor=pointer]:
+                - /url: /events
+            - listitem [ref=e70]:
+              - link "For Organizers" [ref=e71] [cursor=pointer]:
+                - /url: /for-organizers
+            - listitem [ref=e72]:
+              - link "About Us" [ref=e73] [cursor=pointer]:
+                - /url: /about
+        - generic [ref=e74]:
+          - heading "Legal" [level=4] [ref=e75]
+          - list [ref=e76]:
+            - listitem [ref=e77]:
+              - link "Privacy Policy" [ref=e78] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e79]:
+              - link "Terms of Service" [ref=e80] [cursor=pointer]:
+                - /url: /terms
+      - generic [ref=e81]:
+        - paragraph [ref=e82]: © 2026 RaceDay. All rights reserved.
+        - paragraph [ref=e83]: Built with Passion for Runners.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e89] [cursor=pointer]:
+    - img [ref=e90]
+  - alert [ref=e93]

@@ -1,0 +1,53 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic:
+      - generic:
+        - img
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "RaceDay" [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "RaceDay" [ref=e6]
+        - generic [ref=e7]:
+          - link "Events" [ref=e8] [cursor=pointer]:
+            - /url: /events
+          - link "For Organizers" [ref=e9] [cursor=pointer]:
+            - /url: /for-organizers
+          - link "About" [ref=e10] [cursor=pointer]:
+            - /url: /about
+    - main [ref=e14]
+    - contentinfo [ref=e46]:
+      - generic [ref=e47]:
+        - generic [ref=e48]:
+          - link "RaceDay" [ref=e49] [cursor=pointer]:
+            - /url: /
+            - img "RaceDay" [ref=e50]
+          - paragraph [ref=e51]: The ultimate platform for running events. We make registration easy for runners and management seamless for organizers.
+        - generic [ref=e52]:
+          - heading "Explore" [level=4] [ref=e53]
+          - list [ref=e54]:
+            - listitem [ref=e55]:
+              - link "Events" [ref=e56] [cursor=pointer]:
+                - /url: /events
+            - listitem [ref=e57]:
+              - link "For Organizers" [ref=e58] [cursor=pointer]:
+                - /url: /for-organizers
+            - listitem [ref=e59]:
+              - link "About Us" [ref=e60] [cursor=pointer]:
+                - /url: /about
+        - generic [ref=e61]:
+          - heading "Legal" [level=4] [ref=e62]
+          - list [ref=e63]:
+            - listitem [ref=e64]:
+              - link "Privacy Policy" [ref=e65] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e66]:
+              - link "Terms of Service" [ref=e67] [cursor=pointer]:
+                - /url: /terms
+      - generic [ref=e68]:
+        - paragraph [ref=e69]: © 2026 RaceDay. All rights reserved.
+        - paragraph [ref=e70]: Built with Passion for Runners.
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e76] [cursor=pointer]:
+    - img [ref=e77]
+  - alert [ref=e80]

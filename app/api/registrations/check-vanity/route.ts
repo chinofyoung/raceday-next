@@ -21,6 +21,10 @@ export async function GET(req: Request) {
             );
         }
 
+        if (eventId.length <= 20) {
+            return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
+        }
+
         const eventData = await fetchQuery(api.events.getById, { id: eventId as Id<"events"> });
         const category = eventData?.categories?.find((c: any) => (c.id || "0") === categoryId);
 

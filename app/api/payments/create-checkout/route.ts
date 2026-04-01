@@ -21,6 +21,9 @@ export async function POST(req: Request) {
         const userId = user?._id;
 
         // VERIFY EVENT & PRICE
+        if (!registrationData.eventId || registrationData.eventId.length <= 20) {
+            return NextResponse.json({ error: "Invalid event ID" }, { status: 400 });
+        }
         const eventData = await fetchQuery(api.events.getById, { id: registrationData.eventId as Id<"events"> }) as RaceEvent | null;
 
         if (!eventData) {

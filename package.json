@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "npm-run-all --parallel -l dev:backend dev:frontend",
     "dev:backend": "convex dev",
-    "dev:frontend": "next dev --port 5050",
+    "dev:frontend": "next dev --port 3000",
     "predev": "convex dev --until-success",
     "build": "next build",
-    "start": "next start --port 5050",
-    "lint": "eslint"
+    "start": "next start --port 3000",
+    "lint": "eslint",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
@@ -44,6 +45,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",

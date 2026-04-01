@@ -11,8 +11,13 @@ interface EventPageProps {
     params: Promise<{ id: string }>;
 }
 
+function isValidConvexId(id: string): boolean {
+    return typeof id === "string" && id.length > 20;
+}
+
 export async function generateMetadata(props: EventPageProps): Promise<Metadata> {
     const params = await props.params;
+    if (!isValidConvexId(params.id)) return { title: "Event Not Found" };
     try {
         const event = await fetchQuery(api.events.getById, { id: params.id as Id<"events"> });
         if (!event) return { title: "Event Not Found" };
@@ -47,6 +52,7 @@ const toISOString = (date: any): string | null => {
 
 export default async function EventDetailPage(props: EventPageProps) {
     const params = await props.params;
+    if (!isValidConvexId(params.id)) notFound();
     let eventData;
     try {
         eventData = await fetchQuery(api.events.getById, { id: params.id as Id<"events"> });
