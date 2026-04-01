@@ -80,7 +80,9 @@ export const generate = mutation({
         for (let i = 0; i < 100; i++) {
             nextCount++;
             if (nextCount > maxNumber) {
-                throw new Error("Bib number range exhausted");
+                throw new Error(
+                    `Bib number range exhausted for category ${args.categoryId} (max ${maxDigits}-digit number is ${maxNumber})`
+                );
             }
             const padded = String(nextCount).padStart(maxDigits, "0");
             const formatted = formatBib(padded);
